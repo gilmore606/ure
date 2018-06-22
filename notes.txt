@@ -1,0 +1,71 @@
+Renderer (draw cameras of areas in some style)
+	Render(Camera)
+		
+Area (an entire map of continuous play area)
+	Cells[][]
+	Actors[]
+	Lights[]
+
+Camera (a pane showing a sub-block of an area)
+	Area
+	Renderer,Lighter
+	centerX,centerY
+	width,height
+	Lightcells[][]
+	seenOpacity (def 50)
+	allVisible? (def false)
+	Render(centerX,centerY)
+		wipe all Lightcells
+		Lighter.LightCamera(this)
+		Renderer.Render(this)
+
+Lighter (a lighting engine that renders lights into area.cells)
+	LightCamera()
+		find all lights whose range can touch camera
+		foreach area.ambientLights { rect fill into camera }
+		foreach light { adammilAlgo - update any hit cells in camera }
+
+		
+Cell (a single xy cell of an area)
+	URETerrain
+	Collection
+	seen?
+	:isPassable?
+	:isOpaque?
+	
+Lightcell (a single xy cell of a camera)
+	isVisible?
+	sources{}
+	ReceiveLight(source,color)
+		update each source.color to sources{} dict
+	Wipe()
+		clear isVisible and sources
+	UREColor()
+		calculate and return final RGB light color from all sources
+
+URETerrain (wall/floor)
+	tileID (int, ascii for asciirender)
+	tileColor
+	:isPassable?
+	:isOpaque?
+	
+Collection (a bunch of different things in a cell/container/backpack)
+	Things
+	:allThe(Thingtype)
+	
+Thing (a physical entity with a location)
+	weight
+	size
+	Collection 
+	
+Thing:Actor (a thing that takes actions on turns)
+	ActionQueue
+
+
+	
+while {
+	wait for input
+	if command {
+		execute command
+		Camera.Render(player.x, player.y)
+		
