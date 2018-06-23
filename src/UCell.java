@@ -37,7 +37,6 @@ public class UCell implements UContainer {
     }
 
     public void addThing(UREThing thing) {
-        System.out.println("addthing " + Integer.toString(x) + " " + Integer.toString(y));
         contents.add(thing);
     }
     public void removeThing(UREThing thing) {

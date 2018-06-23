@@ -61,7 +61,6 @@ public class URECommander implements KeyListener {
 
     void hearCommand(String command) {
         boolean acted = true;
-        System.out.println("key");
         switch (command) {
             case "MOVE_N":
                 walkPlayer(0, -1);

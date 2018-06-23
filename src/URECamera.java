@@ -182,6 +182,8 @@ public class URECamera extends JPanel {
     public float visibilityAt(int x, int y) {
         if (allVisible)
             return 1.0f;
+        if (!isLegalXY(x, y))
+            return 0f;
         return lightcells[x][y].visibility();
     }
     void setVisibilityAt(int x, int y, float vis) {
@@ -238,6 +240,20 @@ public class URECamera extends JPanel {
                             }
                         }
                     }
+                }
+            }
+        }
+        for (int x=0;x<width;x++) {
+            for (int y=0;y<height;y++) {
+                float v = visibilityAt(x,y);
+                if (v == 0f) {
+                    int neigh = 0;
+                    if (visibilityAt(x-1,y) == 1f && !area.blocksLight(x+x1-1, y+y1)) neigh++;
+                    if (visibilityAt(x+1, y) == 1f && !area.blocksLight(x+x1+1, y+y1)) neigh++;
+                    if (visibilityAt(x,y-1) == 1f && !area.blocksLight(x+x1, y+y1-1)) neigh++;
+                    if (visibilityAt(x, y+1) == 1f && !area.blocksLight(x+x1, y+y1+1)) neigh++;
+                    if (neigh > 1)
+                        projectToCell(x, y, light, projectVisibility, 0.5f);
                 }
             }
         }

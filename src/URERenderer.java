@@ -60,7 +60,6 @@ public class URERenderer {
         if (things != null) {
             while (things.hasNext()) {
                 UREThing thing = things.next();
-                System.out.println("  drawing a " + thing.name);
                 char icon = thing.getIcon();
                 Color color = thing.getIconColor();
                 if (thing.drawIconOutline())
@@ -75,18 +74,12 @@ public class URERenderer {
             return color;
         if (brightness < 0.01f)
             return Color.BLACK;
-        //
-        // THIS IS BROKEN
-        //
-        int r = (color.getRed() & 0xff0000) >> 16;
-        int g = (color.getGreen() & 0xff00) >> 8;
-        int b = (color.getBlue() & 0xff);
+        int r = color.getRed();
+        int g = color.getGreen();
+        int b = color.getBlue();
         r = (int)((float)(r) * brightness);
         g = (int)((float)(g) * brightness);
         b = (int)((float)(b) * brightness);
-        r = (r & 0xff0000) >> 16;
-        g = (g & 0xff00) >> 8;
-        b = (b & 0xff);
         return new Color(r,g,b);
     }
 
