@@ -212,13 +212,13 @@ public class URECamera extends JPanel {
             boolean inFrame = true;
             while (inFrame) {
                 row++;
-                if (!isLegalXY(ox + transformOctantX(0, octant),oy + transformOctantY(row, octant)))
+                if (!isLegalXY(ox + transformOctantCol(row, 0, octant),oy + transformOctantRow(row, 0, octant)))
                     inFrame = false;
                 else {
                     boolean inRow = true;
                     for (int col = 0; col <= row; col++) {
-                        int dy = oy + transformOctantY(row, octant);
-                        int dx = ox + transformOctantX(col, octant);
+                        int dy = oy + transformOctantRow(row, col, octant);
+                        int dx = ox + transformOctantCol(row, col, octant);
                         if (!isLegalXY(dx, dy))
                             inRow = false;
                         else {
@@ -249,45 +249,45 @@ public class URECamera extends JPanel {
         else
             receiveLight(x, y, light, intensity);
     }
-    int transformOctantX(int row, int octant) {
+    int transformOctantRow(int row, int col, int octant) {
         switch (octant) {
             case 0:
-                return -row;
+                return col;
             case 1:
                 return row;
             case 2:
                 return row;
             case 3:
-                return row;
+                return col;
             case 4:
-                return row;
+                return -col;
             case 5:
                 return -row;
             case 6:
                 return -row;
             case 7:
-                return -row;
+                return -col;
         }
         return 0;
     }
-    int transformOctantY(int col, int octant) {
+    int transformOctantCol(int row, int col, int octant) {
         switch (octant) {
             case 0:
-                return col;
+                return -row;
             case 1:
                 return -col;
             case 2:
                 return col;
             case 3:
-                return col;
+                return row;
             case 4:
-                return -col;
+                return row;
             case 5:
                 return col;
             case 6:
                 return -col;
             case 7:
-                return -col;
+                return -row;
         }
         return 0;
     }
