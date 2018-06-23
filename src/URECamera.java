@@ -5,6 +5,7 @@
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 import java.awt.*;
+import java.util.Iterator;
 
 public class URECamera extends JPanel {
     public UREArea area;
@@ -82,6 +83,10 @@ public class URECamera extends JPanel {
 
     public URETerrain terrainAt(int localX, int localY) {
         return area.terrainAt(localX + x1, localY + y1);
+    }
+
+    public Iterator<UREThing> thingsAt(int x, int y) {
+        return area.thingsAt(x + x1, y + y1);
     }
 
     public void renderImage() {

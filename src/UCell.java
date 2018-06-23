@@ -1,3 +1,5 @@
+import java.util.Iterator;
+
 /**
  * Created by gilmore on 6/20/2018.
  *
@@ -25,10 +27,14 @@ public class UCell implements UContainer {
     }
 
     public void addThing(UREThing thing) {
+
         contents.add(thing);
     }
     public void removeThing(UREThing thing) {
         contents.remove(thing);
         area.hearRemoveThing(thing);
+    }
+    public Iterator<UREThing> iterator() {
+        return contents.iterator();
     }
 }

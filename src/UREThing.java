@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.Iterator;
 
 /**
  * Created by gilmore on 6/20/2018.
@@ -10,8 +11,8 @@ public class UREThing implements UContainer {
     public String name;
     public char icon;
 
-    public Color iconColor;
-    public boolean iconOutline = false;
+    Color iconColor;
+    boolean drawIconOutline = false;
 
     UContainer location;  // What collection am I in?
     UCollection contents; // What's inside me?
@@ -20,9 +21,19 @@ public class UREThing implements UContainer {
         name = thename;
         icon = theicon;
         iconColor = thecolor;
-        iconOutline = addOutline;
+        drawIconOutline = addOutline;
         contents = new UCollection(this);
         location = null;
+    }
+
+    public char getIcon() {
+        return icon;
+    }
+    public Color getIconColor() {
+        return iconColor;
+    }
+    public boolean drawIconOutline() {
+        return drawIconOutline;
     }
 
     public void moveToCell(UREArea area, int x, int y) {
@@ -48,5 +59,8 @@ public class UREThing implements UContainer {
     }
     public void removeThing(UREThing thing) {
         contents.remove(thing);
+    }
+    public Iterator<UREThing> iterator() {
+        return contents.iterator();
     }
 }

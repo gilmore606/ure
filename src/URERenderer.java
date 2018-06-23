@@ -1,10 +1,11 @@
 import java.awt.image.BufferedImage;
 import java.awt.*;
 import java.util.HashMap;
+import java.util.Iterator;
 import javax.swing.*;
 
 public class URERenderer {
-    private int fontSize = 16;
+    private int fontSize = 22;
     private int outlineWidth = 0;
     private int fontPadX = 4;
     private int fontPadY = 2;
@@ -57,6 +58,18 @@ public class URERenderer {
             }
             BufferedImage tGlyph = charToGlyph(t.icon, font);
             stampGlyph(tGlyph, image, x*cellw, y*cellh, t.fgColor);
+        }
+        Iterator<UREThing> things = camera.thingsAt(x,y);
+        if (things != null) {
+            while (things.hasNext()) {
+                UREThing thing = things.next();
+                System.out.println("  drawing a " + thing.name);
+                char icon = thing.getIcon();
+                Color color = thing.getIconColor();
+                if (thing.drawIconOutline())
+                    stampGlyph(charToOutline(icon, font), image, x * cellw, y * cellh, Color.BLACK);
+                stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color);
+            }
         }
     }
 

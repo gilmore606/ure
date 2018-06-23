@@ -6,6 +6,7 @@
  */
 
 import java.util.HashSet;
+import java.util.Iterator;
 
 public class UCollection {
 
@@ -23,5 +24,9 @@ public class UCollection {
 
     public void add(UREThing thing) {
         things.add(thing);
+    }
+
+    public Iterator<UREThing> iterator() {
+        return things.iterator();
     }
 }

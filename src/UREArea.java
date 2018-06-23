@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.stream.Stream;
 
 public class UREArea {
@@ -17,7 +18,6 @@ public class UREArea {
     private int xsize, ysize;
     private HashSet<URELight> lights;
     private HashSet<UREActor> actors;
-    private int cellsY;
 
     public UREArea(int thexsize, int theysize) {
         xsize = thexsize;
@@ -35,15 +35,15 @@ public class UREArea {
         cells = new UCell[200][200];
         try {
             Stream<String> lines = Files.lines(Paths.get(filename));
-            cellsY = 0;
             lines.forEach(line -> {
                 int cellsX = 0;
                 for (char c : line.toCharArray()) {
                     URETerrain terrain = terrainCzar.getTerrainForFilechar(c);
-                    cells[cellsX][cellsY] = new UCell(this, terrain);
+                    cells[cellsX][ysize] = new UCell(this, terrain);
                     ++cellsX;
                 }
-                cellsY++;
+                ysize++;
+                xsize = cellsX;
                     });
             lines.close();
         } catch (IOException io) {
@@ -74,11 +74,17 @@ public class UREArea {
         lights.remove(light);
     }
 
+    public boolean isValidXY(int x, int y) {
+        if ((x >= 0) && (y >= 0))
+            if ((x < xsize) && (y < ysize))
+                return true;
+        return false;
+    }
+
     URETerrain terrainAt(int x, int y) {
-        if (x < 0 || y < 0 || x >= 200 || y >= 200) { return null; }
-        if (cells[x][y] != null) {
-            return cells[x][y].getTerrain();
-        }
+        if (isValidXY(x, y))
+            if (cells[x][y] != null)
+                return cells[x][y].getTerrain();
         return null;
     }
 
@@ -88,5 +94,12 @@ public class UREArea {
 
     public void hearRemoveThing(UREThing thing) {
         actors.remove(thing);
+    }
+
+    public Iterator<UREThing> thingsAt(int x, int y) {
+        if (isValidXY(x,y)) {
+            return cells[x][y].iterator();
+        }
+        return null;
     }
 }
