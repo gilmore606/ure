@@ -1,0 +1,6 @@
+w,MOVE_N
+s,NOVE_S
+a,MOVE_W
+d,MOVE_E
+ ,PASS
+

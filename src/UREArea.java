@@ -12,12 +12,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
-public class UREArea {
+public class UREArea implements UTimeListener {
 
     private UCell cells[][];
     private int xsize, ysize;
     private HashSet<URELight> lights;
+    private HashSet<URECamera> cameras;
     private HashSet<UREActor> actors;
+
 
     public UREArea(int thexsize, int theysize) {
         xsize = thexsize;
@@ -53,13 +55,22 @@ public class UREArea {
 
     void initLists() {
         lights = new HashSet<URELight>();
+        cameras = new HashSet<URECamera>();
         actors = new HashSet<UREActor>();
     }
 
     public void close() {
         lights = null;
+        cameras = null;
         actors = null;
         cells = null;
+    }
+
+    public void registerCamera(URECamera thecam) {
+        cameras.add(thecam);
+    }
+    public void unRegisterCamera(URECamera thecam) {
+        cameras.remove(thecam);
     }
 
     public HashSet<URELight> lights() {
@@ -101,5 +112,17 @@ public class UREArea {
             return cells[x][y].iterator();
         }
         return null;
+    }
+
+    public void hearTick() {
+        UpdateCameras();
+    }
+
+    void UpdateCameras() {
+        Iterator<URECamera> camI = cameras.iterator();
+        while (camI.hasNext()) {
+            URECamera camera = camI.next();
+            camera.renderImage();
+        }
     }
 }

@@ -7,6 +7,7 @@ public class ExampleGame {
 
     static UREArea area;
     static URECamera camera;
+    static URECommander commander;
     static UREThing player;
 
     private static void makeWindow() {
@@ -29,5 +30,9 @@ public class ExampleGame {
         player.moveToCell(area, 11, 9);
 
         makeWindow();
+
+        commander = new URECommander(player);
+        commander.registerTimeListener(area);
+        area.hearTick();
     }
 }

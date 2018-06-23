@@ -30,11 +30,21 @@ public class URECamera extends JPanel {
         pixelWidth = thePixW;
         pixelHeight = thePixH;
         image = new BufferedImage(pixelWidth*8,pixelHeight*8, BufferedImage.TYPE_INT_RGB);
+        setBounds();
+        lightcells = new ULightcell[width][height];
+        for (int x=0;x<width;x++)
+            for (int y=0;y<height;y++)
+                lightcells[x][y] = new ULightcell();
+
     }
 
     public void moveTo(UREArea theArea, int thex, int they) {
+        if (theArea != area)
+            if (area != null)
+                area.unRegisterCamera(this);
         area = theArea;
         moveTo(thex,they);
+        area.registerCamera(this);
     }
 
     public void moveTo(int thex, int they) {
@@ -60,7 +70,7 @@ public class URECamera extends JPanel {
     public Graphics getGraphics() { return image.getGraphics(); }
     public BufferedImage getImage() { return image; }
 
-    public void renderLights() {
+    void renderLights() {
         for (int i=0;i<width;i++) {
             for (int j=0;j<height;j++) {
                 lightcells[i][j].wipe();
@@ -90,7 +100,12 @@ public class URECamera extends JPanel {
     }
 
     public void renderImage() {
+        long startTime = System.nanoTime();
+        renderLights();
         renderer.renderCamera(this);
+        long endTime = System.nanoTime();
+        long duration = (endTime - startTime) / 1000000;
+        System.out.println("frametime " + Long.toString(duration) + "ms");
     }
 
     @Override
