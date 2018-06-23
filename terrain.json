@@ -41,6 +41,16 @@
       "bgcolor": [120,100,100]
     },
     {
+      "name": "window",
+      "filechar": "[",
+      "passable": false,
+      "opaque": false,
+      "sunDefault": 1.0,
+      "icon": "[",
+      "fgcolor": [120,120,255],
+      "bgcolor": [70,70,70]
+    },
+    {
       "name": "tree",
       "filechar": "T",
       "passable": true,
