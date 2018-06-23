@@ -1,0 +1,47 @@
+[
+    {
+      "name": "grass",
+      "filechar": ".",
+      "passable": true,
+      "opaque": false,
+      "icon": ".",
+      "fgcolor": [0,150,0],
+      "bgcolor": [0,40,0]
+    },
+    {
+      "name": "wall",
+      "filechar": "#",
+      "passable": false,
+      "opaque": true,
+      "icon": "#",
+      "fgcolor": [30,30,60],
+      "bgcolor": [70,70,70]
+    },
+    {
+      "name": "floor",
+      "filechar": "_",
+      "passable": true,
+      "opaque": false,
+      "icon": " ",
+      "fgcolor": [0,0,0],
+      "bgcolor": [70,70,70]
+    },
+    {
+      "name": "door",
+      "filechar": "D",
+      "passable": true,
+      "opaque": true,
+      "icon": "D",
+      "fgcolor": [255,170,170],
+      "bgcolor": [120,100,100]
+    },
+    {
+      "name": "tree",
+      "filechar": "T",
+      "passable": true,
+      "opaque": true,
+      "icon": "$",
+      "fgcolor": [0,220,0],
+      "bgcolor": [0,40,0]
+    }
+]
