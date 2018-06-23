@@ -99,6 +99,33 @@ public class UREArea implements UTimeListener {
         return null;
     }
 
+    boolean blocksLight(int x, int y) {
+        URETerrain t = terrainAt(x, y);
+        if (t != null)
+            return t.isOpaque();
+        return true;
+    }
+
+    public void setSeen(int x, int y) {
+        setSeen(x, y, true);
+    }
+    public void setSeen(int x, int y, boolean seen) {
+        if (isValidXY(x, y))
+            cells[x][y].setSeen(seen);
+
+    }
+    public boolean seenCell(int x, int y) {
+        if (isValidXY(x, y))
+            return cells[x][y].isSeen();
+        return false;
+    }
+    float sunBrightnessAt(int x, int y) {
+        if (isValidXY(x,y))
+            if (cells[x][y] != null)
+                return cells[x][y].sunBrightness();
+        return 0.0f;
+    }
+
     public boolean willAcceptThing(UREThing thing, int x, int y) {
         if (isValidXY(x, y))
             return cells[x][y].willAcceptThing(thing);

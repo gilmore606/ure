@@ -7,8 +7,8 @@ import java.util.Iterator;
 import javax.swing.*;
 
 public class URERenderer {
-    private int fontSize = 22;
-    private int outlineWidth = 0;
+    private int fontSize = 18;
+    private int outlineWidth = 2;
     private int fontPadX = 4;
     private int fontPadY = 2;
     private int cellPadX = 1;
@@ -40,7 +40,7 @@ public class URERenderer {
         font = new Font(fontName, Font.BOLD, fontSize);
         Graphics g = camera.getGraphics();
         BufferedImage cameraImage = camera.getImage();
-        g.setColor(Color.GRAY);
+        g.setColor(Color.DARK_GRAY);
         g.fillRect(0,0,camw*cellw, camh*cellh);
         for (int x=0;x<camw;x++) {
             for (int y=0;y<camh;y++) {
@@ -50,29 +50,45 @@ public class URERenderer {
     }
 
     void renderCell(URECamera camera, int x, int y, int cellw, int cellh, Graphics g, BufferedImage image) {
+        float vis = camera.visibilityAt(x,y);
+        float visSeen = camera.getSeenOpacity();
         URETerrain t = camera.terrainAt(x,y);
         if (t != null) {
-            g.setColor(t.bgColor);
+            float tOpacity = vis;
+            if ((vis < visSeen) && camera.area.seenCell(x + camera.x1, y + camera.y1))
+                tOpacity = visSeen;
+            g.setColor(DimColor(t.bgColor, tOpacity));
             g.fillRect(x*cellw, y*cellh, cellw, cellh);
-            if (outlineWidth > 0) {
-                BufferedImage tOutline = charToOutline(t.icon, font);
-                stampGlyph(tOutline, image, x * cellw, y * cellh, Color.BLACK);
-            }
             BufferedImage tGlyph = charToGlyph(t.icon, font);
-            stampGlyph(tGlyph, image, x*cellw, y*cellh, t.fgColor);
+            stampGlyph(tGlyph, image, x*cellw, y*cellh, DimColor(t.fgColor, tOpacity));
         }
+        if (vis < 0.5f)
+            return;
         Iterator<UREThing> things = camera.thingsAt(x,y);
         if (things != null) {
             while (things.hasNext()) {
                 UREThing thing = things.next();
-                System.out.println("  drawing a " + thing.name);
                 char icon = thing.getIcon();
                 Color color = thing.getIconColor();
                 if (thing.drawIconOutline())
                     stampGlyph(charToOutline(icon, font), image, x * cellw, y * cellh, Color.BLACK);
-                stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color);
+                stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, DimColor(color, vis));
             }
         }
+    }
+
+    Color DimColor(Color color, float brightness) {
+        if (brightness == 1.0f)
+            return color;
+        if (brightness < 0.01f)
+            return Color.BLACK;
+        int r = color.getRed();
+        int g = color.getGreen();
+        int b = color.getBlue();
+        r = (int)((float)(r) * brightness);
+        g = (int)((float)(g) * brightness);
+        b = (int)((float)(b) * brightness);
+        return new Color(r,g,b);
     }
 
     public void stampGlyph(BufferedImage srcImage, BufferedImage dstImage, int destx, int desty, Color tint) {
@@ -81,6 +97,9 @@ public class URERenderer {
         int[] srcLine = new int[width];
         int[] dstLine = new int[width];
         float[] srcHSB = new float[3];
+
+        // TODO: getRGB() all at once on the whole source image and dest rect
+
         for (int y=0;y<height;y++) {
             srcLine = srcImage.getRGB(0, y, width, 1, srcLine, 0, width);
             dstLine = dstImage.getRGB(destx, desty+y, width, 1, dstLine, 0, width);

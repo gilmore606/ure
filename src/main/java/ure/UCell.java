@@ -12,6 +12,7 @@ public class UCell implements UContainer {
     UREArea area;
     int x,y;
     URETerrain terrain;
+    float sunBrightness;
     UCollection contents;
     boolean isSeen = false;
 
@@ -25,14 +26,25 @@ public class UCell implements UContainer {
 
     public void setTerrain(URETerrain theTerrain) {
         terrain = theTerrain;
+        setSunBrightness(terrain.sunDefault);
+    }
+    public void setSunBrightness(float thebri) { sunBrightness = thebri; }
+
+    public float sunBrightness() {
+        return sunBrightness;
     }
 
+    public void setSeen(boolean theseen) {
+        isSeen = theseen;
+    }
+    public boolean isSeen() {
+        return isSeen;
+    }
     public URETerrain getTerrain() {
         return terrain;
     }
 
     public void addThing(UREThing thing) {
-        System.out.println("addthing " + Integer.toString(x) + " " + Integer.toString(y));
         contents.add(thing);
     }
     public void removeThing(UREThing thing) {

@@ -12,6 +12,11 @@ public class UREActor  extends UREThing {
 
     public void attachCamera(URECamera thecamera) {
         camera = thecamera;
+        camera.addVisibilitySource(this);
+    }
+    public void detachCamera() {
+        camera.removeVisibilitySource(this);
+        camera = null;
     }
 
     public void walkDir(int xdir, int ydir) {
@@ -20,9 +25,15 @@ public class UREActor  extends UREThing {
         if (location.containerType() == UContainer.TYPE_CELL) {
             if (area().willAcceptThing(this, destX, destY)) {
                 moveToCell(area(), destX, destY);
-                if (camera != null)
-                    camera.moveTo(area(), destX, destY);
             }
         }
+    }
+
+    @Override
+    public void moveToCell(UREArea thearea, int destX, int destY) {
+        if (camera != null) {
+            camera.moveTo(area(), destX, destY);
+        }
+        super.moveToCell(thearea, destX, destY);
     }
 }
