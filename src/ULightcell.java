@@ -8,11 +8,11 @@
 
 import java.util.Hashtable;
 
-public class Lightcell {
+public class ULightcell {
     boolean isVisible = false;
     Hashtable<URELight,Float> sources;
 
-    public Lightcell() {
+    public ULightcell() {
         isVisible = false;
         sources = new Hashtable<URELight,Float>();
     }

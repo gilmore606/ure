@@ -6,6 +6,8 @@ import java.awt.*;
  * A type of terrain which can be in a cell.
  *
  */
+import java.awt.image.BufferedImage;
+
 public class URETerrain {
     public String name;
     public char filechar;
@@ -27,7 +29,7 @@ public class URETerrain {
         return opaque;
     }
 
-    public void initColors() {
+    public void initialize() {
         fgColor = new Color(fgcolor[0],fgcolor[1],fgcolor[2]);
         bgColor = new Color(bgcolor[0],bgcolor[1],bgcolor[2]);
     }

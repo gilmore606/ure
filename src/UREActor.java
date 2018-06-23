@@ -1,3 +1,3 @@
-public class UREActor extends UREThing {
+public class UREActor  {
 
 }

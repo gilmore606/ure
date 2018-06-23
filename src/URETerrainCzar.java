@@ -26,7 +26,7 @@ public class URETerrainCzar {
             while (elements.hasNext()) {
                 JsonNode terrainNode = elements.next();
                 URETerrain terrain = objectMapper.treeToValue(terrainNode, URETerrain.class);
-                terrain.initColors();
+                terrain.initialize();
                 terrains.put(terrain.filechar, terrain);
             }
         } catch (IOException io) {

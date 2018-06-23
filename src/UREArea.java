@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 public class UREArea {
 
-    private Cell cells[][];
+    private UCell cells[][];
     private int xsize, ysize;
     private HashSet<URELight> lights;
     private HashSet<UREActor> actors;
@@ -24,7 +24,7 @@ public class UREArea {
         ysize = theysize;
         for (int i=0;i<xsize;i++) {
             for (int j=0;j<ysize;j++) {
-                cells[i][j] = new Cell(null);
+                cells[i][j] = new UCell(this, null);
             }
         }
         initLists();
@@ -32,7 +32,7 @@ public class UREArea {
 
     public UREArea(String filename, URETerrainCzar terrainCzar) {
         initLists();
-        cells = new Cell[200][200];
+        cells = new UCell[200][200];
         try {
             Stream<String> lines = Files.lines(Paths.get(filename));
             cellsY = 0;
@@ -40,7 +40,7 @@ public class UREArea {
                 int cellsX = 0;
                 for (char c : line.toCharArray()) {
                     URETerrain terrain = terrainCzar.getTerrainForFilechar(c);
-                    cells[cellsX][cellsY] = new Cell(terrain);
+                    cells[cellsX][cellsY] = new UCell(this, terrain);
                     ++cellsX;
                 }
                 cellsY++;
@@ -80,5 +80,14 @@ public class UREArea {
             return cells[x][y].getTerrain();
         }
         return null;
+    }
+
+    public void addThing(UREThing thing, int x, int y) {
+        cells[x][y].addThing(thing);
+    }
+
+    public void hearRemoveThing(UREThing thing) {
+        lights.remove(thing);
+        actors.remove(thing);
     }
 }

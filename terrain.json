@@ -7,7 +7,7 @@
       "opaque": false,
       "icon": ".",
       "fgcolor": [0,150,0],
-      "bgcolor": [0,30,0]
+      "bgcolor": [0,40,0]
     },
     {
       "name": "wall",
@@ -15,8 +15,8 @@
       "passable": false,
       "opaque": true,
       "icon": "#",
-      "fgcolor": [80,80,100],
-      "bgcolor": [40,40,60]
+      "fgcolor": [30,30,60],
+      "bgcolor": [70,70,70]
     },
     {
       "name": "floor",
@@ -43,7 +43,7 @@
       "opaque": true,
       "icon": "$",
       "fgcolor": [0,220,0],
-      "bgcolor": [0,30,0]
+      "bgcolor": [0,40,0]
     }
   ]
 }

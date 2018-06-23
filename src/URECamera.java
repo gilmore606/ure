@@ -15,7 +15,7 @@ public class URECamera extends JPanel {
     int width, height;
     int centerX, centerY;
     int x1, y1, x2, y2;
-    Lightcell lightcells[][];
+    ULightcell lightcells[][];
 
     boolean allVisible = false;
     float seenOpacity = 0.5f;
@@ -57,6 +57,7 @@ public class URECamera extends JPanel {
     public int getWidthInCells() { return width; }
     public int getHeightInCells() { return height; }
     public Graphics getGraphics() { return image.getGraphics(); }
+    public BufferedImage getImage() { return image; }
 
     public void renderLights() {
         for (int i=0;i<width;i++) {

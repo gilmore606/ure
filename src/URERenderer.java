@@ -1,15 +1,31 @@
 import java.awt.image.BufferedImage;
 import java.awt.*;
+import java.util.HashMap;
 import javax.swing.*;
 
 public class URERenderer {
-    private int fontSize = 12;
+    private int fontSize = 16;
+    private int outlineWidth = 0;
+    private int fontPadX = 4;
+    private int fontPadY = 2;
+    private int cellPadX = 1;
+    private int cellPadY = 2;
+    private String fontName = "Courier New";
+    private boolean smoothGlyphs = true;
+
+    private HashMap<Character,BufferedImage> glyphCache;
+    private HashMap<Character,BufferedImage> outlineCache;
+
+    public URERenderer() {
+        glyphCache = new HashMap<Character,BufferedImage>();
+        outlineCache = new HashMap<Character,BufferedImage>();
+    }
 
     public int getCellWidth() {
-        return fontSize+1;
+        return fontSize+cellPadX;
     }
     public int getCellHeight() {
-        return fontSize+2;
+        return fontSize+cellPadY;
     }
 
     public void renderCamera(URECamera camera) {
@@ -17,26 +33,117 @@ public class URERenderer {
         int cellh = getCellHeight();
         int camw = camera.getWidthInCells();
         int camh = camera.getHeightInCells();
-        Font font = new Font("MorePerfectDOSVGA", Font.PLAIN, fontSize);
+        Font font = new Font(fontName, Font.BOLD, fontSize);
         Graphics g = camera.getGraphics();
+        BufferedImage cameraImage = camera.getImage();
         g.setColor(Color.GRAY);
         g.fillRect(0,0,camw*cellw, camh*cellh);
         for (int x=0;x<camw;x++) {
             for (int y=0;y<camh;y++) {
-                g.setColor(Color.GRAY);
-                g.fillRect(x*cellw, y*cellh, cellw - 1, cellh - 1);
                 URETerrain t = camera.terrainAt(x,y);
                 if (t != null) {
                     g.setColor(t.bgColor);
                     g.fillRect(x*cellw, y*cellh, cellw, cellh);
-                    g.setColor(t.fgColor);
-                    g.setFont(font);
-                    g.drawString(Character.toString(t.icon), x*cellw + 1, y*cellh + cellh - 1);
-                    System.out.println(Integer.toString(x) + "," + Integer.toString(y) + ": drawing a " + Character.toString(t.icon));
+                    if (outlineWidth > 0) {
+                        BufferedImage tOutline = charToOutline(t.icon, font);
+                        stampGlyph(tOutline, cameraImage, x * cellw, y * cellh, Color.BLACK);
+                    }
+                    BufferedImage tGlyph = charToGlyph(t.icon, font);
+                    stampGlyph(tGlyph, cameraImage, x*cellw, y*cellh, t.fgColor);
                 } else {
-                    System.out.println(Integer.toString(x) + "," + Integer.toString(y) + ": null");
+                    // System.out.println(Integer.toString(x) + "," + Integer.toString(y) + ": null");
                 }
             }
         }
+    }
+
+    public void stampGlyph(BufferedImage srcImage, BufferedImage dstImage, int destx, int desty, Color tint) {
+        int width = srcImage.getWidth();
+        int height = srcImage.getHeight();
+        int[] srcLine = new int[width];
+        int[] dstLine = new int[width];
+        float[] srcHSB = new float[3];
+        for (int y=0;y<height;y++) {
+            srcLine = srcImage.getRGB(0, y, width, 1, srcLine, 0, width);
+            dstLine = dstImage.getRGB(destx, desty+y, width, 1, dstLine, 0, width);
+            for (int x=0;x<width;x++) {
+                if ((destx + x < dstImage.getWidth()) && (desty + y < dstImage.getHeight()) && (destx + x >= 0) && (desty + y >= 0)) {
+                    int srcRGB = srcLine[x];
+                    int dstRGB = dstLine[x];
+                    int r1 = (srcRGB & 0xff0000) >> 16;
+                    int g1 = (srcRGB & 0xff00) >> 8;
+                    int b1 = (srcRGB & 0xff);
+                    srcHSB = Color.RGBtoHSB(r1, g1, b1, srcHSB);
+                    float alpha1 = srcHSB[2];
+                    r1 = (int) ((float) tint.getRed() * alpha1);
+                    g1 = (int) ((float) tint.getGreen() * alpha1);
+                    b1 = (int) ((float) tint.getBlue() * alpha1);
+                    int r2 = (dstRGB & 0xff0000) >> 16;
+                    int g2 = (dstRGB & 0xff00) >> 8;
+                    int b2 = (dstRGB & 0xff);
+                    float alpha2 = 1.0f - alpha1;
+                    int r3 = r1 + (int) ((float) r2 * alpha2);
+                    int g3 = g1 + (int) ((float) g2 * alpha2);
+                    int b3 = b1 + (int) ((float) b2 * alpha2);
+                    int finalRGB = ((r3&0x0ff)<<16)|((g3&0x0ff)<<8)|(b3&0x0ff);
+                    dstLine[x] = finalRGB;
+                }
+            }
+            dstImage.setRGB(destx, desty + y, width, 1, dstLine, 0, width);
+        }
+    }
+
+    BufferedImage charToGlyph(char c, Font font) {
+        if (glyphCache.containsKey((Character)c)) {
+            return glyphCache.get((Character)c);
+        }
+        int cellw = getCellWidth();
+        int cellh = getCellHeight();
+        BufferedImage glyph = new BufferedImage(cellw, cellh, BufferedImage.TYPE_INT_RGB);
+        Graphics g = glyph.getGraphics();
+        if (smoothGlyphs) {
+            ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+        }
+        g.setColor(Color.BLACK);
+        g.fillRect(0,0,cellw,cellh);
+        g.setFont(font);
+        g.setColor(Color.WHITE);
+        g.drawString(Character.toString(c), fontPadX, fontSize - fontPadY);
+        glyphCache.put((Character)c, glyph);
+        System.out.println("cached a glyph for " + Character.toString(c));
+        return glyph;
+    }
+
+    BufferedImage charToOutline(char c, Font font) {
+        if (outlineCache.containsKey((Character)c)) {
+            return outlineCache.get((Character)c);
+        }
+        BufferedImage src = charToGlyph(c, font);
+        int cellw = src.getWidth();
+        int cellh = src.getHeight();
+        BufferedImage outline = new BufferedImage(cellw, cellh, BufferedImage.TYPE_INT_RGB);
+        Graphics g = outline.getGraphics();
+        g.setColor(Color.BLACK);
+        g.fillRect(0,0,cellw,cellh);
+        for (int y=0;y<cellh;y++) {
+            for (int x=0;x<cellw;x++) {
+                int pixel = src.getRGB(x,y);
+                for (int offy=-outlineWidth;offy<=outlineWidth;offy++) {
+                    for (int offx=-outlineWidth;offx<=outlineWidth;offx++) {
+                        int tx = x+offx;
+                        int ty = y+offy;
+                        if (tx >=0 && ty >=0 && tx < cellw && ty < cellh) {
+                            int destpixel = outline.getRGB(tx,ty);
+                            if ((destpixel & 0xff) < (pixel & 0xff)) {
+                                outline.setRGB(tx, ty, pixel);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        outlineCache.put((Character)c, outline);
+        System.out.println("cached a glyph outline for " + Character.toString(c));
+        return outline;
     }
 }
