@@ -49,13 +49,19 @@ public class URERenderer {
 
     void renderCell(URECamera camera, int x, int y, int cellw, int cellh, Graphics g, BufferedImage image) {
         float vis = camera.visibilityAt(x,y);
+        float visSeen = camera.getSeenOpacity();
         URETerrain t = camera.terrainAt(x,y);
         if (t != null) {
-            g.setColor(DimColor(t.bgColor, vis));
+            float tOpacity = vis;
+            if ((vis < visSeen) && camera.area.seenCell(x + camera.x1, y + camera.y1))
+                tOpacity = visSeen;
+            g.setColor(DimColor(t.bgColor, tOpacity));
             g.fillRect(x*cellw, y*cellh, cellw, cellh);
             BufferedImage tGlyph = charToGlyph(t.icon, font);
-            stampGlyph(tGlyph, image, x*cellw, y*cellh, DimColor(t.fgColor, vis));
+            stampGlyph(tGlyph, image, x*cellw, y*cellh, DimColor(t.fgColor, tOpacity));
         }
+        if (vis < 0.5f)
+            return;
         Iterator<UREThing> things = camera.thingsAt(x,y);
         if (things != null) {
             while (things.hasNext()) {
@@ -64,7 +70,7 @@ public class URERenderer {
                 Color color = thing.getIconColor();
                 if (thing.drawIconOutline())
                     stampGlyph(charToOutline(icon, font), image, x * cellw, y * cellh, Color.BLACK);
-                stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color);
+                stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, DimColor(color, vis));
             }
         }
     }

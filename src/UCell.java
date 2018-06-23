@@ -32,6 +32,12 @@ public class UCell implements UContainer {
         return sunBrightness;
     }
 
+    public void setSeen(boolean theseen) {
+        isSeen = theseen;
+    }
+    public boolean isSeen() {
+        return isSeen;
+    }
     public URETerrain getTerrain() {
         return terrain;
     }

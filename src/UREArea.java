@@ -105,6 +105,19 @@ public class UREArea implements UTimeListener {
         return true;
     }
 
+    public void setSeen(int x, int y) {
+        setSeen(x, y, true);
+    }
+    public void setSeen(int x, int y, boolean seen) {
+        if (isValidXY(x, y))
+            cells[x][y].setSeen(seen);
+
+    }
+    public boolean seenCell(int x, int y) {
+        if (isValidXY(x, y))
+            return cells[x][y].isSeen();
+        return false;
+    }
     float sunBrightnessAt(int x, int y) {
         if (isValidXY(x,y))
             if (cells[x][y] != null)

@@ -21,7 +21,7 @@ public class URECamera extends JPanel {
     HashSet<UREActor> visibilitySources;
 
     boolean allVisible = false;
-    float seenOpacity = 0.5f;
+    float seenOpacity = 0.4f;
     float lightHueToFloors = 0.8f;
     float lightHueToWalls = 0.6f;
     float lightHueToThings = 0.5f;
@@ -137,6 +137,7 @@ public class URECamera extends JPanel {
     public int getHeightInCells() { return height; }
     public Graphics getGraphics() { return image.getGraphics(); }
     public BufferedImage getImage() { return image; }
+    public float getSeenOpacity() { return seenOpacity; }
 
     void renderLights() {
         for (int i=0;i<width;i++) {
@@ -182,13 +183,15 @@ public class URECamera extends JPanel {
     public float visibilityAt(int x, int y) {
         if (allVisible)
             return 1.0f;
-        if (!isLegalXY(x, y))
+        if (!isValidXY(x, y))
             return 0f;
         return lightcells[x][y].visibility();
     }
     void setVisibilityAt(int x, int y, float vis) {
-        if ((x>=0) && (x<=width) && (y>=0) && (y<=height)) {
+        if (isValidXY(x, y)) {
             lightcells[x][y].setVisibility(vis);
+            if (vis > 0.5f)
+                area.setSeen(x+x1, y+y1);
         }
     }
 
@@ -214,14 +217,14 @@ public class URECamera extends JPanel {
             boolean inFrame = true;
             while (inFrame) {
                 row++;
-                if (!isLegalXY(ox + transformOctantCol(row, 0, octant),oy + transformOctantRow(row, 0, octant)))
+                if (!isValidXY(ox + transformOctantCol(row, 0, octant),oy + transformOctantRow(row, 0, octant)))
                     inFrame = false;
                 else {
                     boolean inRow = true;
                     for (int col = 0; col <= row; col++) {
                         int dy = oy + transformOctantRow(row, col, octant);
                         int dx = ox + transformOctantCol(row, col, octant);
-                        if (!isLegalXY(dx, dy))
+                        if (!isValidXY(dx, dy))
                             inRow = false;
                         else {
                             if (fullShadow)
@@ -252,7 +255,9 @@ public class URECamera extends JPanel {
                     if (visibilityAt(x+1, y) == 1f && !area.blocksLight(x+x1+1, y+y1)) neigh++;
                     if (visibilityAt(x,y-1) == 1f && !area.blocksLight(x+x1, y+y1-1)) neigh++;
                     if (visibilityAt(x, y+1) == 1f && !area.blocksLight(x+x1, y+y1+1)) neigh++;
-                    if (neigh > 1)
+                    if (neigh > 2)
+                        projectToCell(x, y, light, projectVisibility, 0.7f);
+                    else if (neigh > 1)
                         projectToCell(x, y, light, projectVisibility, 0.5f);
                 }
             }
@@ -307,14 +312,14 @@ public class URECamera extends JPanel {
         }
         return 0;
     }
-    boolean isLegalXY(int x, int y) {
+    boolean isValidXY(int x, int y) {
         if (x >= 0 && y >= 0 && x < width && y < height)
             return true;
         return false;
     }
 
     public void receiveLight(int x, int y, URELight source, float intensity) {
-        if (isLegalXY(x, y)) {
+        if (isValidXY(x, y)) {
             lightcells[x][y].receiveLight(source, intensity);
         }
     }
