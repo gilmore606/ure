@@ -87,7 +87,6 @@ public class UREArea {
     }
 
     public void hearRemoveThing(UREThing thing) {
-        lights.remove(thing);
         actors.remove(thing);
     }
 }

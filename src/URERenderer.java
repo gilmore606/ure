@@ -15,6 +15,7 @@ public class URERenderer {
 
     private HashMap<Character,BufferedImage> glyphCache;
     private HashMap<Character,BufferedImage> outlineCache;
+    private Font font;
 
     public URERenderer() {
         glyphCache = new HashMap<Character,BufferedImage>();
@@ -33,27 +34,29 @@ public class URERenderer {
         int cellh = getCellHeight();
         int camw = camera.getWidthInCells();
         int camh = camera.getHeightInCells();
-        Font font = new Font(fontName, Font.BOLD, fontSize);
+        font = new Font(fontName, Font.BOLD, fontSize);
         Graphics g = camera.getGraphics();
         BufferedImage cameraImage = camera.getImage();
         g.setColor(Color.GRAY);
         g.fillRect(0,0,camw*cellw, camh*cellh);
         for (int x=0;x<camw;x++) {
             for (int y=0;y<camh;y++) {
-                URETerrain t = camera.terrainAt(x,y);
-                if (t != null) {
-                    g.setColor(t.bgColor);
-                    g.fillRect(x*cellw, y*cellh, cellw, cellh);
-                    if (outlineWidth > 0) {
-                        BufferedImage tOutline = charToOutline(t.icon, font);
-                        stampGlyph(tOutline, cameraImage, x * cellw, y * cellh, Color.BLACK);
-                    }
-                    BufferedImage tGlyph = charToGlyph(t.icon, font);
-                    stampGlyph(tGlyph, cameraImage, x*cellw, y*cellh, t.fgColor);
-                } else {
-                    // System.out.println(Integer.toString(x) + "," + Integer.toString(y) + ": null");
-                }
+                renderCell(camera, x, y, cellw, cellh, g, cameraImage);
             }
+        }
+    }
+
+    void renderCell(URECamera camera, int x, int y, int cellw, int cellh, Graphics g, BufferedImage image) {
+        URETerrain t = camera.terrainAt(x,y);
+        if (t != null) {
+            g.setColor(t.bgColor);
+            g.fillRect(x*cellw, y*cellh, cellw, cellh);
+            if (outlineWidth > 0) {
+                BufferedImage tOutline = charToOutline(t.icon, font);
+                stampGlyph(tOutline, image, x * cellw, y * cellh, Color.BLACK);
+            }
+            BufferedImage tGlyph = charToGlyph(t.icon, font);
+            stampGlyph(tGlyph, image, x*cellw, y*cellh, t.fgColor);
         }
     }
 

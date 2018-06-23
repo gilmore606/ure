@@ -27,6 +27,6 @@ public class ExampleGame {
         area = new UREArea("samplemap.txt", terrainCzar);
         makeWindow();
         player = new UREThing("Player", '@', Color.WHITE, true);
-
+        player.moveToCell(area, 3, 3);
     }
 }

@@ -33,6 +33,7 @@ public class UREThing implements UContainer {
     public void moveToContainer(UContainer container) {
         leaveCurrentLocation();
         container.addThing(this);
+        this.location = container;
     }
 
     void leaveCurrentLocation() {
