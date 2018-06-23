@@ -21,7 +21,7 @@ public class URECamera extends JPanel {
     HashSet<UREActor> visibilitySources;
 
     boolean allVisible = false;
-    float seenOpacity = 0.4f;
+    float seenOpacity = 0.35f;
     float lightHueToFloors = 0.8f;
     float lightHueToWalls = 0.6f;
     float lightHueToThings = 0.5f;
@@ -256,9 +256,9 @@ public class URECamera extends JPanel {
                     if (visibilityAt(x,y-1) == 1f && !area.blocksLight(x+x1, y+y1-1)) neigh++;
                     if (visibilityAt(x, y+1) == 1f && !area.blocksLight(x+x1, y+y1+1)) neigh++;
                     if (neigh > 2)
-                        projectToCell(x, y, light, projectVisibility, 0.7f);
+                        projectToCell(x, y, light, projectVisibility, 0.75f);
                     else if (neigh > 1)
-                        projectToCell(x, y, light, projectVisibility, 0.5f);
+                        projectToCell(x, y, light, projectVisibility, 0.6f);
                 }
             }
         }

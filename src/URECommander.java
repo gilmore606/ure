@@ -85,6 +85,7 @@ public class URECommander implements KeyListener {
         while (timeI.hasNext()) {
             timeI.next().hearTick();
         }
+        System.gc();
     }
 
     void walkPlayer(int xdir, int ydir) {
