@@ -14,7 +14,7 @@ public class UREThing implements UContainer {
     Color iconColor;
     boolean drawIconOutline = false;
 
-    UContainer location;  // What collection am I in?
+    UContainer location;  // What container am I in?
     UCollection contents; // What's inside me?
 
     public UREThing(String thename, char theicon, Color thecolor, boolean addOutline) {
@@ -38,7 +38,7 @@ public class UREThing implements UContainer {
 
     public void moveToCell(UREArea area, int x, int y) {
         leaveCurrentLocation();
-        area.addThing(this, x, y);
+        this.location = area.addThing(this, x, y);
     }
 
     public void moveToContainer(UContainer container) {
@@ -64,4 +64,10 @@ public class UREThing implements UContainer {
         return contents.iterator();
     }
     public int containerType() { return UContainer.TYPE_THING; }
+    public boolean willAcceptThing(UREThing thing) {
+        return false;
+    }
+    public int areaX() { return location.areaX(); }
+    public int areaY() { return location.areaY(); }
+    public UREArea area() { return location.area(); }
 }

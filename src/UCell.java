@@ -30,7 +30,7 @@ public class UCell implements UContainer {
     }
 
     public void addThing(UREThing thing) {
-
+        System.out.println("addthing " + Integer.toString(x) + " " + Integer.toString(y));
         contents.add(thing);
     }
     public void removeThing(UREThing thing) {
@@ -41,4 +41,15 @@ public class UCell implements UContainer {
         return contents.iterator();
     }
     public int containerType() { return UContainer.TYPE_CELL; }
+    public boolean willAcceptThing(UREThing thing) {
+        if (terrain != null) {
+            if (terrain.isPassable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public int areaX() { return x; }
+    public int areaY() { return y; }
+    public UREArea area() { return area; }
 }

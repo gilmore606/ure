@@ -98,8 +98,16 @@ public class UREArea implements UTimeListener {
         return null;
     }
 
-    public void addThing(UREThing thing, int x, int y) {
+    public boolean willAcceptThing(UREThing thing, int x, int y) {
+        if (isValidXY(x, y))
+            return cells[x][y].willAcceptThing(thing);
+        return false;
+    }
+
+    public UCell addThing(UREThing thing, int x, int y) {
+
         cells[x][y].addThing(thing);
+        return cells[x][y];
     }
 
     public void hearRemoveThing(UREThing thing) {

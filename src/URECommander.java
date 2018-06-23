@@ -6,6 +6,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.*;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 public class URECommander implements KeyListener {
 
@@ -60,22 +61,30 @@ public class URECommander implements KeyListener {
 
     void hearCommand(String command) {
         boolean acted = true;
+        System.out.println("key");
         switch (command) {
             case "MOVE_N":
-                walkPlayer(0,-1);
+                walkPlayer(0, -1);
                 break;
             case "MOVE_S":
-                walkPlayer(0,1);
+                walkPlayer(0, 1);
                 break;
             case "MOVE_W":
-                walkPlayer(-1,0);
+                walkPlayer(-1, 0);
                 break;
             case "MOVE_E":
-                walkPlayer(1,0);
+                walkPlayer(1, 0);
                 break;
         }
         if (acted) {
+            tickTime();
+        }
+    }
 
+    public void tickTime() {
+        Iterator<UTimeListener> timeI = timeListeners.iterator();
+        while (timeI.hasNext()) {
+            timeI.next().hearTick();
         }
     }
 

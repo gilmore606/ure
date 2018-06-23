@@ -9,6 +9,7 @@ import java.util.Iterator;
 
 public class URECamera extends JPanel {
     public UREArea area;
+    JFrame frame;
     URERenderer renderer;
     BufferedImage image;
     float zoom = 1.0f;
@@ -25,10 +26,11 @@ public class URECamera extends JPanel {
     float lightHueToThings = 0.5f;
     float lightHueToActors = 0.3f;
 
-    public URECamera(URERenderer theRenderer, int thePixW, int thePixH) {
+    public URECamera(URERenderer theRenderer, int thePixW, int thePixH, JFrame theframe) {
         renderer = theRenderer;
         pixelWidth = thePixW;
         pixelHeight = thePixH;
+        frame = theframe;
         image = new BufferedImage(pixelWidth*8,pixelHeight*8, BufferedImage.TYPE_INT_RGB);
         setBounds();
         lightcells = new ULightcell[width][height];
@@ -106,6 +108,8 @@ public class URECamera extends JPanel {
         long endTime = System.nanoTime();
         long duration = (endTime - startTime) / 1000000;
         System.out.println("frametime " + Long.toString(duration) + "ms");
+        repaint();
+        frame.repaint();
     }
 
     @Override
