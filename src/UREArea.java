@@ -98,6 +98,13 @@ public class UREArea implements UTimeListener {
         return null;
     }
 
+    boolean blocksLight(int x, int y) {
+        URETerrain t = terrainAt(x, y);
+        if (t != null)
+            return t.isOpaque();
+        return true;
+    }
+
     float sunBrightnessAt(int x, int y) {
         if (isValidXY(x,y))
             if (cells[x][y] != null)

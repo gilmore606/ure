@@ -96,6 +96,9 @@ public class URERenderer {
         int[] srcLine = new int[width];
         int[] dstLine = new int[width];
         float[] srcHSB = new float[3];
+
+        // TODO: getRGB() all at once on the whole source image and dest rect
+
         for (int y=0;y<height;y++) {
             srcLine = srcImage.getRGB(0, y, width, 1, srcLine, 0, width);
             dstLine = dstImage.getRGB(destx, desty+y, width, 1, dstLine, 0, width);

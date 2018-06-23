@@ -5,8 +5,7 @@
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 
 public class URECamera extends JPanel {
     public UREArea area;
@@ -27,6 +26,71 @@ public class URECamera extends JPanel {
     float lightHueToWalls = 0.6f;
     float lightHueToThings = 0.5f;
     float lightHueToActors = 0.3f;
+
+    private class UShadow {
+        float start, end;
+        public UShadow(float thes, float thee) {
+            start = thes;
+            end = thee;
+        }
+        public boolean contains(UShadow other) {
+            if (start <= other.start && end >= other.end)
+                return true;
+            return false;
+        }
+        public void projectTile(int row, int col) {
+            float topLeft = (float)col / ((float)row + 2f);
+            float bottomRight = ((float)col + 1f) / ((float)row + 1f);
+            start = topLeft;
+            end = bottomRight;
+        }
+    }
+    private class UShadowLine {
+        LinkedList<UShadow> _shadows;
+        public UShadowLine() {
+            _shadows = new LinkedList<UShadow>();
+        }
+        public void add(UShadow shadow) {
+            int index = 0;
+            for (index = 0;index < _shadows.size();index++)
+                if (_shadows.get(index).start >= shadow.start) break;
+            UShadow overlappingPrevious = null;
+            if (index > 0 && _shadows.get(index - 1).end > shadow.start)
+                overlappingPrevious = _shadows.get(index - 1);
+            UShadow overlappingNext = null;
+            if (index < _shadows.size() && _shadows.get(index).start < shadow.end)
+                overlappingNext = _shadows.get(index);
+            if (overlappingNext != null)
+                if (overlappingPrevious != null) {
+                    overlappingPrevious.end = overlappingNext.end;
+                    _shadows.remove(index);
+                } else {
+                    overlappingNext.start = shadow.start;
+                }
+                else {
+                if (overlappingPrevious != null)
+                    overlappingPrevious.end = shadow.end;
+                else
+                    if (index < _shadows.size())
+                        _shadows.add(index, shadow);
+                    else
+                        _shadows.addLast(shadow);
+            }
+        }
+        public boolean isInShadow(UShadow projection) {
+            for (UShadow shadow : _shadows)
+                if (shadow.contains(projection)) return true;
+            return false;
+        }
+        public boolean isFullShadow() {
+            if (_shadows.size() == 1) {
+                for (UShadow shadow: _shadows)
+                    if (shadow.start == 0f && shadow.end == 1f)
+                        return true;
+            }
+            return false;
+        }
+    }
 
     public URECamera(URERenderer theRenderer, int thePixW, int thePixH, JFrame theframe) {
         renderer = theRenderer;
@@ -111,6 +175,7 @@ public class URECamera extends JPanel {
                 setVisibilityAt(dx, dy, 1.0f);
             }
         }
+        projectVisibility(actor.areaX() - x1, actor.areaY() - y1);
     }
 
 
@@ -132,11 +197,109 @@ public class URECamera extends JPanel {
         visibilitySources.remove(actor);
     }
 
-    public void receiveLight(int areax, int areay, URELight source, float intensity) {
-        int cellx = x1 - areax;
-        int celly = y1 - areay;
-        if (cellx >= 0 && celly >= 0 && cellx < width && celly < height) {
-            lightcells[cellx][celly].receiveLight(source, intensity);
+
+    void projectVisibility(int ox, int oy) {
+        projectLight(ox, oy, null, true);
+    }
+    void projectLight(int ox, int oy, URELight light) {
+        projectLight(ox, oy, light, false);
+    }
+    void projectLight(int ox, int oy, URELight light, boolean projectVisibility) {
+        for (int octant=0;octant<8;octant++) {
+            UShadowLine line = new UShadowLine();
+            boolean fullShadow = false;
+            int row = 0;
+            boolean inFrame = true;
+            while (inFrame) {
+                row++;
+                if (!isLegalXY(ox + transformOctantX(0, octant),oy + transformOctantY(row, octant)))
+                    inFrame = false;
+                else {
+                    boolean inRow = true;
+                    for (int col = 0; col <= row; col++) {
+                        int dy = oy + transformOctantY(row, octant);
+                        int dx = ox + transformOctantX(col, octant);
+                        if (!isLegalXY(dx, dy))
+                            inRow = false;
+                        else {
+                            if (fullShadow)
+                                projectToCell(dx, dy, light, projectVisibility, 0f);
+                            else {
+                                UShadow projection = new UShadow(0f, 0f);
+                                projection.projectTile(row, col);
+                                boolean visible = !line.isInShadow(projection);
+                                if (visible) {
+                                    projectToCell(dx, dy, light, projectVisibility, 1f);
+                                    if (area.blocksLight(dx + x1, dy + y1)) {
+                                        line.add(projection);
+                                        fullShadow = line.isFullShadow();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+    void projectToCell(int x, int y, URELight light, boolean projectVisibility, float intensity) {
+        if (projectVisibility)
+            setVisibilityAt(x, y, intensity);
+        else
+            receiveLight(x, y, light, intensity);
+    }
+    int transformOctantX(int row, int octant) {
+        switch (octant) {
+            case 0:
+                return -row;
+            case 1:
+                return row;
+            case 2:
+                return row;
+            case 3:
+                return row;
+            case 4:
+                return row;
+            case 5:
+                return -row;
+            case 6:
+                return -row;
+            case 7:
+                return -row;
+        }
+        return 0;
+    }
+    int transformOctantY(int col, int octant) {
+        switch (octant) {
+            case 0:
+                return col;
+            case 1:
+                return -col;
+            case 2:
+                return col;
+            case 3:
+                return col;
+            case 4:
+                return -col;
+            case 5:
+                return col;
+            case 6:
+                return -col;
+            case 7:
+                return -col;
+        }
+        return 0;
+    }
+    boolean isLegalXY(int x, int y) {
+        if (x >= 0 && y >= 0 && x < width && y < height)
+            return true;
+        return false;
+    }
+
+    public void receiveLight(int x, int y, URELight source, float intensity) {
+        if (isLegalXY(x, y)) {
+            lightcells[x][y].receiveLight(source, intensity);
         }
     }
 
