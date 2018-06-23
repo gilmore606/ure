@@ -63,4 +63,5 @@ public class UREThing implements UContainer {
     public Iterator<UREThing> iterator() {
         return contents.iterator();
     }
+    public int containerType() { return UContainer.TYPE_THING; }
 }

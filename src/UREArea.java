@@ -25,9 +25,8 @@ public class UREArea implements UTimeListener {
         xsize = thexsize;
         ysize = theysize;
         for (int i=0;i<xsize;i++) {
-            for (int j=0;j<ysize;j++) {
-                cells[i][j] = new UCell(this, null);
-            }
+            for (int j=0;j<ysize;j++)
+                cells[i][j] = new UCell(this, i, j, null);
         }
         initLists();
     }
@@ -41,7 +40,7 @@ public class UREArea implements UTimeListener {
                 int cellsX = 0;
                 for (char c : line.toCharArray()) {
                     URETerrain terrain = terrainCzar.getTerrainForFilechar(c);
-                    cells[cellsX][ysize] = new UCell(this, terrain);
+                    cells[cellsX][ysize] = new UCell(this, cellsX, ysize, terrain);
                     ++cellsX;
                 }
                 ysize++;

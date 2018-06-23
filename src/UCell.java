@@ -8,13 +8,16 @@ import java.util.Iterator;
  */
 public class UCell implements UContainer {
     UREArea area;
+    int x,y;
     URETerrain terrain;
     UCollection contents;
     boolean isSeen = false;
 
-    public UCell(UREArea theArea, URETerrain theTerrain) {
+    public UCell(UREArea theArea, int thex, int they, URETerrain theTerrain) {
         contents = new UCollection(this);
         area = theArea;
+        x = thex;
+        y = they;
         setTerrain(theTerrain);
     }
 
@@ -37,4 +40,5 @@ public class UCell implements UContainer {
     public Iterator<UREThing> iterator() {
         return contents.iterator();
     }
+    public int containerType() { return UContainer.TYPE_CELL; }
 }

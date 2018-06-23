@@ -12,15 +12,15 @@ public class URECommander implements KeyListener {
     private HashMap<Character, String> keyBinds;
     private HashSet<UTimeListener> timeListeners;
 
-    private UREThing player;
+    private UREActor player;
 
-    public URECommander(UREThing theplayer) {
+    public URECommander(UREActor theplayer) {
         timeListeners = new HashSet<UTimeListener>();
         setPlayer(theplayer);
         readKeyBinds();
     }
 
-    public void setPlayer(UREThing theplayer) {
+    public void setPlayer(UREActor theplayer) {
         player = theplayer;
     }
 
@@ -80,6 +80,6 @@ public class URECommander implements KeyListener {
     }
 
     void walkPlayer(int xdir, int ydir) {
-
+        player.walkDir(xdir,ydir);
     }
 }

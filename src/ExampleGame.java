@@ -8,7 +8,7 @@ public class ExampleGame {
     static UREArea area;
     static URECamera camera;
     static URECommander commander;
-    static UREThing player;
+    static UREActor player;
 
     private static void makeWindow() {
         JFrame frame = new JFrame("Rogue");
@@ -26,7 +26,7 @@ public class ExampleGame {
     public static void main(String[] args)  {
         URETerrainCzar terrainCzar = new URETerrainCzar();
         area = new UREArea("samplemap.txt", terrainCzar);
-        player = new UREThing("Player", '@', Color.WHITE, true);
+        player = new UREActor("Player", '@', Color.WHITE, true);
         player.moveToCell(area, 11, 9);
 
         makeWindow();
