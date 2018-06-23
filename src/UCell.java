@@ -10,6 +10,7 @@ public class UCell implements UContainer {
     UREArea area;
     int x,y;
     URETerrain terrain;
+    float sunBrightness;
     UCollection contents;
     boolean isSeen = false;
 
@@ -23,6 +24,12 @@ public class UCell implements UContainer {
 
     public void setTerrain(URETerrain theTerrain) {
         terrain = theTerrain;
+        setSunBrightness(terrain.sunDefault);
+    }
+    public void setSunBrightness(float thebri) { sunBrightness = thebri; }
+
+    public float sunBrightness() {
+        return sunBrightness;
     }
 
     public URETerrain getTerrain() {

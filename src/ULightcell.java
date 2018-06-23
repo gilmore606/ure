@@ -9,20 +9,34 @@
 import java.util.Hashtable;
 
 public class ULightcell {
-    boolean isVisible = false;
+    float visibility;
+    float sunBrightness;
+
     Hashtable<URELight,Float> sources;
 
     public ULightcell() {
-        isVisible = false;
+        visibility = 0f;
         sources = new Hashtable<URELight,Float>();
     }
 
     public void wipe() {
-        isVisible = false;
+        visibility = 0f;
         sources.clear();
     }
 
     public void receiveLight(URELight source, float intensity) {
         sources.put(source, intensity);
+    }
+
+    public void setVisibility(float thevis) {
+        visibility = thevis;
+    }
+
+    public float visibility() {
+        return visibility;
+    }
+
+    public void setSunBrightness(float thebri) {
+        sunBrightness = thebri;
     }
 }

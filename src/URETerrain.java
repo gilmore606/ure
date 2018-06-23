@@ -21,6 +21,7 @@ public class URETerrain {
 
     public boolean passable;
     public boolean opaque;
+    public float sunDefault;
 
     public boolean isPassable() {
         return passable;

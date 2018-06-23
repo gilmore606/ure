@@ -5,6 +5,7 @@
       "filechar": ".",
       "passable": true,
       "opaque": false,
+      "sunDefault": 1.0,
       "icon": ".",
       "fgcolor": [0,150,0],
       "bgcolor": [0,40,0]
@@ -14,6 +15,7 @@
       "filechar": "#",
       "passable": false,
       "opaque": true,
+      "sunDefault": 0.0,
       "icon": "#",
       "fgcolor": [30,30,60],
       "bgcolor": [70,70,70]
@@ -23,6 +25,7 @@
       "filechar": "_",
       "passable": true,
       "opaque": false,
+      "sunDefault": 0.0,
       "icon": " ",
       "fgcolor": [0,0,0],
       "bgcolor": [70,70,70]
@@ -32,6 +35,7 @@
       "filechar": "D",
       "passable": true,
       "opaque": true,
+      "sunDefault": 0.0,
       "icon": "D",
       "fgcolor": [255,170,170],
       "bgcolor": [120,100,100]
@@ -41,6 +45,7 @@
       "filechar": "T",
       "passable": true,
       "opaque": true,
+      "sunDefault": 0.5,
       "icon": "$",
       "fgcolor": [0,220,0],
       "bgcolor": [0,40,0]

@@ -5,8 +5,8 @@ import java.util.Iterator;
 import javax.swing.*;
 
 public class URERenderer {
-    private int fontSize = 22;
-    private int outlineWidth = 0;
+    private int fontSize = 16;
+    private int outlineWidth = 2;
     private int fontPadX = 4;
     private int fontPadY = 2;
     private int cellPadX = 1;
@@ -38,7 +38,7 @@ public class URERenderer {
         font = new Font(fontName, Font.BOLD, fontSize);
         Graphics g = camera.getGraphics();
         BufferedImage cameraImage = camera.getImage();
-        g.setColor(Color.GRAY);
+        g.setColor(Color.DARK_GRAY);
         g.fillRect(0,0,camw*cellw, camh*cellh);
         for (int x=0;x<camw;x++) {
             for (int y=0;y<camh;y++) {
@@ -48,16 +48,13 @@ public class URERenderer {
     }
 
     void renderCell(URECamera camera, int x, int y, int cellw, int cellh, Graphics g, BufferedImage image) {
+        float vis = camera.visibilityAt(x,y);
         URETerrain t = camera.terrainAt(x,y);
         if (t != null) {
-            g.setColor(t.bgColor);
+            g.setColor(DimColor(t.bgColor, vis));
             g.fillRect(x*cellw, y*cellh, cellw, cellh);
-            if (outlineWidth > 0) {
-                BufferedImage tOutline = charToOutline(t.icon, font);
-                stampGlyph(tOutline, image, x * cellw, y * cellh, Color.BLACK);
-            }
             BufferedImage tGlyph = charToGlyph(t.icon, font);
-            stampGlyph(tGlyph, image, x*cellw, y*cellh, t.fgColor);
+            stampGlyph(tGlyph, image, x*cellw, y*cellh, DimColor(t.fgColor, vis));
         }
         Iterator<UREThing> things = camera.thingsAt(x,y);
         if (things != null) {
@@ -71,6 +68,26 @@ public class URERenderer {
                 stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color);
             }
         }
+    }
+
+    Color DimColor(Color color, float brightness) {
+        if (brightness == 1.0f)
+            return color;
+        if (brightness < 0.01f)
+            return Color.BLACK;
+        //
+        // THIS IS BROKEN
+        //
+        int r = (color.getRed() & 0xff0000) >> 16;
+        int g = (color.getGreen() & 0xff00) >> 8;
+        int b = (color.getBlue() & 0xff);
+        r = (int)((float)(r) * brightness);
+        g = (int)((float)(g) * brightness);
+        b = (int)((float)(b) * brightness);
+        r = (r & 0xff0000) >> 16;
+        g = (g & 0xff00) >> 8;
+        b = (b & 0xff);
+        return new Color(r,g,b);
     }
 
     public void stampGlyph(BufferedImage srcImage, BufferedImage dstImage, int destx, int desty, Color tint) {

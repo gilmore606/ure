@@ -36,6 +36,7 @@ public class UREThing implements UContainer {
         return drawIconOutline;
     }
 
+
     public void moveToCell(UREArea area, int x, int y) {
         leaveCurrentLocation();
         this.location = area.addThing(this, x, y);

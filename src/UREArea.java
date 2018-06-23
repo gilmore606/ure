@@ -98,6 +98,13 @@ public class UREArea implements UTimeListener {
         return null;
     }
 
+    float sunBrightnessAt(int x, int y) {
+        if (isValidXY(x,y))
+            if (cells[x][y] != null)
+                return cells[x][y].sunBrightness();
+        return 0.0f;
+    }
+
     public boolean willAcceptThing(UREThing thing, int x, int y) {
         if (isValidXY(x, y))
             return cells[x][y].willAcceptThing(thing);
