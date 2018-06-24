@@ -187,11 +187,6 @@ public class URECamera extends JPanel {
             return lightcells[x][y].getSunBrightness();
         return 0f;
     }
-    float getRenderedSunAt(int x, int y) {
-        if (isValidXY(x, y))
-            return lightcells[x][y].getRenderedSun();
-        return 0f;
-    }
 
     void RenderVisible() {
         for (int x=0;x<width;x++) {
@@ -363,33 +358,39 @@ public class URECamera extends JPanel {
         }
     }
 
-    Color lightAtAreaXY(int ax, int ay) {
+    int[] lightAtAreaXY(int ax, int ay) {
         return lightAt(ax - x1, ay - y1);
     }
-    Color lightAt(int x, int y) {
+    int[] lightAt(int x, int y) {
         float sun = lightcells[x][y].getRenderedSun();
         int totalr = (int)((float)(area.sunColor.getRed()) * sun);
         int totalg = (int)((float)(area.sunColor.getGreen()) * sun);
         int totalb = (int)((float)(area.sunColor.getBlue()) * sun);
-        Color total = new Color(totalr, totalg, totalb);
+        int[] total = {totalr,totalg,totalb};
         for (int i=-1;i<2;i++) {
             for (int j=-1;j<2;j++) {
                 URETerrain t = area.terrainAt(x+x1+i,y+y1+j);
                 if (t != null)
                     if (t.glow)
-                        total = AddLightToColor(total, t.bgColor);
+                        total = AddLightToColor(total, t.bgColor, 0.5f);
             }
         }
+        AddLightToColor(total, lightcells[x][y].light(), 1f);
         return total;
     }
-    Color AddLightToColor(Color total, Color light) {
-        int r = total.getRed() + light.getRed();
-        int g = total.getGreen() + light.getGreen();
-        int b = total.getBlue() + light.getBlue();
+    int[] AddLightToColor(int[] total, Color light, float intensity) {
+        int[] lightcolor = {light.getRed(),light.getGreen(),light.getBlue()};
+        return AddLightToColor(total, lightcolor, intensity);
+    }
+    int[] AddLightToColor(int[] total, int[] light, float intensity) {
+        int r = total[0] + (int)((float)light[0] * intensity);
+        int g = total[1] + (int)((float)light[1] * intensity);
+        int b = total[2] + (int)((float)light[2] * intensity);
         if (r > 255) r = 255;
         if (g > 255) g = 255;
         if (b > 255) b = 255;
-        return new Color(r,g,b);
+        int[] color = {r,g,b};
+        return color;
     }
 
     URETerrain terrainAt(int localX, int localY) {

@@ -1,6 +1,9 @@
 package ure;
 
+import java.awt.*;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 /**
  * Created by gilmore on 6/20/2018.
@@ -15,11 +18,11 @@ public class ULightcell {
     float sunBrightness;
     float renderedSun;
 
-    Hashtable<URELight,Float> sources;
+    HashMap<URELight,Float> sources;
 
     public ULightcell() {
         visibility = 0f;
-        sources = new Hashtable<URELight,Float>();
+        sources = new HashMap<URELight,Float>();
     }
 
     public void wipe() {
@@ -48,5 +51,22 @@ public class ULightcell {
     public float getSunBrightness() { return sunBrightness; }
 
     public float getRenderedSun() { return renderedSun; }
+
+    public int[] light() {
+        int r = 0;
+        int g = 0;
+        int b = 0;
+
+        for (URELight source : sources.keySet()) {
+            r = r + source.color[0];
+            g = g + source.color[1];
+            b = b + source.color[2];
+        }
+        if (r > 255) r = 255;
+        if (g > 255) g = 255;
+        if (b > 255) b = 255;
+        int light[] = {r,g,b};
+        return light;
+    }
 
 }

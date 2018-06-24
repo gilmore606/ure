@@ -40,7 +40,7 @@ public class UREActor  extends UREThing {
     public void debug() {
         float sun = area().sunBrightnessAt(areaX(), areaY());
         System.out.println("sun " + Float.toString(sun));
-        Color light = camera.lightAtAreaXY(areaX(), areaY());
+        int[] light = camera.lightAtAreaXY(areaX(), areaY());
         System.out.println("light " + light.toString());
     }
 }

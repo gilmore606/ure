@@ -52,12 +52,14 @@ public class URERenderer {
     void renderCell(URECamera camera, int x, int y, int cellw, int cellh, Graphics g, BufferedImage image) {
         float vis = camera.visibilityAt(x,y);
         float visSeen = camera.getSeenOpacity();
-        Color light = camera.lightAt(x,y);
+        int[] lightRGB = camera.lightAt(x,y);
+        Color light = new Color(lightRGB[0],lightRGB[1],lightRGB[2]);
         URETerrain t = camera.terrainAt(x,y);
         if (t != null) {
             float tOpacity = vis;
             if ((vis < visSeen) && camera.area.seenCell(x + camera.x1, y + camera.y1))
                 tOpacity = visSeen;
+
             Color terrainLight = light;
             if (t.glow)
                 terrainLight = Color.WHITE;
