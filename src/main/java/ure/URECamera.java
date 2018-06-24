@@ -171,26 +171,12 @@ public class URECamera extends JPanel {
                             }
                         }
                     }
-                    if (litnear > 0)
-                        sun = 1f;
-                }
-                lightcells[x][y].setRenderedSun(sun);
-            }
-        }
-        for (int x=0;x<width;x++) {
-            for (int y=0;y<height;y++) {
-                float sun = lightcells[x][y].getRenderedSun();
-                if ((sun < 0.1f) && !area.blocksLight(x + x1, y + y1)) {
-                    int litnear = 0;
-                    for (int k=-1;k<2;k++) {
-                        for (int l=-1;l<2;l++) {
-                            if (!area.blocksLight(x + k + x1, y + l + y1) && (lightcells[x][y].getRenderedSun() > 0.9f)) {
-                                litnear++;
-                            }
-                        }
+                    if (litnear > 0) {
+                        if (area.blocksLight(x + x1, y + y1))
+                            sun = 1f;
+                        else
+                            sun = 0.5f;
                     }
-                    if (litnear > 0)
-                        sun = 0.4f;
                 }
                 lightcells[x][y].setRenderedSun(sun);
             }
@@ -199,6 +185,11 @@ public class URECamera extends JPanel {
     float getSunBrightnessAt(int x, int y) {
         if (isValidXY(x, y))
             return lightcells[x][y].getSunBrightness();
+        return 0f;
+    }
+    float getRenderedSunAt(int x, int y) {
+        if (isValidXY(x, y))
+            return lightcells[x][y].getRenderedSun();
         return 0f;
     }
 
