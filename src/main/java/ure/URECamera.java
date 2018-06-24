@@ -149,13 +149,13 @@ public class URECamera extends JPanel {
                 lightcells[i][j].setSunBrightness(area.sunBrightnessAt(x1+i,y1+j));
             }
         }
+        RenderSun();
+        RenderVisible();
         for (URELight light : area.lights()) {
             if (light.canTouch(this)) {
                 projectLight(light);
             }
         }
-        RenderSun();
-        RenderVisible();
     }
 
     void RenderSun() {
@@ -245,7 +245,7 @@ public class URECamera extends JPanel {
     }
 
     void projectLight(int ox, int oy, URELight light, boolean projectVisibility) {
-        System.out.println("projecting light from " + Integer.toString(ox) + "," + Integer.toString(oy));
+        projectToCell(ox, oy, light, projectVisibility, 1f);
         for (int octant=0;octant<8;octant++) {
             UShadowLine line = new UShadowLine();
             boolean fullShadow = false;
@@ -305,8 +305,15 @@ public class URECamera extends JPanel {
             setVisibilityAt(x, y, intensity);
         else {
             if (light.canTouch(x + x1, y + y1)) {
-                System.out.println("receive light");
-                receiveLight(x, y, light, intensity * light.intensityAtOffset((x + x1) - light.x, (y + y1) - light.y));
+                boolean blockedWallGlow = false;
+                if (area.blocksLight(x+x1, y+y1)) {
+                    if (visibilityAt(light.x - x1, light.y - y1) < 0.1f) {
+                        blockedWallGlow = true;
+                    }
+                }
+                if (!blockedWallGlow) {
+                    receiveLight(x, y, light, intensity * light.intensityAtOffset((x + x1) - light.x, (y + y1) - light.y));
+                }
             }
         }
     }

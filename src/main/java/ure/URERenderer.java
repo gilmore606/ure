@@ -7,7 +7,7 @@ import java.util.Iterator;
 import javax.swing.*;
 
 public class URERenderer {
-    private int fontSize = 18;
+    private int fontSize = 16;
     private int outlineWidth = 2;
     private int fontPadX = 4;
     private int fontPadY = 2;

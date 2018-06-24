@@ -67,11 +67,9 @@ public class URELight {
     }
 
     public float intensityAtOffset(int xoff, int yoff) {
-        System.out.println("off " + Integer.toString(xoff) + "," + Integer.toString(yoff));
         xoff = (int)Math.pow(Math.abs(xoff),2);
         yoff = (int)Math.pow(Math.abs(yoff),2);
         double dist = Math.sqrt((double)xoff + (double)yoff);
-        System.out.println(Double.toString(dist));
         if (dist < falloff) {
             return 1f;
         } else if (dist > range) {

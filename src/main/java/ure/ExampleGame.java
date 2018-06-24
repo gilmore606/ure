@@ -15,7 +15,7 @@ public class ExampleGame {
     private static JFrame makeWindow() {
         JFrame frame = new JFrame("Rogue");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        camera = new URECamera(new URERenderer(), 1000, 700 , frame);
+        camera = new URECamera(new URERenderer(), 1200, 800 , frame);
         camera.moveTo(area, 11,9);
         player.attachCamera(camera);
         camera.renderImage();
@@ -30,8 +30,8 @@ public class ExampleGame {
     public static void main(String[] args)  {
         URETerrainCzar terrainCzar = new URETerrainCzar();
         area = new UREArea("/samplemap.txt", terrainCzar);
-        URELight light = new URELight(Color.WHITE, 12);
-        light.moveTo(area, 11,9);
+        URELight light = new URELight(Color.CYAN, 30);
+        light.moveTo(area, 13,11);
         player = new UREActor("Player", '@', Color.WHITE, true);
         player.moveToCell(area, 11, 9);
         commander = new URECommander(player);
