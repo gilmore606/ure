@@ -13,13 +13,13 @@ public class UREThing implements UContainer {
     public String name;
     public char icon;
 
-    Color iconColor;
+    UColor iconColor;
     boolean drawIconOutline = false;
 
     UContainer location;  // What container am I in?
     UCollection contents; // What's inside me?
 
-    public UREThing(String thename, char theicon, Color thecolor, boolean addOutline) {
+    public UREThing(String thename, char theicon, UColor thecolor, boolean addOutline) {
         name = thename;
         icon = theicon;
         iconColor = thecolor;
@@ -31,7 +31,7 @@ public class UREThing implements UContainer {
     public char getIcon() {
         return icon;
     }
-    public Color getIconColor() {
+    public UColor getIconColor() {
         return iconColor;
     }
     public boolean drawIconOutline() {

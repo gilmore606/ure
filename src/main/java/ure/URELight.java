@@ -9,7 +9,7 @@ import java.lang.Math;
  */
 
 public class URELight {
-    public int[] color;
+    public UColor color;
     public int falloff = 1;
     public int range;
 
@@ -18,10 +18,14 @@ public class URELight {
 
     public URELight(Color thecolor, int therange) {
         int[] rgb = {(int)thecolor.getRed(), (int)thecolor.getGreen(), (int)thecolor.getBlue()};
-        color = rgb;
+        color = new UColor(rgb[0],rgb[1],rgb[2]);
         range = therange;
     }
     public URELight(int[] thecolor, int therange) {
+        color = new UColor(thecolor[0],thecolor[1],thecolor[2]);
+        range = therange;
+    }
+    public URELight(UColor thecolor, int therange) {
         color = thecolor;
         range = therange;
     }

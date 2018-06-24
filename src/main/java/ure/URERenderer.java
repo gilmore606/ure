@@ -53,60 +53,42 @@ public class URERenderer {
     void renderCell(URECamera camera, int x, int y, int cellw, int cellh, Graphics g, BufferedImage image) {
         float vis = camera.visibilityAt(x,y);
         float visSeen = camera.getSeenOpacity();
-        int[] lightRGB = camera.lightAt(x,y);
-        Color light = new Color(lightRGB[0],lightRGB[1],lightRGB[2]);
+        UColor light = camera.lightAt(x,y);
         URETerrain t = camera.terrainAt(x,y);
         if (t != null) {
             float tOpacity = vis;
             if ((vis < visSeen) && camera.area.seenCell(x + camera.x1, y + camera.y1))
                 tOpacity = visSeen;
 
-            Color terrainLight = light;
+            UColor terrainLight = light;
             if (t.glow)
-                terrainLight = Color.WHITE;
-            g.setColor(IlluColor(t.bgColor, tOpacity, terrainLight));
+                terrainLight.set(1f,1f,1f);
+            UColor terrainColor = new UColor(t.bgColor);
+            terrainColor.illuminateWith(terrainLight, tOpacity);
+            g.setColor(terrainColor.makeAWTColor());
             g.fillRect(x*cellw, y*cellh, cellw, cellh);
             BufferedImage tGlyph = charToGlyph(t.icon, font);
-            stampGlyph(tGlyph, image, x*cellw, y*cellh, IlluColor(t.fgColor, tOpacity, terrainLight));
+            terrainColor = new UColor(t.fgColor);
+            terrainColor.illuminateWith(terrainLight, tOpacity);
+            stampGlyph(tGlyph, image, x*cellw, y*cellh, terrainColor);
         }
-        if (vis < 0.5f)
+        if (vis < 0.4f)
             return;
         Iterator<UREThing> things = camera.thingsAt(x,y);
         if (things != null) {
             while (things.hasNext()) {
                 UREThing thing = things.next();
                 char icon = thing.getIcon();
-                Color color = thing.getIconColor();
+                UColor color = new UColor(thing.getIconColor());
                 if (thing.drawIconOutline())
-                    stampGlyph(charToOutline(icon, font), image, x * cellw, y * cellh, Color.BLACK);
-                stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, IlluColor(color, vis, light));
+                    stampGlyph(charToOutline(icon, font), image, x * cellw, y * cellh, new UColor(Color.BLACK));
+                color.illuminateWith(light, vis);
+                stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color);
             }
         }
     }
 
-    Color IlluColor(Color color, float brightness, Color light) {
-        float r = (float)color.getRed();
-        float g = (float)color.getGreen();
-        float b = (float)color.getBlue();
-        r = r * brightness;
-        g = g * brightness;
-        b = b * brightness;
-        float lightr = (float)light.getRed();
-        float lightg = (float)light.getGreen();
-        float lightb = (float)light.getBlue();
-        r = (lightr / 255f) * r;
-        g = (lightg / 255f) * g;
-        b = (lightb / 255f) * b;
-        if (r > 255f) r = 255f;
-        if (g > 255f) g = 255f;
-        if (b > 255f) b = 255f;
-        if (r < 0f) r = 0f;
-        if (g < 0f) g = 0f;
-        if (b < 0f) b = 0f;
-        return new Color((int)r,(int)g,(int)b);
-    }
-
-    public void stampGlyph(BufferedImage srcImage, BufferedImage dstImage, int destx, int desty, Color tint) {
+    public void stampGlyph(BufferedImage srcImage, BufferedImage dstImage, int destx, int desty, UColor tint) {
         int width = srcImage.getWidth();
         int height = srcImage.getHeight();
         int[] srcLine = new int[width];
@@ -114,7 +96,6 @@ public class URERenderer {
         float[] srcHSB = new float[3];
 
         // TODO: getRGB() all at once on the whole source image and dest rect
-
         for (int y=0;y<height;y++) {
             srcLine = srcImage.getRGB(0, y, width, 1, srcLine, 0, width);
             dstLine = dstImage.getRGB(destx, desty+y, width, 1, dstLine, 0, width);
@@ -127,9 +108,9 @@ public class URERenderer {
                     int b1 = (srcRGB & 0xff);
                     srcHSB = Color.RGBtoHSB(r1, g1, b1, srcHSB);
                     float alpha1 = srcHSB[2];
-                    r1 = (int) ((float) tint.getRed() * alpha1);
-                    g1 = (int) ((float) tint.getGreen() * alpha1);
-                    b1 = (int) ((float) tint.getBlue() * alpha1);
+                    r1 = (int) ((float) tint.iR() * alpha1);
+                    g1 = (int) ((float) tint.iG() * alpha1);
+                    b1 = (int) ((float) tint.iB() * alpha1);
                     int r2 = (dstRGB & 0xff0000) >> 16;
                     int g2 = (dstRGB & 0xff00) >> 8;
                     int b2 = (dstRGB & 0xff);

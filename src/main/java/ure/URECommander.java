@@ -18,6 +18,8 @@ public class URECommander implements KeyListener {
 
     private UREActor player;
 
+    private int animationMillis = 200;
+
     public URECommander(UREActor theplayer) {
         timeListeners = new HashSet<UTimeListener>();
         setPlayer(theplayer);
@@ -100,5 +102,13 @@ public class URECommander implements KeyListener {
 
     void debug() {
         player.debug();
+    }
+
+    void animationLoop() {
+        try {
+            Thread.sleep(animationMillis);
+        } catch (InterruptedException e) {
+            System.out.println("hi");
+        }
     }
 }

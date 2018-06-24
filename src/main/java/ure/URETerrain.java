@@ -18,8 +18,8 @@ public class URETerrain {
     public int[] fgcolor;
     public int[] bgcolor;
 
-    public Color fgColor;
-    public Color bgColor;
+    public UColor fgColor;
+    public UColor bgColor;
 
     public boolean passable;
     public boolean opaque;
@@ -34,7 +34,7 @@ public class URETerrain {
     }
 
     public void initialize() {
-        fgColor = new Color(fgcolor[0],fgcolor[1],fgcolor[2]);
-        bgColor = new Color(bgcolor[0],bgcolor[1],bgcolor[2]);
+        fgColor = new UColor(fgcolor[0],fgcolor[1],fgcolor[2]);
+        bgColor = new UColor(bgcolor[0],bgcolor[1],bgcolor[2]);
     }
 }

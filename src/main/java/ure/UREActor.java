@@ -5,8 +5,9 @@ import java.awt.*;
 public class UREActor  extends UREThing {
 
     URECamera camera;
+    private int animationFrame = 0, animationFrames = 4;
 
-    public UREActor(String thename, char theicon, Color thecolor, boolean addOutline) {
+    public UREActor(String thename, char theicon, UColor thecolor, boolean addOutline) {
         super(thename, theicon, thecolor, addOutline);
     }
 
@@ -38,11 +39,15 @@ public class UREActor  extends UREThing {
     }
 
     public void debug() {
-        URELight newlight = new URELight(Color.WHITE, 10);
+        URELight newlight = new URELight(new UColor(Color.WHITE), 10);
         newlight.moveTo(area(), areaX(), areaY());
         float sun = area().sunBrightnessAt(areaX(), areaY());
         System.out.println("sun " + Float.toString(sun));
-        int[] light = camera.lightAtAreaXY(areaX(), areaY());
-        System.out.println("light " + Integer.toString(light[0]) + "," + Integer.toString(light[1]) + "," + Integer.toString(light[2]));
+  }
+
+    public void animationTick() {
+        animationFrame++;
+        if (animationFrame >= animationFrames)
+            animationFrame = 0;
     }
 }

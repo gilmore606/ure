@@ -1,0 +1,50 @@
+RENDERING:
+
+    - UColor mutable color object, replace all int[] and Color, convert on use
+
+    - realtime animation
+        - how to make generic?  where to hook in animators to affect tiles?
+
+    - dynamic sunlight color
+
+    - option setting for camera, renderer
+
+ENGINE:
+
+    - actor ticks
+
+    - daytime tracker
+        - lerp color points through defined ticks-per-day cycle of sunlight
+        - track number of days passed
+
+    - UREAreaGenerator
+        - UREAreaGenFile
+        - UREAreaGenSimpleTown
+        - UREAreaGenWilds
+        - UREAreaGenCave
+        - UREAreaGenDungeon
+
+    - area links
+        - attach to terrain
+
+UI:
+
+    - text scroll pane
+        - highlight current line
+        - scrollbar/binds
+        - expand/retract
+
+    - text info pane
+        - define fields w xy, text, fg/bg color
+            $(name) the $(class)      St:$(st) Dx:$(dx) Gay:$(gay)   $(alignment)
+            $(location)  turn $(turn)
+        - InfoPanel.fields = HashMap<String,String> .fieldColors = HashMap<String,Color>
+        - InfoPanel(xsize,ysize,templateString,font,fgcolor,bgcolor);
+        - InfoPanel.updateField("name", "Gilmore");
+        - InfoPanel.updateFieldColor("name", Color);
+
+    - target picker (in renderer)
+        - draw cursor
+        - optional line from origin
+        - optional show LOS true/false
+

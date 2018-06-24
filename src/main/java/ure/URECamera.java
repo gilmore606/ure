@@ -371,39 +371,23 @@ public class URECamera extends JPanel {
         }
     }
 
-    int[] lightAtAreaXY(int ax, int ay) {
+    UColor lightAtAreaXY(int ax, int ay) {
         return lightAt(ax - x1, ay - y1);
     }
-    int[] lightAt(int x, int y) {
+    UColor lightAt(int x, int y) {
         float sun = lightcells[x][y].getRenderedSun();
-        int totalr = (int)((float)(area.sunColor.getRed()) * sun);
-        int totalg = (int)((float)(area.sunColor.getGreen()) * sun);
-        int totalb = (int)((float)(area.sunColor.getBlue()) * sun);
-        int[] total = {totalr,totalg,totalb};
+        UColor total = new UColor(area.sunColor);
+        total.brightenBy(sun);
         for (int i=-1;i<2;i++) {
             for (int j=-1;j<2;j++) {
                 URETerrain t = area.terrainAt(x+x1+i,y+y1+j);
                 if (t != null)
                     if (t.glow)
-                        total = AddLightToColor(total, t.bgColor, 0.5f);
+                        total.addLights(t.bgColor, 0.5f);
             }
         }
-        total = AddLightToColor(total, lightcells[x][y].light(), 1f);
+        total.addLights(lightcells[x][y].light(), 1f);
         return total;
-    }
-    int[] AddLightToColor(int[] total, Color light, float intensity) {
-        int[] lightcolor = {light.getRed(),light.getGreen(),light.getBlue()};
-        return AddLightToColor(total, lightcolor, intensity);
-    }
-    int[] AddLightToColor(int[] total, int[] light, float intensity) {
-        int r = total[0] + (int)((float)light[0] * intensity);
-        int g = total[1] + (int)((float)light[1] * intensity);
-        int b = total[2] + (int)((float)light[2] * intensity);
-        if (r > 255) r = 255;
-        if (g > 255) g = 255;
-        if (b > 255) b = 255;
-        int[] color = {r,g,b};
-        return color;
     }
 
     URETerrain terrainAt(int localX, int localY) {
@@ -417,10 +401,14 @@ public class URECamera extends JPanel {
     public void renderImage() {
         long startTime = System.nanoTime();
         renderLights();
-        renderer.renderCamera(this);
         long endTime = System.nanoTime();
         long duration = (endTime - startTime) / 1000000;
-        System.out.println("frametime " + Long.toString(duration) + "ms");
+        System.out.println("lighttime " + Long.toString(duration) + "ms");
+        startTime = System.nanoTime();
+        renderer.renderCamera(this);
+        endTime = System.nanoTime();
+        duration = (endTime - startTime) / 1000000;
+        System.out.println("drawtime " + Long.toString(duration) + "ms");
         repaint();
         frame.repaint();
     }

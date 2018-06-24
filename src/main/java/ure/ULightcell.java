@@ -52,22 +52,14 @@ public class ULightcell {
 
     public float getRenderedSun() { return renderedSun; }
 
-    public int[] light() {
-        int r = 0;
-        int g = 0;
-        int b = 0;
+    public UColor light() {
+        UColor total = new UColor(0,0,0);
 
         for (URELight source : sources.keySet()) {
             float intensity = sources.get(source);
-            r = r + (int)((float)source.color[0] * intensity);
-            g = g + (int)((float)source.color[1] * intensity);
-            b = b + (int)((float)source.color[2] * intensity);
+            total.addLights(source.color, intensity);
         }
-        if (r > 255) r = 255;
-        if (g > 255) g = 255;
-        if (b > 255) b = 255;
-        int light[] = {r,g,b};
-        return light;
+        return total;
     }
 
 }
