@@ -58,10 +58,13 @@ public class URERenderer {
             float tOpacity = vis;
             if ((vis < visSeen) && camera.area.seenCell(x + camera.x1, y + camera.y1))
                 tOpacity = visSeen;
-            g.setColor(IlluColor(t.bgColor, tOpacity, light));
+            Color terrainLight = light;
+            if (t.glow)
+                terrainLight = Color.WHITE;
+            g.setColor(IlluColor(t.bgColor, tOpacity, terrainLight));
             g.fillRect(x*cellw, y*cellh, cellw, cellh);
             BufferedImage tGlyph = charToGlyph(t.icon, font);
-            stampGlyph(tGlyph, image, x*cellw, y*cellh, IlluColor(t.fgColor, tOpacity, light));
+            stampGlyph(tGlyph, image, x*cellw, y*cellh, IlluColor(t.fgColor, tOpacity, terrainLight));
         }
         if (vis < 0.5f)
             return;

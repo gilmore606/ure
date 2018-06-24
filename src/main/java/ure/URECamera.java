@@ -372,7 +372,24 @@ public class URECamera extends JPanel {
         int totalg = (int)((float)(area.sunColor.getGreen()) * sun);
         int totalb = (int)((float)(area.sunColor.getBlue()) * sun);
         Color total = new Color(totalr, totalg, totalb);
+        for (int i=-1;i<2;i++) {
+            for (int j=-1;j<2;j++) {
+                URETerrain t = area.terrainAt(x+x1+i,y+y1+j);
+                if (t != null)
+                    if (t.glow)
+                        total = AddLightToColor(total, t.bgColor);
+            }
+        }
         return total;
+    }
+    Color AddLightToColor(Color total, Color light) {
+        int r = total.getRed() + light.getRed();
+        int g = total.getGreen() + light.getGreen();
+        int b = total.getBlue() + light.getBlue();
+        if (r > 255) r = 255;
+        if (g > 255) g = 255;
+        if (b > 255) b = 255;
+        return new Color(r,g,b);
     }
 
     URETerrain terrainAt(int localX, int localY) {

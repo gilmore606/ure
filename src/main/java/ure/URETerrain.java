@@ -23,6 +23,7 @@ public class URETerrain {
 
     public boolean passable;
     public boolean opaque;
+    public boolean glow = false;
     public float sunDefault;
 
     public boolean isPassable() {

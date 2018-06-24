@@ -98,5 +98,16 @@
       "icon": "~",
       "fgcolor": [96,57,0],
       "bgcolor": [64,25,0]
-    }
+    },
+  {
+    "name": "lava",
+    "filechar": "!",
+    "passable": true,
+    "opaque": false,
+    "sunDefault": 0.0,
+    "icon": "~",
+    "fgcolor": [255, 180, 0],
+    "bgcolor": [220, 0, 0],
+    "glow": true
+  }
 ]
