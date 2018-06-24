@@ -58,5 +58,45 @@
       "icon": "$",
       "fgcolor": [0,220,0],
       "bgcolor": [0,40,0]
+    },
+    {
+      "name": "water",
+      "filechar": "W",
+      "passable": false,
+      "opaque": false,
+      "sunDefault": 0.2,
+      "icon": "~",
+      "fgcolor": [0,150,255],
+      "bgcolor": [0,75,127]
+    },
+    {
+      "name": "wooden bridge",
+      "filechar": "B",
+      "passable": true,
+      "opaque": false,
+      "sunDefault": 1.0,
+      "icon": "=",
+      "fgcolor": [255,105,0],
+      "bgcolor": [127,50,0]
+    },
+    {
+      "name": "sand",
+      "filechar": "S",
+      "passable": true,
+      "opaque": false,
+      "sunDefault": 1.0,
+      "icon": "~",
+      "fgcolor": [255,215,0],
+      "bgcolor": [255,235,127]
+    },
+    {
+      "name": "mud",
+      "filechar": "M",
+      "passable": true,
+      "opaque": false,
+      "sunDefault": 1.0,
+      "icon": "~",
+      "fgcolor": [96,57,0],
+      "bgcolor": [64,25,0]
     }
 ]
