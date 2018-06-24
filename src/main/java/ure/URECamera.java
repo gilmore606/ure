@@ -154,10 +154,55 @@ public class URECamera extends JPanel {
                 light.renderInto(this);
             }
         }
-        renderVisible();
+        RenderSun();
+        RenderVisible();
     }
 
-    void renderVisible() {
+    void RenderSun() {
+        for (int x=0;x<width;x++) {
+            for (int y=0;y<height;y++) {
+                float sun = getSunBrightnessAt(x,y);
+                if (sun < 0.1f) {
+                    int litnear = 0;
+                    for (int k = -1;k < 2;k++) {
+                        for (int l = -1;l < 2;l++) {
+                            if (getSunBrightnessAt(x + k, y + l) > 0.9f) {
+                                litnear++;
+                            }
+                        }
+                    }
+                    if (litnear > 0)
+                        sun = 1f;
+                }
+                lightcells[x][y].setRenderedSun(sun);
+            }
+        }
+        for (int x=0;x<width;x++) {
+            for (int y=0;y<height;y++) {
+                float sun = lightcells[x][y].getRenderedSun();
+                if ((sun < 0.1f) && !area.blocksLight(x + x1, y + y1)) {
+                    int litnear = 0;
+                    for (int k=-1;k<2;k++) {
+                        for (int l=-1;l<2;l++) {
+                            if (!area.blocksLight(x + k + x1, y + l + y1) && (lightcells[x][y].getRenderedSun() > 0.9f)) {
+                                litnear++;
+                            }
+                        }
+                    }
+                    if (litnear > 0)
+                        sun = 0.4f;
+                }
+                lightcells[x][y].setRenderedSun(sun);
+            }
+        }
+    }
+    float getSunBrightnessAt(int x, int y) {
+        if (isValidXY(x, y))
+            return lightcells[x][y].getSunBrightness();
+        return 0f;
+    }
+
+    void RenderVisible() {
         for (int x=0;x<width;x++) {
             for (int y=0;y<height;y++) {
                 setVisibilityAt(x,y,0f);
@@ -321,13 +366,25 @@ public class URECamera extends JPanel {
         return false;
     }
 
-    public void receiveLight(int x, int y, URELight source, float intensity) {
+    void receiveLight(int x, int y, URELight source, float intensity) {
         if (isValidXY(x, y)) {
             lightcells[x][y].receiveLight(source, intensity);
         }
     }
 
-    public URETerrain terrainAt(int localX, int localY) {
+    Color lightAtAreaXY(int ax, int ay) {
+        return lightAt(ax - x1, ay - y1);
+    }
+    Color lightAt(int x, int y) {
+        float sun = lightcells[x][y].getRenderedSun();
+        int totalr = (int)((float)(area.sunColor.getRed()) * sun);
+        int totalg = (int)((float)(area.sunColor.getGreen()) * sun);
+        int totalb = (int)((float)(area.sunColor.getBlue()) * sun);
+        Color total = new Color(totalr, totalg, totalb);
+        return total;
+    }
+
+    URETerrain terrainAt(int localX, int localY) {
         return area.terrainAt(localX + x1, localY + y1);
     }
 

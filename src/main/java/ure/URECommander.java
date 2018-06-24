@@ -44,6 +44,7 @@ public class URECommander implements KeyListener {
         keyBinds.put('s', "MOVE_S");
         keyBinds.put('a', "MOVE_W");
         keyBinds.put('d', "MOVE_E");
+        keyBinds.put('e', "DEBUG");
 
     }
 
@@ -77,6 +78,8 @@ public class URECommander implements KeyListener {
             case "MOVE_E":
                 walkPlayer(1, 0);
                 break;
+            case "DEBUG":
+                debug();
         }
         if (acted) {
             tickTime();
@@ -93,5 +96,9 @@ public class URECommander implements KeyListener {
 
     void walkPlayer(int xdir, int ydir) {
         player.walkDir(xdir,ydir);
+    }
+
+    void debug() {
+        player.debug();
     }
 }

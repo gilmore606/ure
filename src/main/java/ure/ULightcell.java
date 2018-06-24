@@ -13,6 +13,7 @@ import java.util.Hashtable;
 public class ULightcell {
     float visibility;
     float sunBrightness;
+    float renderedSun;
 
     Hashtable<URELight,Float> sources;
 
@@ -41,4 +42,11 @@ public class ULightcell {
     public void setSunBrightness(float thebri) {
         sunBrightness = thebri;
     }
+
+    public void setRenderedSun(float thebri) { renderedSun = thebri; }
+
+    public float getSunBrightness() { return sunBrightness; }
+
+    public float getRenderedSun() { return renderedSun; }
+
 }

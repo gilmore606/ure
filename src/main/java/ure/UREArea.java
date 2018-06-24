@@ -1,5 +1,6 @@
 package ure;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +24,7 @@ public class UREArea implements UTimeListener {
     private HashSet<URELight> lights;
     private HashSet<URECamera> cameras;
     private HashSet<UREActor> actors;
+    public Color sunColor;
 
 
     public UREArea(int thexsize, int theysize) {
@@ -57,6 +59,7 @@ public class UREArea implements UTimeListener {
         lights = new HashSet<URELight>();
         cameras = new HashSet<URECamera>();
         actors = new HashSet<UREActor>();
+        sunColor = Color.WHITE;
     }
 
     public void close() {
@@ -84,6 +87,7 @@ public class UREArea implements UTimeListener {
     void removeLight(URELight light) {
         lights.remove(light);
     }
+
 
     public boolean isValidXY(int x, int y) {
         if ((x >= 0) && (y >= 0))

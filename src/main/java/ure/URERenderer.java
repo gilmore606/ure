@@ -52,15 +52,16 @@ public class URERenderer {
     void renderCell(URECamera camera, int x, int y, int cellw, int cellh, Graphics g, BufferedImage image) {
         float vis = camera.visibilityAt(x,y);
         float visSeen = camera.getSeenOpacity();
+        Color light = camera.lightAt(x,y);
         URETerrain t = camera.terrainAt(x,y);
         if (t != null) {
             float tOpacity = vis;
             if ((vis < visSeen) && camera.area.seenCell(x + camera.x1, y + camera.y1))
                 tOpacity = visSeen;
-            g.setColor(DimColor(t.bgColor, tOpacity));
+            g.setColor(IlluColor(t.bgColor, tOpacity, light));
             g.fillRect(x*cellw, y*cellh, cellw, cellh);
             BufferedImage tGlyph = charToGlyph(t.icon, font);
-            stampGlyph(tGlyph, image, x*cellw, y*cellh, DimColor(t.fgColor, tOpacity));
+            stampGlyph(tGlyph, image, x*cellw, y*cellh, IlluColor(t.fgColor, tOpacity, light));
         }
         if (vis < 0.5f)
             return;
@@ -72,23 +73,31 @@ public class URERenderer {
                 Color color = thing.getIconColor();
                 if (thing.drawIconOutline())
                     stampGlyph(charToOutline(icon, font), image, x * cellw, y * cellh, Color.BLACK);
-                stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, DimColor(color, vis));
+                stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, IlluColor(color, vis, light));
             }
         }
     }
 
-    Color DimColor(Color color, float brightness) {
-        if (brightness == 1.0f)
-            return color;
-        if (brightness < 0.01f)
-            return Color.BLACK;
-        int r = color.getRed();
-        int g = color.getGreen();
-        int b = color.getBlue();
-        r = (int)((float)(r) * brightness);
-        g = (int)((float)(g) * brightness);
-        b = (int)((float)(b) * brightness);
-        return new Color(r,g,b);
+    Color IlluColor(Color color, float brightness, Color light) {
+        float r = (float)color.getRed();
+        float g = (float)color.getGreen();
+        float b = (float)color.getBlue();
+        r = r * brightness;
+        g = g * brightness;
+        b = b * brightness;
+        float lightr = (float)light.getRed();
+        float lightg = (float)light.getGreen();
+        float lightb = (float)light.getBlue();
+        r = (lightr / 255f) * r;
+        g = (lightg / 255f) * g;
+        b = (lightb / 255f) * b;
+        if (r > 255f) r = 255f;
+        if (g > 255f) g = 255f;
+        if (b > 255f) b = 255f;
+        if (r < 0f) r = 0f;
+        if (g < 0f) g = 0f;
+        if (b < 0f) b = 0f;
+        return new Color((int)r,(int)g,(int)b);
     }
 
     public void stampGlyph(BufferedImage srcImage, BufferedImage dstImage, int destx, int desty, Color tint) {
