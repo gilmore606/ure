@@ -9,6 +9,10 @@ RENDERING:
 
     - option setting for camera, renderer
 
+    - implement Camera.lightHueToX settings
+
+    - implement zoom
+
 ENGINE:
 
     - actor ticks

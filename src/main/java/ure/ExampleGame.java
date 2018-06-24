@@ -11,11 +11,14 @@ public class ExampleGame {
     static URECamera camera;
     static URECommander commander;
     static UREActor player;
+    static JFrame frame;
+    static Font font;
 
     private static JFrame makeWindow() {
-        JFrame frame = new JFrame("Rogue");
+        font = new Font("Courier", Font.PLAIN, 16);
+        frame = new JFrame("Rogue");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        camera = new URECamera(new URERenderer(), 1200, 800 , frame);
+        camera = new URECamera(new URERenderer(font), 1200, 800 , frame);
         camera.moveTo(area, 40,20);
         player.attachCamera(camera);
         camera.renderImage();
@@ -35,12 +38,15 @@ public class ExampleGame {
         player = new UREActor("Player", '@', new UColor(Color.WHITE), true);
         player.moveToCell(area, 11, 9);
         commander = new URECommander(player);
+        commander.addAnimator(player);
         makeWindow().addKeyListener(commander);
 
         commander.registerTimeListener(area);
         area.hearTick();
         while (true) {
             commander.animationLoop();
+            camera.repaint();
+            frame.repaint();
         }
     }
 }

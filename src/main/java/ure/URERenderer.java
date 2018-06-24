@@ -13,15 +13,16 @@ public class URERenderer {
     private int fontPadY = 2;
     private int cellPadX = 1;
     private int cellPadY = 2;
-    private String fontName = "Courier New";
+    private Font font;
     private boolean smoothGlyphs = true;
 
     private HashMap<Character,BufferedImage> glyphCache;
     private HashMap<Character,BufferedImage> outlineCache;
-    private Font font;
     private Color backgroundColor = Color.BLACK;
 
-    public URERenderer() {
+    public URERenderer(Font thefont) {
+        font = thefont;
+        fontSize = font.getSize();
         glyphCache = new HashMap<Character,BufferedImage>();
         outlineCache = new HashMap<Character,BufferedImage>();
     }
@@ -38,7 +39,6 @@ public class URERenderer {
         int cellh = getCellHeight();
         int camw = camera.getWidthInCells();
         int camh = camera.getHeightInCells();
-        font = new Font(fontName, Font.BOLD, fontSize);
         Graphics g = camera.getGraphics();
         BufferedImage cameraImage = camera.getImage();
         g.setColor(backgroundColor);
@@ -50,6 +50,9 @@ public class URERenderer {
         }
     }
 
+    void renderCell(URECamera camera, int x, int y) {
+        renderCell(camera, x, y, getCellWidth(), getCellHeight(), camera.getGraphics(), camera.getImage());
+    }
     void renderCell(URECamera camera, int x, int y, int cellw, int cellh, Graphics g, BufferedImage image) {
         float vis = camera.visibilityAt(x,y);
         float visSeen = camera.getSeenOpacity();

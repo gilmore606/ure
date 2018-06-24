@@ -15,6 +15,7 @@ public class URECommander implements KeyListener {
 
     private HashMap<Character, String> keyBinds;
     private HashSet<UTimeListener> timeListeners;
+    private HashSet<UAnimator> animators;
 
     private UREActor player;
 
@@ -22,6 +23,7 @@ public class URECommander implements KeyListener {
 
     public URECommander(UREActor theplayer) {
         timeListeners = new HashSet<UTimeListener>();
+        animators = new HashSet<UAnimator>();
         setPlayer(theplayer);
         readKeyBinds();
     }
@@ -37,6 +39,9 @@ public class URECommander implements KeyListener {
     public void unRegisterTimeListener(UTimeListener listener) {
         timeListeners.remove(listener);
     }
+
+    public void addAnimator(UAnimator animator) { animators.add(animator); }
+    public void removeAnimator(UAnimator animator) { animators.remove(animator); }
 
     public void readKeyBinds() {
         // TODO: Actually read keybinds.txt
@@ -109,6 +114,10 @@ public class URECommander implements KeyListener {
             Thread.sleep(animationMillis);
         } catch (InterruptedException e) {
             System.out.println("hi");
+        }
+        Iterator<UAnimator> animI = animators.iterator();
+        while (animI.hasNext()) {
+            animI.next().animationTick();
         }
     }
 }

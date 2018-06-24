@@ -413,8 +413,15 @@ public class URECamera extends JPanel {
         frame.repaint();
     }
 
+    public void redrawAreaCell(int ax, int ay) {
+        redrawCell(ax - x1, ay - y1);
+    }
+    public void redrawCell(int x, int y) {
+        renderer.renderCell(this, x, y);
+    }
+
     @Override
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(image, 0, 0, this);
     }

@@ -2,7 +2,7 @@ package ure;
 
 import java.awt.*;
 
-public class UREActor  extends UREThing {
+public class UREActor  extends UREThing implements UAnimator {
 
     URECamera camera;
     private int animationFrame = 0, animationFrames = 4;
@@ -49,5 +49,14 @@ public class UREActor  extends UREThing {
         animationFrame++;
         if (animationFrame >= animationFrames)
             animationFrame = 0;
+        if (icon == '@')
+            icon = 'o';
+        else
+            icon = '@';
+        RedrawMyCell();
+    }
+
+    public void RedrawMyCell() {
+        area().redrawCell(areaX(),areaY());
     }
 }
