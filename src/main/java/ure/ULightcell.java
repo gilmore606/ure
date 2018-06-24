@@ -58,9 +58,10 @@ public class ULightcell {
         int b = 0;
 
         for (URELight source : sources.keySet()) {
-            r = r + source.color[0];
-            g = g + source.color[1];
-            b = b + source.color[2];
+            float intensity = sources.get(source);
+            r = r + (int)((float)source.color[0] * intensity);
+            g = g + (int)((float)source.color[1] * intensity);
+            b = b + (int)((float)source.color[2] * intensity);
         }
         if (r > 255) r = 255;
         if (g > 255) g = 255;

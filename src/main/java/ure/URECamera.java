@@ -151,7 +151,7 @@ public class URECamera extends JPanel {
         }
         for (URELight light : area.lights()) {
             if (light.canTouch(this)) {
-                light.renderInto(this);
+                projectLight(light);
             }
         }
         RenderSun();
@@ -240,10 +240,12 @@ public class URECamera extends JPanel {
     void projectVisibility(int ox, int oy) {
         projectLight(ox, oy, null, true);
     }
-    void projectLight(int ox, int oy, URELight light) {
-        projectLight(ox, oy, light, false);
+    void projectLight(URELight light) {
+        projectLight(light.x - x1, light.y - y1, light, false);
     }
+
     void projectLight(int ox, int oy, URELight light, boolean projectVisibility) {
+        System.out.println("projecting light from " + Integer.toString(ox) + "," + Integer.toString(oy));
         for (int octant=0;octant<8;octant++) {
             UShadowLine line = new UShadowLine();
             boolean fullShadow = false;
@@ -261,9 +263,9 @@ public class URECamera extends JPanel {
                         if (!isValidXY(dx, dy))
                             inRow = false;
                         else {
-                            if (fullShadow)
-                                projectToCell(dx, dy, light, projectVisibility, 0f);
-                            else {
+                            if (fullShadow) {
+                                // projectToCell(dx, dy, light, projectVisibility, 0f);
+                            } else {
                                 UShadow projection = new UShadow(0f, 0f);
                                 projection.projectTile(row, col);
                                 boolean visible = !line.isInShadow(projection);
@@ -301,8 +303,12 @@ public class URECamera extends JPanel {
     void projectToCell(int x, int y, URELight light, boolean projectVisibility, float intensity) {
         if (projectVisibility)
             setVisibilityAt(x, y, intensity);
-        else
-            receiveLight(x, y, light, intensity);
+        else {
+            if (light.canTouch(x + x1, y + y1)) {
+                System.out.println("receive light");
+                receiveLight(x, y, light, intensity * light.intensityAtOffset((x + x1) - light.x, (y + y1) - light.y));
+            }
+        }
     }
     int transformOctantRow(int row, int col, int octant) {
         switch (octant) {
@@ -375,7 +381,7 @@ public class URECamera extends JPanel {
                         total = AddLightToColor(total, t.bgColor, 0.5f);
             }
         }
-        AddLightToColor(total, lightcells[x][y].light(), 1f);
+        total = AddLightToColor(total, lightcells[x][y].light(), 1f);
         return total;
     }
     int[] AddLightToColor(int[] total, Color light, float intensity) {

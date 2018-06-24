@@ -59,7 +59,7 @@ public class UREArea implements UTimeListener {
         lights = new HashSet<URELight>();
         cameras = new HashSet<URECamera>();
         actors = new HashSet<UREActor>();
-        sunColor = Color.WHITE;
+        sunColor = new Color(190,100,60);
     }
 
     public void close() {

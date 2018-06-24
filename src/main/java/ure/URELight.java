@@ -1,5 +1,6 @@
 package ure;
 
+import java.awt.*;
 import java.lang.Math;
 
 /**
@@ -9,11 +10,17 @@ import java.lang.Math;
 
 public class URELight {
     public int[] color;
+    public int falloff = 1;
     public int range;
 
     UREArea area;
     public int x,y;
 
+    public URELight(Color thecolor, int therange) {
+        int[] rgb = {(int)thecolor.getRed(), (int)thecolor.getGreen(), (int)thecolor.getBlue()};
+        color = rgb;
+        range = therange;
+    }
     public URELight(int[] thecolor, int therange) {
         color = thecolor;
         range = therange;
@@ -53,8 +60,25 @@ public class URELight {
         if (cornerDistSq <= Math.pow(range,2)) return true;
         return false;
     }
+    public boolean canTouch(int tx, int ty) {
+        if (intensityAtOffset(x - tx, y - ty) > 0.01f)
+            return true;
+        return false;
+    }
 
-    public void renderInto(URECamera camera) {
-
+    public float intensityAtOffset(int xoff, int yoff) {
+        System.out.println("off " + Integer.toString(xoff) + "," + Integer.toString(yoff));
+        xoff = (int)Math.pow(Math.abs(xoff),2);
+        yoff = (int)Math.pow(Math.abs(yoff),2);
+        double dist = Math.sqrt((double)xoff + (double)yoff);
+        System.out.println(Double.toString(dist));
+        if (dist < falloff) {
+            return 1f;
+        } else if (dist > range) {
+            return 0f;
+        } else {
+            float scale = ((float)dist - falloff) / (float)range;
+            return 1f - scale;
+        }
     }
 }

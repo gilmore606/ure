@@ -19,6 +19,7 @@ public class URERenderer {
     private HashMap<Character,BufferedImage> glyphCache;
     private HashMap<Character,BufferedImage> outlineCache;
     private Font font;
+    private Color backgroundColor = Color.BLACK;
 
     public URERenderer() {
         glyphCache = new HashMap<Character,BufferedImage>();
@@ -40,7 +41,7 @@ public class URERenderer {
         font = new Font(fontName, Font.BOLD, fontSize);
         Graphics g = camera.getGraphics();
         BufferedImage cameraImage = camera.getImage();
-        g.setColor(Color.DARK_GRAY);
+        g.setColor(backgroundColor);
         g.fillRect(0,0,camw*cellw, camh*cellh);
         for (int x=0;x<camw;x++) {
             for (int y=0;y<camh;y++) {
