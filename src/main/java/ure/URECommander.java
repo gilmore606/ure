@@ -56,6 +56,7 @@ public class URECommander implements KeyListener {
     }
 
     public void keyPressed(KeyEvent e) {
+        System.out.println("keypress " + Character.toString(e.getKeyChar()));
         char c = e.getKeyChar();
         if (keyBinds.containsKey((Character)c)) {
             hearCommand(keyBinds.get((Character)c));
@@ -98,6 +99,7 @@ public class URECommander implements KeyListener {
         while (timeI.hasNext()) {
             timeI.next().hearTick();
         }
+        System.out.println("tick");
         System.gc();
     }
 

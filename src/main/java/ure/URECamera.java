@@ -96,6 +96,8 @@ public class URECamera extends JPanel {
     }
 
     public URECamera(URERenderer theRenderer, int thePixW, int thePixH, JFrame theframe) {
+        setLayout(null);
+        setFocusable(false);
         renderer = theRenderer;
         pixelWidth = thePixW;
         pixelHeight = thePixH;
@@ -109,6 +111,12 @@ public class URECamera extends JPanel {
                 lightcells[x][y] = new ULightcell();
 
     }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(pixelWidth, pixelHeight);
+    }
+
 
     public void moveTo(UREArea theArea, int thex, int they) {
         if (theArea != area)
@@ -128,8 +136,8 @@ public class URECamera extends JPanel {
     private void setBounds() {
         float cellWidth = (float)renderer.getCellWidth() * zoom;
         float cellHeight = (float)renderer.getCellHeight() * zoom;
-        width = (int)(pixelWidth / cellWidth) + 1;
-        height = (int)(pixelHeight / cellHeight) + 1;
+        width = (int)(pixelWidth / cellWidth) + 2;
+        height = (int)(pixelHeight / cellHeight) + 2;
         x1 = centerX - (width / 2);
         y1 = centerY - (height / 2);
         x2 = x1 + width;
@@ -375,6 +383,8 @@ public class URECamera extends JPanel {
         return lightAt(ax - x1, ay - y1);
     }
     UColor lightAt(int x, int y) {
+        if (!isValidXY(x,y))
+            return new UColor(Color.BLACK);
         float sun = lightcells[x][y].getRenderedSun();
         UColor total = new UColor(area.sunColor);
         total.brightenBy(sun);
