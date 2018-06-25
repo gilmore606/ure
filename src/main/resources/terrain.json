@@ -23,11 +23,12 @@
     {
       "name": "floor",
       "filechar": "_",
+      "variants": "_   ._ _ __._",
       "passable": true,
       "opaque": false,
       "sunDefault": 0.0,
       "icon": " ",
-      "fgcolor": [0,0,0],
+      "fgcolor": [55,55,55],
       "bgcolor": [70,70,70]
     },
     {

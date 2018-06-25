@@ -79,8 +79,9 @@ public class URELight {
         } else if (dist > range) {
             return 0f;
         } else {
-            float scale = ((float)dist - falloff) / (float)range;
-            return 1f - scale;
+            float scale = 1f - ((float)dist - falloff) / (float)range;
+            double root = Math.sqrt(scale);
+            return (float)root;
         }
     }
 }
