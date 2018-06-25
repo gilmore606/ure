@@ -12,6 +12,7 @@ public class UREScrollPanel extends JPanel {
     int textRows, textColumns;
     int pixelw, pixelh;
     int padX, padY;
+    int spacing = 1;
     int charWidth, charHeight;
     ArrayList<String> lines;
     ArrayList<Color> lineFades;
@@ -21,7 +22,7 @@ public class UREScrollPanel extends JPanel {
         super();
         setLayout(null);
         setFocusable(false);
-        image = new BufferedImage(rows * cw, columns * ch, BufferedImage.TYPE_INT_RGB);
+        image = new BufferedImage(columns * cw, rows * ch, BufferedImage.TYPE_INT_RGB);
         lines = new ArrayList<String>();
         lineFades = new ArrayList<Color>();
         textRows = rows;
@@ -31,8 +32,8 @@ public class UREScrollPanel extends JPanel {
         charHeight = ch;
         padX = px;
         padY = py;
-        pixelw = textRows * cw;
-        pixelh = textColumns * ch;
+        pixelw = textColumns * cw;
+        pixelh = textRows * ch;
         fgColor = fg.makeAWTColor();
         bgColor = bg.makeAWTColor();
         setFont(font);
@@ -59,7 +60,7 @@ public class UREScrollPanel extends JPanel {
                     g.setColor(lineFades.get(i));
                 else
                     g.setColor(lineFades.get(lineFades.size()));
-                g.drawString(lines.get(i), padX, padY - (i * charHeight));
+                g.drawString(lines.get(i), padX, (padY + pixelh) - ((i-1) * charHeight + spacing));
             }
             i++;
         }
@@ -67,7 +68,7 @@ public class UREScrollPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(textRows * charWidth, textColumns * charHeight);
+        return new Dimension(textColumns * charWidth, textRows * charHeight);
     }
 
     @Override
