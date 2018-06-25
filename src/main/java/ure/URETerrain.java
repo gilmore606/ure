@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 
 public class URETerrain {
     public String name;
+    public String walkmsg = "";
     public char filechar;
     public char icon;
 

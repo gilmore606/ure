@@ -46,13 +46,12 @@ public class ExampleGame implements UTimeListener {
 
         scrollPanel = new UREScrollPanel(font, 5, 80, 16, 16, 5, 5, new UColor(1f,1f,1f), new UColor(0f,0f,0f));
         scrollPanel.addLineFade(Color.WHITE);
-        scrollPanel.addLineFade(new Color(0.7f, 0.7f, 0.7f));
         scrollPanel.addLineFade(new Color(0.6f, 0.6f, 0.6f));
-        scrollPanel.addLineFade(new Color(0.6f, 0.6f, 0.6f));
+        scrollPanel.addLineFade(new Color(0.4f, 0.4f, 0.4f));
+        scrollPanel.addLineFade(new Color(0.3f, 0.3f, 0.3f));
         scrollPanel.setBounds(0,600,1100,200);
         scrollPanel.print("Welcome to UnRogueEngine!");
         scrollPanel.print("The universal java toolkit for roguelike games.");
-        scrollPanel.print("---");
         scrollPanel.print("Your journey begins...");
 
         frame.getContentPane().add(statusPanel);
@@ -88,6 +87,8 @@ public class ExampleGame implements UTimeListener {
     }
 
     public void hearTick() {
+
         statusPanel.setText("turn", "T " + Integer.toString(commander.getTurn()));
+        scrollPanel.print("It's now turn " + Integer.toString(commander.getTurn()) + ".");
     }
 }
