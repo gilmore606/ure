@@ -68,11 +68,13 @@ public class ExampleGame implements UTimeListener {
 
     public void startUp()  {
         URETerrainCzar terrainCzar = new URETerrainCzar();
-        area = new UREArea("/samplemap.txt", terrainCzar);
-        URELight light = new URELight(new UColor(Color.WHITE), 25);
-        light.moveTo(area, 45,25);
+        //area = new UREArea("/samplemap.txt", terrainCzar);
+        URECaveGenerator areaGen = new URECaveGenerator();
+        area = areaGen.generate(terrainCzar, 300, 200, 200);
+        //URELight light = new URELight(new UColor(Color.WHITE), 25);
+        //light.moveTo(area, 200,200);
         player = new UREActor("Player", '@', new UColor(Color.WHITE), true);
-        player.moveToCell(area, 11, 9);
+        player.moveToCell(area, 100, 100);
         commander = new URECommander(player);
         commander.addAnimator(player);
         area.setCommander(commander);

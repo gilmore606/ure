@@ -30,14 +30,15 @@ public class UREArea implements UTimeListener {
     public Color sunColor;
 
 
-    public UREArea(int thexsize, int theysize) {
+    public UREArea(int thexsize, int theysize, URETerrain defaultTerrain) {
         xsize = thexsize;
         ysize = theysize;
-        for (int i=0;i<xsize;i++) {
-            for (int j=0;j<ysize;j++)
-                cells[i][j] = new UCell(this, i, j, null);
-        }
         initLists();
+        cells = new UCell[xsize][ysize];
+        for (int i=0;i<xsize;i++) {
+            for (int j = 0; j < ysize; j++)
+                cells[i][j] = new UCell(this, i, j, defaultTerrain);
+        }
     }
 
     public UREArea(String filename, URETerrainCzar terrainCzar) {
@@ -121,6 +122,15 @@ public class UREArea implements UTimeListener {
         return true;
     }
 
+    // debug / for map scrolls or whatever
+    public void setSeenEverything() {
+        for(int x = 0; x < xsize; x++) {
+            for(int y = 0; y < ysize; y++) {
+                this.setSeen(x, y, true);
+            }
+        }
+    }
+
     public void setSeen(int x, int y) {
         setSeen(x, y, true);
     }
@@ -166,6 +176,12 @@ public class UREArea implements UTimeListener {
 
     public void hearTick() {
         UpdateCameras();
+    }
+
+    public void setTerrainOnCell(int x, int y, URETerrain terrain) {
+        if(this.isValidXY(x, y)) {
+            this.cells[x][y].setTerrain(terrain);
+        }
     }
 
     void UpdateCameras() {
