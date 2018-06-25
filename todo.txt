@@ -6,12 +6,13 @@ RENDERING:
         - how to make generic?  where to hook in animators to affect tiles?
 
     - dynamic sunlight color
+        - lerp between daytime points (in turns)
 
     - option setting for camera, renderer
 
     - implement Camera.lightHueToX settings
 
-    - implement zoom
+    - implement camera zoom
 
 ENGINE:
 
@@ -28,8 +29,13 @@ ENGINE:
         - UREAreaGenCave
         - UREAreaGenDungeon
 
+    - random association-generator
+        - takes a bag of objects (healing potion, death potion) and a bag of qualities (sparkly, green)
+        - random associates qualities to objects, can query for quality for object or object for quality
+        - track known/unknown per association
+
     - area links
-        - attach to terrain
+        - attach to terrain type? to cell?
 
 UI:
 
@@ -51,4 +57,6 @@ UI:
         - draw cursor
         - optional line from origin
         - optional show LOS true/false
+
+    - print terrain.walkString when walked on
 
