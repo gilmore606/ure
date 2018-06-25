@@ -13,6 +13,7 @@ public class ExampleGame implements UTimeListener {
     static UREActor player;
     static JFrame frame;
     static UREStatusPanel statusPanel;
+    static UREScrollPanel scrollPanel;
     static Font font;
 
     private JFrame makeWindow() {
@@ -28,26 +29,36 @@ public class ExampleGame implements UTimeListener {
         frame.setResizable(false);
         frame.setLayout(null);
         frame.getContentPane().setLayout(null);
-        frame.setBounds(0,0,1200,800);
+        frame.setBounds(0,0,1100,800);
 
-        camera = new URECamera(new URERenderer(font), 900, 800 , frame);
+        camera = new URECamera(new URERenderer(font), 900, 600 , frame);
         camera.moveTo(area, 40,20);
         player.attachCamera(camera);
-        camera.setBounds(0,0,900,800);
+        camera.setBounds(0,0,900,600);
         camera.renderImage();
 
-        statusPanel = new UREStatusPanel(font, 15, 10, 16, 16, 5, 5, new UColor(1f,1f,1f), new UColor(0f,0f,0f));
+        statusPanel = new UREStatusPanel(font, 15, 10, 16, 16, 10, 10, new UColor(1f,1f,1f), new UColor(0f,0f,0f));
         statusPanel.addText("name", "Player 1",0,0);
         statusPanel.addText("race", "Elf",0,1);
         statusPanel.addText("class", "Homo",0,2);
         statusPanel.addText("turn", "T 1", 0, 5);
-        statusPanel.setBounds(900,0,300,800);
+        statusPanel.setBounds(900,0,200,800);
+
+        scrollPanel = new UREScrollPanel(font, 5, 80, 16, 16, 5, 5, new UColor(1f,1f,1f), new UColor(0f,0f,0f));
+        scrollPanel.addLineFade(Color.WHITE);
+        scrollPanel.addLineFade(new Color(0.8f, 0.8f, 0.8f));
+        scrollPanel.addLineFade(new Color(0.7f, 0.7f, 0.7f));
+        scrollPanel.addLineFade(new Color(0.6f, 0.6f, 0.6f));
+        scrollPanel.setBounds(0,800,1100,200);
+        scrollPanel.print("Welcome to UnRogueEngine!");
+        scrollPanel.print("Your journey begins...");
 
         frame.getContentPane().add(statusPanel);
+        frame.getContentPane().add(scrollPanel);
         frame.getContentPane().add(camera);
 
         frame.setLocationRelativeTo(null);
-        frame.setSize(1200, 800);
+        frame.setSize(1100, 800);
         frame.getContentPane().setFocusable(true);
         frame.setVisible(true);
         frame.getContentPane().requestFocusInWindow();

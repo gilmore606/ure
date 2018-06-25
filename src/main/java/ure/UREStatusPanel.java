@@ -3,7 +3,6 @@ package ure;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class UREStatusPanel extends JPanel {
@@ -44,8 +43,8 @@ public class UREStatusPanel extends JPanel {
         charHeight = ch;
         padX = px;
         padY = py;
-        pixelw = textRows * font.getSize();
-        pixelh = textColumns * font.getSize();
+        pixelw = textRows * cw;
+        pixelh = textColumns * ch;
         fgColor = fg.makeAWTColor();
         bgColor = bg.makeAWTColor();
         setLayout(null);
