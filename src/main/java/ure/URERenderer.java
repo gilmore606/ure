@@ -10,9 +10,9 @@ public class URERenderer {
     private int fontSize = 16;
     private int outlineWidth = 2;
     private int fontPadX = 4;
-    private int fontPadY = 2;
-    private int cellPadX = 1;
-    private int cellPadY = 2;
+    private int fontPadY = 1;
+    private int cellPadX = 0;
+    private int cellPadY = 1;
     private Font font;
     private boolean smoothGlyphs = true;
 

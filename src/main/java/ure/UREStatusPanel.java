@@ -64,8 +64,15 @@ public class UREStatusPanel extends JPanel {
         texts.put(frag.name, frag);
     }
 
+    public void setText(String name, String text) {
+        TextFrag frag = texts.get(name);
+        frag.text = text;
+    }
+
     public void renderImage() {
         Graphics g = image.getGraphics();
+        g.setColor(bgColor);
+        g.fillRect(0,0,pixelw,pixelh);
         for (String textName : texts.keySet()) {
             TextFrag frag = texts.get(textName);
             g.setFont(font);

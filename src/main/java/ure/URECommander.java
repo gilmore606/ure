@@ -18,6 +18,7 @@ public class URECommander implements KeyListener {
     private HashSet<UAnimator> animators;
 
     private UREActor player;
+    private int turnCounter;
 
     private int animationMillis = 200;
 
@@ -26,7 +27,10 @@ public class URECommander implements KeyListener {
         animators = new HashSet<UAnimator>();
         setPlayer(theplayer);
         readKeyBinds();
+        turnCounter = 0;
     }
+
+    public int getTurn() { return turnCounter; };
 
     public void setPlayer(UREActor theplayer) {
         player = theplayer;
@@ -99,6 +103,7 @@ public class URECommander implements KeyListener {
         while (timeI.hasNext()) {
             timeI.next().hearTick();
         }
+        turnCounter++;
         System.out.println("tick");
         System.gc();
     }
