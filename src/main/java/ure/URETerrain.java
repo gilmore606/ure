@@ -2,6 +2,7 @@ package ure;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 /**
  * Created by gilmore on 6/20/2018.
@@ -15,6 +16,7 @@ public class URETerrain {
     public String walkmsg = "";
     public char filechar;
     public char icon;
+    public String variants;
 
     public int[] fgcolor;
     public int[] bgcolor;
@@ -37,5 +39,17 @@ public class URETerrain {
     public void initialize() {
         fgColor = new UColor(fgcolor[0],fgcolor[1],fgcolor[2]);
         bgColor = new UColor(bgcolor[0],bgcolor[1],bgcolor[2]);
+    }
+
+    public char icon() {
+        return icon;
+    }
+
+    public char icon(int x, int y) {
+        if (variants == null)
+            return icon();
+        int seed = (x * y * 19 + 1883) / 74;
+        int period = variants.length();
+        return (char)variants.charAt(seed % period);
     }
 }

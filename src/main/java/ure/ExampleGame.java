@@ -75,8 +75,10 @@ public class ExampleGame implements UTimeListener {
         player.moveToCell(area, 11, 9);
         commander = new URECommander(player);
         commander.addAnimator(player);
+        area.setCommander(commander);
         makeWindow().getContentPane().addKeyListener(commander);
 
+        commander.registerScrollPrinter(scrollPanel);
         commander.registerTimeListener(area);
         commander.registerTimeListener(this);
         //while (true) {
@@ -89,6 +91,5 @@ public class ExampleGame implements UTimeListener {
     public void hearTick() {
 
         statusPanel.setText("turn", "T " + Integer.toString(commander.getTurn()));
-        scrollPanel.print("It's now turn " + Integer.toString(commander.getTurn()) + ".");
     }
 }

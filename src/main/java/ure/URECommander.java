@@ -18,6 +18,7 @@ public class URECommander implements KeyListener {
     private HashSet<UAnimator> animators;
 
     private UREActor player;
+    private UREScrollPanel scrollPrinter;
     private int turnCounter;
 
     private int animationMillis = 200;
@@ -42,6 +43,10 @@ public class URECommander implements KeyListener {
 
     public void unRegisterTimeListener(UTimeListener listener) {
         timeListeners.remove(listener);
+    }
+
+    public void registerScrollPrinter(UREScrollPanel printer) {
+        scrollPrinter = printer;
     }
 
     public void addAnimator(UAnimator animator) { animators.add(animator); }
@@ -114,6 +119,10 @@ public class URECommander implements KeyListener {
 
     void debug() {
         player.debug();
+    }
+
+    public void printScroll(String text) {
+        scrollPrinter.print(text);
     }
 
     void animationLoop() {

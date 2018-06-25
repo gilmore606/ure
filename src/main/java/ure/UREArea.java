@@ -25,6 +25,7 @@ public class UREArea implements UTimeListener {
     private HashSet<URECamera> cameras;
     private HashSet<UREActor> actors;
     private HashSet<UParticle> particles;
+    private URECommander commander;
 
     public Color sunColor;
 
@@ -62,7 +63,7 @@ public class UREArea implements UTimeListener {
         cameras = new HashSet<URECamera>();
         actors = new HashSet<UREActor>();
         particles = new HashSet<UParticle>();
-        sunColor = new Color(100,80,70);
+        sunColor = new Color(130,50,25);
     }
 
     public void close() {
@@ -70,6 +71,13 @@ public class UREArea implements UTimeListener {
         cameras = null;
         actors = null;
         cells = null;
+    }
+
+    public void setCommander(URECommander cmdr) {
+        commander = cmdr;
+    }
+    public URECommander commander() {
+        return commander;
     }
 
     public void registerCamera(URECamera thecam) {

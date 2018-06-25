@@ -6,6 +6,7 @@
       "opaque": false,
       "sunDefault": 1.0,
       "icon": ".",
+      "variants": ".....,",
       "fgcolor": [0,150,0],
       "bgcolor": [0,40,0]
     },

@@ -70,7 +70,7 @@ public class URERenderer {
             terrainColor.illuminateWith(terrainLight, tOpacity);
             g.setColor(terrainColor.makeAWTColor());
             g.fillRect(x*cellw, y*cellh, cellw, cellh);
-            BufferedImage tGlyph = charToGlyph(t.icon, font);
+            BufferedImage tGlyph = charToGlyph(t.icon(x + camera.x1, y + camera.y1), font);
             terrainColor = new UColor(t.fgColor);
             terrainColor.illuminateWith(terrainLight, tOpacity);
             stampGlyph(tGlyph, image, x*cellw, y*cellh, terrainColor);

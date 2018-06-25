@@ -22,7 +22,7 @@ public class UREScrollPanel extends JPanel {
         super();
         setLayout(null);
         setFocusable(false);
-        image = new BufferedImage(padX + columns * cw, padY + rows * (ch + spacing), BufferedImage.TYPE_INT_RGB);
+        image = new BufferedImage(px + columns * cw, py + rows * (ch + spacing), BufferedImage.TYPE_INT_RGB);
         lines = new ArrayList<String>();
         lineFades = new ArrayList<Color>();
         textRows = rows;
@@ -32,8 +32,8 @@ public class UREScrollPanel extends JPanel {
         charHeight = ch;
         padX = px;
         padY = py;
-        pixelw = textColumns * cw;
-        pixelh = textRows * ch;
+        pixelw = textColumns * cw + padX;
+        pixelh = textRows * (ch + spacing) + padY;
         fgColor = fg.makeAWTColor();
         bgColor = bg.makeAWTColor();
         setFont(font);
@@ -60,7 +60,7 @@ public class UREScrollPanel extends JPanel {
                     g.setColor(lineFades.get(i));
                 else
                     g.setColor(lineFades.get(lineFades.size() - 1));
-                g.drawString(lines.get(i), padX, (padY + pixelh) - ((i+1) * charHeight + spacing));
+                g.drawString(lines.get(i), padX, (padY + pixelh + 4) - ((i + 1) * (charHeight + spacing)));
             }
             i++;
         }

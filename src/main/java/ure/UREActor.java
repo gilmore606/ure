@@ -43,6 +43,7 @@ public class UREActor  extends UREThing implements UAnimator {
         newlight.moveTo(area(), areaX(), areaY());
         float sun = area().sunBrightnessAt(areaX(), areaY());
         System.out.println("sun " + Float.toString(sun));
+        area().commander().printScroll("hello from " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
   }
 
     public void animationTick() {
