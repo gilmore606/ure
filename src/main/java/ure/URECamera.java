@@ -24,6 +24,7 @@ public class URECamera extends JPanel {
     HashSet<UREActor> visibilitySources;
 
     boolean allVisible = false;
+    boolean allLit = false;
     float seenOpacity = 0.35f;
     float lightHueToFloors = 0.8f;
     float lightHueToWalls = 0.6f;
@@ -385,6 +386,8 @@ public class URECamera extends JPanel {
     UColor lightAt(int x, int y) {
         if (!isValidXY(x,y))
             return new UColor(Color.BLACK);
+        if (allLit)
+            return new UColor(Color.WHITE);
         float sun = lightcells[x][y].getRenderedSun();
         UColor total = new UColor(area.sunColor);
         total.brightenBy(sun);

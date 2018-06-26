@@ -20,6 +20,7 @@ public class URECommander implements KeyListener {
     private UREActor player;
     private UREScrollPanel scrollPrinter;
     private int turnCounter;
+    private int turnsPerDay = 120000;
 
     private int animationMillis = 200;
 
@@ -135,5 +136,42 @@ public class URECommander implements KeyListener {
         while (animI.hasNext()) {
             animI.next().animationTick();
         }
+    }
+
+    public int daytimeMinutes() {
+        return ((turnCounter % turnsPerDay) * 86400) / turnsPerDay;
+    }
+    public int daytimeMM() {
+        return (daytimeMinutes() % 60);
+    }
+    public int daytimeHH() {
+        return daytimeMinutes() / 60 + 1;
+    }
+    public String timeString(boolean ampm, String zeropad) {
+        String t = "";
+        int h = daytimeHH();
+        int m = daytimeMM();
+        boolean pm = false;
+        if (ampm) {
+            if (h > 12) {
+                h = h - 12;
+                pm = true;
+            }
+            if (h < 10)
+                t = t + zeropad;
+            t = t + Integer.toString(h);
+        }
+        t = t + ":";
+        if (m < 10)
+            t = t + "0";
+        t = t + Integer.toString(m);
+        if (ampm) {
+            if (pm) {
+                t = t + "pm";
+            } else {
+                t = t + "am";
+            }
+        }
+        return t;
     }
 }

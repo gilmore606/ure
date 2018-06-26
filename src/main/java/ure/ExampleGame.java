@@ -42,6 +42,7 @@ public class ExampleGame implements UTimeListener {
         statusPanel.addText("race", "Elf",0,1);
         statusPanel.addText("class", "Homo",0,2);
         statusPanel.addText("turn", "T 1", 0, 5);
+        statusPanel.addText("time", "", 0, 6);
         statusPanel.setBounds(900,0,200,800);
 
         scrollPanel = new UREScrollPanel(font, 5, 80, 16, 16, 5, 5, new UColor(1f,1f,1f), new UColor(0f,0f,0f));
@@ -91,5 +92,6 @@ public class ExampleGame implements UTimeListener {
     public void hearTick() {
 
         statusPanel.setText("turn", "T " + Integer.toString(commander.getTurn()));
+        statusPanel.setText("time", commander.timeString(true, " "));
     }
 }
