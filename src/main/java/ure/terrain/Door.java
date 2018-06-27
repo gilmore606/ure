@@ -1,6 +1,6 @@
 package ure.terrain;
 
-public class UREDoor extends URETerrain {
+public class Door extends URETerrain {
 
     public static final String TYPE = "door";
 

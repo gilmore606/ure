@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
@@ -68,7 +67,7 @@ public class URETerrainCzar {
 
         private Class<? extends URETerrain> classForType(String type) {
             if (type == null || type.equals("")) {
-                return URETypelessTerrain.class;
+                return Blank.class;
             }
             try {
                 for (Class<? extends URETerrain> terrainClass : terrainClasses) {

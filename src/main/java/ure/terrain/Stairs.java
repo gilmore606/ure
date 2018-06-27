@@ -2,7 +2,7 @@ package ure.terrain;
 
 import ure.UREArea;
 
-public class UREStairs extends URETerrain {
+public class Stairs extends URETerrain {
 
     public static final String TYPE = "stairs";
 

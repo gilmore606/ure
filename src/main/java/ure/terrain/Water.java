@@ -1,6 +1,6 @@
 package ure.terrain;
 
-public class UREWater extends URETerrain {
+public class Water extends URETerrain {
 
     public static final String TYPE = "water";
 
