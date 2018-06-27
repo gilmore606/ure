@@ -1,20 +1,41 @@
+CODE:
+
+    - audit public/protected/private, set protected on inter-package methods
+
+    - javadoc on all public methods & classes of API
+
 RENDERING:
 
-    - UColor mutable color object, replace all int[] and Color, convert on use
+    - refactor URERenderer as URERendererASCII and leave an abstract base URERenderer
+
+    - in stampGlyph, instead of reading/writing line by line read the whole source + dest image RGB data at once (optimization)
 
     - realtime animation
-        - how to make generic?  where to hook in animators to affect tiles?
+        skeleton of this is in place
 
     - dynamic sunlight color
-        - lerp between daytime points (in turns)
+        - lerp between daytime points (in turns) (gil: working on this)
 
-    - option setting for camera, renderer
+    - options setting methods for camera, renderer
 
     - implement Camera.lightHueToX settings
 
     - implement camera zoom
 
+    - .drawOverTerrain, .drawActorAndThings, .drawThingsStack to control glyph stacking
+
+    - .fogColor - custom color for nonvisible areas
+
+    - Terrain.groupVariants = [147, 149, 138...] - one variant char per neighbor-arrangement (for walls etc)
+
+
 ENGINE:
+
+    - make URECommander control a complete game loop with setting for realtime (ms per tick) or wait-after-command
+
+    - make UREArea file constructor into a type of AreaGenerator and make the default constructor sensible
+
+    - smooth out keyboard input
 
     - actor ticks
 

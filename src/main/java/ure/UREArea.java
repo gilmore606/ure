@@ -27,7 +27,7 @@ public class UREArea implements UTimeListener {
     private HashSet<UParticle> particles;
     private URECommander commander;
 
-    public Color sunColor;
+    public UColor sunColor;
 
 
     public UREArea(int thexsize, int theysize) {
@@ -63,7 +63,7 @@ public class UREArea implements UTimeListener {
         cameras = new HashSet<URECamera>();
         actors = new HashSet<UREActor>();
         particles = new HashSet<UParticle>();
-        sunColor = new Color(130,50,25);
+        sunColor = new UColor(130,50,25);
     }
 
     public void close() {
@@ -99,6 +99,9 @@ public class UREArea implements UTimeListener {
         lights.remove(light);
     }
 
+    public void setSunColor(int r, int g, int b) {
+        this.sunColor.set(r,g,b);
+    }
 
     public boolean isValidXY(int x, int y) {
         if ((x >= 0) && (y >= 0))
