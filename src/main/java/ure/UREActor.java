@@ -14,6 +14,7 @@ public class UREActor  extends UREThing implements UAnimator {
     public void attachCamera(URECamera thecamera) {
         camera = thecamera;
         camera.addVisibilitySource(this);
+        camera.moveTo(area(), areaX(),  areaY());
     }
     public void detachCamera() {
         camera.removeVisibilitySource(this);
@@ -50,10 +51,10 @@ public class UREActor  extends UREThing implements UAnimator {
         animationFrame++;
         if (animationFrame >= animationFrames)
             animationFrame = 0;
-        if (icon == '@')
-            icon = 'o';
+        if (glyph == '@')
+            glyph = 'o';
         else
-            icon = '@';
+            glyph = '@';
         RedrawMyCell();
     }
 

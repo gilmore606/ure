@@ -1,6 +1,5 @@
 package ure;
 
-import java.awt.*;
 import java.util.Iterator;
 
 /**
@@ -11,31 +10,31 @@ import java.util.Iterator;
  */
 public class UREThing implements UContainer {
     public String name;
-    public char icon;
+    public char glyph;
 
-    UColor iconColor;
-    boolean drawIconOutline = false;
+    UColor glyphColor;
+    boolean glyphOutline = false;
 
     UContainer location;  // What container am I in?
     UCollection contents; // What's inside me?
 
-    public UREThing(String thename, char theicon, UColor thecolor, boolean addOutline) {
+    public UREThing(String thename, char theglyph, UColor thecolor, boolean addOutline) {
         name = thename;
-        icon = theicon;
-        iconColor = thecolor;
-        drawIconOutline = addOutline;
+        glyph = theglyph;
+        glyphColor = thecolor;
+        glyphOutline = addOutline;
         contents = new UCollection(this);
         location = null;
     }
 
-    public char getIcon() {
-        return icon;
+    public char getGlyph() {
+        return glyph;
     }
-    public UColor getIconColor() {
-        return iconColor;
+    public UColor getGlyphColor() {
+        return glyphColor;
     }
-    public boolean drawIconOutline() {
-        return drawIconOutline;
+    public boolean drawGlyphOutline() {
+        return glyphOutline;
     }
 
 

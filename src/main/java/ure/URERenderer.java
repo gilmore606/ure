@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Iterator;
-import javax.swing.*;
 
 public class URERenderer {
     private int fontSize = 16;
@@ -81,9 +80,9 @@ public class URERenderer {
         if (things != null) {
             while (things.hasNext()) {
                 UREThing thing = things.next();
-                char icon = thing.getIcon();
-                UColor color = new UColor(thing.getIconColor());
-                if (thing.drawIconOutline())
+                char icon = thing.getGlyph();
+                UColor color = new UColor(thing.getGlyphColor());
+                if (thing.drawGlyphOutline())
                     stampGlyph(charToOutline(icon, font), image, x * cellw, y * cellh, new UColor(Color.BLACK));
                 color.illuminateWith(light, vis);
                 stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color);
