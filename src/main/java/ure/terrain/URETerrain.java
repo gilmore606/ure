@@ -1,8 +1,7 @@
-package ure;
+package ure.terrain;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import ure.UColor;
 
 /**
  * Created by gilmore on 6/20/2018.
@@ -11,7 +10,11 @@ import java.util.ArrayList;
  *
  */
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class URETerrain {
+
+    public static final String TYPE = "";
+
     public String name;
     public String walkmsg = "";
     public char filechar;

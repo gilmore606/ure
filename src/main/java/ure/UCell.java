@@ -1,5 +1,7 @@
 package ure;
 
+import ure.terrain.URETerrain;
+
 import java.util.Iterator;
 
 /**
