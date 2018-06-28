@@ -89,7 +89,7 @@ public class ExampleGame implements UTimeListener {
         //}
     }
 
-    public void hearTick() {
+    public void hearTick(URECommander commander) {
 
         statusPanel.setText("turn", "T " + Integer.toString(commander.getTurn()));
         statusPanel.setText("time", commander.timeString(true, " "));

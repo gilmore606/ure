@@ -1,5 +1,5 @@
 package ure;
 
 public interface UTimeListener {
-    public void hearTick();
+    public void hearTick(URECommander commander);
 }

@@ -20,7 +20,7 @@ public class URECommander implements KeyListener {
     private UREActor player;
     private UREScrollPanel scrollPrinter;
     private int turnCounter;
-    private int turnsPerDay = 120000;
+    private int turnsPerDay = 12000;
 
     private int animationMillis = 200;
 
@@ -107,7 +107,7 @@ public class URECommander implements KeyListener {
     public void tickTime() {
         Iterator<UTimeListener> timeI = timeListeners.iterator();
         while (timeI.hasNext()) {
-            timeI.next().hearTick();
+            timeI.next().hearTick(this);
         }
         turnCounter++;
         System.out.println("tick");
