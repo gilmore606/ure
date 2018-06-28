@@ -57,6 +57,19 @@ public class UCell implements UContainer {
         return contents.iterator();
     }
     public int containerType() { return UContainer.TYPE_CELL; }
+
+    public void moveTriggerFrom(UREActor actor) {
+        if (actorHere() != null) {
+            actorHere().moveTriggerFrom(actor);
+        } else {
+            terrain.moveTriggerFrom(actor, this);
+        }
+    }
+
+    public UREActor actorHere() {
+        return area.actorAt(x, y);
+    }
+
     public boolean willAcceptThing(UREThing thing) {
         if (terrain != null) {
             if (terrain.isPassable()) {

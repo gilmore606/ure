@@ -37,7 +37,9 @@ public class UREThing implements UContainer {
         return glyphOutline;
     }
 
-
+    public void moveToCell(int x, int y) {
+        moveToCell(area(), x, y);
+    }
     public void moveToCell(UREArea area, int x, int y) {
         leaveCurrentLocation();
         this.location = area.addThing(this, x, y);

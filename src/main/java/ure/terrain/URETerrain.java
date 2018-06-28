@@ -1,6 +1,8 @@
 package ure.terrain;
 
+import ure.UCell;
 import ure.UColor;
+import ure.UREActor;
 
 /**
  * Created by gilmore on 6/20/2018.
@@ -34,6 +36,7 @@ public abstract class URETerrain {
     public boolean isPassable() {
         return passable;
     }
+    public boolean isPassable(UREActor actor) { return isPassable(); }
     public boolean isOpaque() {
         return opaque;
     }
@@ -53,5 +56,12 @@ public abstract class URETerrain {
         int seed = (x * y * 19 + 1883) / 74;
         int period = variants.length();
         return variants.charAt(seed % period);
+    }
+
+    public void moveTriggerFrom(UREActor actor, UCell cell) {
+        if (isPassable(actor)) {
+            System.out.println("terrain is moving actor");
+            actor.moveToCell(cell.areaX(), cell.areaY());
+        }
     }
 }

@@ -76,7 +76,7 @@ public class UREArea implements UTimeListener {
         sunColor = new UColor(130,50,25);
         addSunColorLerp(0, new UColor(0f, 0f, 0.1f));
         addSunColorLerp(4*60, new UColor(0.2f, 0.2f, 0.2f));
-        addSunColorLerp(6*60, new UColor(0.6f, 0.4f, 0.25f), "The sun's first rays appear on the horizon.");
+        addSunColorLerp(6*60, new UColor(0.6f, 0.3f, 0.25f), "The sun's first rays appear on the horizon.");
         addSunColorLerp(9*60, new UColor(0.9f, 0.8f, 0.75f));
         addSunColorLerp(13*60, new UColor(1f, 1f, 1f));
         addSunColorLerp(17*60, new UColor(0.9f, 0.9f, 1f));
@@ -179,6 +179,22 @@ public class UREArea implements UTimeListener {
         return null;
     }
 
+    public UCell cellAt(int x, int y) {
+        if (isValidXY(x,y)) {
+            return cells[x][y];
+        }
+        return null;
+    }
+    UREActor actorAt(int x, int y) {
+        if (isValidXY(x, y)) {
+            for (UREActor actor : actors) {
+                if (actor.areaX() == x && actor.areaY() == y) {
+                    return actor;
+                }
+            }
+        }
+        return null;
+    }
     boolean blocksLight(int x, int y) {
         URETerrain t = terrainAt(x, y);
         if (t != null)

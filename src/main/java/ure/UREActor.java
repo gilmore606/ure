@@ -25,8 +25,8 @@ public class UREActor  extends UREThing implements UAnimator {
         int destX = xdir + areaX();
         int destY = ydir + areaY();
         if (location.containerType() == UContainer.TYPE_CELL) {
-            if (area().willAcceptThing(this, destX, destY)) {
-                moveToCell(area(), destX, destY);
+            if (area().isValidXY(destX, destY)) {
+                area().cellAt(destX, destY).moveTriggerFrom(this);
             }
         }
     }
@@ -44,7 +44,7 @@ public class UREActor  extends UREThing implements UAnimator {
         newlight.moveTo(area(), areaX(), areaY());
         float sun = area().sunBrightnessAt(areaX(), areaY());
         System.out.println("sun " + Float.toString(sun));
-        area().commander().printScroll("hello from " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
+        area().commander().printScroll("shitting a glowstick at  " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
   }
 
     public void animationTick() {
@@ -60,5 +60,9 @@ public class UREActor  extends UREThing implements UAnimator {
 
     public void RedrawMyCell() {
         area().redrawCell(areaX(),areaY());
+    }
+
+    public void moveTriggerFrom(UREActor actor) {
+        area().commander().printScroll("Ow!");
     }
 }
