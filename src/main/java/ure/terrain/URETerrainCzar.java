@@ -50,7 +50,9 @@ public class URETerrainCzar {
     }
 
     public URETerrain getTerrainForFilechar(char thechar) {
-        return terrains.get(thechar);
+        URETerrain template = terrains.get(thechar);
+        URETerrain clone = null;
+        return terrains.get(thechar).getClone();
     }
 
     public class TerrainDeserializer extends JsonDeserializer<URETerrain> {

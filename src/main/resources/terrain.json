@@ -4,7 +4,7 @@
       "filechar": ".",
       "passable": true,
       "opaque": false,
-      "sunDefault": 1.0,
+      "sunvis": 1.0,
       "icon": ".",
       "variants": ".....,",
       "fgcolor": [0,150,0],
@@ -15,7 +15,7 @@
       "filechar": "#",
       "passable": false,
       "opaque": true,
-      "sunDefault": 0.0,
+      "sunvis": 0.0,
       "icon": "#",
       "fgcolor": [30,30,60],
       "bgcolor": [70,70,70]
@@ -26,7 +26,7 @@
       "variants": "_   ._ _ __._",
       "passable": true,
       "opaque": false,
-      "sunDefault": 0.0,
+      "sunvis": 0.0,
       "icon": " ",
       "fgcolor": [55,55,55],
       "bgcolor": [70,70,70]
@@ -37,18 +37,21 @@
       "filechar": "D",
       "passable": true,
       "opaque": true,
-      "sunDefault": 0.0,
+      "sunvis": 0.0,
       "icon": "D",
+      "iconopen": "|",
       "fgcolor": [255,170,170],
       "bgcolor": [120,100,100],
-      "walkmsg": "You pass through a doorway."
+      "walkmsg": "An open doorway.",
+      "openmsg": "The door creaks open.",
+      "closemsg": "The door clicks shut."
     },
     {
       "name": "window",
       "filechar": "[",
       "passable": false,
       "opaque": false,
-      "sunDefault": 1.0,
+      "sunvis": 1.0,
       "icon": "[",
       "fgcolor": [120,120,255],
       "bgcolor": [70,70,70]
@@ -58,7 +61,7 @@
       "filechar": "T",
       "passable": true,
       "opaque": true,
-      "sunDefault": 0.5,
+      "sunvis": 0.5,
       "icon": "$",
       "fgcolor": [0,220,0],
       "bgcolor": [0,40,0]
@@ -69,7 +72,7 @@
       "filechar": "W",
       "passable": false,
       "opaque": false,
-      "sunDefault": 0.2,
+      "sunvis": 0.2,
       "icon": "~",
       "fgcolor": [0,150,255],
       "bgcolor": [0,75,127]
@@ -79,7 +82,7 @@
       "filechar": "B",
       "passable": true,
       "opaque": false,
-      "sunDefault": 1.0,
+      "sunvis": 1.0,
       "icon": "=",
       "fgcolor": [255,105,0],
       "bgcolor": [127,50,0]
@@ -89,7 +92,7 @@
       "filechar": "S",
       "passable": true,
       "opaque": false,
-      "sunDefault": 1.0,
+      "sunvis": 1.0,
       "icon": "~",
       "fgcolor": [255,215,0],
       "bgcolor": [255,235,127]
@@ -99,7 +102,7 @@
       "filechar": "M",
       "passable": true,
       "opaque": false,
-      "sunDefault": 1.0,
+      "sunvis": 1.0,
       "icon": "~",
       "fgcolor": [96,57,0],
       "bgcolor": [64,25,0]
@@ -109,7 +112,7 @@
       "filechar": "!",
       "passable": true,
       "opaque": false,
-      "sunDefault": 0.0,
+      "sunvis": 0.0,
       "icon": "~",
       "fgcolor": [255, 180, 0],
       "bgcolor": [220, 0, 0],

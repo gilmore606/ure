@@ -11,7 +11,7 @@ import ure.UREActor;
  *
  */
 
-public abstract class URETerrain {
+public abstract class URETerrain implements Cloneable {
 
     public static final String TYPE = "";
 
@@ -31,7 +31,7 @@ public abstract class URETerrain {
     public boolean passable;
     public boolean opaque;
     public boolean glow = false;
-    public float sunDefault;
+    public float sunvis;
 
     public boolean isPassable() {
         return passable;
@@ -60,12 +60,31 @@ public abstract class URETerrain {
 
     public void moveTriggerFrom(UREActor actor, UCell cell) {
         if (isPassable(actor)) {
-            System.out.println("terrain is moving actor");
             actor.moveToCell(cell.areaX(), cell.areaY());
         }
     }
 
     public boolean preventMoveFrom(UREActor actor) {
         return false;
+    }
+
+    public void walkedOnBy(UREActor actor, UCell cell) {
+        printScroll(walkmsg, cell);
+    }
+
+    public void printScroll(String msg, UCell cell) {
+        if (walkmsg != null)
+            if (walkmsg.length() > 0)
+                if (cell.area() != null)
+                    if (cell.area().commander() != null)
+                        cell.area().commander().printScroll(msg);
+    }
+    public URETerrain getClone() {
+        try {
+            return (URETerrain) super.clone();
+        } catch (CloneNotSupportedException e) {
+            System.out.println(" Cloning not allowed. ");
+            return this;
+        }
     }
 }

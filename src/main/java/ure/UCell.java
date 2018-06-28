@@ -23,17 +23,11 @@ public class UCell implements UContainer {
         area = theArea;
         x = thex;
         y = they;
-        setTerrain(theTerrain);
-    }
-
-    public void setTerrain(URETerrain theTerrain) {
         terrain = theTerrain;
-        setSunBrightness(terrain.sunDefault);
     }
-    public void setSunBrightness(float thebri) { sunBrightness = thebri; }
 
     public float sunBrightness() {
-        return sunBrightness;
+        return terrain.sunvis;
     }
 
     public void setSeen(boolean theseen) {
@@ -64,6 +58,10 @@ public class UCell implements UContainer {
         } else {
             terrain.moveTriggerFrom(actor, this);
         }
+    }
+
+    public void walkedOnBy(UREActor actor) {
+        terrain.walkedOnBy(actor, this);
     }
 
     public UREActor actorHere() {

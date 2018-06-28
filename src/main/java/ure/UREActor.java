@@ -48,6 +48,7 @@ public class UREActor  extends UREThing implements UAnimator {
             camera.moveTo(area(), destX, destY);
         }
         super.moveToCell(thearea, destX, destY);
+        thearea.cellAt(destX, destY).walkedOnBy(this);
     }
 
     public void debug() {
