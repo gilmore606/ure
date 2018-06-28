@@ -53,6 +53,8 @@ public class URECommander implements KeyListener {
     public void addAnimator(UAnimator animator) { animators.add(animator); }
     public void removeAnimator(UAnimator animator) { animators.remove(animator); }
 
+    public UREActor player() { return player; }
+
     public void readKeyBinds() {
         // TODO: Actually read keybinds.txt
         //

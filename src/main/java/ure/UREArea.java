@@ -156,10 +156,11 @@ public class UREArea implements UTimeListener {
                      lerp1.fG() + (lerp2.fG() - lerp1.fG()) * ratio,
                          lerp1.fB() + (lerp2.fB() - lerp1.fB()) * ratio);
         String msg = sunCycleMessages.get(min1);
-        if (msg != null) {
+        if (msg != null && commander.player() != null) {
             if (sunCycleLastAnnounceMarker != min1) {
                 sunCycleLastAnnounceMarker = min1;
-                commander.printScroll(msg);
+                if (cells[commander.player().areaX()][commander.player().areaY()].sunBrightness > 0.1f)
+                    commander.printScroll(msg);
             }
         }
     }
