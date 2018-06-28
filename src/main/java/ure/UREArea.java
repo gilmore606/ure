@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,7 +31,11 @@ public class UREArea implements UTimeListener {
     private URECommander commander;
 
     public UColor sunColor;
-    HashMap<Integer,UColor> sunColorLerps;
+
+    ArrayList<Integer> sunColorLerpMarkers;
+    ArrayList<UColor> sunColorLerps;
+    HashMap<Integer,String> sunCycleMessages;
+    int sunCycleLastAnnounceMarker;
 
     public UREArea(int thexsize, int theysize) {
         xsize = thexsize;
@@ -65,18 +70,20 @@ public class UREArea implements UTimeListener {
         cameras = new HashSet<URECamera>();
         actors = new HashSet<UREActor>();
         particles = new HashSet<UParticle>();
-        sunColorLerps = new HashMap<Integer,UColor>();
+        sunColorLerps = new ArrayList<UColor>();
+        sunColorLerpMarkers = new ArrayList<Integer>();
+        sunCycleMessages = new HashMap<Integer,String>();
         sunColor = new UColor(130,50,25);
-        sunColorLerps.put(0, new UColor(0f, 0f, 0.1f));
-        sunColorLerps.put(4*3600, new UColor(0.2f, 0.2f, 0.2f));
-        sunColorLerps.put(6*3600, new UColor(0.6f, 0.4f, 0.25f));
-        sunColorLerps.put(10*3600, new UColor(0.9f, 0.8f, 0.75f));
-        sunColorLerps.put(14*3600, new UColor(1f, 1f, 1f));
-        sunColorLerps.put(16*3600, new UColor(0.9f, 0.9f, 1f));
-        sunColorLerps.put(19*3600, new UColor(0.7f, 0.7f, 0.8f));
-        sunColorLerps.put(20*3600, new UColor(0.8f, 0.4f, 0.3f));
-        sunColorLerps.put(21*3600, new UColor(0.3f, 0.3f, 0.4f));
-        sunColorLerps.put(24*3600, new UColor(0f, 0f, 0.1f));
+        addSunColorLerp(0, new UColor(0f, 0f, 0.1f));
+        addSunColorLerp(4*60, new UColor(0.2f, 0.2f, 0.2f));
+        addSunColorLerp(6*60, new UColor(0.6f, 0.4f, 0.25f), "The sun's first rays appear on the horizon.");
+        addSunColorLerp(9*60, new UColor(0.9f, 0.8f, 0.75f));
+        addSunColorLerp(13*60, new UColor(1f, 1f, 1f));
+        addSunColorLerp(17*60, new UColor(0.9f, 0.9f, 1f));
+        addSunColorLerp(19*60, new UColor(0.7f, 0.7f, 0.8f));
+        addSunColorLerp(20*60, new UColor(0.8f, 0.4f, 0.3f));
+        addSunColorLerp(21*60, new UColor(0.3f, 0.3f, 0.4f), "The sun sets.");
+        addSunColorLerp(24*60, new UColor(0f, 0f, 0.1f));
     }
 
     public void close() {
@@ -112,11 +119,16 @@ public class UREArea implements UTimeListener {
         lights.remove(light);
     }
 
+    public void addSunColorLerp(int minutes, UColor color) { addSunColorLerp(minutes, color, null); }
+    public void addSunColorLerp(int minutes, UColor color, String msg) {
+        sunColorLerps.add(color);
+        sunColorLerpMarkers.add(minutes);
+        if (msg != null) {
+            sunCycleMessages.put((Integer)minutes, msg);
+        }
+    }
     public void setSunColor(float r, float g, float b) {
         this.sunColor.set(r, g, b);
-    }
-    public void setSunColor(int r, int g, int b) {
-        this.sunColor.set(r,g,b);
     }
 
     public void setSunColor(int minutes) {
@@ -127,21 +139,29 @@ public class UREArea implements UTimeListener {
         lerp1 = null;
         lerp2 = null;
         boolean gotem = false;
-        for (Integer min : sunColorLerps.keySet()) {
+        for (int x=0;x<sunColorLerps.size();x++) {
+            int min = (int)sunColorLerpMarkers.get(x);
             if (minutes >= min) {
-                lerp1 = sunColorLerps.get(min);
-                min1 = (int)min;
+                lerp1 = sunColorLerps.get(x);
+                min1 = min;
                 gotem = true;
             } else if (gotem) {
-                lerp2 = sunColorLerps.get(min);
-                min2 = (int)min;
+                lerp2 = sunColorLerps.get(x);
+                min2 = min;
                 gotem = false;
             }
         }
-        float ratio = (float)minutes / (float)(min2 - min1);
+        float ratio = (float)(minutes - min1) / (float)(min2 - min1);
         setSunColor(lerp1.fR() + (lerp2.fR() - lerp1.fR()) * ratio,
                      lerp1.fG() + (lerp2.fG() - lerp1.fG()) * ratio,
                          lerp1.fB() + (lerp2.fB() - lerp1.fB()) * ratio);
+        String msg = sunCycleMessages.get(min1);
+        if (msg != null) {
+            if (sunCycleLastAnnounceMarker != min1) {
+                sunCycleLastAnnounceMarker = min1;
+                commander.printScroll(msg);
+            }
+        }
     }
 
     public boolean isValidXY(int x, int y) {

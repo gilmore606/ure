@@ -20,7 +20,7 @@ public class URECommander implements KeyListener {
     private UREActor player;
     private UREScrollPanel scrollPrinter;
     private int turnCounter;
-    private int turnsPerDay = 12000;
+    private int turnsPerDay = 192;
 
     private int animationMillis = 200;
 
@@ -139,7 +139,7 @@ public class URECommander implements KeyListener {
     }
 
     public int daytimeMinutes() {
-        return ((turnCounter % turnsPerDay) * 86400) / turnsPerDay;
+        return (int)(((float)(turnCounter % turnsPerDay) / (float)turnsPerDay) * 1440f);
     }
     public int daytimeMM() {
         return (daytimeMinutes() % 60);
