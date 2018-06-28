@@ -1,5 +1,7 @@
 package ure;
 
+import ure.terrain.URETerrain;
+
 import java.awt.*;
 
 public class UREActor  extends UREThing implements UAnimator {
@@ -25,10 +27,19 @@ public class UREActor  extends UREThing implements UAnimator {
         int destX = xdir + areaX();
         int destY = ydir + areaY();
         if (location.containerType() == UContainer.TYPE_CELL) {
-            if (area().isValidXY(destX, destY)) {
-                area().cellAt(destX, destY).moveTriggerFrom(this);
+            if (!myTerrain().preventMoveFrom(this)) {
+                if (area().isValidXY(destX, destY)) {
+                    area().cellAt(destX, destY).moveTriggerFrom(this);
+                }
             }
         }
+    }
+
+    public URETerrain myTerrain() {
+        UCell c = area().cellAt(areaX(), areaY());
+        if (c != null)
+            return c.terrain();
+        return null;
     }
 
     @Override

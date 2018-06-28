@@ -42,7 +42,7 @@ public class UCell implements UContainer {
     public boolean isSeen() {
         return isSeen;
     }
-    public URETerrain getTerrain() {
+    public URETerrain terrain() {
         return terrain;
     }
 

@@ -175,7 +175,7 @@ public class UREArea implements UTimeListener {
     URETerrain terrainAt(int x, int y) {
         if (isValidXY(x, y))
             if (cells[x][y] != null)
-                return cells[x][y].getTerrain();
+                return cells[x][y].terrain();
         return null;
     }
 

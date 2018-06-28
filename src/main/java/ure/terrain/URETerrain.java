@@ -64,4 +64,8 @@ public abstract class URETerrain {
             actor.moveToCell(cell.areaX(), cell.areaY());
         }
     }
+
+    public boolean preventMoveFrom(UREActor actor) {
+        return false;
+    }
 }
