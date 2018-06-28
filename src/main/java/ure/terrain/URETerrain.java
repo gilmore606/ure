@@ -1,8 +1,6 @@
-package ure;
+package ure.terrain;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import ure.UColor;
 
 /**
  * Created by gilmore on 6/20/2018.
@@ -11,8 +9,12 @@ import java.util.ArrayList;
  *
  */
 
-public class URETerrain {
+public abstract class URETerrain {
+
+    public static final String TYPE = "";
+
     public String name;
+    public String type;
     public String walkmsg = "";
     public char filechar;
     public char icon;
@@ -50,6 +52,6 @@ public class URETerrain {
             return icon();
         int seed = (x * y * 19 + 1883) / 74;
         int period = variants.length();
-        return (char)variants.charAt(seed % period);
+        return variants.charAt(seed % period);
     }
 }

@@ -33,6 +33,7 @@
     },
     {
       "name": "door",
+      "type": "door",
       "filechar": "D",
       "passable": true,
       "opaque": true,
@@ -64,6 +65,7 @@
     },
     {
       "name": "water",
+      "type": "water",
       "filechar": "W",
       "passable": false,
       "opaque": false,
@@ -102,16 +104,16 @@
       "fgcolor": [96,57,0],
       "bgcolor": [64,25,0]
     },
-  {
-    "name": "lava",
-    "filechar": "!",
-    "passable": true,
-    "opaque": false,
-    "sunDefault": 0.0,
-    "icon": "~",
-    "fgcolor": [255, 180, 0],
-    "bgcolor": [220, 0, 0],
-    "glow": true,
-    "walkmsg": "Oh god it burns!  It BURNS!"
-  }
+    {
+      "name": "lava",
+      "filechar": "!",
+      "passable": true,
+      "opaque": false,
+      "sunDefault": 0.0,
+      "icon": "~",
+      "fgcolor": [255, 180, 0],
+      "bgcolor": [220, 0, 0],
+      "glow": true,
+      "walkmsg": "Oh god it burns!  It BURNS!"
+    }
 ]

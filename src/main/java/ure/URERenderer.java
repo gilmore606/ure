@@ -1,5 +1,7 @@
 package ure;
 
+import ure.terrain.URETerrain;
+
 import java.awt.image.BufferedImage;
 import java.awt.*;
 import java.util.HashMap;

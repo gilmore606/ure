@@ -1,7 +1,8 @@
 package ure;
 
+import ure.terrain.URETerrainCzar;
+
 import java.awt.*;
-import java.io.IOException;
 import javax.swing.*;
 
 
@@ -69,6 +70,7 @@ public class ExampleGame implements UTimeListener {
 
     public void startUp()  {
         URETerrainCzar terrainCzar = new URETerrainCzar();
+        terrainCzar.loadTerrains("/terrains.json");
         area = new UREArea("/samplemap.txt", terrainCzar);
         URELight light = new URELight(new UColor(Color.WHITE), 25);
         light.moveTo(area, 45,25);
