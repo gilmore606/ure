@@ -1,0 +1,25 @@
+GETTING A THING
+        commander fires commandGet which picks the topmost thing at cell (or pops a UI with callback actor.tryGetThing(selection))
+
+        actor.tryGetThing(thing)
+                if (!thing.tryGetBy(this)) return;
+                thing.moveTo(this)
+                scroll.print(thing.getMsg(this))
+
+Thing   
+        .location()
+                Container i'm in
+        -moveTo(UContainer)
+                Public method to move me.  Call removeThing on location, then addThing on destination container.
+        .onMove(UContainer)
+                Called after i successfully move to a new location.
+
+Container
+        .removeThing(thing)
+                remove thing from internal collection(s)
+        .canAccept(thing)
+                true if thing can move into me
+        .addThing(thing)
+                add thing to default internal collection
+        .onAccept(thing)
+                called after thing successfully moves here
