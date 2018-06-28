@@ -95,23 +95,20 @@ public class URERenderer {
     public void stampGlyph(BufferedImage srcImage, BufferedImage dstImage, int destx, int desty, UColor tint) {
         int width = srcImage.getWidth();
         int height = srcImage.getHeight();
-        int[] srcLine = new int[width];
-        int[] dstLine = new int[width];
-        float[] srcHSB = new float[3];
-
-        // TODO: getRGB() all at once on the whole source image and dest rect
+        int[] srcData = new int[width*height];
+        int[] dstData = new int[width*height];
+        srcData = srcImage.getRGB(0, 0, width, height, srcData, 0, width);
+        dstData = dstImage.getRGB(destx, desty, width, height, dstData, 0, width);
         for (int y=0;y<height;y++) {
-            srcLine = srcImage.getRGB(0, y, width, 1, srcLine, 0, width);
-            dstLine = dstImage.getRGB(destx, desty+y, width, 1, dstLine, 0, width);
+            int offset = y*width;
             for (int x=0;x<width;x++) {
                 if ((destx + x < dstImage.getWidth()) && (desty + y < dstImage.getHeight()) && (destx + x >= 0) && (desty + y >= 0)) {
-                    int srcRGB = srcLine[x];
-                    int dstRGB = dstLine[x];
+                    int srcRGB = srcData[x+offset];
+                    int dstRGB = dstData[x+offset];
                     int r1 = (srcRGB & 0xff0000) >> 16;
                     int g1 = (srcRGB & 0xff00) >> 8;
                     int b1 = (srcRGB & 0xff);
-                    srcHSB = Color.RGBtoHSB(r1, g1, b1, srcHSB);
-                    float alpha1 = srcHSB[2];
+                    float alpha1 = (float)(r1 + g1 + b1) / 765f;
                     r1 = (int) ((float) tint.iR() * alpha1);
                     g1 = (int) ((float) tint.iG() * alpha1);
                     b1 = (int) ((float) tint.iB() * alpha1);
@@ -123,11 +120,11 @@ public class URERenderer {
                     int g3 = g1 + (int) ((float) g2 * alpha2);
                     int b3 = b1 + (int) ((float) b2 * alpha2);
                     int finalRGB = ((r3&0x0ff)<<16)|((g3&0x0ff)<<8)|(b3&0x0ff);
-                    dstLine[x] = finalRGB;
+                    dstData[x+offset] = finalRGB;
                 }
             }
-            dstImage.setRGB(destx, desty + y, width, 1, dstLine, 0, width);
         }
+        dstImage.setRGB(destx, desty, width, height, dstData, 0, width);
     }
 
     BufferedImage charToGlyph(char c, Font font) {
