@@ -14,6 +14,8 @@ public class UREScrollPanel extends JPanel {
     int padX, padY;
     int spacing = 1;
     int charWidth, charHeight;
+    boolean suppressDuplicates = true;
+    String lastMessage;
     ArrayList<String> lines;
     ArrayList<Color> lineFades;
     BufferedImage image;
@@ -45,7 +47,12 @@ public class UREScrollPanel extends JPanel {
     }
 
     public void print(String line) {
-        lines.add(0, line);
+        if (line != "") {
+            if (line != lastMessage || !suppressDuplicates) {
+                lines.add(0, line);
+                lastMessage = line;
+            }
+        }
     }
 
     public void renderImage() {

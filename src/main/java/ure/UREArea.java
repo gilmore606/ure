@@ -74,16 +74,16 @@ public class UREArea implements UTimeListener {
         sunColorLerpMarkers = new ArrayList<Integer>();
         sunCycleMessages = new HashMap<Integer,String>();
         sunColor = new UColor(130,50,25);
-        addSunColorLerp(0, new UColor(0f, 0f, 0.1f));
-        addSunColorLerp(4*60, new UColor(0.2f, 0.2f, 0.2f));
-        addSunColorLerp(6*60, new UColor(0.6f, 0.3f, 0.25f), "The sun's first rays appear on the horizon.");
-        addSunColorLerp(9*60, new UColor(0.9f, 0.8f, 0.75f));
+        addSunColorLerp(0, new UColor(0.1f, 0.1f, 0.3f));
+        addSunColorLerp(4*60, new UColor(0.2f, 0.2f, 0.3f));
+        addSunColorLerp(6*60, new UColor(0.9f, 0.5f, 0.35f), "The sun's first rays appear on the horizon.");
+        addSunColorLerp(9*60, new UColor(1f, 0.9f, 0.75f));
         addSunColorLerp(13*60, new UColor(1f, 1f, 1f));
         addSunColorLerp(17*60, new UColor(0.9f, 0.9f, 1f));
         addSunColorLerp(19*60, new UColor(0.7f, 0.7f, 0.8f));
         addSunColorLerp(20*60, new UColor(0.8f, 0.4f, 0.3f));
         addSunColorLerp(21*60, new UColor(0.3f, 0.3f, 0.4f), "The sun sets.");
-        addSunColorLerp(24*60, new UColor(0f, 0f, 0.1f));
+        addSunColorLerp(24*60, new UColor(0.1f, 0.1f, 0.3f));
     }
 
     public void close() {

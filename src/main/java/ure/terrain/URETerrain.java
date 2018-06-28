@@ -18,6 +18,7 @@ public abstract class URETerrain implements Cloneable {
     public String name;
     public String type;
     public String walkmsg = "";
+    public String bonkmsg = "";
     public char filechar;
     public char icon;
     public String variants;
@@ -61,6 +62,8 @@ public abstract class URETerrain implements Cloneable {
     public void moveTriggerFrom(UREActor actor, UCell cell) {
         if (isPassable(actor)) {
             actor.moveToCell(cell.areaX(), cell.areaY());
+        } else {
+            cell.area().commander().printScroll(bonkmsg);
         }
     }
 

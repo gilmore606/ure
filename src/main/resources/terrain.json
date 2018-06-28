@@ -18,7 +18,8 @@
       "sunvis": 0.0,
       "icon": "#",
       "fgcolor": [30,30,60],
-      "bgcolor": [70,70,70]
+      "bgcolor": [70,70,70],
+      "bonkmsg": "A rough stone wall."
     },
     {
       "name": "floor",
@@ -54,7 +55,8 @@
       "sunvis": 1.0,
       "icon": "[",
       "fgcolor": [120,120,255],
-      "bgcolor": [70,70,70]
+      "bgcolor": [70,70,70],
+      "bonkmsg": "Dusty glass panes in rotten wood framing."
     },
     {
       "name": "tree",
@@ -64,7 +66,8 @@
       "sunvis": 0.5,
       "icon": "$",
       "fgcolor": [0,220,0],
-      "bgcolor": [0,40,0]
+      "bgcolor": [0,40,0],
+      "walkmsg": "Tall pine trees."
     },
     {
       "name": "water",
@@ -75,7 +78,8 @@
       "sunvis": 0.2,
       "icon": "~",
       "fgcolor": [0,150,255],
-      "bgcolor": [0,75,127]
+      "bgcolor": [0,75,127],
+      "bonkmsg": "You can't swim, and that water looks cold anyway."
     },
     {
       "name": "wooden bridge",
@@ -85,7 +89,8 @@
       "sunvis": 1.0,
       "icon": "=",
       "fgcolor": [255,105,0],
-      "bgcolor": [127,50,0]
+      "bgcolor": [127,50,0],
+      "walkmsg": "A rickety plank bridge, with no railing."
     },
     {
       "name": "sand",
@@ -95,7 +100,8 @@
       "sunvis": 1.0,
       "icon": "~",
       "fgcolor": [255,215,0],
-      "bgcolor": [255,235,127]
+      "bgcolor": [255,235,127],
+      "walkmsg": "Damp sand.  Trudge, trudge."
     },
     {
       "name": "mud",
@@ -105,7 +111,8 @@
       "sunvis": 1.0,
       "icon": "~",
       "fgcolor": [96,57,0],
-      "bgcolor": [64,25,0]
+      "bgcolor": [64,25,0],
+      "walkmsg": "Thick clumpy mud.  Ugh."
     },
     {
       "name": "lava",
