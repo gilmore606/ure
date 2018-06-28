@@ -5,7 +5,7 @@
       "passable": true,
       "opaque": false,
       "sunvis": 1.0,
-      "icon": ".",
+      "glyph": ".",
       "variants": ".....,",
       "fgcolor": [0,150,0],
       "bgcolor": [0,40,0]
@@ -16,7 +16,7 @@
       "passable": false,
       "opaque": true,
       "sunvis": 0.0,
-      "icon": "#",
+      "glyph": "#",
       "fgcolor": [30,30,60],
       "bgcolor": [70,70,70],
       "bonkmsg": "A rough stone wall."
@@ -28,7 +28,7 @@
       "passable": true,
       "opaque": false,
       "sunvis": 0.0,
-      "icon": " ",
+      "glyph": " ",
       "fgcolor": [55,55,55],
       "bgcolor": [70,70,70]
     },
@@ -39,8 +39,8 @@
       "passable": true,
       "opaque": true,
       "sunvis": 0.0,
-      "icon": "D",
-      "iconopen": "|",
+      "glyph": "D",
+      "glyphopen": "|",
       "fgcolor": [255,170,170],
       "bgcolor": [120,100,100],
       "walkmsg": "An open doorway.",
@@ -53,7 +53,7 @@
       "passable": false,
       "opaque": false,
       "sunvis": 1.0,
-      "icon": "[",
+      "glyph": "[",
       "fgcolor": [120,120,255],
       "bgcolor": [70,70,70],
       "bonkmsg": "Dusty glass panes in rotten wood framing."
@@ -64,7 +64,7 @@
       "passable": true,
       "opaque": true,
       "sunvis": 0.5,
-      "icon": "$",
+      "glyph": "$",
       "fgcolor": [0,220,0],
       "bgcolor": [0,40,0],
       "walkmsg": "Tall pine trees."
@@ -76,7 +76,7 @@
       "passable": false,
       "opaque": false,
       "sunvis": 0.2,
-      "icon": "~",
+      "glyph": "~",
       "fgcolor": [0,150,255],
       "bgcolor": [0,75,127],
       "bonkmsg": "You can't swim, and that water looks cold anyway."
@@ -87,7 +87,7 @@
       "passable": true,
       "opaque": false,
       "sunvis": 1.0,
-      "icon": "=",
+      "glyph": "=",
       "fgcolor": [255,105,0],
       "bgcolor": [127,50,0],
       "walkmsg": "A rickety plank bridge, with no railing."
@@ -98,7 +98,7 @@
       "passable": true,
       "opaque": false,
       "sunvis": 1.0,
-      "icon": "~",
+      "glyph": "~",
       "fgcolor": [255,215,0],
       "bgcolor": [255,235,127],
       "walkmsg": "Damp sand.  Trudge, trudge."
@@ -109,7 +109,7 @@
       "passable": true,
       "opaque": false,
       "sunvis": 1.0,
-      "icon": "~",
+      "glyph": "~",
       "fgcolor": [96,57,0],
       "bgcolor": [64,25,0],
       "walkmsg": "Thick clumpy mud.  Ugh."
@@ -120,7 +120,7 @@
       "passable": true,
       "opaque": false,
       "sunvis": 0.0,
-      "icon": "~",
+      "glyph": "~",
       "fgcolor": [255, 180, 0],
       "bgcolor": [220, 0, 0],
       "glow": true,

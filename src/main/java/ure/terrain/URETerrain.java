@@ -20,7 +20,7 @@ public abstract class URETerrain implements Cloneable {
     public String walkmsg = "";
     public String bonkmsg = "";
     public char filechar;
-    public char icon;
+    public char glyph;
     public String variants;
 
     public int[] fgcolor;
@@ -47,13 +47,13 @@ public abstract class URETerrain implements Cloneable {
         bgColor = new UColor(bgcolor[0],bgcolor[1],bgcolor[2]);
     }
 
-    public char icon() {
-        return icon;
+    public char glyph() {
+        return glyph;
     }
 
-    public char icon(int x, int y) {
+    public char glyph(int x, int y) {
         if (variants == null)
-            return icon();
+            return glyph();
         int seed = (x * y * 19 + 1883) / 74;
         int period = variants.length();
         return variants.charAt(seed % period);

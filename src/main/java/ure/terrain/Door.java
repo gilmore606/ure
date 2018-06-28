@@ -9,7 +9,7 @@ public class Door extends URETerrain {
 
     public String openmsg = "The door opens.";
     public String closemsg = "The door closes.";
-    public char iconopen;
+    public char glyphopen;
 
     boolean isOpen;
 
@@ -25,11 +25,11 @@ public class Door extends URETerrain {
     }
 
     @Override
-    public char icon() {
+    public char glyph() {
         if (isOpen()) {
-            return iconopen;
+            return glyphopen;
         }
-        return super.icon();
+        return super.glyph();
     }
     @Override
     public void moveTriggerFrom(UREActor actor, UCell cell) {
