@@ -22,7 +22,7 @@ public class URECommander implements KeyListener {
     private int turnCounter;
     private int turnsPerDay = 192;
 
-    private int animationMillis = 200;
+    private int animationMillis = 50;
 
     public URECommander(UREActor theplayer) {
         timeListeners = new HashSet<UTimeListener>();

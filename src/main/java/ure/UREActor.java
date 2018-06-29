@@ -4,7 +4,7 @@ import ure.terrain.URETerrain;
 
 import java.awt.*;
 
-public class UREActor  extends UREThing implements UAnimator {
+public class UREActor  extends UREThing {
 
     URECamera camera;
     int cameraPinStyle;
@@ -71,21 +71,6 @@ public class UREActor  extends UREThing implements UAnimator {
         System.out.println("sun " + Float.toString(sun));
         area().commander().printScroll("shitting a glowstick at  " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
   }
-
-    public void animationTick() {
-        animationFrame++;
-        if (animationFrame >= animationFrames)
-            animationFrame = 0;
-        if (glyph == '@')
-            glyph = 'o';
-        else
-            glyph = '@';
-        RedrawMyCell();
-    }
-
-    public void RedrawMyCell() {
-        area().redrawCell(areaX(),areaY());
-    }
 
     public void moveTriggerFrom(UREActor actor) {
         area().commander().printScroll("Ow!");

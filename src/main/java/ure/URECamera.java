@@ -12,7 +12,7 @@ import java.util.*;
  *
  */
 
-public class URECamera extends JPanel {
+public class URECamera extends JPanel implements UAnimator {
     public UREArea area;
     JFrame frame;
     URERenderer renderer;
@@ -442,5 +442,14 @@ public class URECamera extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(image, 0, 0, this);
+    }
+
+    public void animationTick() {
+        for (int x=x1;x<x2;x++) {
+            for (int y=y1;y<y2;y++) {
+                if (area.isValidXY(x,y))
+                    area.cellAt(x,y).animationTick();
+            }
+        }
     }
 }

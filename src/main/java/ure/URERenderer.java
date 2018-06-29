@@ -73,7 +73,7 @@ public class URERenderer {
             BufferedImage tGlyph = charToGlyph(t.glyph(x + camera.x1, y + camera.y1), font);
             t.fgColorBuffer.set(t.fgColor.r, t.fgColor.g, t.fgColor.b);
             t.fgColorBuffer.illuminateWith(terrainLight, tOpacity);
-            stampGlyph(tGlyph, image, x*cellw, y*cellh, t.fgColorBuffer);
+            stampGlyph(tGlyph, image, x*cellw, y*cellh, t.fgColorBuffer, t.glyphOffsetX(), t.glyphOffsetY());
         }
         if (vis < 0.3f)
             return;
@@ -84,14 +84,14 @@ public class URERenderer {
                 char icon = thing.getGlyph();
                 UColor color = new UColor(thing.getGlyphColor());
                 if (thing.drawGlyphOutline())
-                    stampGlyph(charToOutline(icon, font), image, x * cellw, y * cellh, new UColor(Color.BLACK));
+                    stampGlyph(charToOutline(icon, font), image, x * cellw, y * cellh, UColor.COLOR_BLACK, 0, 0);
                 color.illuminateWith(light, vis);
-                stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color);
+                stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color, 0, 0);
             }
         }
     }
 
-    public void stampGlyph(BufferedImage srcImage, BufferedImage dstImage, int destx, int desty, UColor tint) {
+    public void stampGlyph(BufferedImage srcImage, BufferedImage dstImage, int destx, int desty, UColor tint, int offX, int offY) {
         int width = srcImage.getWidth();
         int height = srcImage.getHeight();
         int[] srcData = new int[width*height];
@@ -102,24 +102,27 @@ public class URERenderer {
             int offset = y*width;
             for (int x=0;x<width;x++) {
                 if ((destx + x < dstImage.getWidth()) && (desty + y < dstImage.getHeight()) && (destx + x >= 0) && (desty + y >= 0)) {
-                    int srcRGB = srcData[x+offset];
-                    int dstRGB = dstData[x+offset];
-                    int r1 = (srcRGB & 0xff0000) >> 16;
-                    int g1 = (srcRGB & 0xff00) >> 8;
-                    int b1 = (srcRGB & 0xff);
-                    float alpha1 = (float)(r1 + g1 + b1) / 765f;
-                    r1 = (int) ((float) tint.iR() * alpha1);
-                    g1 = (int) ((float) tint.iG() * alpha1);
-                    b1 = (int) ((float) tint.iB() * alpha1);
-                    int r2 = (dstRGB & 0xff0000) >> 16;
-                    int g2 = (dstRGB & 0xff00) >> 8;
-                    int b2 = (dstRGB & 0xff);
-                    float alpha2 = 1.0f - alpha1;
-                    int r3 = r1 + (int) ((float) r2 * alpha2);
-                    int g3 = g1 + (int) ((float) g2 * alpha2);
-                    int b3 = b1 + (int) ((float) b2 * alpha2);
-                    int finalRGB = ((r3&0x0ff)<<16)|((g3&0x0ff)<<8)|(b3&0x0ff);
-                    dstData[x+offset] = finalRGB;
+                    int pixeli = x+offset+offX+offY*width;
+                    if (pixeli >=0 && pixeli < srcData.length) {
+                        int srcRGB = srcData[x + offset + offX + offY * width];
+                        int dstRGB = dstData[x + offset];
+                        int r1 = (srcRGB & 0xff0000) >> 16;
+                        int g1 = (srcRGB & 0xff00) >> 8;
+                        int b1 = (srcRGB & 0xff);
+                        float alpha1 = (float) (r1 + g1 + b1) / 765f;
+                        r1 = (int) ((float) tint.iR() * alpha1);
+                        g1 = (int) ((float) tint.iG() * alpha1);
+                        b1 = (int) ((float) tint.iB() * alpha1);
+                        int r2 = (dstRGB & 0xff0000) >> 16;
+                        int g2 = (dstRGB & 0xff00) >> 8;
+                        int b2 = (dstRGB & 0xff);
+                        float alpha2 = 1.0f - alpha1;
+                        int r3 = r1 + (int) ((float) r2 * alpha2);
+                        int g3 = g1 + (int) ((float) g2 * alpha2);
+                        int b3 = b1 + (int) ((float) b2 * alpha2);
+                        int finalRGB = ((r3 & 0x0ff) << 16) | ((g3 & 0x0ff) << 8) | (b3 & 0x0ff);
+                        dstData[x + offset] = finalRGB;
+                    }
                 }
             }
         }

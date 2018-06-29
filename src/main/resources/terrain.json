@@ -85,7 +85,9 @@
       "bgcolor": [0,75,127],
       "bgvariants": [ [0,75,127],[0,80,135],[0,83,139],[0,72,140] ],
       "bonkmsg": "You can't swim, and that water looks cold anyway.",
-      "walkmsg": "You splash through the cold water."
+      "walkmsg": "You splash through the cold water.",
+      "animationFrames": 25,
+      "waves": 7
     },
     {
       "name": "wooden bridge",

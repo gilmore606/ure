@@ -82,26 +82,26 @@ public class ExampleGame implements UTimeListener {
         player = new UREActor("Player", '@', new UColor(Color.WHITE), true);
         int px = 20;
         int py = 20;
-        for (int x=30;x<50;x++) {
-            for (int y=30;y<50;y++) {
+        for (int x=30;x<80;x++) {
+            for (int y=30;y<80;y++) {
                 if (area.willAcceptThing(player, x, y))
                     px = x; py = y;
             }
         }
         player.moveToCell(area, px, py);
         commander = new URECommander(player);
-        commander.addAnimator(player);
         area.setCommander(commander);
         makeWindow().getContentPane().addKeyListener(commander);
 
         commander.registerScrollPrinter(scrollPanel);
         commander.registerTimeListener(area);
         commander.registerTimeListener(this);
-        //while (true) {
-        //  commander.animationLoop();
-        //    camera.repaint();
-        //    frame.repaint();
-        //}
+        commander.addAnimator(camera);
+        while (true) {
+          commander.animationLoop();
+            camera.repaint();
+            frame.repaint();
+        }
     }
 
     public void hearTick(URECommander commander) {

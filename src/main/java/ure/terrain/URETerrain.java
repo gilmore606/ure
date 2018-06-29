@@ -1,5 +1,6 @@
 package ure.terrain;
 
+import ure.UAnimator;
 import ure.UCell;
 import ure.UColor;
 import ure.UREActor;
@@ -13,7 +14,7 @@ import java.util.Random;
  *
  */
 
-public abstract class URETerrain implements Cloneable {
+public abstract class URETerrain implements Cloneable, UAnimator {
 
     public static final String TYPE = "";
 
@@ -42,6 +43,8 @@ public abstract class URETerrain implements Cloneable {
     public boolean glow = false;
     public float sunvis;
 
+    public int animationFrame, animationFrames;
+
     public boolean isPassable() {
         return passable;
     }
@@ -50,6 +53,8 @@ public abstract class URETerrain implements Cloneable {
         return opaque;
     }
 
+    UCell cell;
+
     public void initialize() {
         fgColor = new UColor(fgcolor[0],fgcolor[1],fgcolor[2]);
         bgColor = new UColor(bgcolor[0],bgcolor[1],bgcolor[2]);
@@ -57,7 +62,8 @@ public abstract class URETerrain implements Cloneable {
         bgColorBuffer = new UColor(0f, 0f ,0f);
     }
 
-    public void becomeReal() {
+    public void becomeReal(UCell c) {
+        cell = c;
         initialize();
         if (bgvariants != null) {
             Random r = new Random();
@@ -85,6 +91,13 @@ public abstract class URETerrain implements Cloneable {
         int seed = (x * y * 19 + 1883) / 74;
         int period = variants.length();
         return variants.charAt(seed % period);
+    }
+
+    public int glyphOffsetX() {
+        return 0;
+    }
+    public int glyphOffsetY() {
+        return 0;
     }
 
     public void moveTriggerFrom(UREActor actor, UCell cell) {
@@ -117,5 +130,12 @@ public abstract class URETerrain implements Cloneable {
             System.out.println(" Cloning not allowed. ");
             return this;
         }
+    }
+
+    public void animationTick() {
+        animationFrame++;
+        if (animationFrame >= animationFrames)
+            animationFrame = 0;
+        cell.area().redrawCell(cell.areaX(), cell.areaY());
     }
 }

@@ -82,6 +82,11 @@ public class UCell implements UContainer {
 
     public void useTerrain(URETerrain t) {
         terrain = t;
-        t.becomeReal();
+        t.becomeReal(this);
+    }
+
+    public void animationTick() {
+        if (terrain.animationFrames > 0)
+            terrain.animationTick();
     }
 }
