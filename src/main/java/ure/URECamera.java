@@ -447,7 +447,7 @@ public class URECamera extends JPanel implements UAnimator {
     public void animationTick() {
         for (int x=x1;x<x2;x++) {
             for (int y=y1;y<y2;y++) {
-                if (area.isValidXY(x,y))
+                if (area.isValidXY(x,y) && lightcells[x-x1][y-y1].visibility() > 0.1f)
                     area.cellAt(x,y).animationTick();
             }
         }
