@@ -8,7 +8,6 @@ public class UREActor  extends UREThing {
 
     URECamera camera;
     int cameraPinStyle;
-    private int animationFrame = 0, animationFrames = 4;
 
     public UREActor(String thename, char theicon, UColor thecolor, boolean addOutline) {
         super(thename, theicon, thecolor, addOutline);
@@ -65,11 +64,9 @@ public class UREActor  extends UREThing {
     }
 
     public void debug() {
-        URELight newlight = new URELight(new UColor(Color.WHITE), 20);
+        URELight newlight = new URELight(new UColor(0.9f,1f,0.7f), 15, 1);
         newlight.moveTo(area(), areaX(), areaY());
-        float sun = area().sunBrightnessAt(areaX(), areaY());
-        System.out.println("sun " + Float.toString(sun));
-        area().commander().printScroll("shitting a glowstick at  " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
+        area().commander().printScroll("You dropped a glowstick at " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
   }
 
     public void moveTriggerFrom(UREActor actor) {

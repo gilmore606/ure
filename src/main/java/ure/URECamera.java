@@ -27,7 +27,7 @@ public class URECamera extends JPanel implements UAnimator {
     HashSet<UREActor> visibilitySources;
 
     boolean allVisible = false;
-    boolean allLit = true;
+    boolean allLit = false;
     float seenOpacity = 0.35f;
     float lightHueToFloors = 0.8f;
     float lightHueToWalls = 0.6f;

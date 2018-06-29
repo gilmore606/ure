@@ -16,18 +16,21 @@ public class URELight {
     UREArea area;
     public int x,y;
 
-    public URELight(Color thecolor, int therange) {
+    public URELight(Color thecolor, int therange, int thefalloff) {
         int[] rgb = {(int)thecolor.getRed(), (int)thecolor.getGreen(), (int)thecolor.getBlue()};
         color = new UColor(rgb[0],rgb[1],rgb[2]);
         range = therange;
+        falloff = thefalloff;
     }
-    public URELight(int[] thecolor, int therange) {
+    public URELight(int[] thecolor, int therange, int thefalloff) {
         color = new UColor(thecolor[0],thecolor[1],thecolor[2]);
         range = therange;
+        falloff = thefalloff;
     }
-    public URELight(UColor thecolor, int therange) {
+    public URELight(UColor thecolor, int therange, int thefalloff) {
         color = thecolor;
         range = therange;
+        falloff = thefalloff;
     }
 
     public void close() {

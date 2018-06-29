@@ -77,9 +77,7 @@ public class ExampleGame implements UTimeListener {
         scaper.digCaves(area, "floor",2, 2, 98, 98);
         scaper.digRiver(area, "water", 0, 0, 99, 99, 5f, 0.7f, 1.4f);
         scaper.digRiver(area, "water", 0, 0, 99, 99, 3f, 0.9f, 2f);
-        URELight light = new URELight(new UColor(Color.WHITE), 25);
-        light.moveTo(area, 45,25);
-        player = new UREActor("Player", '@', new UColor(Color.WHITE), true);
+        player = new UREPlayer("Player", '@', new UColor(Color.WHITE), true, 2, 1);
         int px = 20;
         int py = 20;
         for (int x=30;x<80;x++) {
