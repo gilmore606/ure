@@ -79,4 +79,8 @@ public class UCell implements UContainer {
     public int areaX() { return x; }
     public int areaY() { return y; }
     public UREArea area() { return area; }
+
+    public void useTerrain(URETerrain t) {
+        terrain = t;
+    }
 }

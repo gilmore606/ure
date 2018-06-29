@@ -24,6 +24,8 @@ import org.reflections.scanners.SubTypesScanner;
 public class URETerrainCzar {
 
     private  HashMap<Character,URETerrain> terrains;
+    private  HashMap<String,URETerrain> terrainsByName;
+
     private Set<Class<? extends URETerrain>> terrainClasses;
     private ObjectMapper objectMapper = new ObjectMapper();
     private Reflections reflections = new Reflections("", new SubTypesScanner());
@@ -37,12 +39,14 @@ public class URETerrainCzar {
     public void loadTerrains(String resourceName) {
         terrainClasses = reflections.getSubTypesOf(URETerrain.class);
         terrains = new HashMap<>();
+        terrainsByName = new HashMap<>();
         try {
             InputStream inputStream = getClass().getResourceAsStream("/terrain.json");
             URETerrain[] terrainObjs = objectMapper.readValue(inputStream, URETerrain[].class);
             for (URETerrain terrain : terrainObjs) {
                 terrain.initialize();
                 terrains.put(terrain.filechar, terrain);
+                terrainsByName.put(terrain.name, terrain);
             }
         } catch (IOException io) {
             io.printStackTrace();
@@ -53,6 +57,10 @@ public class URETerrainCzar {
         URETerrain template = terrains.get(thechar);
         URETerrain clone = null;
         return terrains.get(thechar).getClone();
+    }
+
+    public URETerrain getTerrainByName(String name) {
+        return getTerrainForFilechar(terrainsByName.get(name).filechar);
     }
 
     public class TerrainDeserializer extends JsonDeserializer<URETerrain> {

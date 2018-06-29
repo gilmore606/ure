@@ -29,6 +29,7 @@ public class UREArea implements UTimeListener {
     private HashSet<UREActor> actors;
     private HashSet<UParticle> particles;
     private URECommander commander;
+    private URETerrainCzar terrainCzar;
 
     public UColor sunColor;
 
@@ -37,18 +38,21 @@ public class UREArea implements UTimeListener {
     HashMap<Integer,String> sunCycleMessages;
     int sunCycleLastAnnounceMarker;
 
-    public UREArea(int thexsize, int theysize) {
+    public UREArea(int thexsize, int theysize, URETerrainCzar tczar, String defaultTerrain) {
         xsize = thexsize;
         ysize = theysize;
+        terrainCzar = tczar;
+        cells = new UCell[xsize][ysize];
         for (int i=0;i<xsize;i++) {
             for (int j=0;j<ysize;j++)
-                cells[i][j] = new UCell(this, i, j, null);
+                cells[i][j] = new UCell(this, i, j, terrainCzar.getTerrainByName(defaultTerrain));
         }
         initLists();
     }
 
-    public UREArea(String filename, URETerrainCzar terrainCzar) {
+    public UREArea(String filename, URETerrainCzar tczar) {
         initLists();
+        terrainCzar = tczar;
         cells = new UCell[200][200];
         InputStream in = getClass().getResourceAsStream(filename);
         Stream<String> lines = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)).lines();
@@ -177,6 +181,13 @@ public class UREArea implements UTimeListener {
             if (cells[x][y] != null)
                 return cells[x][y].terrain();
         return null;
+    }
+
+    public void setTerrain(int x, int y, String t) {
+        if (isValidXY(x, y)) {
+            URETerrain terrain = terrainCzar.getTerrainByName(t);
+            cells[x][y].useTerrain(terrain);
+        }
     }
 
     public UCell cellAt(int x, int y) {

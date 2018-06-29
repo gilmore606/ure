@@ -71,11 +71,22 @@ public class ExampleGame implements UTimeListener {
     public void startUp()  {
         URETerrainCzar terrainCzar = new URETerrainCzar();
         terrainCzar.loadTerrains("/terrains.json");
-        area = new UREArea("/samplemap.txt", terrainCzar);
+        //area = new UREArea("/samplemap.txt", terrainCzar);
+        area = new UREArea(150, 150, terrainCzar, "wall");
+        URELandscaper scaper = new URELandscaper();
+        scaper.digCaves(area, "floor",2, 2, 148, 148);
         URELight light = new URELight(new UColor(Color.WHITE), 25);
         light.moveTo(area, 45,25);
         player = new UREActor("Player", '@', new UColor(Color.WHITE), true);
-        player.moveToCell(area, 11, 9);
+        int px = 20;
+        int py = 20;
+        for (int x=30;x<50;x++) {
+            for (int y=30;y<50;y++) {
+                if (area.willAcceptThing(player, x, y))
+                    px = x; py = y;
+            }
+        }
+        player.moveToCell(area, px, py);
         commander = new URECommander(player);
         commander.addAnimator(player);
         area.setCommander(commander);

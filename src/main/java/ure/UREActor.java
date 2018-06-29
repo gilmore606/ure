@@ -65,7 +65,7 @@ public class UREActor  extends UREThing implements UAnimator {
     }
 
     public void debug() {
-        URELight newlight = new URELight(new UColor(Color.WHITE), 10);
+        URELight newlight = new URELight(new UColor(Color.WHITE), 20);
         newlight.moveTo(area(), areaX(), areaY());
         float sun = area().sunBrightnessAt(areaX(), areaY());
         System.out.println("sun " + Float.toString(sun));
