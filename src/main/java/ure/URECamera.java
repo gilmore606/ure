@@ -27,7 +27,7 @@ public class URECamera extends JPanel {
     HashSet<UREActor> visibilitySources;
 
     boolean allVisible = false;
-    boolean allLit = false;
+    boolean allLit = true;
     float seenOpacity = 0.35f;
     float lightHueToFloors = 0.8f;
     float lightHueToWalls = 0.6f;

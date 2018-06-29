@@ -26,6 +26,7 @@ public abstract class URETerrain implements Cloneable {
     public String variants;
 
     public int[] fgcolor;
+    public int[][] fgvariants;
     public int[] bgcolor;
     public int[] bgvariance;
     public int[][] bgvariants;
@@ -61,6 +62,10 @@ public abstract class URETerrain implements Cloneable {
         if (bgvariants != null) {
             Random r = new Random();
             bgColor.set(bgvariants[r.nextInt(bgvariants.length - 1)]);
+        }
+        if (fgvariants != null) {
+            Random r = new Random();
+            fgColor.set(fgvariants[r.nextInt(fgvariants.length-1)]);
         }
         if (bgvariance != null) {
             Random r = new Random();

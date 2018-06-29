@@ -76,13 +76,16 @@
       "name": "water",
       "type": "water",
       "filechar": "W",
-      "passable": false,
+      "passable": true,
       "opaque": false,
       "sunvis": 0.2,
       "glyph": "~",
       "fgcolor": [0,150,255],
+      "fgvariants": [ [0,150,255],[150,150,255],[75,150,255],[0,150,255],[0,140,245],[0,130,235] ],
       "bgcolor": [0,75,127],
-      "bonkmsg": "You can't swim, and that water looks cold anyway."
+      "bgvariants": [ [0,75,127],[0,80,135],[0,83,139],[0,72,140] ],
+      "bonkmsg": "You can't swim, and that water looks cold anyway.",
+      "walkmsg": "You splash through the cold water."
     },
     {
       "name": "wooden bridge",

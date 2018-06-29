@@ -6,6 +6,8 @@ import java.util.Random;
 
 public class URELandscaper {
 
+    Random rand;
+
     class Grid {
         boolean cells[][];
         int width;
@@ -58,6 +60,10 @@ public class URELandscaper {
         }
     }
 
+    public URELandscaper() {
+        rand = new Random();
+    }
+
     public void fillRect(UREArea area, String t, int x1, int y1, int x2, int y2) { drawRect(area, t, x1, y1, x2, y2, true); }
     public void drawRect(UREArea area, String t, int x1, int y1, int x2, int y2) { drawRect(area, t, x1, y1, x2, y2, false); }
     public void drawRect(UREArea area, String t, int x1, int y1, int x2, int y2, boolean filled) {
@@ -70,11 +76,50 @@ public class URELandscaper {
         }
     }
 
+    public void digRiver(UREArea area, String t, int x1, int y1, int x2, int y2, float riverWidth, float twist, float twistmax) {
+        int width = x2-x1; int height = y2-y1;
+        int edge = rand.nextInt(4);
+        float startx, starty, dx, dy, ctwist;
+        if (edge == 0) {
+            starty = (float)y1;  startx = (float)(rand.nextInt(width) + x1);
+            dx = 0f ; dy = 1f;
+        } else if (edge == 1) {
+            starty = (float)height; startx = (float)(rand.nextInt(width) + x1);
+            dx = 0f; dy = -1f;
+        } else if (edge == 2) {
+            startx = (float)x1; starty = (float)(rand.nextInt(height) + y1);
+            dx = 1f; dy = 0f;
+        } else {
+            startx = (float)width; starty = (float)(rand.nextInt(height) + y1);
+            dx = -1f; dy = 0f;
+        }
+        ctwist = 0f;
+        boolean hitedge = false;
+        while (!hitedge) {
+            fillRect(area, t, (int)startx, (int)starty, (int)(startx+riverWidth), (int)(starty+riverWidth));
+            startx += dx;
+            starty += dy;
+            if (rand.nextFloat() < twist) {
+                if (dx == 0) {
+                    startx += ctwist;
+                }
+                if (dy == 0) {
+                    starty += ctwist;
+                }
+            }
+            if (startx > x2 || startx < x1 || starty > y2 || starty < y1) {
+                hitedge = true;
+            }
+            ctwist = ctwist + rand.nextFloat() * twist - (twist/2f);
+            if (ctwist > twistmax) ctwist = twistmax;
+            if (ctwist < -twistmax) ctwist = -twistmax;
+        }
+    }
+
     public void digCaves(UREArea area, String t, int x1, int y1, int x2, int y2) {
         digCaves(area,t,x1,y1,x2,y2,0.42f,6,4,3);
     }
     public void digCaves(UREArea area, String t, int x1, int y1, int x2, int y2, float initialDensity, int jumblePasses, int jumbleDensity, int smoothPasses) {
-        Random rand = new Random();
         int width = x2-x1; int height = y2-y1;
         Grid map = new Grid(width,height);
         Grid scratchmap = new Grid(width,height);
