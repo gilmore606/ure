@@ -19,6 +19,7 @@
       "glyph": "#",
       "fgcolor": [30,30,60],
       "bgcolor": [70,70,70],
+      "bgvariance": [6,6,6],
       "bonkmsg": "A rough stone wall."
     },
     {
@@ -30,7 +31,9 @@
       "sunvis": 0.0,
       "glyph": " ",
       "fgcolor": [55,55,55],
-      "bgcolor": [70,70,70]
+      "bgcolor": [70,70,70],
+      "bgvariance": [4,4,4],
+      "bgvariants": [ [70,70,70],[75,75,75],[65,65,65]]
     },
     {
       "name": "door",

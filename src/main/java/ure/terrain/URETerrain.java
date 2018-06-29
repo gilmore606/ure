@@ -4,6 +4,8 @@ import ure.UCell;
 import ure.UColor;
 import ure.UREActor;
 
+import java.util.Random;
+
 /**
  * Created by gilmore on 6/20/2018.
  *
@@ -25,6 +27,8 @@ public abstract class URETerrain implements Cloneable {
 
     public int[] fgcolor;
     public int[] bgcolor;
+    public int[] bgvariance;
+    public int[][] bgvariants;
 
     public UColor fgColor;
     public UColor bgColor;
@@ -50,6 +54,20 @@ public abstract class URETerrain implements Cloneable {
         bgColor = new UColor(bgcolor[0],bgcolor[1],bgcolor[2]);
         fgColorBuffer = new UColor(0f,0f,0f);
         bgColorBuffer = new UColor(0f, 0f ,0f);
+    }
+
+    public void becomeReal() {
+        initialize();
+        if (bgvariants != null) {
+            Random r = new Random();
+            bgColor.set(bgvariants[r.nextInt(bgvariants.length - 1)]);
+        }
+        if (bgvariance != null) {
+            Random r = new Random();
+            bgColor.set(bgColor.iR() + r.nextInt(bgvariance[0]) - bgvariance[0] / 2,
+                    bgColor.iG() + r.nextInt(bgvariance[1]) - bgvariance[1] / 2,
+                    bgColor.iB() + r.nextInt(bgvariance[2]) - bgvariance[2] / 2);
+        }
     }
 
     public char glyph() {

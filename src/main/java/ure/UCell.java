@@ -23,7 +23,7 @@ public class UCell implements UContainer {
         area = theArea;
         x = thex;
         y = they;
-        terrain = theTerrain;
+        useTerrain(theTerrain);
     }
 
     public float sunBrightness() {
@@ -82,5 +82,6 @@ public class UCell implements UContainer {
 
     public void useTerrain(URETerrain t) {
         terrain = t;
+        t.becomeReal();
     }
 }

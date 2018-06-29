@@ -59,7 +59,9 @@ public class UColor {
         b = fb;
         BoundsCheck();
     }
-
+    public void set(int[] arr) {
+        set(arr[0],arr[1],arr[2]);
+    }
     public void brightenBy(float intensity) {
         r = r * intensity;
         g = g * intensity;
