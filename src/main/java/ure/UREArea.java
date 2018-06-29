@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 public class UREArea implements UTimeListener {
 
     private UCell cells[][];
-    private int xsize, ysize;
+    public int xsize, ysize;
     private HashSet<URELight> lights;
     private HashSet<URECamera> cameras;
     private HashSet<UREActor> actors;

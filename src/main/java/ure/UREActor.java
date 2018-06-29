@@ -7,14 +7,16 @@ import java.awt.*;
 public class UREActor  extends UREThing implements UAnimator {
 
     URECamera camera;
+    int cameraPinStyle;
     private int animationFrame = 0, animationFrames = 4;
 
     public UREActor(String thename, char theicon, UColor thecolor, boolean addOutline) {
         super(thename, theicon, thecolor, addOutline);
     }
 
-    public void attachCamera(URECamera thecamera) {
+    public void attachCamera(URECamera thecamera, int pinstyle) {
         camera = thecamera;
+        cameraPinStyle = pinstyle;
         camera.addVisibilitySource(this);
         camera.moveTo(area(), areaX(),  areaY());
     }
@@ -45,7 +47,18 @@ public class UREActor  extends UREThing implements UAnimator {
     @Override
     public void moveToCell(UREArea thearea, int destX, int destY) {
         if (camera != null) {
-            camera.moveTo(area(), destX, destY);
+            if (cameraPinStyle == URECamera.PINSTYLE_HARD)
+                camera.moveTo(area(), destX, destY);
+            if (cameraPinStyle == URECamera.PINSTYLE_SOFT) {
+                int cameraX = Math.min(destX, thearea.xsize - camera.width / 2);
+                int cameraY = Math.min(destY, thearea.ysize - camera.height / 2);
+                cameraX = Math.max(camera.width / 2, cameraX);
+                cameraY = Math.max(camera.height / 2, cameraY);
+                camera.moveTo(area(), cameraX, cameraY);
+            }
+            if (cameraPinStyle == URECamera.PINSTYLE_SCREENS) {
+                System.out.println("ERROR: Camera.PINSTYLE_SCREENS not implemented!");
+            }
         }
         super.moveToCell(thearea, destX, destY);
         thearea.cellAt(destX, destY).walkedOnBy(this);

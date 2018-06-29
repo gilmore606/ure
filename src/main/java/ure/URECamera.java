@@ -19,6 +19,7 @@ public class URECamera extends JPanel {
     BufferedImage image;
     float zoom = 1.0f;
     int pixelWidth, pixelHeight;
+    Dimension preferredSize;
     int width, height;
     int centerX, centerY;
     int x1, y1, x2, y2;
@@ -32,6 +33,11 @@ public class URECamera extends JPanel {
     float lightHueToWalls = 0.6f;
     float lightHueToThings = 0.5f;
     float lightHueToActors = 0.3f;
+
+    public static int PINSTYLE_NONE = 0;
+    public static int PINSTYLE_SOFT = 1;
+    public static int PINSTYLE_SCREENS = 2;
+    public static int PINSTYLE_HARD = 3;
 
     private class UShadow {
         float start, end;
@@ -104,6 +110,7 @@ public class URECamera extends JPanel {
         renderer = theRenderer;
         pixelWidth = thePixW;
         pixelHeight = thePixH;
+        preferredSize = new Dimension(pixelWidth, pixelHeight);
         frame = theframe;
         image = new BufferedImage(pixelWidth*8,pixelHeight*8, BufferedImage.TYPE_INT_RGB);
         visibilitySources = new HashSet<UREActor>();
@@ -116,7 +123,7 @@ public class URECamera extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(pixelWidth, pixelHeight);
+        return preferredSize;
     }
 
 

@@ -34,7 +34,7 @@ public class ExampleGame implements UTimeListener {
 
         camera = new URECamera(new URERenderer(font), 900, 600 , frame);
         camera.moveTo(area, 40,20);
-        player.attachCamera(camera);
+        player.attachCamera(camera, URECamera.PINSTYLE_SOFT);
         camera.setBounds(0,0,900,600);
         camera.renderImage();
 
