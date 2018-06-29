@@ -29,6 +29,9 @@ public abstract class URETerrain implements Cloneable {
     public UColor fgColor;
     public UColor bgColor;
 
+    public UColor fgColorBuffer;
+    public UColor bgColorBuffer;
+
     public boolean passable;
     public boolean opaque;
     public boolean glow = false;
@@ -45,6 +48,8 @@ public abstract class URETerrain implements Cloneable {
     public void initialize() {
         fgColor = new UColor(fgcolor[0],fgcolor[1],fgcolor[2]);
         bgColor = new UColor(bgcolor[0],bgcolor[1],bgcolor[2]);
+        fgColorBuffer = new UColor(0f,0f,0f);
+        bgColorBuffer = new UColor(0f, 0f ,0f);
     }
 
     public char glyph() {

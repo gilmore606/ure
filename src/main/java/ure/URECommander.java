@@ -113,7 +113,7 @@ public class URECommander implements KeyListener {
         }
         turnCounter++;
         System.out.println("tick");
-        System.gc();
+        //System.gc();
     }
 
     void walkPlayer(int xdir, int ydir) {

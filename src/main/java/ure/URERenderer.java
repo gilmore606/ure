@@ -63,20 +63,19 @@ public class URERenderer {
             float tOpacity = vis;
             if ((vis < visSeen) && camera.area.seenCell(x + camera.x1, y + camera.y1))
                 tOpacity = visSeen;
-
             UColor terrainLight = light;
             if (t.glow)
                 terrainLight.set(1f,1f,1f);
-            UColor terrainColor = new UColor(t.bgColor);
-            terrainColor.illuminateWith(terrainLight, tOpacity);
-            g.setColor(terrainColor.makeAWTColor());
+            t.bgColorBuffer.set(t.bgColor.r, t.bgColor.g, t.bgColor.b);
+            t.bgColorBuffer.illuminateWith(terrainLight, tOpacity);
+            g.setColor(t.bgColorBuffer.makeAWTColor());
             g.fillRect(x*cellw, y*cellh, cellw, cellh);
             BufferedImage tGlyph = charToGlyph(t.glyph(x + camera.x1, y + camera.y1), font);
-            terrainColor = new UColor(t.fgColor);
-            terrainColor.illuminateWith(terrainLight, tOpacity);
-            stampGlyph(tGlyph, image, x*cellw, y*cellh, terrainColor);
+            t.fgColorBuffer.set(t.fgColor.r, t.fgColor.g, t.fgColor.b);
+            t.fgColorBuffer.illuminateWith(terrainLight, tOpacity);
+            stampGlyph(tGlyph, image, x*cellw, y*cellh, t.fgColorBuffer);
         }
-        if (vis < 0.4f)
+        if (vis < 0.3f)
             return;
         Iterator<UREThing> things = camera.thingsAt(x,y);
         if (things != null) {

@@ -111,8 +111,7 @@ public class URECamera extends JPanel {
         lightcells = new ULightcell[width][height];
         for (int x=0;x<width;x++)
             for (int y=0;y<height;y++)
-                lightcells[x][y] = new ULightcell();
-
+                lightcells[x][y] = new ULightcell(this);
     }
 
     @Override
@@ -387,12 +386,10 @@ public class URECamera extends JPanel {
     }
     UColor lightAt(int x, int y) {
         if (!isValidXY(x,y))
-            return new UColor(Color.BLACK);
+            return UColor.COLOR_BLACK;
         if (allLit)
-            return new UColor(Color.WHITE);
-        float sun = lightcells[x][y].getRenderedSun();
-        UColor total = new UColor(area.sunColor);
-        total.brightenBy(sun);
+            return UColor.COLOR_WHITE;
+        UColor total = lightcells[x][y].light();
         for (int i=-1;i<2;i++) {
             for (int j=-1;j<2;j++) {
                 URETerrain t = area.terrainAt(x+x1+i,y+y1+j);
@@ -401,7 +398,6 @@ public class URECamera extends JPanel {
                         total.addLights(t.bgColor, 0.5f);
             }
         }
-        total.addLights(lightcells[x][y].light(), 1f);
         return total;
     }
 

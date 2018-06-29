@@ -1,9 +1,7 @@
 package ure;
 
-import java.awt.*;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
+
 
 /**
  * Created by gilmore on 6/20/2018.
@@ -16,13 +14,18 @@ import java.util.Iterator;
 public class ULightcell {
     float visibility;
     float sunBrightness;
-    float renderedSun;
+    float sunBuffer;
+
+    private UColor lightBuffer;
 
     HashMap<URELight,Float> sources;
+    private URECamera camera;
 
-    public ULightcell() {
+    public ULightcell(URECamera thecam) {
+        camera = thecam;
         visibility = 0f;
         sources = new HashMap<URELight,Float>();
+        lightBuffer = new UColor(0f,0f,0f);
     }
 
     public void wipe() {
@@ -46,20 +49,20 @@ public class ULightcell {
         sunBrightness = thebri;
     }
 
-    public void setRenderedSun(float thebri) { renderedSun = thebri; }
+    public void setRenderedSun(float thebri) { sunBuffer = thebri; }
 
     public float getSunBrightness() { return sunBrightness; }
 
-    public float getRenderedSun() { return renderedSun; }
+    public float getRenderedSun() { return sunBuffer; }
 
     public UColor light() {
-        UColor total = new UColor(0,0,0);
-
+        lightBuffer.set(0f,0f,0f);
+        lightBuffer.addLights(camera.area.sunColor, getRenderedSun());
         for (URELight source : sources.keySet()) {
             float intensity = sources.get(source);
-            total.addLights(source.color, intensity);
+            lightBuffer.addLights(source.color, intensity);
         }
-        return total;
+        return lightBuffer;
     }
 
 }

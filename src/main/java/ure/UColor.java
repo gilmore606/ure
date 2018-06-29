@@ -5,6 +5,9 @@ import java.awt.*;
 public class UColor {
     public float r, g, b;
 
+    public static UColor COLOR_BLACK = new UColor(0f,0f,0f);
+    public static UColor COLOR_WHITE = new UColor(1f,1f,1f);
+
     public UColor(int ir, int ig, int ib) {
         set(ir,ig,ib);
     }
