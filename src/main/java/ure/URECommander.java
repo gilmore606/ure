@@ -5,6 +5,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.*;
 import java.awt.image.BufferStrategy;
 import java.util.*;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Receive input and dispatch game commands or UI controls.
@@ -24,8 +25,8 @@ public class URECommander implements KeyListener {
 
     private int animationMillis = 100;
 
-    private LinkedList<Character> keyBuffer;
-    private int keyBufferSize = 3;
+    private LinkedBlockingQueue<Character> keyBuffer;
+    private int keyBufferSize = 2;
 
     public URECommander(UREActor theplayer) {
         timeListeners = new HashSet<UTimeListener>();
@@ -33,7 +34,7 @@ public class URECommander implements KeyListener {
         setPlayer(theplayer);
         readKeyBinds();
         turnCounter = 0;
-        keyBuffer = new LinkedList<Character>();
+        keyBuffer = new LinkedBlockingQueue<Character>();
     }
 
     public int getTurn() { return turnCounter; };
@@ -157,7 +158,7 @@ public class URECommander implements KeyListener {
             else gameTime += tickRate;
             while (System.nanoTime() < gameTime) {
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(1);
                 } catch (InterruptedException e) { }
             }
             if (!keyBuffer.isEmpty()) {
