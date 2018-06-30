@@ -9,7 +9,7 @@ public class Water extends URETerrain {
     @Override
     public int glyphOffsetY() {
         int f = animationFrame;
-        f = (f + cell.areaX() + cell.areaY()) % animationFrames;
+        f = (f + cell.areaX() * 10 + cell.areaY()) % animationFrames;
         int mid = animationFrames/2;
         if (f > mid + 1)
             f =  animationFrames - f;

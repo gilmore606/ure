@@ -23,25 +23,29 @@ public class URERenderer {
     private HashMap<Character,BufferedImage> outlineCache;
     private Color backgroundColor = Color.BLACK;
 
+    String UIframeTiles = "+-+|+-+|";
+    UColor UIframeColor;
+
     public URERenderer(Font thefont) {
         font = thefont;
         fontSize = font.getSize();
         glyphCache = new HashMap<Character,BufferedImage>();
         outlineCache = new HashMap<Character,BufferedImage>();
+        UIframeColor = new UColor(1f, 1f, 0f);
     }
 
-    public int getCellWidth() {
+    public int cellWidth() {
         return fontSize+cellPadX;
     }
-    public int getCellHeight() {
+    public int cellHeight() {
         return fontSize+cellPadY;
     }
 
     public void renderCamera(URECamera camera) {
         camera.rendering = true;
         rendering = true;
-        int cellw = getCellWidth();
-        int cellh = getCellHeight();
+        int cellw = cellWidth();
+        int cellh = cellHeight();
         int camw = camera.getWidthInCells();
         int camh = camera.getHeightInCells();
         Graphics g = camera.getGraphics();
@@ -58,7 +62,7 @@ public class URERenderer {
     }
 
     void renderCell(URECamera camera, int x, int y) {
-        renderCell(camera, x, y, getCellWidth(), getCellHeight(), camera.getGraphics(), camera.getImage());
+        renderCell(camera, x, y, cellWidth(), cellHeight(), camera.getGraphics(), camera.getImage());
     }
     void renderCell(URECamera camera, int x, int y, int cellw, int cellh, Graphics g, BufferedImage image) {
         float vis = camera.visibilityAt(x,y);
@@ -139,8 +143,8 @@ public class URERenderer {
         if (glyphCache.containsKey((Character)c)) {
             return glyphCache.get((Character)c);
         }
-        int cellw = getCellWidth();
-        int cellh = getCellHeight();
+        int cellw = cellWidth();
+        int cellh = cellHeight();
         BufferedImage glyph = new BufferedImage(cellw, cellh, BufferedImage.TYPE_INT_RGB);
         Graphics g = glyph.getGraphics();
         if (smoothGlyphs) {
@@ -187,5 +191,37 @@ public class URERenderer {
         outlineCache.put((Character)c, outline);
         System.out.println("cached a glyph outline for " + Character.toString(c));
         return outline;
+    }
+
+    public void renderUIFrame(UIModal modal) {
+
+        modal.getGraphics().setColor(modal.bgColor.makeAWTColor());
+        modal.getGraphics().fillRect(0,0,modal.pixelWidth,modal.pixelHeight);
+        modal.getGraphics().dispose();
+        for (int x=0;x<modal.width;x++) {
+            for (int y=0;y<modal.height;y++) {
+                char c = 0;
+                if (x == 0 && y == 0) {
+                    c = UIframeTiles.charAt(0);
+                } else if (y == 0 && x < modal.width - 1) {
+                    c = UIframeTiles.charAt(1);
+                } else if (y == 0) {
+                    c = UIframeTiles.charAt(2);
+                } else if (x == modal.width - 1 && y < modal.height - 1) {
+                    c = UIframeTiles.charAt(3);
+                } else if (x == modal.width - 1 && y == modal.height - 1) {
+                    c = UIframeTiles.charAt(4);
+                } else if (x < modal.width - 1 && y == modal.height - 1) {
+                    c = UIframeTiles.charAt(5);
+                } else if (x == 0 && y == modal.height - 1) {
+                    c = UIframeTiles.charAt(6);
+                } else if (x == 0 && y < modal.height - 1) {
+                    c = UIframeTiles.charAt(7);
+                }
+                if (c != 0) {
+                    stampGlyph(charToGlyph(c, font), modal.getImage(), x*cellWidth(), y*cellHeight(), UIframeColor, 0, 0);
+                }
+            }
+        }
     }
 }

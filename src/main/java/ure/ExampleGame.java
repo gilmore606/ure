@@ -16,15 +16,9 @@ public class ExampleGame implements UTimeListener {
     static UREStatusPanel statusPanel;
     static UREScrollPanel scrollPanel;
     static Font font;
+    static URERenderer renderer;
 
     private JFrame makeWindow() {
-        try {
-            font = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResourceAsStream("/Px437_Phoenix_BIOS-2y.ttf")).deriveFont(Font.PLAIN, 16);
-        } catch (Exception e) {
-            System.out.println("Failed to load font");
-        }
-        //font = new Font("Px437 Verite 9x14", Font.PLAIN, 16);
-
         frame = new JFrame("Rogue");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
@@ -32,7 +26,7 @@ public class ExampleGame implements UTimeListener {
         frame.getContentPane().setLayout(null);
         frame.setBounds(0,0,1400,1000);
 
-        camera = new URECamera(new URERenderer(font), 1200, 800 , frame);
+        camera = new URECamera(renderer, 1200, 800 , frame);
         camera.moveTo(area, 40,20);
         player.attachCamera(camera, URECamera.PINSTYLE_SOFT);
         camera.setBounds(0,0,1200,800);
@@ -69,6 +63,12 @@ public class ExampleGame implements UTimeListener {
     }
 
     public void startUp()  {
+        try {
+            font = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResourceAsStream("/Px437_Phoenix_BIOS-2y.ttf")).deriveFont(Font.PLAIN, 16);
+        } catch (Exception e) {
+            System.out.println("Failed to load font");
+        }
+        renderer = new URERenderer(font);
         URETerrainCzar terrainCzar = new URETerrainCzar();
         terrainCzar.loadTerrains("/terrains.json");
         //area = new UREArea("/samplemap.txt", terrainCzar);
@@ -88,7 +88,7 @@ public class ExampleGame implements UTimeListener {
             }
         }
         player.moveToCell(area, px, py);
-        commander = new URECommander(player);
+        commander = new URECommander(player, renderer);
         area.setCommander(commander);
         makeWindow().getContentPane().addKeyListener(commander);
 

@@ -27,6 +27,8 @@ public class URECamera extends Canvas implements UAnimator {
     ULightcell lightcells[][];
     HashSet<UREActor> visibilitySources;
 
+    UIModal modal;
+
     boolean allVisible = false;
     boolean allLit = true;
     float seenOpacity = 0.35f;
@@ -146,8 +148,8 @@ public class URECamera extends Canvas implements UAnimator {
     }
 
     private void setBounds() {
-        float cellWidth = (float)renderer.getCellWidth() * zoom;
-        float cellHeight = (float)renderer.getCellHeight() * zoom;
+        float cellWidth = (float)renderer.cellWidth() * zoom;
+        float cellHeight = (float)renderer.cellHeight() * zoom;
         width = (int)(pixelWidth / cellWidth) + 2;
         height = (int)(pixelHeight / cellHeight) + 2;
         x1 = centerX - (width / 2);
@@ -417,6 +419,8 @@ public class URECamera extends Canvas implements UAnimator {
     }
 
     public void renderImage() {
+        if (modal != null)
+            modal.renderImage();
         long startTime = System.nanoTime();
         renderLights();
         long endTime = System.nanoTime();
@@ -442,7 +446,11 @@ public class URECamera extends Canvas implements UAnimator {
             createBufferStrategy(2);
             frameBuffer = getBufferStrategy();
         }
-        frameBuffer.getDrawGraphics().drawImage(image, 0, 0, this);
+        Graphics g = frameBuffer.getDrawGraphics();
+        g.drawImage(image, 0, 0, null);
+        if (modal != null) {
+            g.drawImage(modal.getImage(), (pixelWidth / 2) - (modal.pixelWidth / 2), (pixelHeight / 2) - (modal.pixelHeight / 2), null);
+        }
         frameBuffer.show();
     }
 
@@ -453,5 +461,18 @@ public class URECamera extends Canvas implements UAnimator {
                     area.cellAt(x,y).animationTick();
             }
         }
+    }
+
+    public void attachModal(UIModal modal) {
+        if (this.modal != null) {
+            this.detachModal();
+        }
+        this.modal = modal;
+        renderImage();
+    }
+
+    public void detachModal() {
+        this.modal = null;
+        renderImage();
     }
 }

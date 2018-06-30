@@ -30,10 +30,10 @@
       "opaque": false,
       "sunvis": 0.0,
       "glyph": " ",
-      "fgcolor": [55,55,55],
-      "bgcolor": [70,70,70],
+      "fgcolor": [50,50,50],
+      "bgcolor": [30,30,30],
       "bgvariance": [6,6,6],
-      "bgvariants": [ [70,70,70],[75,75,75],[65,65,65]]
+      "bgvariants": [ [20,20,20],[30,30,30],[40,40,40]]
     },
     {
       "name": "door",
@@ -86,8 +86,8 @@
       "bgvariants": [ [0,75,127],[0,80,135],[0,83,139],[0,72,140] ],
       "bonkmsg": "You can't swim, and that water looks cold anyway.",
       "walkmsg": "You splash through the cold water.",
-      "animationFrames": 150,
-      "waves": 3
+      "animationFrames": 250,
+      "waves": 2
     },
     {
       "name": "wooden bridge",

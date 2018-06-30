@@ -17,7 +17,7 @@ public class URECommander implements KeyListener {
     private HashMap<Character, String> keyBinds;
     private HashSet<UTimeListener> timeListeners;
     private HashSet<UAnimator> animators;
-
+    private URERenderer renderer;
     private UREActor player;
     private UREScrollPanel scrollPrinter;
     private int turnCounter;
@@ -28,7 +28,8 @@ public class URECommander implements KeyListener {
     private LinkedBlockingQueue<Character> keyBuffer;
     private int keyBufferSize = 2;
 
-    public URECommander(UREActor theplayer) {
+    public URECommander(UREActor theplayer, URERenderer theRenderer) {
+        renderer = theRenderer;
         timeListeners = new HashSet<UTimeListener>();
         animators = new HashSet<UAnimator>();
         setPlayer(theplayer);
@@ -68,6 +69,7 @@ public class URECommander implements KeyListener {
         keyBinds.put('s', "MOVE_S");
         keyBinds.put('a', "MOVE_W");
         keyBinds.put('d', "MOVE_E");
+        keyBinds.put('g', "GET");
         keyBinds.put('e', "DEBUG");
 
     }
@@ -97,25 +99,32 @@ public class URECommander implements KeyListener {
     }
 
     void hearCommand(String command) {
-        boolean acted = true;
-        switch (command) {
-            case "MOVE_N":
-                walkPlayer(0, -1);
-                break;
-            case "MOVE_S":
-                walkPlayer(0, 1);
-                break;
-            case "MOVE_W":
-                walkPlayer(-1, 0);
-                break;
-            case "MOVE_E":
-                walkPlayer(1, 0);
-                break;
-            case "DEBUG":
-                debug();
-        }
-        if (acted) {
-            tickTime();
+        if (player.camera.modal != null) {
+            player.camera.modal.hearCommand(command);
+        } else {
+            boolean acted = true;
+            switch (command) {
+                case "MOVE_N":
+                    walkPlayer(0, -1);
+                    break;
+                case "MOVE_S":
+                    walkPlayer(0, 1);
+                    break;
+                case "MOVE_W":
+                    walkPlayer(-1, 0);
+                    break;
+                case "MOVE_E":
+                    walkPlayer(1, 0);
+                    break;
+                case "GET":
+                    commandGet();
+                    break;
+                case "DEBUG":
+                    debug();
+            }
+            if (acted) {
+                tickTime();
+            }
         }
     }
 
@@ -131,6 +140,15 @@ public class URECommander implements KeyListener {
 
     void walkPlayer(int xdir, int ydir) {
         player.walkDir(xdir,ydir);
+    }
+
+    void commandGet() {
+        UIModal modal = new UIModal(20,10, renderer, player.camera, UColor.COLOR_BLACK);
+        showModal(modal);
+    }
+
+    void showModal(UIModal modal) {
+        player.camera.attachModal(modal);
     }
 
     void debug() {
