@@ -1,10 +1,9 @@
 package ure;
 
+import javax.swing.*;
 import java.awt.event.KeyListener;
 import java.awt.event.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Receive input and dispatch game commands or UI controls.
@@ -22,7 +21,10 @@ public class URECommander implements KeyListener {
     private int turnCounter;
     private int turnsPerDay = 192;
 
-    private int animationMillis = 50;
+    private int animationMillis = 100;
+
+    private LinkedList<Character> keyBuffer;
+    private int keyBufferSize = 3;
 
     public URECommander(UREActor theplayer) {
         timeListeners = new HashSet<UTimeListener>();
@@ -30,6 +32,7 @@ public class URECommander implements KeyListener {
         setPlayer(theplayer);
         readKeyBinds();
         turnCounter = 0;
+        keyBuffer = new LinkedList<Character>();
     }
 
     public int getTurn() { return turnCounter; };
@@ -71,7 +74,9 @@ public class URECommander implements KeyListener {
         System.out.println("keypress " + Character.toString(e.getKeyChar()));
         char c = e.getKeyChar();
         if (keyBinds.containsKey((Character)c)) {
-            hearCommand(keyBinds.get((Character)c));
+            //hearCommand(keyBinds.get((Character)c));
+            if (keyBuffer.size() < keyBufferSize)
+                keyBuffer.add((Character)c);
         }
     }
 
@@ -81,6 +86,13 @@ public class URECommander implements KeyListener {
 
     public void keyTyped(KeyEvent e) {
 
+    }
+
+    public void consumeKeyFromBuffer() {
+        if (!keyBuffer.isEmpty()) {
+            Character c = keyBuffer.remove();
+            hearCommand(keyBinds.get(c));
+        }
     }
 
     void hearCommand(String command) {
@@ -128,15 +140,28 @@ public class URECommander implements KeyListener {
         scrollPrinter.print(text);
     }
 
-    void animationLoop() {
-        try {
-            Thread.sleep(animationMillis);
-        } catch (InterruptedException e) {
-            System.out.println("hi");
-        }
+    void animationFrame(JFrame frame) {
         Iterator<UAnimator> animI = animators.iterator();
         while (animI.hasNext()) {
             animI.next().animationTick();
+        }
+        frame.repaint();
+    }
+
+    public void gameLoop(JFrame frame) {
+        long tickRate = 1000000 / 30;
+        long gameTime = System.nanoTime();
+        while (true) {
+            frame.repaint();
+            long curTime = System.nanoTime();
+            if (curTime > gameTime + tickRate * 2) gameTime = curTime;
+            else gameTime += tickRate;
+            while (System.nanoTime() < gameTime) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) { }
+            }
+            if (!keyBuffer.isEmpty()) consumeKeyFromBuffer();
         }
     }
 

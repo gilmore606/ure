@@ -87,7 +87,7 @@
       "bonkmsg": "You can't swim, and that water looks cold anyway.",
       "walkmsg": "You splash through the cold water.",
       "animationFrames": 25,
-      "waves": 7
+      "waves": 3
     },
     {
       "name": "wooden bridge",

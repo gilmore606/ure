@@ -95,11 +95,8 @@ public class ExampleGame implements UTimeListener {
         commander.registerTimeListener(area);
         commander.registerTimeListener(this);
         commander.addAnimator(camera);
-        while (true) {
-          commander.animationLoop();
-            camera.repaint();
-            frame.repaint();
-        }
+
+        commander.gameLoop(frame);
     }
 
     public void hearTick(URECommander commander) {

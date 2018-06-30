@@ -10,9 +10,10 @@ public class Water extends URETerrain {
     public int glyphOffsetY() {
         int f = animationFrame;
         f = (f + cell.areaX() + cell.areaY()) % animationFrames;
-        if (f > animationFrames/2)
-            f = (animationFrames/2) - f;
-        float n = (float)f / (float)animationFrames;
-        return (int)(Math.sin((double)n) * waves + waves / 2);
+        int mid = animationFrames/2;
+        if (f > mid + 1)
+            f =  animationFrames - f;
+        float n = (float)f / (float)(animationFrames / 2);
+        return (int)(Math.sin((double)n * 6.28) * waves - waves);
     }
 }
