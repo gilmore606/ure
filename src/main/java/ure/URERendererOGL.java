@@ -324,7 +324,7 @@ public class URERendererOGL {
             addQuad(x * cellw, y * cellh, cellw, cellh, t.bgColorBuffer);
             t.fgColorBuffer.set(t.fgColor.r, t.fgColor.g, t.fgColor.b);
             t.fgColorBuffer.illuminateWith(terrainLight, tOpacity);
-            stampGlyph(t.glyph, x * cellw, y * cellh, t.fgColorBuffer, 0, 0);
+            stampGlyph(t.glyph, x * cellw, y * cellh, t.fgColorBuffer, t.glyphOffsetX(), t.glyphOffsetY() + 2);
         }
         if (vis < 0.3f)
             return;
