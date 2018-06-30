@@ -21,9 +21,9 @@ public class URECommander implements KeyListener {
     private UREActor player;
     private UREScrollPanel scrollPrinter;
     private int turnCounter;
-    private int turnsPerDay = 192;
+    private int turnsPerDay = 512;
 
-    private int animationMillis = 100;
+    private int animationMillis = 33;
 
     private LinkedBlockingQueue<Character> keyBuffer;
     private int keyBufferSize = 2;
@@ -142,11 +142,10 @@ public class URECommander implements KeyListener {
     }
 
     void animationFrame(JFrame frame) {
-        Iterator<UAnimator> animI = animators.iterator();
-        while (animI.hasNext()) {
-            animI.next().animationTick();
+        for (UAnimator anim : animators) {
+            anim.animationTick();
         }
-        frame.repaint();
+        player.camera.paintFrameBuffer(); // TODO: make this more generic and notify all cameras
     }
 
     public void gameLoop(JFrame frame) {
@@ -154,6 +153,8 @@ public class URECommander implements KeyListener {
         long gameTime = System.nanoTime();
         while (true) {
             long curTime = System.nanoTime();
+            //if (curTime - gameTime > animationMillis*1000)
+            //    animationFrame(frame);
             if (curTime > gameTime + tickRate * 2) gameTime = curTime;
             else gameTime += tickRate;
             while (System.nanoTime() < gameTime) {

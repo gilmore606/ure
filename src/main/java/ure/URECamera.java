@@ -391,9 +391,6 @@ public class URECamera extends Canvas implements UAnimator {
         }
     }
 
-    UColor lightAtAreaXY(int ax, int ay) {
-        return lightAt(ax - x1, ay - y1);
-    }
     UColor lightAt(int x, int y) {
         if (!isValidXY(x,y))
             return UColor.COLOR_BLACK;

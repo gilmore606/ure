@@ -96,7 +96,6 @@ public class ExampleGame implements UTimeListener {
         commander.registerTimeListener(area);
         commander.registerTimeListener(this);
         commander.addAnimator(camera);
-
         commander.gameLoop(frame);
     }
 
