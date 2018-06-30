@@ -1,6 +1,7 @@
 package ure;
 
 import ure.terrain.URETerrain;
+import ure.things.UREThing;
 
 import java.util.Iterator;
 

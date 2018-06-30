@@ -1,6 +1,7 @@
 package ure;
 
 import ure.terrain.URETerrain;
+import ure.things.UREThing;
 import ure.ui.UIModal;
 
 import java.awt.image.BufferedImage;

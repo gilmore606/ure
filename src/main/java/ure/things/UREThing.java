@@ -1,4 +1,9 @@
-package ure;
+package ure.things;
+
+import ure.UCollection;
+import ure.UColor;
+import ure.UContainer;
+import ure.UREArea;
 
 import java.util.Iterator;
 
@@ -8,23 +13,25 @@ import java.util.Iterator;
  * A real instance of a thing.
  *
  */
-public class UREThing implements UContainer {
+public class UREThing implements UContainer, Cloneable {
     public String name;
     public char glyph;
 
     UColor glyphColor;
     boolean glyphOutline = false;
 
-    UContainer location;  // What container am I in?
-    UCollection contents; // What's inside me?
+    protected UContainer location;  // What container am I in?
+    protected UCollection contents; // What's inside me?
 
-    public UREThing(String thename, char theglyph, UColor thecolor, boolean addOutline) {
+    public void initialize() {
+        contents = new UCollection(this);
+    }
+
+    public void setDisplayFields(String thename, char theglyph, UColor thecolor, boolean addOutline) {
         name = thename;
         glyph = theglyph;
         glyphColor = thecolor;
         glyphOutline = addOutline;
-        contents = new UCollection(this);
-        location = null;
     }
 
     public char getGlyph() {
@@ -74,4 +81,13 @@ public class UREThing implements UContainer {
     public int areaX() { return location.areaX(); }
     public int areaY() { return location.areaY(); }
     public UREArea area() { return location.area(); }
+
+    public UREThing getClone() {
+        try {
+            return (UREThing) super.clone();
+        } catch (CloneNotSupportedException e) {
+            System.out.println(" Cloning not allowed. ");
+            return this;
+        }
+    }
 }
