@@ -2,6 +2,7 @@ package ure;
 
 import ure.terrain.URETerrain;
 
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +13,7 @@ import java.util.*;
  *
  */
 
-public class URECamera extends JPanel implements UAnimator {
+public class URECamera extends Canvas implements UAnimator {
     public UREArea area;
     JFrame frame;
     URERenderer renderer;
@@ -40,6 +41,7 @@ public class URECamera extends JPanel implements UAnimator {
     public static int PINSTYLE_HARD = 3;
 
     public boolean rendering;
+    private BufferStrategy frameBuffer;
 
     private class UShadow {
         float start, end;
@@ -107,7 +109,6 @@ public class URECamera extends JPanel implements UAnimator {
     }
 
     public URECamera(URERenderer theRenderer, int thePixW, int thePixH, JFrame theframe) {
-        setLayout(null);
         setFocusable(false);
         renderer = theRenderer;
         pixelWidth = thePixW;
@@ -429,8 +430,7 @@ public class URECamera extends JPanel implements UAnimator {
         endTime = System.nanoTime();
         duration = (endTime - startTime) / 1000000;
         System.out.println("drawtime " + Long.toString(duration) + "ms");
-        repaint();
-        frame.repaint();
+        paintFrameBuffer();
     }
 
     public void redrawAreaCell(int ax, int ay) {
@@ -440,10 +440,13 @@ public class URECamera extends JPanel implements UAnimator {
         renderer.renderCell(this, x, y);
     }
 
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawImage(image, 0, 0, this);
+    public void paintFrameBuffer() {
+        if (frameBuffer == null) {
+            createBufferStrategy(2);
+            frameBuffer = getBufferStrategy();
+        }
+        frameBuffer.getDrawGraphics().drawImage(image, 0, 0, this);
+        frameBuffer.show();
     }
 
     public void animationTick() {

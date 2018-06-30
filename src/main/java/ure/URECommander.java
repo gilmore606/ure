@@ -149,8 +149,6 @@ public class URECommander implements KeyListener {
     }
 
     public void gameLoop(JFrame frame) {
-        frame.createBufferStrategy(2);
-        BufferStrategy strategy = frame.getBufferStrategy();
         long tickRate = 1000000 / 30;
         long gameTime = System.nanoTime();
         while (true) {
@@ -164,7 +162,7 @@ public class URECommander implements KeyListener {
             }
             if (!keyBuffer.isEmpty()) {
                 consumeKeyFromBuffer();
-                strategy.show();
+                frame.repaint();
             }
         }
     }

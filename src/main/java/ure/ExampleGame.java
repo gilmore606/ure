@@ -36,7 +36,6 @@ public class ExampleGame implements UTimeListener {
         camera.moveTo(area, 40,20);
         player.attachCamera(camera, URECamera.PINSTYLE_SOFT);
         camera.setBounds(0,0,1200,800);
-        camera.renderImage();
 
         statusPanel = new UREStatusPanel(font, 15, 10, 16, 16, 10, 10, new UColor(1f,1f,1f), new UColor(0f,0f,0f));
         statusPanel.addText("name", "Player 1",0,0);
