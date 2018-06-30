@@ -72,4 +72,11 @@ public class UREActor  extends UREThing {
     public void moveTriggerFrom(UREActor actor) {
         area().commander().printScroll("Ow!");
     }
+
+    public void tryGetThing(UREThing thing) {
+        if (thing.tryGetBy(this)) {
+            thing.moveToContainer(this);
+            area().commander().printScroll(thing.getMsg(this));
+        }
+    }
 }

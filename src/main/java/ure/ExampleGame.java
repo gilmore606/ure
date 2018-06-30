@@ -1,6 +1,7 @@
 package ure;
 
 import ure.terrain.URETerrainCzar;
+import ure.things.UREThingCzar;
 import ure.ui.UREScrollPanel;
 import ure.ui.UREStatusPanel;
 
@@ -19,6 +20,9 @@ public class ExampleGame implements UTimeListener {
     static UREScrollPanel scrollPanel;
     static Font font;
     static URERenderer renderer;
+
+    static URETerrainCzar terrainCzar;
+    static UREThingCzar thingCzar;
 
     private JFrame makeWindow() {
         frame = new JFrame("Rogue");
@@ -71,8 +75,12 @@ public class ExampleGame implements UTimeListener {
             System.out.println("Failed to load font");
         }
         renderer = new URERenderer(font);
-        URETerrainCzar terrainCzar = new URETerrainCzar();
+
+        terrainCzar = new URETerrainCzar();
         terrainCzar.loadTerrains("/terrains.json");
+        thingCzar = new UREThingCzar();
+        thingCzar.loadThings("/things.json");
+
         //area = new UREArea("/samplemap.txt", terrainCzar);
         area = new UREArea(100, 100, terrainCzar, "wall");
         URELandscaper scaper = new URELandscaper();

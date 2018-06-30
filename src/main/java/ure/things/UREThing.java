@@ -1,9 +1,6 @@
 package ure.things;
 
-import ure.UCollection;
-import ure.UColor;
-import ure.UContainer;
-import ure.UREArea;
+import ure.*;
 
 import java.util.Iterator;
 
@@ -16,6 +13,12 @@ import java.util.Iterator;
 public class UREThing implements UContainer, Cloneable {
     public String name;
     public char glyph;
+    public String description = "A thing.";
+    public int weight;
+    public int value;
+    public int[] color;
+
+    public static final String TYPE = "";
 
     UColor glyphColor;
     boolean glyphOutline = false;
@@ -25,6 +28,8 @@ public class UREThing implements UContainer, Cloneable {
 
     public void initialize() {
         contents = new UCollection(this);
+        if (glyphColor == null && color != null)
+            glyphColor = new UColor(color[0],color[1],color[2]);
     }
 
     public void setDisplayFields(String thename, char theglyph, UColor thecolor, boolean addOutline) {
@@ -89,5 +94,13 @@ public class UREThing implements UContainer, Cloneable {
             System.out.println(" Cloning not allowed. ");
             return this;
         }
+    }
+
+    public boolean tryGetBy(UREActor actor) {
+        return true;
+    }
+
+    public String getMsg(UREActor actor) {
+        return description;
     }
 }
