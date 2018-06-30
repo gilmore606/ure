@@ -1,4 +1,6 @@
-package ure;
+package ure.ui;
+
+import ure.UColor;
 
 import javax.swing.*;
 import java.awt.*;

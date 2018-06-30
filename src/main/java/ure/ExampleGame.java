@@ -1,6 +1,8 @@
 package ure;
 
 import ure.terrain.URETerrainCzar;
+import ure.ui.UREScrollPanel;
+import ure.ui.UREStatusPanel;
 
 import java.awt.*;
 import javax.swing.*;
