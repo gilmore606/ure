@@ -197,7 +197,6 @@ public class URERenderer {
     }
 
     public void renderUIFrame(UIModal modal) {
-
         Graphics g = modal.getGraphics();
         g.setColor(modal.bgColor.makeAWTColor());
         g.fillRect(0,0,modal.pixelWidth,modal.pixelHeight);
@@ -214,7 +213,7 @@ public class URERenderer {
                     c = UIframeTiles.charAt(3);
                 } else if (x == modal.width - 1 && y == modal.height - 1) {
                     c = UIframeTiles.charAt(4);
-                } else if (x < modal.width - 1 && y == modal.height - 1) {
+                } else if (x > 0 && x < modal.width - 1 && y == modal.height - 1) {
                     c = UIframeTiles.charAt(5);
                 } else if (x == 0 && y == modal.height - 1) {
                     c = UIframeTiles.charAt(6);

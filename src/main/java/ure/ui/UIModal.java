@@ -16,6 +16,7 @@ public class UIModal {
     BufferedImage image;
     public int width, height;
     public int pixelWidth, pixelHeight;
+    public int cellx,celly;
     Dimension preferredSize;
     String frameTiles;
     public UColor bgColor;
@@ -46,6 +47,8 @@ public class UIModal {
         texts = new HashMap<String,TextFrag>();
         pixelWidth = theRenderer.cellWidth() * width;
         pixelHeight = theRenderer.cellHeight() * height;
+        cellx = camera.getWidthInCells()/2 - width/2;
+        celly = camera.getHeightInCells()/2 - height/2;
         image = new BufferedImage(pixelWidth, pixelHeight, BufferedImage.TYPE_INT_RGB);
         Graphics g = getGraphics();
         g.setColor(Color.BLACK);
@@ -53,7 +56,7 @@ public class UIModal {
     }
 
     public static UIModal popMessage(String message, URERenderer theRenderer, URECamera theCamera, UColor thebgcolor) {
-        UIModal m = new UIModal(message.length() + 4, 3, theRenderer, theCamera, thebgcolor);
+        UIModal m = new UIModal(message.length() + 4, 5, theRenderer, theCamera, thebgcolor);
         m.addText("message", message, 1, 1, theRenderer.UItextColor.makeAWTColor());
         return m;
     }
