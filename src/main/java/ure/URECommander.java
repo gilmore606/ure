@@ -153,8 +153,8 @@ public class URECommander implements KeyListener {
         long gameTime = System.nanoTime();
         while (true) {
             long curTime = System.nanoTime();
-            //if (curTime - gameTime > animationMillis*1000)
-            //    animationFrame(frame);
+            if (curTime - gameTime > animationMillis*1000)
+                animationFrame(frame);
             if (curTime > gameTime + tickRate * 2) gameTime = curTime;
             else gameTime += tickRate;
             while (System.nanoTime() < gameTime) {

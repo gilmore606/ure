@@ -32,7 +32,7 @@
       "glyph": " ",
       "fgcolor": [55,55,55],
       "bgcolor": [70,70,70],
-      "bgvariance": [4,4,4],
+      "bgvariance": [6,6,6],
       "bgvariants": [ [70,70,70],[75,75,75],[65,65,65]]
     },
     {
@@ -86,7 +86,7 @@
       "bgvariants": [ [0,75,127],[0,80,135],[0,83,139],[0,72,140] ],
       "bonkmsg": "You can't swim, and that water looks cold anyway.",
       "walkmsg": "You splash through the cold water.",
-      "animationFrames": 25,
+      "animationFrames": 150,
       "waves": 3
     },
     {
