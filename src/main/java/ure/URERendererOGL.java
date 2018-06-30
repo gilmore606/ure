@@ -284,6 +284,13 @@ public class URERendererOGL {
         //tint.r = 1.0f;
         addQuad(destx + offX, desty + offY, cellWidth(), cellHeight(), tint, glyph);
     }
+    public void stampGlyphOutline(char glyph, int destx, int desty, UColor tint, int offX, int offY) {
+        //tint.r = 1.0f;
+        for(int y = -1; y < 2; y += 1)
+            for(int x = -1; x < 2; x += 1)
+                if(x != 0 && y != 0)
+                    addQuad(destx + offX + x, desty + offY + y, cellWidth(), cellHeight(), tint, glyph);
+    }
 
     public boolean rendering = false;
     public void renderCamera(URECamera camera) {
@@ -334,8 +341,8 @@ public class URERendererOGL {
                 UREThing thing = things.next();
                 char icon = thing.getGlyph();
                 UColor color = new UColor(thing.getGlyphColor());
-                //if (thing.drawGlyphOutline())
-                    //stampGlyph(charToOutline(icon, font), image, x * cellw, y * cellh, UColor.COLOR_BLACK, 0, 0);
+                if (thing.drawGlyphOutline())
+                    stampGlyphOutline(icon, x * cellw, y * cellh, UColor.COLOR_BLACK, 0, 0);
                 color.illuminateWith(light, vis);
                 //stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color, 0, 0);
                 stampGlyph(icon, x * cellw, y * cellh, color, 0, 0);
