@@ -124,6 +124,7 @@
     },
     {
       "name": "lava",
+      "type": "lava",
       "filechar": "!",
       "passable": true,
       "opaque": false,
@@ -132,6 +133,7 @@
       "fgcolor": [255, 180, 0],
       "bgcolor": [220, 0, 0],
       "glow": true,
-      "walkmsg": "Oh god it burns!  It BURNS!"
+      "walkmsg": "Oh god it burns!  It BURNS!",
+      "animationFrames": 2
     }
 ]
