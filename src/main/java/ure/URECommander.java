@@ -193,7 +193,7 @@ public class URECommander implements KeyListener {
     }
 
     public void gameLoop() {
-        long tickRate = 1000000000 / 3000000;
+        long tickRate = 1000000000 / 60;
         long gameTime = System.nanoTime();
         while (!glfwWindowShouldClose(renderer.window)) {
             glfwPollEvents();
