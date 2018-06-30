@@ -17,6 +17,8 @@ public class URERenderer {
     private Font font;
     private boolean smoothGlyphs = true;
 
+    public boolean rendering;
+
     private HashMap<Character,BufferedImage> glyphCache;
     private HashMap<Character,BufferedImage> outlineCache;
     private Color backgroundColor = Color.BLACK;
@@ -36,6 +38,8 @@ public class URERenderer {
     }
 
     public void renderCamera(URECamera camera) {
+        camera.rendering = true;
+        rendering = true;
         int cellw = getCellWidth();
         int cellh = getCellHeight();
         int camw = camera.getWidthInCells();
@@ -49,6 +53,8 @@ public class URERenderer {
                 renderCell(camera, x, y, cellw, cellh, g, cameraImage);
             }
         }
+        camera.rendering = false;
+        rendering = false;
     }
 
     void renderCell(URECamera camera, int x, int y) {

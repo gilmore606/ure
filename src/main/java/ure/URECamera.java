@@ -39,6 +39,8 @@ public class URECamera extends JPanel implements UAnimator {
     public static int PINSTYLE_SCREENS = 2;
     public static int PINSTYLE_HARD = 3;
 
+    public boolean rendering;
+
     private class UShadow {
         float start, end;
         public UShadow(float thes, float thee) {

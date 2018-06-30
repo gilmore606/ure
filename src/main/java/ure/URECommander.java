@@ -3,6 +3,7 @@ package ure;
 import javax.swing.*;
 import java.awt.event.KeyListener;
 import java.awt.event.*;
+import java.awt.image.BufferStrategy;
 import java.util.*;
 
 /**
@@ -71,7 +72,6 @@ public class URECommander implements KeyListener {
     }
 
     public void keyPressed(KeyEvent e) {
-        System.out.println("keypress " + Character.toString(e.getKeyChar()));
         char c = e.getKeyChar();
         if (keyBinds.containsKey((Character)c)) {
             //hearCommand(keyBinds.get((Character)c));
@@ -149,19 +149,23 @@ public class URECommander implements KeyListener {
     }
 
     public void gameLoop(JFrame frame) {
+        frame.createBufferStrategy(2);
+        BufferStrategy strategy = frame.getBufferStrategy();
         long tickRate = 1000000 / 30;
         long gameTime = System.nanoTime();
         while (true) {
-            frame.repaint();
             long curTime = System.nanoTime();
             if (curTime > gameTime + tickRate * 2) gameTime = curTime;
             else gameTime += tickRate;
             while (System.nanoTime() < gameTime) {
                 try {
-                    Thread.sleep(1);
+                    Thread.sleep(10);
                 } catch (InterruptedException e) { }
             }
-            if (!keyBuffer.isEmpty()) consumeKeyFromBuffer();
+            if (!keyBuffer.isEmpty()) {
+                consumeKeyFromBuffer();
+                strategy.show();
+            }
         }
     }
 

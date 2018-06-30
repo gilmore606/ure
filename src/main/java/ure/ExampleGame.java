@@ -56,6 +56,7 @@ public class ExampleGame implements UTimeListener {
         scrollPanel.print("The universal java toolkit for roguelike games.");
         scrollPanel.print("Your journey begins...");
 
+
         frame.getContentPane().add(statusPanel);
         frame.getContentPane().add(scrollPanel);
         frame.getContentPane().add(camera);
