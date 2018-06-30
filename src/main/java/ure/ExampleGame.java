@@ -12,26 +12,26 @@ public class ExampleGame implements UTimeListener {
     static URECamera camera;
     static URECommander commander;
     static UREActor player;
-    static JFrame frame;
     static UREStatusPanel statusPanel;
     static UREScrollPanel scrollPanel;
     static Font font;
-    static URERenderer renderer;
+    //static URERenderer renderer;
+    static URERendererOGL renderer;
 
-    private JFrame makeWindow() {
-        frame = new JFrame("Rogue");
+    private void makeWindow() {
+        /*frame = new JFrame("Rogue");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setLayout(null);
         frame.getContentPane().setLayout(null);
-        frame.setBounds(0,0,1400,1000);
+        frame.setBounds(0,0,1400,1000);*/
 
-        camera = new URECamera(renderer, 1200, 800 , frame);
+        camera = new URECamera(renderer, 1200, 800);
         camera.moveTo(area, 40,20);
         player.attachCamera(camera, URECamera.PINSTYLE_SOFT);
         camera.setBounds(0,0,1200,800);
 
-        statusPanel = new UREStatusPanel(font, 15, 10, 16, 16, 10, 10, new UColor(1f,1f,1f), new UColor(0f,0f,0f));
+        statusPanel = new UREStatusPanel(renderer, 15, 10, 16, 16, 10, 10, new UColor(1f,1f,1f), new UColor(0f,0f,0f));
         statusPanel.addText("name", "Player 1",0,0);
         statusPanel.addText("race", "Elf",0,1);
         statusPanel.addText("class", "Homo",0,2);
@@ -39,18 +39,19 @@ public class ExampleGame implements UTimeListener {
         statusPanel.addText("time", "", 0, 6);
         statusPanel.setBounds(1200,0,200,800);
 
-        scrollPanel = new UREScrollPanel(font, 5, 80, 16, 16, 5, 5, new UColor(1f,1f,1f), new UColor(0f,0f,0f));
-        scrollPanel.addLineFade(Color.WHITE);
-        scrollPanel.addLineFade(new Color(0.6f, 0.6f, 0.6f));
-        scrollPanel.addLineFade(new Color(0.4f, 0.4f, 0.4f));
-        scrollPanel.addLineFade(new Color(0.3f, 0.3f, 0.3f));
+        scrollPanel = new UREScrollPanel(renderer, 5, 80, 16, 16, 5, 5, new UColor(1f,1f,1f), new UColor(0f,0f,0f));
+        scrollPanel.addLineFade(new UColor(1.0f, 1.0f, 1.0f));
+        scrollPanel.addLineFade(new UColor(0.6f, 0.6f, 0.6f));
+        scrollPanel.addLineFade(new UColor(0.4f, 0.4f, 0.4f));
+        scrollPanel.addLineFade(new UColor(0.3f, 0.3f, 0.3f));
         scrollPanel.setBounds(0,800,1400,200);
         scrollPanel.print("Welcome to UnRogueEngine!");
         scrollPanel.print("The universal java toolkit for roguelike games.");
         scrollPanel.print("Your journey begins...");
 
-
-        frame.getContentPane().add(statusPanel);
+        commander.setStatusPanel(statusPanel);
+        commander.setScrollPanel(scrollPanel);
+        /*frame.getContentPane().add(statusPanel);
         frame.getContentPane().add(scrollPanel);
         frame.getContentPane().add(camera);
 
@@ -58,8 +59,8 @@ public class ExampleGame implements UTimeListener {
         frame.setSize(1400, 1000);
         frame.getContentPane().setFocusable(true);
         frame.setVisible(true);
-        frame.getContentPane().requestFocusInWindow();
-        return frame;
+        frame.getContentPane().requestFocusInWindow();*/
+        //return frame;
     }
 
     public void startUp()  {
@@ -68,7 +69,10 @@ public class ExampleGame implements UTimeListener {
         } catch (Exception e) {
             System.out.println("Failed to load font");
         }
-        renderer = new URERenderer(font);
+        //renderer = new URERenderer(font);
+        renderer = new URERendererOGL(font);
+        renderer.init();
+
         URETerrainCzar terrainCzar = new URETerrainCzar();
         terrainCzar.loadTerrains("/terrains.json");
         //area = new UREArea("/samplemap.txt", terrainCzar);
@@ -89,14 +93,15 @@ public class ExampleGame implements UTimeListener {
         }
         player.moveToCell(area, px, py);
         commander = new URECommander(player, renderer);
+        renderer.setCommander(commander);
         area.setCommander(commander);
-        makeWindow().getContentPane().addKeyListener(commander);
+        makeWindow();//.getContentPane().addKeyListener(commander);
 
         commander.registerScrollPrinter(scrollPanel);
         commander.registerTimeListener(area);
         commander.registerTimeListener(this);
         commander.addAnimator(camera);
-        commander.gameLoop(frame);
+        commander.gameLoop();
     }
 
     public void hearTick(URECommander commander) {

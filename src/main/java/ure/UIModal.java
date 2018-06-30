@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 public class UIModal {
     JFrame frame;
-    URERenderer renderer;
+    URERendererOGL renderer;
     URECamera camera;
     BufferedImage image;
     public int width, height;
@@ -15,7 +15,7 @@ public class UIModal {
     String frameTiles;
     public UColor bgColor;
 
-    public UIModal(int theCharWidth, int theCharHeight, URERenderer theRenderer, URECamera theCamera, UColor thebgColor) {
+    public UIModal(int theCharWidth, int theCharHeight, URERendererOGL theRenderer, URECamera theCamera, UColor thebgColor) {
         renderer = theRenderer;
         camera = theCamera;
         width = theCharWidth;
@@ -35,7 +35,8 @@ public class UIModal {
     }
 
     void DrawFrame() {
-        renderer.renderUIFrame(this);
+        //renderer.renderUIFrame(this);
+        //MM FINISH ME
     }
 
     public BufferedImage getImage() {

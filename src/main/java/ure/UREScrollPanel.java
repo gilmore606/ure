@@ -5,10 +5,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public class UREScrollPanel extends JPanel {
+public class UREScrollPanel {
 
     Font font;
-    Color fgColor, bgColor;
+    UColor fgColor, bgColor;
     int textRows, textColumns;
     int pixelw, pixelh;
     int padX, padY;
@@ -17,32 +17,35 @@ public class UREScrollPanel extends JPanel {
     boolean suppressDuplicates = true;
     String lastMessage;
     ArrayList<String> lines;
-    ArrayList<Color> lineFades;
+    ArrayList<UColor> lineFades;
     BufferedImage image;
+    URERendererOGL renderer;
 
-    public UREScrollPanel(Font thefont, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg) {
-        super();
-        setLayout(null);
-        setFocusable(false);
-        image = new BufferedImage(px + columns * cw, py + rows * (ch + spacing), BufferedImage.TYPE_INT_RGB);
+    int xPos, yPos, width, height;
+    public void setBounds(int x, int y, int xx, int yy) {
+        //Hacky?
+        xPos = x;
+        yPos = y;
+        width = xx - x;
+        height = yy - y;
+    }
+    public UREScrollPanel(URERendererOGL theRenderer, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg) {
         lines = new ArrayList<String>();
-        lineFades = new ArrayList<Color>();
+        lineFades = new ArrayList<UColor>();
         textRows = rows;
         textColumns = columns;
-        font = thefont;
         charWidth = cw;
         charHeight = ch;
         padX = px;
         padY = py;
         pixelw = textColumns * cw + padX;
         pixelh = textRows * (ch + spacing) + padY;
-        fgColor = fg.makeAWTColor();
-        bgColor = bg.makeAWTColor();
-        setFont(font);
-        setBackground(bgColor);
+        fgColor = fg;
+        bgColor = bg;
+        renderer = theRenderer;
     }
 
-    public void addLineFade(Color fade) {
+    public void addLineFade(UColor fade) {
         lineFades.add(fade);
     }
 
@@ -56,32 +59,20 @@ public class UREScrollPanel extends JPanel {
     }
 
     public void renderImage() {
-        Graphics g = image.getGraphics();
-        g.setColor(bgColor);
-        g.fillRect(0,0,pixelw,pixelh);
-        g.setFont(font);
         int i = 0;
         while (i < textRows) {
             if (i < lines.size()) {
+                UColor col;
+                //MM FINISH THIS
                 if (i < lineFades.size())
-                    g.setColor(lineFades.get(i));
+                    col = lineFades.get(i);
                 else
-                    g.setColor(lineFades.get(lineFades.size() - 1));
-                g.drawString(lines.get(i), padX, (padY + pixelh + 4) - ((i + 1) * (charHeight + spacing)));
+                    col = lineFades.get(lineFades.size() - 1);
+                renderer.renderString(xPos + padX, yPos + (padY + pixelh + 4) - ((i + 1) * (charHeight + spacing)), col, lines.get(i));
+                //g.drawString(lines.get(i), padX, (padY + pixelh + 4) - ((i + 1) * (charHeight + spacing)));
+
             }
             i++;
         }
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(textColumns * charWidth, textRows * (charHeight + padY));
-    }
-
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        renderImage();
-        g.drawImage(image, 0, 0, this);
     }
 }

@@ -16,7 +16,7 @@ import java.util.*;
 public class URECamera extends Canvas implements UAnimator {
     public UREArea area;
     JFrame frame;
-    URERenderer renderer;
+    URERendererOGL renderer;
     BufferedImage image;
     float zoom = 1.0f;
     int pixelWidth, pixelHeight;
@@ -110,13 +110,12 @@ public class URECamera extends Canvas implements UAnimator {
         }
     }
 
-    public URECamera(URERenderer theRenderer, int thePixW, int thePixH, JFrame theframe) {
+    public URECamera(URERendererOGL theRenderer, int thePixW, int thePixH) {
         setFocusable(false);
         renderer = theRenderer;
         pixelWidth = thePixW;
         pixelHeight = thePixH;
         preferredSize = new Dimension(pixelWidth, pixelHeight);
-        frame = theframe;
         image = new BufferedImage(pixelWidth*8,pixelHeight*8, BufferedImage.TYPE_INT_RGB);
         visibilitySources = new HashSet<UREActor>();
         setBounds();
@@ -438,11 +437,12 @@ public class URECamera extends Canvas implements UAnimator {
         redrawCell(ax - x1, ay - y1);
     }
     public void redrawCell(int x, int y) {
-        renderer.renderCell(this, x, y);
+        //MM TODO THIS -- We cannot redraw cells any more.
+        //renderer.renderCell(this, x, y);
     }
 
     public void paintFrameBuffer() {
-        if (frameBuffer == null) {
+        /*if (frameBuffer == null) {
             createBufferStrategy(2);
             frameBuffer = getBufferStrategy();
         }
@@ -451,7 +451,7 @@ public class URECamera extends Canvas implements UAnimator {
         if (modal != null) {
             g.drawImage(modal.getImage(), (pixelWidth / 2) - (modal.pixelWidth / 2), (pixelHeight / 2) - (modal.pixelHeight / 2), null);
         }
-        frameBuffer.show();
+        frameBuffer.show();*/
     }
 
     public void animationTick() {
