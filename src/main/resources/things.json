@@ -1,25 +1,26 @@
 [
   {
     "name": "rock",
-    "glyph": 'o',
-    color: [70,70,120],
-    weight: 10,
-    value: 0
+    "glyph": "o",
+    "description": "A chunk of sandstone.",
+    "color": [70,70,120],
+    "weight": 10,
+    "value": 0
   },
   {
     "name": "butcher knife",
-    "type": "weapon",
-    "glyph": 't',
-    color: [100,100,240],
-    weight: 5,
-    value: 10
+    "glyph": "t",
+    "description": "A rusty butcher knife.",
+    "color": [100,100,240],
+    "weight": 5,
+    "value": 10
   },
   {
     "name": "trucker hat",
-    "type": "clothing",
-    "glyph": '^',
-    color: [0,240,0],
-    weight: 3,
-    value: 5
+    "glyph": "^",
+    "description": "A baseball cap bearing a strange inscription.",
+    "color": [0,240,0],
+    "weight": 3,
+    "value": 5
   }
 ]

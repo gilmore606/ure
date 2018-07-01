@@ -1,6 +1,8 @@
 package ure;
 
 import ure.terrain.URETerrain;
+import ure.things.UREThing;
+import ure.ui.UIModal;
 
 import java.awt.image.BufferedImage;
 import java.awt.*;
@@ -14,7 +16,7 @@ public class URERenderer {
     private int fontPadY = 1;
     private int cellPadX = 0;
     private int cellPadY = 1;
-    private Font font;
+    public Font font;
     private boolean smoothGlyphs = true;
 
     public boolean rendering;
@@ -25,13 +27,15 @@ public class URERenderer {
 
     String UIframeTiles = "+-+|+-+|";
     UColor UIframeColor;
+    public UColor UItextColor;
 
     public URERenderer(Font thefont) {
         font = thefont;
         fontSize = font.getSize();
         glyphCache = new HashMap<Character,BufferedImage>();
         outlineCache = new HashMap<Character,BufferedImage>();
-        UIframeColor = new UColor(1f, 1f, 0f);
+        UIframeColor = new UColor(0.7f, 0.7f, 0.7f);
+        UItextColor = new UColor(1f, 1f, 1f);
     }
 
     public int cellWidth() {
@@ -194,10 +198,9 @@ public class URERenderer {
     }
 
     public void renderUIFrame(UIModal modal) {
-
-        modal.getGraphics().setColor(modal.bgColor.makeAWTColor());
-        modal.getGraphics().fillRect(0,0,modal.pixelWidth,modal.pixelHeight);
-        modal.getGraphics().dispose();
+        Graphics g = modal.getGraphics();
+        g.setColor(modal.bgColor.makeAWTColor());
+        g.fillRect(0,0,modal.pixelWidth,modal.pixelHeight);
         for (int x=0;x<modal.width;x++) {
             for (int y=0;y<modal.height;y++) {
                 char c = 0;
@@ -211,7 +214,7 @@ public class URERenderer {
                     c = UIframeTiles.charAt(3);
                 } else if (x == modal.width - 1 && y == modal.height - 1) {
                     c = UIframeTiles.charAt(4);
-                } else if (x < modal.width - 1 && y == modal.height - 1) {
+                } else if (x > 0 && x < modal.width - 1 && y == modal.height - 1) {
                     c = UIframeTiles.charAt(5);
                 } else if (x == 0 && y == modal.height - 1) {
                     c = UIframeTiles.charAt(6);

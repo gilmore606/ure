@@ -38,6 +38,11 @@ public class URETerrainCzar {
 
     public void loadTerrains(String resourceName) {
         terrainClasses = reflections.getSubTypesOf(URETerrain.class);
+        System.out.println("+++++++++ " + terrainClasses.size() + " UREterrains");
+        for (Class<? extends URETerrain> terrainClass : terrainClasses) {
+            System.out.println("**** " + terrainClass.toString());
+        }
+        System.out.println("+++++++++");
         terrains = new HashMap<>();
         terrainsByName = new HashMap<>();
         try {

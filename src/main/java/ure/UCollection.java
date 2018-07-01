@@ -1,5 +1,7 @@
 package ure;
 
+import ure.things.UREThing;
+
 import java.util.HashSet;
 import java.util.Iterator;
 

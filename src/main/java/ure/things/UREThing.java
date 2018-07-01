@@ -1,4 +1,6 @@
-package ure;
+package ure.things;
+
+import ure.*;
 
 import java.util.Iterator;
 
@@ -8,23 +10,33 @@ import java.util.Iterator;
  * A real instance of a thing.
  *
  */
-public class UREThing implements UContainer {
+public class UREThing implements UContainer, Cloneable {
     public String name;
     public char glyph;
+    public String description = "A thing.";
+    public int weight;
+    public int value;
+    public int[] color;
+
+    public static final String TYPE = "";
 
     UColor glyphColor;
     boolean glyphOutline = false;
 
-    UContainer location;  // What container am I in?
-    UCollection contents; // What's inside me?
+    protected UContainer location;  // What container am I in?
+    protected UCollection contents; // What's inside me?
 
-    public UREThing(String thename, char theglyph, UColor thecolor, boolean addOutline) {
+    public void initialize() {
+        contents = new UCollection(this);
+        if (glyphColor == null && color != null)
+            glyphColor = new UColor(color[0],color[1],color[2]);
+    }
+
+    public void setDisplayFields(String thename, char theglyph, UColor thecolor, boolean addOutline) {
         name = thename;
         glyph = theglyph;
         glyphColor = thecolor;
         glyphOutline = addOutline;
-        contents = new UCollection(this);
-        location = null;
     }
 
     public char getGlyph() {
@@ -74,4 +86,21 @@ public class UREThing implements UContainer {
     public int areaX() { return location.areaX(); }
     public int areaY() { return location.areaY(); }
     public UREArea area() { return location.area(); }
+
+    public UREThing getClone() {
+        try {
+            return (UREThing) super.clone();
+        } catch (CloneNotSupportedException e) {
+            System.out.println(" Cloning not allowed. ");
+            return this;
+        }
+    }
+
+    public boolean tryGetBy(UREActor actor) {
+        return true;
+    }
+
+    public String getMsg(UREActor actor) {
+        return description;
+    }
 }

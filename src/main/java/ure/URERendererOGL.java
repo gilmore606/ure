@@ -5,12 +5,11 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import ure.terrain.URETerrain;
+import ure.things.UREThing;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import javax.imageio.ImageIO;
-import java.io.File;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -72,9 +71,9 @@ public class URERendererOGL {
 
     public void init(){
 
-        glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
+        glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
         // Configure our window
         glfwDefaultWindowHints();

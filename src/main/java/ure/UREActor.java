@@ -1,8 +1,7 @@
 package ure;
 
 import ure.terrain.URETerrain;
-
-import java.awt.*;
+import ure.things.UREThing;
 
 public class UREActor  extends UREThing {
 
@@ -10,7 +9,8 @@ public class UREActor  extends UREThing {
     int cameraPinStyle;
 
     public UREActor(String thename, char theicon, UColor thecolor, boolean addOutline) {
-        super(thename, theicon, thecolor, addOutline);
+        initialize();
+        setDisplayFields(thename, theicon, thecolor, addOutline);
     }
 
     public void attachCamera(URECamera thecamera, int pinstyle) {
@@ -71,5 +71,12 @@ public class UREActor  extends UREThing {
 
     public void moveTriggerFrom(UREActor actor) {
         area().commander().printScroll("Ow!");
+    }
+
+    public void tryGetThing(UREThing thing) {
+        if (thing.tryGetBy(this)) {
+            thing.moveToContainer(this);
+            area().commander().printScroll(thing.getMsg(this));
+        }
     }
 }

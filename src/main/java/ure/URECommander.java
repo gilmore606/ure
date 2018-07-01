@@ -1,9 +1,11 @@
 package ure;
 
-import javax.swing.*;
+import ure.ui.UIModal;
+import ure.ui.UREScrollPanel;
+import ure.ui.UREStatusPanel;
+
 import java.awt.event.KeyListener;
 import java.awt.event.*;
-import java.awt.image.BufferStrategy;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -161,7 +163,8 @@ public class URECommander implements KeyListener {
     }
 
     void commandGet() {
-        UIModal modal = new UIModal(20,10, renderer, player.camera, UColor.COLOR_BLACK);
+        //UIModal modal = new UIModal(20,10, renderer, player.camera, UColor.COLOR_BLACK);
+        UIModal modal = UIModal.popMessage("Nothing happened.", renderer, player.camera, UColor.COLOR_BLACK);
         showModal(modal);
     }
 

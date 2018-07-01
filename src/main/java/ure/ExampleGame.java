@@ -1,10 +1,11 @@
 package ure;
 
 import ure.terrain.URETerrainCzar;
+import ure.things.UREThingCzar;
+import ure.ui.UREScrollPanel;
+import ure.ui.UREStatusPanel;
 
 import java.awt.*;
-import javax.swing.*;
-
 
 public class ExampleGame implements UTimeListener {
 
@@ -18,14 +19,10 @@ public class ExampleGame implements UTimeListener {
     //static URERenderer renderer;
     static URERendererOGL renderer;
 
-    private void makeWindow() {
-        /*frame = new JFrame("Rogue");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
-        frame.setLayout(null);
-        frame.getContentPane().setLayout(null);
-        frame.setBounds(0,0,1400,1000);*/
+    static URETerrainCzar terrainCzar;
+    static UREThingCzar thingCzar;
 
+    private void makeWindow() {
         camera = new URECamera(renderer, 1200, 800);
         camera.moveTo(area, 40,20);
         player.attachCamera(camera, URECamera.PINSTYLE_SOFT);
@@ -51,16 +48,6 @@ public class ExampleGame implements UTimeListener {
 
         commander.setStatusPanel(statusPanel);
         commander.setScrollPanel(scrollPanel);
-        /*frame.getContentPane().add(statusPanel);
-        frame.getContentPane().add(scrollPanel);
-        frame.getContentPane().add(camera);
-
-        frame.setLocationRelativeTo(null);
-        frame.setSize(1400, 1000);
-        frame.getContentPane().setFocusable(true);
-        frame.setVisible(true);
-        frame.getContentPane().requestFocusInWindow();*/
-        //return frame;
     }
 
     public void startUp()  {
@@ -73,9 +60,11 @@ public class ExampleGame implements UTimeListener {
         renderer = new URERendererOGL(font);
         renderer.init();
 
-        URETerrainCzar terrainCzar = new URETerrainCzar();
+        terrainCzar = new URETerrainCzar();
         terrainCzar.loadTerrains("/terrains.json");
-        //area = new UREArea("/samplemap.txt", terrainCzar);
+        thingCzar = new UREThingCzar();
+        thingCzar.loadThings("/things.json");
+
         area = new UREArea(100, 100, terrainCzar, "wall");
         URELandscaper scaper = new URELandscaper();
         scaper.digCaves(area, "floor",2, 2, 98, 98);

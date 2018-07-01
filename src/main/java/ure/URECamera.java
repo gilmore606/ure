@@ -1,6 +1,8 @@
 package ure;
 
 import ure.terrain.URETerrain;
+import ure.things.UREThing;
+import ure.ui.UIModal;
 
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -393,17 +395,27 @@ public class URECamera extends Canvas implements UAnimator {
     }
 
     UColor lightAt(int x, int y) {
+        UColor total;
         if (!isValidXY(x,y))
             return UColor.COLOR_BLACK;
-        if (allLit)
-            return UColor.COLOR_WHITE;
-        UColor total = lightcells[x][y].light();
-        for (int i=-1;i<2;i++) {
-            for (int j=-1;j<2;j++) {
-                URETerrain t = area.terrainAt(x+x1+i,y+y1+j);
-                if (t != null)
-                    if (t.glow)
-                        total.addLights(t.bgColor, 0.5f);
+        if (allLit) {
+            total = UColor.COLOR_WHITE;
+        } else {
+            total = lightcells[x][y].light();
+            for (int i = -1;i < 2;i++) {
+                for (int j = -1;j < 2;j++) {
+                    URETerrain t = area.terrainAt(x + x1 + i, y + y1 + j);
+                    if (t != null)
+                        if (t.glow)
+                            total.addLights(t.bgColor, 0.5f);
+                }
+            }
+        }
+        if (modal != null) {
+            if (x >= modal.cellx+1 && x <= modal.cellx+modal.width-1) {
+                if (y >= modal.celly + 1 && y <= modal.celly + modal.height-1) {
+                    total = new UColor(total.fR() * 0.6f, total.fG() * 0.6f, total.fB() * 0.6f);
+                }
             }
         }
         return total;
@@ -468,11 +480,13 @@ public class URECamera extends Canvas implements UAnimator {
             this.detachModal();
         }
         this.modal = modal;
+        renderLights();
         renderImage();
     }
 
     public void detachModal() {
         this.modal = null;
+        renderLights();
         renderImage();
     }
 }

@@ -1,8 +1,9 @@
-package ure;
+package ure.ui;
 
-import javax.swing.*;
+import ure.UColor;
+import ure.URERendererOGL;
+
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 public class UREStatusPanel /*extends JPanel */{

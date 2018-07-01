@@ -2,6 +2,7 @@ package ure;
 
 import ure.terrain.URETerrain;
 import ure.terrain.URETerrainCzar;
+import ure.things.UREThing;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
