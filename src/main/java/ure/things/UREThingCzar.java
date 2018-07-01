@@ -23,7 +23,7 @@ public class UREThingCzar {
 
     private Set<Class<? extends UREThing>> thingClasses;
     private ObjectMapper objectMapper = new ObjectMapper();
-    private Reflections reflections = new Reflections("", new SubTypesScanner());
+    private Reflections reflections = new Reflections("ure", new SubTypesScanner());
 
     public UREThingCzar() {
         SimpleModule module = new SimpleModule();

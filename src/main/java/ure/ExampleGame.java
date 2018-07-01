@@ -1,6 +1,7 @@
 package ure;
 
 import ure.actors.UREActor;
+import ure.actors.UREActorCzar;
 import ure.actors.UREPlayer;
 import ure.terrain.URETerrainCzar;
 import ure.things.UREThingCzar;
@@ -25,6 +26,7 @@ public class ExampleGame implements UTimeListener {
 
     static URETerrainCzar terrainCzar;
     static UREThingCzar thingCzar;
+    static UREActorCzar actorCzar;
 
     private JFrame makeWindow() {
         frame = new JFrame("Rogue");
@@ -81,6 +83,8 @@ public class ExampleGame implements UTimeListener {
         terrainCzar.loadTerrains("/terrains.json");
         thingCzar = new UREThingCzar();
         thingCzar.loadThings("/things.json");
+        actorCzar = new UREActorCzar();
+        actorCzar.loadActors("/actors.json");
 
         //area = new UREArea("/samplemap.txt", terrainCzar);
         area = new UREArea(80, 80, terrainCzar, "wall");

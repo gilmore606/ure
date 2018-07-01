@@ -28,7 +28,7 @@ public class URETerrainCzar {
 
     private Set<Class<? extends URETerrain>> terrainClasses;
     private ObjectMapper objectMapper = new ObjectMapper();
-    private Reflections reflections = new Reflections("", new SubTypesScanner());
+    private Reflections reflections = new Reflections("ure", new SubTypesScanner());
 
     public URETerrainCzar() {
         SimpleModule module = new SimpleModule();
