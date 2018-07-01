@@ -25,7 +25,7 @@ public class UREThing implements UContainer, Cloneable {
     public static final String TYPE = "";
 
     UColor glyphColor;
-    boolean glyphOutline = false;
+    public boolean glyphOutline = false;
 
     protected UContainer location;  // What container am I in?
     protected UCollection contents; // What's inside me?
@@ -35,6 +35,7 @@ public class UREThing implements UContainer, Cloneable {
     public boolean isActor() {
         return false;
     }
+    public boolean isPlayer() { return false; }
 
     public void initialize() {
         contents = new UCollection(this);

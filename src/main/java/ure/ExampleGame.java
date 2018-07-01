@@ -91,6 +91,7 @@ public class ExampleGame implements UTimeListener {
         ExampleCaveScaper scaper = new ExampleCaveScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
 
+
         player = new UREPlayer("Player", '@', new UColor(Color.WHITE), true, 4, 6);
 
         commander = new URECommander(player, renderer);
@@ -106,6 +107,9 @@ public class ExampleGame implements UTimeListener {
         UCell startcell = scaper.randomCell(area, new String[]{"floor"});
         player.moveToCell(area, startcell.x, startcell.y);
         player.attachCamera(camera, URECamera.PINSTYLE_HARD);
+
+        UREActor monk = actorCzar.getActorByName("monk");
+        monk.moveToCell(area, startcell.x, startcell.y - 2);
 
         commander.gameLoop(frame);
     }

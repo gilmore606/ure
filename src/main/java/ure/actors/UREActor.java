@@ -6,6 +6,8 @@ import ure.things.UREThing;
 
 public class UREActor  extends UREThing {
 
+    public boolean awake;
+
     public URECamera camera;
     int cameraPinStyle;
 
@@ -14,6 +16,7 @@ public class UREActor  extends UREThing {
     @Override
     public void initialize() {
         super.initialize();
+        glyphOutline = true;
     }
 
     @Override
@@ -96,5 +99,9 @@ public class UREActor  extends UREThing {
             area().commander().printScroll("You pick up " + thing.iname() + ".");
             thing.gotBy(this);
         }
+    }
+
+    public void hearTick() {
+
     }
 }

@@ -21,6 +21,9 @@ public class UREPlayer extends UREActor {
     }
 
     @Override
+    public boolean isPlayer() { return true; }
+
+    @Override
     public void moveToCell(UREArea area, int destX, int destY) {
         super.moveToCell(area,destX,destY);
         if (light != null) {
