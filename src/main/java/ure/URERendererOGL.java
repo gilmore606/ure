@@ -4,8 +4,10 @@ import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
+import ure.actors.UREActor;
 import ure.terrain.URETerrain;
 import ure.things.UREThing;
+import ure.ui.UIModal;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
@@ -50,7 +52,9 @@ public class URERendererOGL {
     private int cellPadX = 0;
     private int cellPadY = 1;
     private int fontSize;
+    String UIframeTiles = "+-+|+-+|";
     public UColor UIframeColor;
+    public UColor UItextColor;
 
     URECommander commander;
     public void setCommander(URECommander cmdr) {
@@ -339,16 +343,22 @@ public class URERendererOGL {
         Iterator<UREThing> things = camera.thingsAt(x,y);
         if (things != null) {
             while (things.hasNext()) {
-                UREThing thing = things.next();
-                char icon = thing.getGlyph();
-                UColor color = new UColor(thing.getGlyphColor());
-                if (thing.drawGlyphOutline())
-                    stampGlyphOutline(icon, x * cellw, y * cellh, UColor.COLOR_BLACK, 0, 0);
-                color.illuminateWith(light, vis);
-                //stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color, 0, 0);
-                stampGlyph(icon, x * cellw, y * cellh, color, 0, 0);
+                renderThing((UREThing)things.next(), x * cellw, y * cellh, light, vis, 0, 0);
             }
         }
+        UREActor actor = camera.actorAt(x,y);
+        if (actor != null) {
+            renderThing((UREThing)actor, x * cellw, y * cellh, light, vis, 0, 0);
+        }
+    }
+
+    void renderThing(UREThing thing, int x, int y, UColor light, float vis, int offx, int offy) {
+        char glyph = thing.getGlyph();
+        if (thing.drawGlyphOutline())
+            stampGlyphOutline(glyph, x, y, UColor.COLOR_BLACK, offx, offy);
+        UColor color = new UColor(thing.getGlyphColor());
+        color.illuminateWith(light, vis);
+        stampGlyph(glyph, x, y, color, offx, offy);
     }
 
     public void render(){
@@ -393,5 +403,37 @@ public class URERendererOGL {
         glfwSwapBuffers(window);
 
         tris = 0;
+    }
+
+    public void renderUIFrame(UIModal modal) {
+        Graphics g = modal.getGraphics();
+        g.setColor(modal.bgColor.makeAWTColor());
+        g.fillRect(0,0,modal.pixelWidth,modal.pixelHeight);
+        for (int x=0;x<modal.width;x++) {
+            for (int y=0;y<modal.height;y++) {
+                char c = 0;
+                if (x == 0 && y == 0) {
+                    c = UIframeTiles.charAt(0);
+                } else if (y == 0 && x < modal.width - 1) {
+                    c = UIframeTiles.charAt(1);
+                } else if (y == 0) {
+                    c = UIframeTiles.charAt(2);
+                } else if (x == modal.width - 1 && y < modal.height - 1) {
+                    c = UIframeTiles.charAt(3);
+                } else if (x == modal.width - 1 && y == modal.height - 1) {
+                    c = UIframeTiles.charAt(4);
+                } else if (x > 0 && x < modal.width - 1 && y == modal.height - 1) {
+                    c = UIframeTiles.charAt(5);
+                } else if (x == 0 && y == modal.height - 1) {
+                    c = UIframeTiles.charAt(6);
+                } else if (x == 0 && y < modal.height - 1) {
+                    c = UIframeTiles.charAt(7);
+                }
+                if (c != 0) {
+                    // TODO: this will not work because it needs to draw on the modal's image
+                    stampGlyph(c, x*cellWidth(), y*cellHeight(), UIframeColor, 0, 0);
+                }
+            }
+        }
     }
 }
