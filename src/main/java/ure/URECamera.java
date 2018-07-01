@@ -134,6 +134,16 @@ public class URECamera extends Canvas implements UAnimator {
         return preferredSize;
     }
 
+    public void setAllVisible(boolean val) {
+        allVisible = val;
+        renderLights();
+        renderImage();
+    }
+    public void setAllLit(boolean val) {
+        allLit = val;
+        renderLights();
+        renderImage();
+    }
 
     public void moveTo(UREArea theArea, int thex, int they) {
         if (theArea != area)

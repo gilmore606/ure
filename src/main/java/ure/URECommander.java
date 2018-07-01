@@ -74,7 +74,9 @@ public class URECommander implements KeyListener {
         keyBinds.put('d', "MOVE_E");
         keyBinds.put('g', "GET");
         keyBinds.put('e', "DEBUG");
-
+        keyBinds.put('1', "DEBUG_1");
+        keyBinds.put('2', "DEBUG_2");
+        keyBinds.put('3', "DEBUG_3");
     }
 
     public void keyPressed(KeyEvent e) {
@@ -124,6 +126,20 @@ public class URECommander implements KeyListener {
                     break;
                 case "DEBUG":
                     debug();
+                    break;
+                case "DEBUG_1":
+                    debug_1();
+                    acted = false;
+                    break;
+                case "DEBUG_2":
+                    debug_2();
+                    acted = false;
+                    break;
+                case "DEBUG_3":
+                    debug_3();
+                    acted = false;
+                    break;
+
             }
             if (acted) {
                 tickTime();
@@ -158,6 +174,16 @@ public class URECommander implements KeyListener {
     void debug() {
         player.debug();
     }
+
+    void debug_1() {
+        player.camera.setAllVisible(!player.camera.allVisible);
+    }
+
+    void debug_2() {
+        player.camera.setAllLit(!player.camera.allLit);
+    }
+
+    void debug_3() { }
 
     public void printScroll(String text) {
         scrollPrinter.print(text);
