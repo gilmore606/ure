@@ -1,9 +1,9 @@
 package ure;
 
+import ure.actors.UREActor;
 import ure.things.UREThing;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 
 /**

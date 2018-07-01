@@ -1,18 +1,19 @@
-package ure;
+package ure.actors;
 
+import ure.*;
 import ure.terrain.URETerrain;
 import ure.things.UREThing;
 
 public class UREActor  extends UREThing {
 
-    URECamera camera;
+    public URECamera camera;
     int cameraPinStyle;
 
     public static boolean isActor = true;
 
-    public UREActor(String thename, char theicon, UColor thecolor, boolean addOutline) {
-        initialize();
-        setDisplayFields(thename, theicon, thecolor, addOutline);
+    @Override
+    public void initialize() {
+        super.initialize();
     }
 
     @Override

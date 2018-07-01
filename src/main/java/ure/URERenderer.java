@@ -1,5 +1,6 @@
 package ure;
 
+import ure.actors.UREActor;
 import ure.terrain.URETerrain;
 import ure.things.UREThing;
 import ure.ui.UIModal;

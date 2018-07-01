@@ -1,7 +1,7 @@
 package ure.terrain;
 
 import ure.UCell;
-import ure.UREActor;
+import ure.actors.UREActor;
 
 public class Door extends URETerrain {
 

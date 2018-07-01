@@ -1,6 +1,7 @@
 package ure.things;
 
 import ure.*;
+import ure.actors.UREActor;
 
 import java.util.Iterator;
 

@@ -1,5 +1,7 @@
 package ure;
 
+import ure.actors.UREActor;
+import ure.actors.UREPlayer;
 import ure.terrain.URETerrainCzar;
 import ure.things.UREThingCzar;
 import ure.ui.UREScrollPanel;
