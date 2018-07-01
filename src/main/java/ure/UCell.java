@@ -77,6 +77,10 @@ public class UCell implements UContainer {
         return null;
     }
 
+    public UREThing topThingAt() {
+        return contents.topThing();
+    }
+
     public boolean willAcceptThing(UREThing thing) {
         if (terrain != null) {
             if (terrain.isPassable()) {

@@ -163,8 +163,10 @@ public class URECommander implements KeyListener {
 
     void commandGet() {
         //UIModal modal = new UIModal(20,10, renderer, player.camera, UColor.COLOR_BLACK);
-        UIModal modal = UIModal.popMessage("Nothing happened.", renderer, player.camera, UColor.COLOR_BLACK);
-        showModal(modal);
+        //UIModal modal = UIModal.popMessage("Nothing happened.", renderer, player.camera, UColor.COLOR_BLACK);
+        //showModal(modal);
+        if (player.myCell() != null)
+            player.tryGetThing(player.myCell().topThingAt());
     }
 
     void showModal(UIModal modal) {

@@ -109,7 +109,7 @@ public class UREThing implements UContainer, Cloneable {
     }
 
     public String getMsg(UREActor actor) {
-        return description;
+        return "You got a " + name + ".";
     }
     public String walkMsg(UREActor actor) { return description; }
 }

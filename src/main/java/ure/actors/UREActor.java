@@ -71,6 +71,11 @@ public class UREActor  extends UREThing {
         thearea.cellAt(destX, destY).walkedOnBy(this);
     }
 
+    public UCell myCell() {
+        if (location.containerType() == UContainer.TYPE_CELL)
+            return (UCell)location;
+        return null;
+    }
     public void debug() {
         URELight newlight = new URELight(new UColor(1f,1f,0.9f), 12, 3);
         newlight.moveTo(area(), areaX(), areaY());
@@ -82,6 +87,10 @@ public class UREActor  extends UREThing {
     }
 
     public void tryGetThing(UREThing thing) {
+        if (thing == null) {
+            area().commander().printScroll("Nothing to get.");
+            return;
+        }
         if (thing.tryGetBy(this)) {
             thing.moveToContainer(this);
             area().commander().printScroll(thing.getMsg(this));
