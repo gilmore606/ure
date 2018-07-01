@@ -12,6 +12,7 @@ import java.util.Iterator;
  */
 public class UREThing implements UContainer, Cloneable {
     public String name;
+    public String type;
     public char glyph;
     public String description = "A thing.";
     public int weight;

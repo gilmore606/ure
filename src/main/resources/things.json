@@ -9,6 +9,7 @@
   },
   {
     "name": "butcher knife",
+    "type": "weapon",
     "glyph": "t",
     "description": "A rusty butcher knife.",
     "color": [100,100,240],
@@ -17,6 +18,7 @@
   },
   {
     "name": "trucker hat",
+    "type": "clothing",
     "glyph": "^",
     "description": "A baseball cap bearing a strange inscription.",
     "color": [0,240,0],
