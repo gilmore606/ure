@@ -1,6 +1,7 @@
 package ure;
 
 import ure.actors.UREActor;
+import ure.things.UREThing;
 import ure.ui.UIModal;
 import ure.ui.UREScrollPanel;
 
@@ -73,6 +74,7 @@ public class URECommander implements KeyListener {
         keyBinds.put('a', "MOVE_W");
         keyBinds.put('d', "MOVE_E");
         keyBinds.put('g', "GET");
+        keyBinds.put('i', "INVENTORY");
         keyBinds.put('e', "DEBUG");
         keyBinds.put('1', "DEBUG_1");
         keyBinds.put('2', "DEBUG_2");
@@ -124,6 +126,9 @@ public class URECommander implements KeyListener {
                 case "GET":
                     commandGet();
                     break;
+                case "INVENTORY":
+                    commandInventory();
+                    break;
                 case "DEBUG":
                     debug();
                     break;
@@ -167,6 +172,23 @@ public class URECommander implements KeyListener {
         //showModal(modal);
         if (player.myCell() != null)
             player.tryGetThing(player.myCell().topThingAt());
+    }
+
+    void commandInventory() {
+        UIModal modal = makeInventoryModal();
+        showModal(modal);
+    }
+
+    UIModal makeInventoryModal() {
+        UIModal modal = new UIModal(30,30, renderer, player.camera, UColor.COLOR_BLACK);
+        Iterator<UREThing> things = player.iterator();
+        int i = 1;
+        while (things.hasNext()) {
+            UREThing thing = things.next();
+            modal.addText("item" + Integer.toString(i), thing.name, 2, i + 1, renderer.UItextColor.makeAWTColor());
+            i++;
+        }
+        return modal;
     }
 
     void showModal(UIModal modal) {

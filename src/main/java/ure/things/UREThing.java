@@ -108,8 +108,13 @@ public class UREThing implements UContainer, Cloneable {
         return true;
     }
 
-    public String getMsg(UREActor actor) {
-        return "You got a " + name + ".";
+    public void gotBy(UREActor actor) {
+        if (this.getMsg(actor) != null)
+            area().commander().printScroll(this.getMsg(actor));
     }
-    public String walkMsg(UREActor actor) { return description; }
+
+    public String getMsg(UREActor actor) {
+        return description;
+    }
+    public String walkMsg(UREActor actor) { return "You see a " + name + "."; }
 }
