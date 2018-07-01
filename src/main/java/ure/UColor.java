@@ -3,7 +3,7 @@ package ure;
 import java.awt.*;
 
 public class UColor {
-    public float r, g, b;
+    public float r, g, b, a;
 
     public static UColor COLOR_BLACK = new UColor(0f,0f,0f);
     public static UColor COLOR_WHITE = new UColor(1f,1f,1f);
@@ -23,9 +23,11 @@ public class UColor {
         if (r > 1f) r = 1f;
         if (g > 1f) g = 1f;
         if (b > 1f) b = 1f;
+        if (a > 1f) a = 1f;
         if (r < 0f) r = 0f;
         if (g < 0f) g = 0f;
         if (b < 0f) b = 0f;
+        if (a < 0f) a = 0f;
     }
 
     public int iR() {
@@ -37,6 +39,7 @@ public class UColor {
     public int iB() {
         return (int)(b * 255f);
     }
+    public int iA() { return (int)(a * 255f); }
     public float fR() {
         return r;
     }
@@ -46,17 +49,22 @@ public class UColor {
     public float fB() {
         return b;
     }
+    public float fA() { return a; }
 
-    public void set(int ir, int ig, int ib) {
+    public void set (int ir, int ig, int ib) { set(ir,ig,ib,255); }
+    public void set(int ir, int ig, int ib, int ia) {
         r = (float)ir / 255f;
         g = (float)ig / 255f;
         b = (float)ib / 255f;
+        a = (float)ia / 255f;
         BoundsCheck();
     }
-    public void set(float fr, float fg, float fb) {
+    public void set(float fr, float fg, float fb) { set (fr,fg,fb,1f); }
+    public void set(float fr, float fg, float fb, float fa) {
         r = fr;
         g = fg;
         b = fb;
+        a = fa;
         BoundsCheck();
     }
     public void set(int[] arr) {
