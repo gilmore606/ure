@@ -90,6 +90,7 @@ public class ExampleGame implements UTimeListener {
         scaper.digRiver(area, "water", 0, 0, 99, 99, 5f, 0.7f, 1.4f);
         scaper.digRiver(area, "water", 0, 0, 99, 99, 3f, 0.9f, 2f);
         scaper.digRiver(area, "lava", 0, 0, 99, 99, 2f, 1.5f, 2f);
+        scaper.addDoors(area, "door", new String[]{"wall"}, 1f);
         scaper.scatterThings(area, new String[]{"trucker hat", "butcher knife", "rock", "rock", "rock"}, new String[]{"floor"}, 50);
 
         player = new UREPlayer("Player", '@', new UColor(Color.WHITE), true, 4, 6);

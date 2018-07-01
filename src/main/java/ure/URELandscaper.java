@@ -96,11 +96,43 @@ public class URELandscaper {
 
     }
 
+    boolean cellHasTerrain(UREArea area, UCell cell, String[] terrains) {
+        if (cell == null) return false;
+        for (int i=0;i<terrains.length;i++) {
+            if (terrains[i].equals(cell.terrain.name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    boolean[][] neighborsHaveTerrain(UREArea area, UCell cell, String[] terrains) {
+        boolean[][] neighbors = new boolean[3][3];
+        for (int xo=-1;xo<2;xo++) {
+            for (int yo=-1;yo<2;yo++) {
+                neighbors[xo+1][yo+1] = cellHasTerrain(area, area.cellAt(cell.x+xo,cell.y+yo), terrains);
+            }
+        }
+        return neighbors;
+    }
+    int numNeighborsHaveTerrain(UREArea area, UCell cell, String[] terrains) {
+        boolean[][] neighbors = neighborsHaveTerrain(area, cell, terrains);
+        int total = 0;
+        for (int xo=-1;xo<2;xo++) {
+            for (int yo=-1;yo<2;yo++) {
+                if (neighbors[xo+1][yo+1])
+                    total++;
+            }
+        }
+        return total;
+    }
+
     public UCell randomCell(UREArea area, String[] terrains) {
         UCell cell = null;
         boolean match = false;
         while (cell == null || !match) {
             cell = area.cellAt(random.nextInt(area.xsize), random.nextInt(area.ysize));
+            match = cellHasTerrain(area, cell, terrains);
             for (int i=0;i<terrains.length;i++) {
                 if (terrains[i].equals(cell.terrain.name)) {
                     match = true;
@@ -108,6 +140,23 @@ public class URELandscaper {
             }
         }
         return cell;
+    }
+
+    public void addDoors(UREArea area, String doorTerrain, String[] wallTerrains, float doorChance) {
+        for (int x=0;x<area.xsize;x++) {
+            for (int y=0;y<area.ysize;y++) {
+                if (area.cellAt(x,y).terrain.isPassable()) {
+                    boolean[][] neighbors = neighborsHaveTerrain(area, area.cellAt(x,y), wallTerrains);
+                    int neighborCount = numNeighborsHaveTerrain(area, area.cellAt(x,y), wallTerrains);
+                    if ((neighbors[0][1] && neighbors[2][1] && !neighbors[1][0] && !neighbors[1][2]) ||
+                        !neighbors[0][1] && !neighbors[2][1] && neighbors[1][0] && neighbors[1][2]) {
+                        if (neighborCount <= 5) {
+                            area.setTerrain(x,y,doorTerrain);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public void digRiver(UREArea area, String t, int x1, int y1, int x2, int y2, float riverWidth, float twist, float twistmax) {
