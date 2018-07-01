@@ -15,6 +15,11 @@ public class UREActor  extends UREThing {
         setDisplayFields(thename, theicon, thecolor, addOutline);
     }
 
+    @Override
+    public boolean isActor() {
+        return true;
+    }
+
     public void attachCamera(URECamera thecamera, int pinstyle) {
         camera = thecamera;
         cameraPinStyle = pinstyle;

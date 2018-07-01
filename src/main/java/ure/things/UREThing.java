@@ -29,6 +29,10 @@ public class UREThing implements UContainer, Cloneable {
 
     public static boolean isActor = false;
 
+    public boolean isActor() {
+        return false;
+    }
+
     public void initialize() {
         contents = new UCollection(this);
         if (glyphColor == null && color != null)

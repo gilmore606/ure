@@ -31,7 +31,7 @@ public class UCollection {
     }
 
     public void add(UREThing thing) {
-        if (thing.isActor)
+        if (thing.isActor())
             actors.add((UREActor)thing);
         else
             things.add(thing);
@@ -45,9 +45,19 @@ public class UCollection {
         return !things.isEmpty();
     }
 
+    public boolean hasActors() {
+        return !actors.isEmpty();
+    }
+
     public UREThing topThing() {
         if (things.isEmpty())
             return null;
         return things.get(0);
+    }
+
+    public UREActor actor() {
+        if (actors.isEmpty())
+            return null;
+        return actors.get(0);
     }
 }

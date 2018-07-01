@@ -429,6 +429,7 @@ public class URECamera extends Canvas implements UAnimator {
     public Iterator<UREThing> thingsAt(int x, int y) {
         return area.thingsAt(x + x1, y + y1);
     }
+    public UREActor actorAt(int x, int y) { return area.actorAt(x+x1,y+y1); }
 
     public void renderImage() {
         if (modal != null)

@@ -2,6 +2,8 @@ package ure;
 
 public class UREPlayer extends UREActor {
 
+    public static boolean isActor = true;
+
     URELight light;
 
     public UREPlayer(String thename, char theicon, UColor thecolor, boolean addOutline, int selfLight, int selfLightFalloff) {

@@ -16,7 +16,7 @@ public class UCell implements UContainer {
     int x,y;
     URETerrain terrain;
     float sunBrightness;
-    UCollection contents;
+    public UCollection contents;
     boolean isSeen = false;
 
     public UCell(UREArea theArea, int thex, int they, URETerrain theTerrain) {
@@ -54,8 +54,8 @@ public class UCell implements UContainer {
     public int containerType() { return UContainer.TYPE_CELL; }
 
     public void moveTriggerFrom(UREActor actor) {
-        if (actorHere() != null) {
-            actorHere().moveTriggerFrom(actor);
+        if (actorAt() != null) {
+            actorAt().moveTriggerFrom(actor);
         } else {
             terrain.moveTriggerFrom(actor, this);
         }
@@ -70,8 +70,10 @@ public class UCell implements UContainer {
         terrain.walkedOnBy(actor, this);
     }
 
-    public UREActor actorHere() {
-        return area.actorAt(x, y);
+    public UREActor actorAt() {
+        if (contents.hasActors())
+            return contents.actor();
+        return null;
     }
 
     public boolean willAcceptThing(UREThing thing) {

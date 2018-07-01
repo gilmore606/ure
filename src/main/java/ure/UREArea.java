@@ -197,16 +197,7 @@ public class UREArea implements UTimeListener {
         }
         return null;
     }
-    UREActor actorAt(int x, int y) {
-        if (isValidXY(x, y)) {
-            for (UREActor actor : actors) {
-                if (actor.areaX() == x && actor.areaY() == y) {
-                    return actor;
-                }
-            }
-        }
-        return null;
-    }
+
     boolean blocksLight(int x, int y) {
         URETerrain t = terrainAt(x, y);
         if (t != null)
@@ -253,6 +244,12 @@ public class UREArea implements UTimeListener {
     public Iterator<UREThing> thingsAt(int x, int y) {
         if (isValidXY(x,y)) {
             return cells[x][y].iterator();
+        }
+        return null;
+    }
+    public UREActor actorAt(int x, int y) {
+        if (isValidXY(x,y)) {
+            return cells[x][y].actorAt();
         }
         return null;
     }
