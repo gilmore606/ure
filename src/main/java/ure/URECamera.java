@@ -1,5 +1,6 @@
 package ure;
 
+import ure.actors.UREActor;
 import ure.terrain.URETerrain;
 import ure.things.UREThing;
 import ure.ui.UIModal;
@@ -23,7 +24,7 @@ public class URECamera extends Canvas implements UAnimator {
     float zoom = 1.0f;
     int pixelWidth, pixelHeight;
     Dimension preferredSize;
-    int width, height;
+    public int width, height;
     int centerX, centerY;
     int x1, y1, x2, y2;
     ULightcell lightcells[][];
@@ -32,7 +33,7 @@ public class URECamera extends Canvas implements UAnimator {
     UIModal modal;
 
     boolean allVisible = false;
-    boolean allLit = true;
+    boolean allLit = false;
     float seenOpacity = 0.35f;
     float lightHueToFloors = 0.8f;
     float lightHueToWalls = 0.6f;
@@ -428,6 +429,7 @@ public class URECamera extends Canvas implements UAnimator {
     public Iterator<UREThing> thingsAt(int x, int y) {
         return area.thingsAt(x + x1, y + y1);
     }
+    public UREActor actorAt(int x, int y) { return area.actorAt(x+x1,y+y1); }
 
     public void renderImage() {
         if (modal != null)

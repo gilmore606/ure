@@ -1,16 +1,24 @@
-package ure;
+package ure.actors;
 
+import ure.*;
 import ure.terrain.URETerrain;
 import ure.things.UREThing;
 
 public class UREActor  extends UREThing {
 
-    URECamera camera;
+    public URECamera camera;
     int cameraPinStyle;
 
-    public UREActor(String thename, char theicon, UColor thecolor, boolean addOutline) {
-        initialize();
-        setDisplayFields(thename, theicon, thecolor, addOutline);
+    public static boolean isActor = true;
+
+    @Override
+    public void initialize() {
+        super.initialize();
+    }
+
+    @Override
+    public boolean isActor() {
+        return true;
     }
 
     public void attachCamera(URECamera thecamera, int pinstyle) {
@@ -64,7 +72,7 @@ public class UREActor  extends UREThing {
     }
 
     public void debug() {
-        URELight newlight = new URELight(new UColor(0.9f,1f,0.7f), 15, 1);
+        URELight newlight = new URELight(new UColor(1f,1f,0.9f), 12, 3);
         newlight.moveTo(area(), areaX(), areaY());
         area().commander().printScroll("You dropped a glowstick at " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
   }

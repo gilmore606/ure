@@ -36,6 +36,19 @@
       "bgvariants": [ [20,20,20],[30,30,30],[40,40,40]]
     },
     {
+      "name": "floormoss",
+      "filechar": "9",
+      "passable": true,
+      "opaque": false,
+      "sunvis": 0.0,
+      "glyph": "~",
+      "fgcolor": [20,90,20],
+      "bgcolor": [30,30,30],
+      "bgvariance": [6,6,6],
+      "bgvariants": [ [20,20,20],[30,30,30],[40,40,40]],
+      "walkmsg": "Moss grows on the stone."
+    },
+    {
       "name": "door",
       "type": "door",
       "filechar": "D",

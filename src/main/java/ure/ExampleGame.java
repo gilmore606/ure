@@ -1,5 +1,7 @@
 package ure;
 
+import ure.actors.UREActor;
+import ure.actors.UREPlayer;
 import ure.terrain.URETerrainCzar;
 import ure.things.UREThingCzar;
 import ure.ui.UREScrollPanel;
@@ -66,11 +68,15 @@ public class ExampleGame implements UTimeListener {
         thingCzar.loadThings("/things.json");
 
         area = new UREArea(100, 100, terrainCzar, "wall");
-        URELandscaper scaper = new URELandscaper();
+        URELandscaper scaper = new URELandscaper(terrainCzar, thingCzar);
         scaper.digCaves(area, "floor",2, 2, 98, 98);
         scaper.digRiver(area, "water", 0, 0, 99, 99, 5f, 0.7f, 1.4f);
         scaper.digRiver(area, "water", 0, 0, 99, 99, 3f, 0.9f, 2f);
         scaper.digRiver(area, "lava", 0, 0, 99, 99, 2f, 1.5f, 2f);
+        scaper.addDoors(area, "door", new String[]{"wall"}, 1f);
+        scaper.simplexScatterTerrain(area, "floormoss", new String[]{"floor"}, 0.5f, 0.3f);
+        scaper.scatterThings(area, new String[]{"trucker hat", "butcher knife", "rock", "rock", "rock"}, new String[]{"floor", "floormoss"}, 50);
+
         player = new UREPlayer("Player", '@', new UColor(Color.WHITE), true, 4, 6);
         int px = 20;
         int py = 20;

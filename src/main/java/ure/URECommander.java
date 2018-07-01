@@ -1,5 +1,6 @@
 package ure;
 
+import ure.actors.UREActor;
 import ure.ui.UIModal;
 import ure.ui.UREScrollPanel;
 import ure.ui.UREStatusPanel;

@@ -1,6 +1,7 @@
 package ure.things;
 
 import ure.*;
+import ure.actors.UREActor;
 
 import java.util.Iterator;
 
@@ -12,6 +13,7 @@ import java.util.Iterator;
  */
 public class UREThing implements UContainer, Cloneable {
     public String name;
+    public String type;
     public char glyph;
     public String description = "A thing.";
     public int weight;
@@ -25,6 +27,12 @@ public class UREThing implements UContainer, Cloneable {
 
     protected UContainer location;  // What container am I in?
     protected UCollection contents; // What's inside me?
+
+    public static boolean isActor = false;
+
+    public boolean isActor() {
+        return false;
+    }
 
     public void initialize() {
         contents = new UCollection(this);
@@ -103,4 +111,5 @@ public class UREThing implements UContainer, Cloneable {
     public String getMsg(UREActor actor) {
         return description;
     }
+    public String walkMsg(UREActor actor) { return description; }
 }

@@ -3,7 +3,7 @@ package ure.terrain;
 import ure.UAnimator;
 import ure.UCell;
 import ure.UColor;
-import ure.UREActor;
+import ure.actors.UREActor;
 
 import java.util.Random;
 

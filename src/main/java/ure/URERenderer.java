@@ -1,5 +1,6 @@
 package ure;
 
+import ure.actors.UREActor;
 import ure.terrain.URETerrain;
 import ure.things.UREThing;
 import ure.ui.UIModal;
@@ -103,7 +104,17 @@ public class URERenderer {
                 stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color, 0, 0);
             }
         }
+        UREActor actor = camera.actorAt(x,y);
+        if (actor != null) {
+            char icon = actor.getGlyph();
+            UColor color = new UColor(actor.getGlyphColor());
+            if (actor.drawGlyphOutline())
+                stampGlyph(charToOutline(icon, font), image, x*cellw,y*cellh,UColor.COLOR_BLACK, 0, 0);
+            color.illuminateWith(light,vis);
+            stampGlyph(charToGlyph(icon, font), image, x*cellw,y*cellh,color,0,0);
+        }
     }
+
 
     public void stampGlyph(BufferedImage srcImage, BufferedImage dstImage, int destx, int desty, UColor tint, int offX, int offY) {
         int width = srcImage.getWidth();

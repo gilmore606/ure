@@ -47,8 +47,6 @@ public class UREThingCzar {
     }
 
     public UREThing getThingByName(String name) {
-        UREThing template = thingsByName.get(name);
-        UREThing clone = null;
         return thingsByName.get(name).getClone();
     }
 
