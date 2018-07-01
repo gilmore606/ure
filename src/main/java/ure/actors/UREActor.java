@@ -93,7 +93,7 @@ public class UREActor  extends UREThing {
         }
         if (thing.tryGetBy(this)) {
             thing.moveToContainer(this);
-            area().commander().printScroll("You pick up a " + thing.name + ".");
+            area().commander().printScroll("You pick up " + thing.iname() + ".");
             thing.gotBy(this);
         }
     }

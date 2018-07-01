@@ -113,7 +113,7 @@ public class ExampleGame implements UTimeListener {
         }
         scaper.simplexScatterTerrain(area, "floormoss", new String[]{"floor"}, 0.4f + scaper.random.nextFloat() * 0.3f, scaper.random.nextFloat() * 0.6f);
         scaper.simplexScatterThings(area, "skull", new String[]{"floor","floormoss"}, 0.6f, 0.15f + scaper.random.nextFloat() * 0.3f);
-        scaper.scatterThings(area, new String[]{"trucker hat", "butcher knife", "rock"}, new String[]{"floor"}, 10 + scaper.random.nextInt(40));
+        scaper.scatterThings(area, new String[]{"trucker hat", "butcher knife", "rock", "apple"}, new String[]{"floor"}, 10 + scaper.random.nextInt(40));
 
         player = new UREPlayer("Player", '@', new UColor(Color.WHITE), true, 4, 6);
 
