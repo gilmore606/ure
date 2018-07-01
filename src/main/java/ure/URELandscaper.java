@@ -176,6 +176,23 @@ public class URELandscaper {
         }
     }
 
+    public void simplexScatterThings(UREArea area, String thing, String[] targets, float threshold, float scatterChance) {
+        float[] noiseScales = new float[]{5f, 10f, 40f, 120f};
+        for (int x=0;x<area.xsize;x++) {
+            for (int y=0;y<area.ysize;y++) {
+                if (cellHasTerrain(area, area.cellAt(x,y), targets)) {
+                    float sample = simplexNoise.multi(x, y, noiseScales);
+                    if (sample > threshold) {
+                        if (random.nextFloat() <= scatterChance) {
+                            UREThing thingobj = thingCzar.getThingByName(thing);
+                            thingobj.moveToCell(area,x,y);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public void digRiver(UREArea area, String t, int x1, int y1, int x2, int y2, float riverWidth, float twist, float twistmax) {
         int width = x2-x1; int height = y2-y1;
         int edge = random.nextInt(4);

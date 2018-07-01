@@ -24,5 +24,13 @@
     "color": [0,240,0],
     "weight": 3,
     "value": 5
+  },
+  {
+    "name": "skull",
+    "glyph": "o",
+    "description": "A broken human(ish) skull.",
+    "color": [250,250,220],
+    "weight": 6,
+    "value": 2
   }
 ]
