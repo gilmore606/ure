@@ -1,12 +1,19 @@
 package ure;
 
 import ure.terrain.URETerrain;
+import ure.terrain.URETerrainCzar;
+import ure.things.UREThing;
+import ure.things.UREThingCzar;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class URELandscaper {
 
-    Random rand;
+    private URETerrainCzar terrainCzar;
+    private UREThingCzar thingCzar;
+
+    Random random;
 
     class Grid {
         boolean cells[][];
@@ -60,8 +67,10 @@ public class URELandscaper {
         }
     }
 
-    public URELandscaper() {
-        rand = new Random();
+    public URELandscaper(URETerrainCzar theTerrainCzar, UREThingCzar theThingCzar) {
+        terrainCzar = theTerrainCzar;
+        thingCzar = theThingCzar;
+        random = new Random();
     }
 
     public void fillRect(UREArea area, String t, int x1, int y1, int x2, int y2) { drawRect(area, t, x1, y1, x2, y2, true); }
@@ -76,21 +85,46 @@ public class URELandscaper {
         }
     }
 
+    public void scatterThings(UREArea area, String[] things, String[] terrains, int numberToScatter) {
+        while (numberToScatter > 0) {
+            numberToScatter--;
+            UCell cell = randomCell(area, terrains);
+            String name = things[random.nextInt(things.length)];
+            UREThing thing = thingCzar.getThingByName(name);
+            thing.moveToCell(area, cell.x, cell.y);
+        }
+
+    }
+
+    public UCell randomCell(UREArea area, String[] terrains) {
+        UCell cell = null;
+        boolean match = false;
+        while (cell == null || !match) {
+            cell = area.cellAt(random.nextInt(area.xsize), random.nextInt(area.ysize));
+            for (int i=0;i<terrains.length;i++) {
+                if (terrains[i].equals(cell.terrain.name)) {
+                    match = true;
+                }
+            }
+        }
+        return cell;
+    }
+
     public void digRiver(UREArea area, String t, int x1, int y1, int x2, int y2, float riverWidth, float twist, float twistmax) {
         int width = x2-x1; int height = y2-y1;
-        int edge = rand.nextInt(4);
+        int edge = random.nextInt(4);
         float startx, starty, dx, dy, ctwist;
         if (edge == 0) {
-            starty = (float)y1;  startx = (float)(rand.nextInt(width) + x1);
+            starty = (float)y1;  startx = (float)(random.nextInt(width) + x1);
             dx = 0f ; dy = 1f;
         } else if (edge == 1) {
-            starty = (float)height; startx = (float)(rand.nextInt(width) + x1);
+            starty = (float)height; startx = (float)(random.nextInt(width) + x1);
             dx = 0f; dy = -1f;
         } else if (edge == 2) {
-            startx = (float)x1; starty = (float)(rand.nextInt(height) + y1);
+            startx = (float)x1; starty = (float)(random.nextInt(height) + y1);
             dx = 1f; dy = 0f;
         } else {
-            startx = (float)width; starty = (float)(rand.nextInt(height) + y1);
+            startx = (float)width; starty = (float)(random.nextInt(height) + y1);
             dx = -1f; dy = 0f;
         }
         ctwist = 0f;
@@ -99,7 +133,7 @@ public class URELandscaper {
             fillRect(area, t, (int)startx, (int)starty, (int)(startx+riverWidth), (int)(starty+riverWidth));
             startx += dx;
             starty += dy;
-            if (rand.nextFloat() < twist) {
+            if (random.nextFloat() < twist) {
                 if (dx == 0) {
                     startx += ctwist;
                 }
@@ -110,7 +144,7 @@ public class URELandscaper {
             if (startx > x2 || startx < x1 || starty > y2 || starty < y1) {
                 hitedge = true;
             }
-            ctwist = ctwist + rand.nextFloat() * twist - (twist/2f);
+            ctwist = ctwist + random.nextFloat() * twist - (twist/2f);
             if (ctwist > twistmax) ctwist = twistmax;
             if (ctwist < -twistmax) ctwist = -twistmax;
         }
@@ -125,10 +159,10 @@ public class URELandscaper {
         Grid scratchmap = new Grid(width,height);
         float fillratio = 0f;
         while (fillratio < 0.4f) {
-            int gapY = rand.nextInt(height / 2) + height / 3;
+            int gapY = random.nextInt(height / 2) + height / 3;
             for (int x = 0;x < width;x++) {
                 for (int y = 0;y < height;y++) {
-                    if ((y < gapY || y > gapY + 1) && rand.nextFloat() < initialDensity)
+                    if ((y < gapY || y > gapY + 1) && random.nextFloat() < initialDensity)
                         map.set(x, y, true);
                     else
                         map.set(x, y, false);
@@ -162,8 +196,8 @@ public class URELandscaper {
             int x = width / 2;
             int y = height / 2;
             while (scratchmap.get(x, y)) {
-                x = rand.nextInt(width - 2) + 2;
-                y = rand.nextInt(height - 2) + 2;
+                x = random.nextInt(width - 2) + 2;
+                y = random.nextInt(height - 2) + 2;
             }
             int spacecount = scratchmap.flood(x, y);
             fillratio = (float) spacecount / (float) (width * height);

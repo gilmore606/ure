@@ -62,6 +62,11 @@ public class UCell implements UContainer {
     }
 
     public void walkedOnBy(UREActor actor) {
+        if (contents.hasThings()) {
+            UREThing thing = contents.topThing();
+            if (area.commander() != null)
+                area.commander().printScroll(thing.walkMsg(actor));
+        }
         terrain.walkedOnBy(actor, this);
     }
 

@@ -83,11 +83,13 @@ public class ExampleGame implements UTimeListener {
 
         //area = new UREArea("/samplemap.txt", terrainCzar);
         area = new UREArea(100, 100, terrainCzar, "wall");
-        URELandscaper scaper = new URELandscaper();
+        URELandscaper scaper = new URELandscaper(terrainCzar, thingCzar);
         scaper.digCaves(area, "floor",2, 2, 98, 98);
         scaper.digRiver(area, "water", 0, 0, 99, 99, 5f, 0.7f, 1.4f);
         scaper.digRiver(area, "water", 0, 0, 99, 99, 3f, 0.9f, 2f);
         scaper.digRiver(area, "lava", 0, 0, 99, 99, 2f, 1.5f, 2f);
+        scaper.scatterThings(area, new String[]{"trucker hat", "butcher knife", "rock", "rock", "rock"}, new String[]{"floor"}, 50);
+
         player = new UREPlayer("Player", '@', new UColor(Color.WHITE), true, 4, 6);
         int px = 20;
         int py = 20;
