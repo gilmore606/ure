@@ -25,6 +25,7 @@ libraryDependencies ++= {
 }
 
 libraryDependencies += "org.reflections" % "reflections" % "0.9.11"
+libraryDependencies += "org.joml" % "joml" % "1.9.9"
 
 
 

@@ -83,6 +83,10 @@ public class URECommander implements KeyListener {
 
     public void keyPressed(KeyEvent e) {
         char c = e.getKeyChar();
+        keyPressed(c);
+    }
+
+    public void keyPressed(char c) {
         if (keyBinds.containsKey((Character)c)) {
             //hearCommand(keyBinds.get((Character)c));
             if (keyBuffer.size() < keyBufferSize)
