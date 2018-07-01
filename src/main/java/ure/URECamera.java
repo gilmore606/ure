@@ -434,39 +434,17 @@ public class URECamera extends Canvas implements UAnimator {
     public void renderImage() {
         if (modal != null)
             modal.renderImage();
-        long startTime = System.nanoTime();
         renderLights();
-        long endTime = System.nanoTime();
-        long duration = (endTime - startTime) / 1000000;
-        System.out.println("lighttime " + Long.toString(duration) + "ms");
-        startTime = System.nanoTime();
         renderer.renderCamera(this);
-        endTime = System.nanoTime();
-        duration = (endTime - startTime) / 1000000;
-        System.out.println("drawtime " + Long.toString(duration) + "ms");
-        paintFrameBuffer();
     }
 
-    public void redrawAreaCell(int ax, int ay) {
+/*    public void redrawAreaCell(int ax, int ay) {
         redrawCell(ax - x1, ay - y1);
     }
     public void redrawCell(int x, int y) {
         //MM TODO THIS -- We cannot redraw cells any more.
         //renderer.renderCell(this, x, y);
-    }
-
-    public void paintFrameBuffer() {
-        /*if (frameBuffer == null) {
-            createBufferStrategy(2);
-            frameBuffer = getBufferStrategy();
-        }
-        Graphics g = frameBuffer.getDrawGraphics();
-        g.drawImage(image, 0, 0, null);
-        if (modal != null) {
-            g.drawImage(modal.getImage(), (pixelWidth / 2) - (modal.pixelWidth / 2), (pixelHeight / 2) - (modal.pixelHeight / 2), null);
-        }
-        frameBuffer.show();*/
-    }
+    }*/
 
     public void animationTick() {
         for (int x=x1;x<x2;x++) {

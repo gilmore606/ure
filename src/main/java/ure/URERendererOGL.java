@@ -4,6 +4,7 @@ import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
+import ure.actors.UREActor;
 import ure.terrain.URETerrain;
 import ure.things.UREThing;
 
@@ -300,15 +301,14 @@ public class URERendererOGL {
         int cellh = cellHeight();
         int camw = camera.getWidthInCells();
         int camh = camera.getHeightInCells();
-        //Graphics g = camera.getGraphics();
-        //BufferedImage cameraImage = camera.getImage();
-        //g.setColor(backgroundColor);
-        //g.fillRect(0,0,camw*cellw, camh*cellh);
+
+        // Render Cells.
         for (int x=0;x<camw;x++) {
             for (int y=0;y<camh;y++) {
                 renderCell(camera, x, y, cellw, cellh);
             }
         }
+
         camera.rendering = false;
         rendering = false;
     }
@@ -332,23 +332,21 @@ public class URERendererOGL {
             t.fgColorBuffer.illuminateWith(terrainLight, tOpacity);
             stampGlyph(t.glyph, x * cellw, y * cellh, t.fgColorBuffer, t.glyphOffsetX(), t.glyphOffsetY() + 2);
         }
+
+        //TODO: Define this magic value somewhere?
         if (vis < 0.3f)
             return;
         Iterator<UREThing> things = camera.thingsAt(x,y);
         if (things != null) {
             while (things.hasNext()) {
-                UREThing thing = things.next();
-                char icon = thing.getGlyph();
-                UColor color = new UColor(thing.getGlyphColor());
-                if (thing.drawGlyphOutline())
-                    stampGlyphOutline(icon, x * cellw, y * cellh, UColor.COLOR_BLACK, 0, 0);
-                color.illuminateWith(light, vis);
-                //stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color, 0, 0);
-                stampGlyph(icon, x * cellw, y * cellh, color, 0, 0);
+                things.next().render(this, x * cellw, y * cellh, light, vis);
             }
         }
+        UREActor actor = camera.actorAt(x,y);
+        if (actor != null) {
+            actor.render(this, x * cellw, y * cellh, light, vis);
+        }
     }
-
     public void render(){
 
         glViewport(0, 0, screenWidth, screenHeight);

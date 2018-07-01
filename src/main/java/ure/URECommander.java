@@ -185,7 +185,7 @@ public class URECommander implements KeyListener {
         for (UAnimator anim : animators) {
             anim.animationTick();
         }
-        player.camera.paintFrameBuffer(); // TODO: make this more generic and notify all cameras
+        //player.camera.paintFrameBuffer(); // TODO: make this more generic and notify all cameras
     }
 
     void setStatusPanel(UREStatusPanel panel){
@@ -206,6 +206,9 @@ public class URECommander implements KeyListener {
             renderer.renderCamera(player.camera);
             scrollPanel.renderImage();
             statusPanel.renderImage();
+
+
+            //Finalize and flush what we've rendered above to screen.
             renderer.render();
             long curTime = System.nanoTime();
             if (curTime - gameTime > animationMillis*1000)

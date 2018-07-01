@@ -112,4 +112,15 @@ public class UREThing implements UContainer, Cloneable {
         return description;
     }
     public String walkMsg(UREActor actor) { return description; }
+
+    //The camera class will call this, and tell where in screen coords to draw it.
+    public void render(URERendererOGL renderer, int x, int y, UColor light, float vis){
+        char icon = this.getGlyph();
+        UColor color = new UColor(this.getGlyphColor());
+        if (this.drawGlyphOutline())
+            renderer.stampGlyphOutline(icon, x, y, UColor.COLOR_BLACK, 0, 0);
+        color.illuminateWith(light, vis);
+        //stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color, 0, 0);
+        renderer.stampGlyph(icon, x, y, color, 0, 0);
+    }
 }

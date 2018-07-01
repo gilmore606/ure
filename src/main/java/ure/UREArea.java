@@ -269,13 +269,6 @@ public class UREArea implements UTimeListener {
         }
     }
 
-    public void redrawCell(int x, int y) {
-        Iterator<URECamera> camI = cameras.iterator();
-        while (camI.hasNext()) {
-            URECamera camera = camI.next();
-            camera.redrawAreaCell(x,y);
-        }
-    }
     public void addParticle(UParticle particle) {
         particles.add(particle);
     }
