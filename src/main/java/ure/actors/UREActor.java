@@ -96,12 +96,19 @@ public class UREActor  extends UREThing {
         }
         if (thing.tryGetBy(this)) {
             thing.moveToContainer(this);
-            area().commander().printScroll("You pick up " + thing.iname() + ".");
+            if (isPlayer())
+                area().commander().printScroll("You pick up " + thing.iname() + ".");
+            else
+                area().commander().printScrollIfSeen(this, this.dnamec() + " picks up " + thing.iname() + ".");
             thing.gotBy(this);
         }
     }
 
     public void hearTick() {
 
+    }
+
+    public boolean canSee(UREThing thing) {
+        return true;
     }
 }

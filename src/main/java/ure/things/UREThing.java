@@ -14,6 +14,7 @@ import java.util.Iterator;
 public class UREThing implements UContainer, Cloneable {
     public String name;
     public String iname;
+    public String dname;
     public String plural;
     public String type;
     public char glyph;
@@ -54,6 +55,12 @@ public class UREThing implements UContainer, Cloneable {
         if (iname != null && iname != "")
             return iname;
         return "a " + name;
+    }
+    public String dname() {
+        return "the " + name;
+    }
+    public String dnamec() {
+        return "The " + name;
     }
     public String plural() {
         if (plural != null && plural != "")

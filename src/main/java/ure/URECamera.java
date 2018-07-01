@@ -26,7 +26,7 @@ public class URECamera extends Canvas implements UAnimator {
     Dimension preferredSize;
     public int width, height;
     int centerX, centerY;
-    int x1, y1, x2, y2;
+    public int x1, y1, x2, y2;
     ULightcell lightcells[][];
     HashSet<UREActor> visibilitySources;
 

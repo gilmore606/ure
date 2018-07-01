@@ -217,6 +217,11 @@ public class URECommander implements KeyListener {
         scrollPrinter.print(text);
     }
 
+    public void printScrollIfSeen(UREThing source, String text) {
+        if (player.canSee(source))
+            printScroll(text);
+    }
+
     void animationFrame(JFrame frame) {
         for (UAnimator anim : animators) {
             anim.animationTick();

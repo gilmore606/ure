@@ -3,7 +3,12 @@
     "name": "monk",
     "glyph": "M",
     "description": "A somber monk clad in rough robes.",
-    "color": [240,160,70]
+    "color": [240,160,70],
+    "ambients": [ "The monk scratches his balls under his robe.",
+                  "The monk says, 'Wh...whose skulls are those?'",
+                  "The monk eyes you warily.",
+                  "The monk mutters a soft chant.",
+                  "The monk hums a discordant melody."]
   }
 
 ]

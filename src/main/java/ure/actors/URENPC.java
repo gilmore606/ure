@@ -6,6 +6,7 @@ public class URENPC extends UREActor {
 
     public int visionRange = 12;
     public int wakeRange = 20;
+    public String[] ambients;
 
     Random random;
 
@@ -17,7 +18,12 @@ public class URENPC extends UREActor {
 
     @Override
     public void hearTick() {
-        Wander();
+        float act = random.nextFloat();
+        if (act < 0.5) {
+            Wander();
+        } else if (act < 0.7) {
+            Ambient();
+        }
     }
 
     void Wander() {
@@ -30,6 +36,12 @@ public class URENPC extends UREActor {
             walkDir(0,1);
         } else {
             walkDir(0, -1);
+        }
+    }
+
+    void Ambient() {
+        if (ambients != null && ambients.length > 0) {
+            area().commander().printScrollIfSeen(this, ambients[random.nextInt(ambients.length)]);
         }
     }
 }
