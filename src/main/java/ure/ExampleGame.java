@@ -36,7 +36,6 @@ public class ExampleGame implements UTimeListener {
 
         camera = new URECamera(renderer, 1200, 800 , frame);
         camera.moveTo(area, 40,20);
-        player.attachCamera(camera, URECamera.PINSTYLE_SOFT);
         camera.setBounds(0,0,1200,800);
 
         statusPanel = new UREStatusPanel(font, 15, 10, 16, 16, 10, 10, new UColor(1f,1f,1f), new UColor(0f,0f,0f));
@@ -84,27 +83,40 @@ public class ExampleGame implements UTimeListener {
         thingCzar.loadThings("/things.json");
 
         //area = new UREArea("/samplemap.txt", terrainCzar);
-        area = new UREArea(100, 100, terrainCzar, "wall");
+        area = new UREArea(80, 80, terrainCzar, "wall");
         URELandscaper scaper = new URELandscaper(terrainCzar, thingCzar);
-        scaper.digCaves(area, "floor",2, 2, 98, 98);
-        scaper.digRiver(area, "water", 0, 0, 99, 99, 5f, 0.7f, 1.4f);
-        scaper.digRiver(area, "water", 0, 0, 99, 99, 3f, 0.9f, 2f);
-        scaper.digRiver(area, "lava", 0, 0, 99, 99, 2f, 1.5f, 2f);
-        scaper.addDoors(area, "door", new String[]{"wall"}, 1f);
-        scaper.simplexScatterTerrain(area, "floormoss", new String[]{"floor"}, 0.5f, 0.3f);
-        scaper.simplexScatterThings(area, "skull", new String[]{"floor","floormoss"}, 0.6f, 0.15f);
-        scaper.scatterThings(area, new String[]{"trucker hat", "butcher knife", "rock"}, new String[]{"floor"}, 30);
-
-        player = new UREPlayer("Player", '@', new UColor(Color.WHITE), true, 4, 6);
-        int px = 20;
-        int py = 20;
-        for (int x=30;x<80;x++) {
-            for (int y=30;y<80;y++) {
-                if (area.willAcceptThing(player, x, y))
-                    px = x; py = y;
+        // TODO: make a custom URECaveScaper that just calls all this stuff with some params
+        scaper.digCaves(area, "floor",2, 2, 98, 98, 0.38f + scaper.random.nextFloat() * 0.14f,
+                4 + scaper.random.nextInt(3), 3 + scaper.random.nextInt(3),
+                2 + scaper.random.nextInt(3));
+        if (scaper.random.nextFloat() < 0.4f)
+            scaper.digRiver(area, "water", 0, 0, 99, 99, 2f + scaper.random.nextFloat() * 4f,
+                    0.7f, 1.4f);
+        if (scaper.random.nextFloat() < 0.3f)
+            scaper.digRiver(area, "water", 0, 0, 99, 99, 3f, 0.9f, 2f);
+        if (scaper.random.nextFloat() < 0.3f)
+            scaper.digRiver(area, "lava", 0, 0, 99, 99, scaper.random.nextFloat() * 4f + 1f,
+                    0.5f + scaper.random.nextFloat()*2f, 1f + scaper.random.nextFloat());
+        scaper.addDoors(area, "door", new String[]{"wall"}, 0.1f + scaper.random.nextFloat());
+        for (int i=0;i<scaper.random.nextInt(6);i++) {
+            int width = scaper.random.nextInt(5)+2;
+            int height = scaper.random.nextInt(5)+2;
+            int[] boxloc = scaper.locateBox(area, width, height, new String[]{"floor"});
+            if (boxloc != null) {
+                scaper.drawRect(area, "carvings", boxloc[0], boxloc[1], boxloc[0] + width, boxloc[1] + height);
+                if (scaper.random.nextFloat() < 0.5f) {
+                    scaper.spawnThingAt(area, boxloc[0] + (width / 2), boxloc[1] + (height / 2), "gold statue");
+                    scaper.spawnLightAt(area, boxloc[0] + (width/2), boxloc[1] + (height/2),
+                            new UColor(1f, 1f, 0.7f), (width+height)/2, 15);
+                }
             }
         }
-        player.moveToCell(area, px, py);
+        scaper.simplexScatterTerrain(area, "floormoss", new String[]{"floor"}, 0.4f + scaper.random.nextFloat() * 0.3f, scaper.random.nextFloat() * 0.6f);
+        scaper.simplexScatterThings(area, "skull", new String[]{"floor","floormoss"}, 0.6f, 0.15f + scaper.random.nextFloat() * 0.3f);
+        scaper.scatterThings(area, new String[]{"trucker hat", "butcher knife", "rock"}, new String[]{"floor"}, 10 + scaper.random.nextInt(40));
+
+        player = new UREPlayer("Player", '@', new UColor(Color.WHITE), true, 4, 6);
+
         commander = new URECommander(player, renderer);
         area.setCommander(commander);
         makeWindow().getContentPane().addKeyListener(commander);
@@ -113,6 +125,12 @@ public class ExampleGame implements UTimeListener {
         commander.registerTimeListener(area);
         commander.registerTimeListener(this);
         commander.addAnimator(camera);
+
+
+        UCell startcell = scaper.randomCell(area, new String[]{"floor"});
+        player.moveToCell(area, startcell.x, startcell.y);
+        player.attachCamera(camera, URECamera.PINSTYLE_HARD);
+
         commander.gameLoop(frame);
     }
 

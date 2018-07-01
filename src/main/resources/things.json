@@ -32,5 +32,13 @@
     "color": [250,250,220],
     "weight": 6,
     "value": 2
+  },
+  {
+    "name": "gold statue",
+    "glyph": "Y",
+    "description": "A golden statue of a man, arms uplifted.",
+    "color": [250,250,0],
+    "weight": 15,
+    "value": 500
   }
 ]

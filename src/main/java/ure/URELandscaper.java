@@ -13,7 +13,7 @@ public class URELandscaper {
     private URETerrainCzar terrainCzar;
     private UREThingCzar thingCzar;
 
-    Random random;
+    public Random random;
     USimplexNoise simplexNoise;
 
     class Grid {
@@ -97,6 +97,15 @@ public class URELandscaper {
         }
     }
 
+    public void spawnThingAt(UREArea area, int x, int y, String thing) {
+        UREThing thingobj = thingCzar.getThingByName(thing);
+        thingobj.moveToCell(area,x,y);
+    }
+    public void spawnLightAt(UREArea area, int x, int y, UColor color, int falloff, int range) {
+        URELight light = new URELight(color, range, falloff);
+        light.moveTo(area,x,y);
+    }
+
     boolean cellHasTerrain(UREArea area, UCell cell, String[] terrains) {
         if (cell == null) return false;
         for (int i=0;i<terrains.length;i++) {
@@ -134,11 +143,6 @@ public class URELandscaper {
         while (cell == null || !match) {
             cell = area.cellAt(random.nextInt(area.xsize), random.nextInt(area.ysize));
             match = cellHasTerrain(area, cell, terrains);
-            for (int i=0;i<terrains.length;i++) {
-                if (terrains[i].equals(cell.terrain.name)) {
-                    match = true;
-                }
-            }
         }
         return cell;
     }
@@ -241,7 +245,7 @@ public class URELandscaper {
         Grid map = new Grid(width,height);
         Grid scratchmap = new Grid(width,height);
         float fillratio = 0f;
-        while (fillratio < 0.4f) {
+        while (fillratio < 0.3f) {
             int gapY = random.nextInt(height / 2) + height / 3;
             for (int x = 0;x < width;x++) {
                 for (int y = 0;y < height;y++) {
@@ -252,6 +256,7 @@ public class URELandscaper {
                 }
             }
             for (int i = 0;i < jumblePasses;i++) {
+                System.out.println("  jumble " + Integer.toString(i));
                 for (int x = 0;x < width;x++) {
                     for (int y = 0;y < height;y++) {
                         if (map.neighborsAt(x, y) >= 5 || map.neighborsAt(x, y, 2) <= jumbleDensity) {
@@ -264,6 +269,7 @@ public class URELandscaper {
                 map.copyFrom(scratchmap);
             }
             for (int i = 0;i < smoothPasses;i++) {
+                System.out.println("  smooth " + Integer.toString(i));
                 for (int x = 0;x < width;x++) {
                     for (int y = 0;y < height;y++) {
                         if (map.neighborsAt(x, y) >= 5) {
@@ -291,5 +297,32 @@ public class URELandscaper {
                     area.setTerrain(x+x1, y+y1, t);
             }
         }
+    }
+
+    boolean canFitBoxAt(UREArea area, int x, int y, int width, int height, String[] floorTerrains) {
+        for (int xo=0;xo<width;xo++) {
+            for (int yo=0;yo<height;yo++) {
+                if (!cellHasTerrain(area, area.cellAt(x+xo,y+yo), floorTerrains))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    int[] locateBox(UREArea area, int width, int height, String[] floorTerrains) {
+        int tries = 200;
+        while (tries > 0) {
+            tries--;
+            int x = random.nextInt(area.xsize);
+            int y = random.nextInt(area.ysize);
+            if (canFitBoxAt(area, x, y, width, height, floorTerrains)) {
+                System.out.println("found a box");
+                int[] coords = new int[2];
+                coords[0] = x;
+                coords[1] = y;
+                return coords;
+            }
+        }
+        return null;
     }
 }

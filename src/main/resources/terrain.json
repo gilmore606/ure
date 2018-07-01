@@ -33,7 +33,7 @@
       "fgcolor": [50,50,50],
       "bgcolor": [30,30,30],
       "bgvariance": [6,6,6],
-      "bgvariants": [ [20,20,20],[30,30,30],[40,40,40]]
+      "bgvariants": [ [22,22,22],[28,28,28],[35,35,35]]
     },
     {
       "name": "floormoss",
@@ -48,6 +48,17 @@
       "bgvariants": [ [20,20,20],[30,30,30],[40,40,40]],
       "walkmsg": "Moss grows on the stone."
     },
+  {
+  "name": "carvings",
+    "filechar": "8",
+    "passable": true,
+    "opaque": false,
+    "sunvis": 0.0,
+    "glyph": "%",
+    "fgcolor": [55,55,55],
+    "bgcolor": [35,35,35],
+    "walkmsg": "Ancient runes cover the stone."
+},
     {
       "name": "door",
       "type": "door",
