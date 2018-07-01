@@ -1,6 +1,7 @@
 package ure;
 
 import ure.actors.UREActor;
+import ure.things.UREThing;
 import ure.ui.UIModal;
 import ure.ui.UREScrollPanel;
 import ure.ui.UREStatusPanel;
@@ -75,13 +76,16 @@ public class URECommander implements KeyListener {
         // TODO: Actually read keybinds.txt
         //
         keyBinds = new HashMap<Character, String>();
-        keyBinds.put('W', "MOVE_N");
-        keyBinds.put('S', "MOVE_S");
-        keyBinds.put('A', "MOVE_W");
-        keyBinds.put('D', "MOVE_E");
-        keyBinds.put('G', "GET");
-        keyBinds.put('E', "DEBUG");
-
+        keyBinds.put('w', "MOVE_N");
+        keyBinds.put('s', "MOVE_S");
+        keyBinds.put('a', "MOVE_W");
+        keyBinds.put('d', "MOVE_E");
+        keyBinds.put('g', "GET");
+        keyBinds.put('i', "INVENTORY");
+        keyBinds.put('e', "DEBUG");
+        keyBinds.put('1', "DEBUG_1");
+        keyBinds.put('2', "DEBUG_2");
+        keyBinds.put('3', "DEBUG_3");
     }
 
     public void keyPressed(KeyEvent e) {
@@ -140,8 +144,25 @@ public class URECommander implements KeyListener {
                 case "GET":
                     commandGet();
                     break;
+                case "INVENTORY":
+                    commandInventory();
+                    break;
                 case "DEBUG":
                     debug();
+                    break;
+                case "DEBUG_1":
+                    debug_1();
+                    acted = false;
+                    break;
+                case "DEBUG_2":
+                    debug_2();
+                    acted = false;
+                    break;
+                case "DEBUG_3":
+                    debug_3();
+                    acted = false;
+                    break;
+
             }
             if (acted) {
                 tickTime();
@@ -165,8 +186,29 @@ public class URECommander implements KeyListener {
 
     void commandGet() {
         //UIModal modal = new UIModal(20,10, renderer, player.camera, UColor.COLOR_BLACK);
-        UIModal modal = UIModal.popMessage("Nothing happened.", renderer, player.camera, UColor.COLOR_BLACK);
+        //UIModal modal = UIModal.popMessage("Nothing happened.", renderer, player.camera, UColor.COLOR_BLACK);
+        //showModal(modal);
+        if (player.myCell() != null)
+            player.tryGetThing(player.myCell().topThingAt());
+    }
+
+    void commandInventory() {
+        UIModal modal = makeInventoryModal();
         showModal(modal);
+    }
+
+    UIModal makeInventoryModal() {
+        UIModal modal = new UIModal(30,30, renderer, player.camera, UColor.COLOR_BLACK);
+        Iterator<UREThing> things = player.iterator();
+        int i = 1;
+        while (things.hasNext()) {
+            UREThing thing = things.next();
+            modal.addText("item" + Integer.toString(i), thing.name, 2, i + 1);
+            // TODO: figure out what to do with the color here
+            //modal.addText("item" + Integer.toString(i), thing.name, 2, i + 1, renderer.UItextColor.makeAWTColor());
+            i++;
+        }
+        return modal;
     }
 
     void showModal(UIModal modal) {
@@ -176,6 +218,16 @@ public class URECommander implements KeyListener {
     void debug() {
         player.debug();
     }
+
+    void debug_1() {
+        player.camera.setAllVisible(!player.camera.allVisible);
+    }
+
+    void debug_2() {
+        player.camera.setAllLit(!player.camera.allLit);
+    }
+
+    void debug_3() { }
 
     public void printScroll(String text) {
         scrollPrinter.print(text);

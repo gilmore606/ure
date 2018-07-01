@@ -14,6 +14,7 @@ public class UREPlayer extends UREActor {
 
     public UREPlayer(String thename, char theicon, UColor thecolor, boolean addOutline, int selfLight, int selfLightFalloff) {
         super();
+        initialize();
         setDisplayFields(thename, theicon, thecolor, addOutline);
         if (selfLight > 0) {
             light = new URELight(UColor.COLOR_WHITE, selfLightFalloff + selfLight, selfLight);

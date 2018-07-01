@@ -24,5 +24,31 @@
     "color": [0,240,0],
     "weight": 3,
     "value": 5
+  },
+  {
+    "name": "skull",
+    "glyph": "o",
+    "description": "A broken human(ish) skull.",
+    "color": [250,250,220],
+    "weight": 6,
+    "value": 2
+  },
+  {
+    "name": "gold statue",
+    "glyph": "Y",
+    "description": "A golden statue of a man, arms uplifted.",
+    "color": [250,250,0],
+    "weight": 15,
+    "value": 500
+  },
+  {
+    "name": "apple",
+    "iname": "an apple",
+    "type": "food",
+    "glyph": "a",
+    "description": "A red and yellow streaked apple.",
+    "color": [240,240,2],
+    "weight": 3,
+    "value": 10
   }
 ]

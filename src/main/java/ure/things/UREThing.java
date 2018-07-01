@@ -13,6 +13,8 @@ import java.util.Iterator;
  */
 public class UREThing implements UContainer, Cloneable {
     public String name;
+    public String iname;
+    public String plural;
     public String type;
     public char glyph;
     public String description = "A thing.";
@@ -45,6 +47,20 @@ public class UREThing implements UContainer, Cloneable {
         glyph = theglyph;
         glyphColor = thecolor;
         glyphOutline = addOutline;
+    }
+
+    public String iname() {
+        if (iname != null && iname != "")
+            return iname;
+        return "a " + name;
+    }
+    public String plural() {
+        if (plural != null && plural != "")
+            return plural;
+        char last = name.charAt(name.length()-1);
+        if (last == 's')
+            return name + "es";
+        return name + "s";
     }
 
     public char getGlyph() {
@@ -108,10 +124,16 @@ public class UREThing implements UContainer, Cloneable {
         return true;
     }
 
+    public void gotBy(UREActor actor) {
+        if (this.getMsg(actor) != null)
+            area().commander().printScroll(this.getMsg(actor));
+    }
+
     public String getMsg(UREActor actor) {
         return description;
     }
-    public String walkMsg(UREActor actor) { return description; }
+
+    public String walkMsg(UREActor actor) { return "You see " + iname() + "."; }
 
     //The camera class will call this, and tell where in screen coords to draw it.
     public void render(URERendererOGL renderer, int x, int y, UColor light, float vis){

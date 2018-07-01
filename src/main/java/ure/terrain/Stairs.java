@@ -8,5 +8,7 @@ public class Stairs extends URETerrain {
 
     UREArea destArea;
     int destX, destY;
+    boolean onstep = false;
+    boolean confirm = true;
 
 }
