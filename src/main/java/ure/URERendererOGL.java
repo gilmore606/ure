@@ -73,9 +73,9 @@ public class URERendererOGL {
 
     public void init(){
 
-        glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
+        glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
         // Configure our window
         glfwDefaultWindowHints();
