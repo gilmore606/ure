@@ -33,7 +33,7 @@ public class URECamera extends Canvas implements UAnimator {
     UIModal modal;
 
     boolean allVisible = false;
-    boolean allLit = true;
+    boolean allLit = false;
     float seenOpacity = 0.35f;
     float lightHueToFloors = 0.8f;
     float lightHueToWalls = 0.6f;

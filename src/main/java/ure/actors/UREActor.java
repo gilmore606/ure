@@ -72,7 +72,7 @@ public class UREActor  extends UREThing {
     }
 
     public void debug() {
-        URELight newlight = new URELight(new UColor(0.9f,1f,0.7f), 15, 1);
+        URELight newlight = new URELight(new UColor(1f,1f,0.9f), 12, 3);
         newlight.moveTo(area(), areaX(), areaY());
         area().commander().printScroll("You dropped a glowstick at " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
   }

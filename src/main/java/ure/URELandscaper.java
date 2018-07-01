@@ -14,6 +14,7 @@ public class URELandscaper {
     private UREThingCzar thingCzar;
 
     Random random;
+    USimplexNoise simplexNoise;
 
     class Grid {
         boolean cells[][];
@@ -71,6 +72,7 @@ public class URELandscaper {
         terrainCzar = theTerrainCzar;
         thingCzar = theThingCzar;
         random = new Random();
+        simplexNoise = new USimplexNoise();
     }
 
     public void fillRect(UREArea area, String t, int x1, int y1, int x2, int y2) { drawRect(area, t, x1, y1, x2, y2, true); }
@@ -93,7 +95,6 @@ public class URELandscaper {
             UREThing thing = thingCzar.getThingByName(name);
             thing.moveToCell(area, cell.x, cell.y);
         }
-
     }
 
     boolean cellHasTerrain(UREArea area, UCell cell, String[] terrains) {
@@ -152,6 +153,22 @@ public class URELandscaper {
                         !neighbors[0][1] && !neighbors[2][1] && neighbors[1][0] && neighbors[1][2]) {
                         if (neighborCount <= 5) {
                             area.setTerrain(x,y,doorTerrain);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void simplexScatterTerrain(UREArea area, String terrain, String[] targets, float threshold, float scatterChance) {
+        float[] noiseScales = new float[]{5f, 10f, 40f, 120f};
+        for (int x=0;x<area.xsize;x++) {
+            for (int y=0;y<area.ysize;y++) {
+                if (cellHasTerrain(area, area.cellAt(x,y), targets)) {
+                    float sample = simplexNoise.multi(x, y, noiseScales);
+                    if (sample > threshold) {
+                        if (random.nextFloat() <= scatterChance) {
+                            area.setTerrain(x, y, terrain);
                         }
                     }
                 }
