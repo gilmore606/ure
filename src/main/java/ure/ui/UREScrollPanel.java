@@ -28,8 +28,8 @@ public class UREScrollPanel {
         //Hacky?
         xPos = x;
         yPos = y;
-        width = xx - x;
-        height = yy - y;
+        width = xx;
+        height = yy;
     }
     public UREScrollPanel(URERendererOGL theRenderer, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg) {
         lines = new ArrayList<String>();
@@ -61,6 +61,8 @@ public class UREScrollPanel {
     }
 
     public void renderImage() {
+        renderer.addQuad(xPos, yPos, width, height, fgColor);
+        renderer.addQuad(xPos+1, yPos+1, width-2, height-2, bgColor);
         int i = 0;
         while (i < textRows) {
             if (i < lines.size()) {

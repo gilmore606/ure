@@ -54,8 +54,8 @@ public class UREStatusPanel /*extends JPanel */{
         //Hacky?
         xPos = x;
         yPos = y;
-        width = xx - x;
-        height = yy - y;
+        width = xx;
+        height = yy;
     }
 
     public void addText(String name, String text, int row, int col) {
@@ -74,6 +74,8 @@ public class UREStatusPanel /*extends JPanel */{
     }
 
     public void renderImage() {
+        renderer.addQuad(xPos, yPos, width, height, fgColor);
+        renderer.addQuad(xPos+1, yPos+1, width-2, height-2, bgColor);
         //renderer.addQuad(xPos, yPos, width, height, bgColor);
         for (String textName : texts.keySet()) {
             TextFrag frag = texts.get(textName);
