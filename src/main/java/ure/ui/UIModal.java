@@ -2,14 +2,14 @@ package ure.ui;
 
 import ure.UColor;
 import ure.URECamera;
-import ure.URERendererOGL;
+import ure.render.URERenderer;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 public class UIModal {
-    URERendererOGL renderer;
+    URERenderer renderer;
     URECamera camera;
     BufferedImage image;
     public int width, height;
@@ -34,7 +34,7 @@ public class UIModal {
         }
     }
 
-    public UIModal(int theCharWidth, int theCharHeight, URERendererOGL theRenderer, URECamera theCamera, UColor thebgColor) {
+    public UIModal(int theCharWidth, int theCharHeight, URERenderer theRenderer, URECamera theCamera, UColor thebgColor) {
         renderer = theRenderer;
         camera = theCamera;
         width = theCharWidth;
@@ -51,7 +51,7 @@ public class UIModal {
         g.fillRect(0,0,pixelWidth,pixelHeight);
     }
 
-    public static UIModal popMessage(String message, URERendererOGL theRenderer, URECamera theCamera, UColor thebgcolor) {
+    public static UIModal popMessage(String message, URERenderer theRenderer, URECamera theCamera, UColor thebgcolor) {
         UIModal m = new UIModal(message.length() + 4, 5, theRenderer, theCamera, thebgcolor);
         // TODO: Fix for new renderer
         //m.addText("message", message, 1, 1, theRenderer.UItextColor.makeAWTColor());

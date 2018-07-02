@@ -1,7 +1,7 @@
 package ure.ui;
 
 import ure.UColor;
-import ure.URERendererOGL;
+import ure.render.URERenderer;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -15,7 +15,7 @@ public class UREStatusPanel /*extends JPanel */{
     int padX, padY;
     int charWidth, charHeight;
     HashMap<String,TextFrag> texts;
-    URERendererOGL renderer;
+    URERenderer renderer;
     int xPos, yPos, width, height;
 
     class TextFrag {
@@ -34,7 +34,7 @@ public class UREStatusPanel /*extends JPanel */{
         }
     }
 
-    public UREStatusPanel(URERendererOGL theRenderer, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg) {
+    public UREStatusPanel(URERenderer theRenderer, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg) {
         super();
         texts = new HashMap<String,TextFrag>();
         textRows = rows;
@@ -79,7 +79,7 @@ public class UREStatusPanel /*extends JPanel */{
         //renderer.addQuad(xPos, yPos, width, height, bgColor);
         for (String textName : texts.keySet()) {
             TextFrag frag = texts.get(textName);
-            renderer.renderString(xPos + frag.row * charWidth + padX, yPos + (frag.col + 1) * charHeight + padY, frag.color, frag.text);
+            renderer.drawString(xPos + frag.row * charWidth + padX, yPos + (frag.col + 1) * charHeight + padY, frag.color, frag.text);
         }
     }
 }

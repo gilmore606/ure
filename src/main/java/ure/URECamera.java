@@ -1,6 +1,7 @@
 package ure;
 
 import ure.actors.UREActor;
+import ure.render.URERenderer;
 import ure.terrain.URETerrain;
 import ure.things.UREThing;
 import ure.ui.UIModal;
@@ -18,7 +19,7 @@ import java.util.*;
 
 public class URECamera extends Canvas implements UAnimator {
     public UREArea area;
-    URERendererOGL renderer;
+    URERenderer renderer;
     BufferedImage image;
     float zoom = 1.0f;
     int pixelWidth, pixelHeight;
@@ -112,7 +113,7 @@ public class URECamera extends Canvas implements UAnimator {
         }
     }
 
-    public URECamera(URERendererOGL theRenderer, int thePixW, int thePixH) {
+    public URECamera(URERenderer theRenderer, int thePixW, int thePixH) {
         setFocusable(false);
         renderer = theRenderer;
         pixelWidth = thePixW;
@@ -404,7 +405,7 @@ public class URECamera extends Canvas implements UAnimator {
         }
     }
 
-    UColor lightAt(int x, int y) {
+    public UColor lightAt(int x, int y) {
         UColor total;
         if (!isValidXY(x,y))
             return UColor.COLOR_BLACK;
@@ -431,7 +432,7 @@ public class URECamera extends Canvas implements UAnimator {
         return total;
     }
 
-    URETerrain terrainAt(int localX, int localY) {
+    public URETerrain terrainAt(int localX, int localY) {
         return area.terrainAt(localX + x1, localY + y1);
     }
 
@@ -444,7 +445,7 @@ public class URECamera extends Canvas implements UAnimator {
         if (modal != null)
             modal.renderImage();
         renderLights();
-        renderer.renderCamera(this);
+        renderer.drawCamera(this);
     }
 
 /*    public void redrawAreaCell(int ax, int ay) {
