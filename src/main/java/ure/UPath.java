@@ -8,17 +8,12 @@ import java.util.TreeSet;
 
 public class UPath {
 
-    static class Nodelist extends TreeSet<Node> {
+    class Nodelist extends TreeSet<Node> {
         public Nodelist() {
             super(new Node(0,0));
         }
-        public Node getLeast() {
-            Node least = first();
-            remove(least);
-            return least;
-        }
     }
-    static class Node implements Comparator<Node> {
+    class Node implements Comparator<Node> {
         int x, y;
         Node parent;
         double g, h, f;
@@ -48,50 +43,50 @@ public class UPath {
         }
     }
 
-    public static Node NodeIfOpen(UREArea area, int x, int y, Node parent, String[] terrains) {
+    public Node NodeIfOpen(UREArea area, int x, int y, Node parent, String[] terrains) {
         if (x < 0 || y < 0 || x >= area.xsize || y >= area.ysize)
             return null;
         URETerrain t = area.terrainAt(x,y);
         for (int i=0;i<terrains.length;i++)
-            if (terrains[i] == t.name)
+            if (terrains[i].equals(t.name))
                 return new Node(x,y,parent);
         return null;
     }
 
-    public static int[] nextStep(UREArea area, int x1, int y1, int x2, int y2, String[] terrains) {
+    public int[] nextStep(UREArea area, int x1, int y1, int x2, int y2, String[] terrains) {
         Nodelist openlist = new Nodelist();
         Nodelist closedlist = new Nodelist();
         Node start = new Node(x1,y1);
         openlist.add(start);
-        while (!openlist.isEmpty()) {
-            Node q = openlist.getLeast();
+        int stepcount = 0;
+        while (!openlist.isEmpty() && stepcount < 100000) {
+            stepcount++;
+            Node q = openlist.pollFirst();
+            area.setTerrain(q.x, q.y, "lava");
             Node[] steps = new Node[4];
-            steps[0] = NodeIfOpen(area, x1-1, y1, q, terrains);
-            steps[1] = NodeIfOpen(area, x1+1, y1, q, terrains);
-            steps[2] = NodeIfOpen(area, x1, y1-1, q, terrains);
-            steps[3] = NodeIfOpen(area, x1, y1+1, q, terrains);
+            steps[0] = NodeIfOpen(area, q.x-1, q.y, q, terrains);
+            steps[1] = NodeIfOpen(area, q.x+1, q.y, q, terrains);
+            steps[2] = NodeIfOpen(area, q.x, q.y-1, q, terrains);
+            steps[3] = NodeIfOpen(area, q.x, q.y+1, q, terrains);
             for (int i=0;i<4;i++) {
                 Node step = steps[i];
                 if (step != null) {
                     if (step.x == x2 && step.y == y2) {
                         // we made it!
                         while (step.parent.x != x1 && step.parent.y != y1) {
+                            area.setTerrain(step.x, step.y, "lava");
                             step = step.parent;
                         }
                         return new int[]{step.x, step.y};
                     }
                     step.recalc(x2,y2);
                     boolean skipstep = false;
-                    Iterator<Node> openi = openlist.iterator();
-                    while (openi.hasNext()) {
-                        Node o = openi.next();
+                    for (Node o : openlist) {
                         if (o.x == step.x && o.y == step.y && o.f < step.f) {
                             skipstep = true;
                         }
                     }
-                    Iterator<Node> closedi = closedlist.iterator();
-                    while (closedi.hasNext()) {
-                        Node c = closedi.next();
+                    for (Node c : closedlist) {
                         if (c.x == step.x && c.y == step.y && c.f < step.f) {
                             skipstep = true;
                         }
