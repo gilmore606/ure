@@ -358,7 +358,7 @@ public class URERendererOGL {
         }
     }
 
-    static boolean slowMethod = true;
+    static boolean slowMethod = false;
     public void render(){
 
         glViewport(0, 0, screenWidth, screenHeight);
