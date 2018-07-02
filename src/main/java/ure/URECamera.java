@@ -19,7 +19,6 @@ import java.util.*;
 
 public class URECamera extends Canvas implements UAnimator {
     public UREArea area;
-    JFrame frame;
     URERenderer renderer;
     BufferedImage image;
     float zoom = 1.0f;
