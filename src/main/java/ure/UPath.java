@@ -53,16 +53,21 @@ public class UPath {
         return null;
     }
 
+    public int mdist(int x1, int y1, int x2, int y2) {
+        return Math.abs(x2-x1) + Math.abs(y2-y1);
+    }
+
     public int[] nextStep(UREArea area, int x1, int y1, int x2, int y2, String[] terrains) {
+        //if (mdist(x1,y1,x2,y2) > maxrange)
+        //    return new int[]{0,0};
         Nodelist openlist = new Nodelist();
         Nodelist closedlist = new Nodelist();
         Node start = new Node(x1,y1);
         openlist.add(start);
         int stepcount = 0;
-        while (!openlist.isEmpty() && stepcount < 100000) {
+        while (!openlist.isEmpty() && stepcount < 10000) {
             stepcount++;
             Node q = openlist.pollFirst();
-            area.setTerrain(q.x, q.y, "lava");
             Node[] steps = new Node[4];
             steps[0] = NodeIfOpen(area, q.x-1, q.y, q, terrains);
             steps[1] = NodeIfOpen(area, q.x+1, q.y, q, terrains);
@@ -71,12 +76,11 @@ public class UPath {
             for (int i=0;i<4;i++) {
                 Node step = steps[i];
                 if (step != null) {
-                    if (step.x == x2 && step.y == y2) {
-                        // we made it!
+                    if (step.x == x2 && step.y == y2) { // FOUND IT
                         while (step.parent.x != x1 && step.parent.y != y1) {
-                            area.setTerrain(step.x, step.y, "lava");
                             step = step.parent;
                         }
+                        System.out.println("found path in " + Integer.toString(stepcount) + " steps");
                         return new int[]{step.x, step.y};
                     }
                     step.recalc(x2,y2);

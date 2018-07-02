@@ -259,7 +259,7 @@ public class URELandscaper {
         Grid map = new Grid(width,height);
         Grid scratchmap = new Grid(width,height);
         float fillratio = 0f;
-        while (fillratio < 0.3f) {
+        while (fillratio < 0.2f) {
             int gapY = random.nextInt(height / 2) + height / 3;
             for (int x = 0;x < width;x++) {
                 for (int y = 0;y < height;y++) {
