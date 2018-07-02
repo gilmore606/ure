@@ -2,23 +2,19 @@ package ure.ui;
 
 import ure.UColor;
 import ure.URECamera;
-import ure.URERenderer;
+import ure.URERendererOGL;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 public class UIModal {
-    JFrame frame;
-    URERenderer renderer;
+    URERendererOGL renderer;
     URECamera camera;
     BufferedImage image;
     public int width, height;
     public int pixelWidth, pixelHeight;
     public int cellx,celly;
-    Dimension preferredSize;
-    String frameTiles;
     public UColor bgColor;
     HashMap<String,TextFrag> texts;
 
@@ -38,13 +34,13 @@ public class UIModal {
         }
     }
 
-    public UIModal(int theCharWidth, int theCharHeight, URERenderer theRenderer, URECamera theCamera, UColor thebgColor) {
+    public UIModal(int theCharWidth, int theCharHeight, URERendererOGL theRenderer, URECamera theCamera, UColor thebgColor) {
         renderer = theRenderer;
         camera = theCamera;
         width = theCharWidth;
         height = theCharHeight;
         bgColor = thebgColor;
-        texts = new HashMap<String,TextFrag>();
+        texts = new HashMap<>();
         pixelWidth = theRenderer.cellWidth() * width;
         pixelHeight = theRenderer.cellHeight() * height;
         cellx = camera.getWidthInCells()/2 - width/2;
@@ -55,9 +51,10 @@ public class UIModal {
         g.fillRect(0,0,pixelWidth,pixelHeight);
     }
 
-    public static UIModal popMessage(String message, URERenderer theRenderer, URECamera theCamera, UColor thebgcolor) {
+    public static UIModal popMessage(String message, URERendererOGL theRenderer, URECamera theCamera, UColor thebgcolor) {
         UIModal m = new UIModal(message.length() + 4, 5, theRenderer, theCamera, thebgcolor);
-        m.addText("message", message, 1, 1, theRenderer.UItextColor.makeAWTColor());
+        // TODO: Fix for new renderer
+        //m.addText("message", message, 1, 1, theRenderer.UItextColor.makeAWTColor());
         return m;
     }
     public Graphics getGraphics() { return image.getGraphics(); }
@@ -69,14 +66,16 @@ public class UIModal {
     }
 
     void DrawFrame() {
-        renderer.renderUIFrame(this);
+        // TODO: Fix for new renderer
+        //renderer.renderUIFrame(this);
     }
 
     void DrawContent() {
         Graphics g = getGraphics();
         for (String textName : texts.keySet()) {
             TextFrag frag = texts.get(textName);
-            g.setFont(renderer.font);
+            // TODO: Fix for new renderer
+            //g.setFont(renderer.font);
             g.setColor(frag.color);
             g.drawString(frag.text, frag.row * renderer.cellWidth(), ((frag.col + 1) * renderer.cellHeight()) + 0);
         }
@@ -94,7 +93,8 @@ public class UIModal {
     }
 
     public void addText(String name, String text, int row, int col) {
-        addTextFrag(new TextFrag(name, text, row, col, renderer.UItextColor.makeAWTColor()));
+        // TODO: Fix for new renderer
+        //addTextFrag(new TextFrag(name, text, row, col, renderer.UItextColor.makeAWTColor()));
     }
     public void addText(String name, String text, int row, int col, Color color) {
         addTextFrag(new TextFrag(name, text, row, col, color));
