@@ -14,6 +14,7 @@ import java.util.Iterator;
 public class UREThing implements UContainer, Cloneable {
     public String name;
     public String iname;
+    public String dname;
     public String plural;
     public String type;
     public char glyph;
@@ -25,7 +26,7 @@ public class UREThing implements UContainer, Cloneable {
     public static final String TYPE = "";
 
     UColor glyphColor;
-    boolean glyphOutline = false;
+    public boolean glyphOutline = false;
 
     protected UContainer location;  // What container am I in?
     protected UCollection contents; // What's inside me?
@@ -35,6 +36,7 @@ public class UREThing implements UContainer, Cloneable {
     public boolean isActor() {
         return false;
     }
+    public boolean isPlayer() { return false; }
 
     public void initialize() {
         contents = new UCollection(this);
@@ -53,6 +55,12 @@ public class UREThing implements UContainer, Cloneable {
         if (iname != null && iname != "")
             return iname;
         return "a " + name;
+    }
+    public String dname() {
+        return "the " + name;
+    }
+    public String dnamec() {
+        return "The " + name;
     }
     public String plural() {
         if (plural != null && plural != "")

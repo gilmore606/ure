@@ -23,7 +23,7 @@ public class UREActorCzar {
 
     private Set<Class<? extends UREActor>> actorClasses;
     private ObjectMapper objectMapper = new ObjectMapper();
-    private Reflections reflections = new Reflections("", new SubTypesScanner());
+    private Reflections reflections = new Reflections("ure", new SubTypesScanner());
 
     public UREActorCzar() {
         SimpleModule module = new SimpleModule();

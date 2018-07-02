@@ -90,6 +90,10 @@ public class URECommander implements KeyListener {
 
     public void keyPressed(KeyEvent e) {
         char c = e.getKeyChar();
+        keyPressed(c);
+    }
+
+    public void keyPressed(char c) {
         if (keyBinds.containsKey((Character)c)) {
             //hearCommand(keyBinds.get((Character)c));
             if (keyBuffer.size() < keyBufferSize)
@@ -234,10 +238,9 @@ public class URECommander implements KeyListener {
     }
 
     void animationFrame() {
-        for (UAnimator anim : animators) {
-            anim.animationTick();
-        }
-        //player.camera.paintFrameBuffer(); // TODO: make this more generic and notify all cameras
+    public void printScrollIfSeen(UREThing source, String text) {
+        if (player.canSee(source))
+            printScroll(text);
     }
 
     void setStatusPanel(UREStatusPanel panel){

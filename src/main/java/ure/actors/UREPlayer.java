@@ -5,6 +5,7 @@ import ure.UREArea;
 import ure.URELight;
 import ure.URERendererOGL;
 import ure.actors.UREActor;
+import ure.things.UREThing;
 
 public class UREPlayer extends UREActor {
 
@@ -22,6 +23,9 @@ public class UREPlayer extends UREActor {
     }
 
     @Override
+    public boolean isPlayer() { return true; }
+
+    @Override
     public void moveToCell(UREArea area, int destX, int destY) {
         super.moveToCell(area,destX,destY);
         if (light != null) {
@@ -31,7 +35,5 @@ public class UREPlayer extends UREActor {
     }
 
     /*@Override
-    public void render(URERendererOGL renderer, int x, int y, UColor light, float vis){
-        System.out.println("OMG THE PLAYER IS RENDERED?!" + this.glyph);
-    }/**/
+    @Override
 }

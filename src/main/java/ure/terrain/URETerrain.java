@@ -113,7 +113,9 @@ public abstract class URETerrain implements Cloneable, UAnimator {
     }
 
     public void walkedOnBy(UREActor actor, UCell cell) {
-        printScroll(walkmsg, cell);
+        if (actor.isPlayer()) {
+            printScroll(walkmsg, cell);
+        }
     }
 
     public void printScroll(String msg, UCell cell) {

@@ -75,6 +75,10 @@ public class URELandscaper {
         simplexNoise = new USimplexNoise();
     }
 
+    public void buildArea(UREArea area) {
+        System.out.println("Default landscaper cannot build areas!");
+    }
+
     public void fillRect(UREArea area, String t, int x1, int y1, int x2, int y2) { drawRect(area, t, x1, y1, x2, y2, true); }
     public void drawRect(UREArea area, String t, int x1, int y1, int x2, int y2) { drawRect(area, t, x1, y1, x2, y2, false); }
     public void drawRect(UREArea area, String t, int x1, int y1, int x2, int y2, boolean filled) {
@@ -85,6 +89,16 @@ public class URELandscaper {
                 }
             }
         }
+    }
+
+    public int rand(int max) {
+        return random.nextInt(max);
+    }
+    public float randf(float max) {
+        return random.nextFloat() * max;
+    }
+    public float randf() {
+        return random.nextFloat();
     }
 
     public void scatterThings(UREArea area, String[] things, String[] terrains, int numberToScatter) {

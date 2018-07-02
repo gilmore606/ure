@@ -233,7 +233,8 @@ public class UREArea implements UTimeListener {
     }
 
     public UCell addThing(UREThing thing, int x, int y) {
-
+        if (thing.isActor())
+            actors.add((UREActor)thing);
         cells[x][y].addThing(thing);
         return cells[x][y];
     }
@@ -257,8 +258,12 @@ public class UREArea implements UTimeListener {
 
     public void hearTick(URECommander commander) {
         setSunColor(commander.daytimeMinutes());
+        HashSet<UREActor> tempactors = (HashSet<UREActor>)actors.clone();
+        Iterator<UREActor> actori = tempactors.iterator();
+        while (actori.hasNext()) {
+            actori.next().hearTick();
+        }
         UpdateCameras();
-
     }
 
     void UpdateCameras() {

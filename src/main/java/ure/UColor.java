@@ -55,7 +55,8 @@ public class UColor {
         return a;
     }
 
-    public void set(int ir, int ig, int ib) {
+    public void set (int ir, int ig, int ib) { set(ir,ig,ib,255); }
+    public void set(int ir, int ig, int ib, int ia) {
         r = (float)ir / 255f;
         g = (float)ig / 255f;
         b = (float)ib / 255f;
@@ -69,10 +70,12 @@ public class UColor {
         a = (float)ia / 255f;
         BoundsCheck();
     }
-    public void set(float fr, float fg, float fb) {
+    public void set(float fr, float fg, float fb) { set (fr,fg,fb,1f); }
+    public void set(float fr, float fg, float fb, float fa) {
         r = fr;
         g = fg;
         b = fb;
+        a = fa;
         BoundsCheck();
     }
     public void set(float fr, float fg, float fb, float fa) {
