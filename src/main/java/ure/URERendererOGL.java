@@ -7,13 +7,10 @@ import org.lwjgl.opengl.*;
 import ure.actors.UREActor;
 import ure.terrain.URETerrain;
 import ure.things.UREThing;
-import ure.ui.UIModal;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import javax.imageio.ImageIO;
-import java.io.File;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -52,9 +49,7 @@ public class URERendererOGL {
     private int cellPadX = 0;
     private int cellPadY = 1;
     private int fontSize;
-    String UIframeTiles = "+-+|+-+|";
     public UColor UIframeColor;
-    public UColor UItextColor;
 
     URECommander commander;
     public void setCommander(URECommander cmdr) {
@@ -306,15 +301,14 @@ public class URERendererOGL {
         int cellh = cellHeight();
         int camw = camera.getWidthInCells();
         int camh = camera.getHeightInCells();
-        //Graphics g = camera.getGraphics();
-        //BufferedImage cameraImage = camera.getImage();
-        //g.setColor(backgroundColor);
-        //g.fillRect(0,0,camw*cellw, camh*cellh);
+
+        // Render Cells.
         for (int x=0;x<camw;x++) {
             for (int y=0;y<camh;y++) {
                 renderCell(camera, x, y, cellw, cellh);
             }
         }
+
         camera.rendering = false;
         rendering = false;
     }
@@ -338,29 +332,21 @@ public class URERendererOGL {
             t.fgColorBuffer.illuminateWith(terrainLight, tOpacity);
             stampGlyph(t.glyph, x * cellw, y * cellh, t.fgColorBuffer, t.glyphOffsetX(), t.glyphOffsetY() + 2);
         }
+
+        //TODO: Define this magic value somewhere?
         if (vis < 0.3f)
             return;
         Iterator<UREThing> things = camera.thingsAt(x,y);
         if (things != null) {
             while (things.hasNext()) {
-                renderThing((UREThing)things.next(), x * cellw, y * cellh, light, vis, 0, 0);
+                things.next().render(this, x * cellw, y * cellh, light, vis);
             }
         }
         UREActor actor = camera.actorAt(x,y);
         if (actor != null) {
-            renderThing((UREThing)actor, x * cellw, y * cellh, light, vis, 0, 0);
+            actor.render(this, x * cellw, y * cellh, light, vis);
         }
     }
-
-    void renderThing(UREThing thing, int x, int y, UColor light, float vis, int offx, int offy) {
-        char glyph = thing.getGlyph();
-        if (thing.drawGlyphOutline())
-            stampGlyphOutline(glyph, x, y, UColor.COLOR_BLACK, offx, offy);
-        UColor color = new UColor(thing.getGlyphColor());
-        color.illuminateWith(light, vis);
-        stampGlyph(glyph, x, y, color, offx, offy);
-    }
-
     public void render(){
 
         glViewport(0, 0, screenWidth, screenHeight);
@@ -403,37 +389,5 @@ public class URERendererOGL {
         glfwSwapBuffers(window);
 
         tris = 0;
-    }
-
-    public void renderUIFrame(UIModal modal) {
-        Graphics g = modal.getGraphics();
-        g.setColor(modal.bgColor.makeAWTColor());
-        g.fillRect(0,0,modal.pixelWidth,modal.pixelHeight);
-        for (int x=0;x<modal.width;x++) {
-            for (int y=0;y<modal.height;y++) {
-                char c = 0;
-                if (x == 0 && y == 0) {
-                    c = UIframeTiles.charAt(0);
-                } else if (y == 0 && x < modal.width - 1) {
-                    c = UIframeTiles.charAt(1);
-                } else if (y == 0) {
-                    c = UIframeTiles.charAt(2);
-                } else if (x == modal.width - 1 && y < modal.height - 1) {
-                    c = UIframeTiles.charAt(3);
-                } else if (x == modal.width - 1 && y == modal.height - 1) {
-                    c = UIframeTiles.charAt(4);
-                } else if (x > 0 && x < modal.width - 1 && y == modal.height - 1) {
-                    c = UIframeTiles.charAt(5);
-                } else if (x == 0 && y == modal.height - 1) {
-                    c = UIframeTiles.charAt(6);
-                } else if (x == 0 && y < modal.height - 1) {
-                    c = UIframeTiles.charAt(7);
-                }
-                if (c != 0) {
-                    // TODO: this will not work because it needs to draw on the modal's image
-                    stampGlyph(c, x*cellWidth(), y*cellHeight(), UIframeColor, 0, 0);
-                }
-            }
-        }
     }
 }

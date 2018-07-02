@@ -12,7 +12,7 @@ public class UColor {
         set(ir,ig,ib);
     }
     public UColor(float fr, float fg, float fb) {
-        set(fr,fg,fb,1.0f);
+        set(fr,fg,fb);
     }
     public UColor(Color color) {
         set(color.getRed(),color.getGreen(),color.getBlue());
@@ -39,9 +39,7 @@ public class UColor {
     public int iB() {
         return (int)(b * 255f);
     }
-    public int iA() {
-        return (int)(a * 255f);
-    }
+    public int iA() { return (int)(a * 255f); }
     public float fR() {
         return r;
     }
@@ -51,18 +49,9 @@ public class UColor {
     public float fB() {
         return b;
     }
-    public float fA() {
-        return a;
-    }
+    public float fA() { return a; }
 
     public void set (int ir, int ig, int ib) { set(ir,ig,ib,255); }
-    public void set(int ir, int ig, int ib, int ia) {
-        r = (float)ir / 255f;
-        g = (float)ig / 255f;
-        b = (float)ib / 255f;
-        a = 1.0f;
-        BoundsCheck();
-    }
     public void set(int ir, int ig, int ib, int ia) {
         r = (float)ir / 255f;
         g = (float)ig / 255f;
@@ -71,13 +60,6 @@ public class UColor {
         BoundsCheck();
     }
     public void set(float fr, float fg, float fb) { set (fr,fg,fb,1f); }
-    public void set(float fr, float fg, float fb, float fa) {
-        r = fr;
-        g = fg;
-        b = fb;
-        a = fa;
-        BoundsCheck();
-    }
     public void set(float fr, float fg, float fb, float fa) {
         r = fr;
         g = fg;

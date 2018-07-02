@@ -76,13 +76,13 @@ public class URECommander implements KeyListener {
         // TODO: Actually read keybinds.txt
         //
         keyBinds = new HashMap<Character, String>();
-        keyBinds.put('w', "MOVE_N");
-        keyBinds.put('s', "MOVE_S");
-        keyBinds.put('a', "MOVE_W");
-        keyBinds.put('d', "MOVE_E");
-        keyBinds.put('g', "GET");
-        keyBinds.put('i', "INVENTORY");
-        keyBinds.put('e', "DEBUG");
+        keyBinds.put('W', "MOVE_N");
+        keyBinds.put('S', "MOVE_S");
+        keyBinds.put('A', "MOVE_W");
+        keyBinds.put('D', "MOVE_E");
+        keyBinds.put('G', "GET");
+        keyBinds.put('I', "INVENTORY");
+        keyBinds.put('E', "DEBUG");
         keyBinds.put('1', "DEBUG_1");
         keyBinds.put('2', "DEBUG_2");
         keyBinds.put('3', "DEBUG_3");
@@ -93,21 +93,9 @@ public class URECommander implements KeyListener {
         keyPressed(c);
     }
 
-    public void keyPressed(char c) {
-        if (keyBinds.containsKey((Character)c)) {
-            //hearCommand(keyBinds.get((Character)c));
-            if (keyBuffer.size() < keyBufferSize)
-                keyBuffer.add((Character)c);
-        }
-    }
-    public void keyPressed(char c) {
 
+    public void keyPressed(char c) {
         hearCommand(keyBinds.get(c));
-        /*if (keyBinds.containsKey((Character)c)) {
-            //hearCommand(keyBinds.get((Character)c));
-            if (keyBuffer.size() < keyBufferSize)
-                keyBuffer.add((Character)c);
-        }*/
     }
 
     public void keyReleased(KeyEvent e) {
@@ -237,10 +225,16 @@ public class URECommander implements KeyListener {
         scrollPrinter.print(text);
     }
 
-    void animationFrame() {
     public void printScrollIfSeen(UREThing source, String text) {
         if (player.canSee(source))
             printScroll(text);
+    }
+
+    void animationFrame() {
+        for (UAnimator anim : animators) {
+            anim.animationTick();
+        }
+        //player.camera.paintFrameBuffer(); // TODO: make this more generic and notify all cameras
     }
 
     void setStatusPanel(UREStatusPanel panel){

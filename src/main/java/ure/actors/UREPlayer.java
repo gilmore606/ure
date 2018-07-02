@@ -34,6 +34,12 @@ public class UREPlayer extends UREActor {
 
     }
 
-    /*@Override
     @Override
+    public boolean canSee(UREThing thing) {
+        int x = thing.areaX();
+        int y = thing.areaY();
+        if (camera.visibilityAt(x - camera.x1,y - camera.y1) > 0.1f)
+            return true;
+        return false;
+    }
 }
