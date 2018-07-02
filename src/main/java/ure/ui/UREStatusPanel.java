@@ -1,31 +1,31 @@
 package ure.ui;
 
 import ure.UColor;
+import ure.URERendererOGL;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
-public class UREStatusPanel extends JPanel {
+public class UREStatusPanel /*extends JPanel */{
 
     Font font;
-    Color fgColor, bgColor;
+    UColor fgColor, bgColor;
     int textRows,textColumns;
     int pixelw, pixelh;
     int padX, padY;
     int charWidth, charHeight;
     HashMap<String,TextFrag> texts;
-    BufferedImage image;
+    URERendererOGL renderer;
+    int xPos, yPos, width, height;
 
     class TextFrag {
         String name;
         String text;
         int row;
         int col;
-        Color color;
+        UColor color;
 
-        public TextFrag(String tname, String ttext, int trow, int tcol, Color tcolor) {
+        public TextFrag(String tname, String ttext, int trow, int tcol, UColor tcolor) {
             name = tname;
             text = ttext;
             row = trow;
@@ -34,31 +34,34 @@ public class UREStatusPanel extends JPanel {
         }
     }
 
-    public UREStatusPanel(Font thefont, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg) {
+    public UREStatusPanel(URERendererOGL theRenderer, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg) {
         super();
-        image = new BufferedImage(rows * cw, columns * ch, BufferedImage.TYPE_INT_RGB);
         texts = new HashMap<String,TextFrag>();
         textRows = rows;
         textColumns = columns;
-        font = thefont;
+        renderer = theRenderer;
         charWidth = cw;
         charHeight = ch;
         padX = px;
         padY = py;
         pixelw = textRows * cw;
         pixelh = textColumns * ch;
-        fgColor = fg.makeAWTColor();
-        bgColor = bg.makeAWTColor();
-        setLayout(null);
-        setFocusable(false);
-        setFont(font);
-        setBackground(bgColor);
+        fgColor = fg;
+        bgColor = bg;
+    }
+
+    public void setBounds(int x, int y, int xx, int yy) {
+        //Hacky?
+        xPos = x;
+        yPos = y;
+        width = xx - x;
+        height = yy - y;
     }
 
     public void addText(String name, String text, int row, int col) {
         addTextFrag(new TextFrag(name, text, row, col, fgColor));
     }
-    public void addText(String name, String text, int row, int col, Color color) {
+    public void addText(String name, String text, int row, int col, UColor color) {
         addTextFrag(new TextFrag(name, text, row, col, color));
     }
     void addTextFrag(TextFrag frag) {
@@ -71,26 +74,10 @@ public class UREStatusPanel extends JPanel {
     }
 
     public void renderImage() {
-        Graphics g = image.getGraphics();
-        g.setColor(bgColor);
-        g.fillRect(0,0,pixelw,pixelh);
+        //renderer.addQuad(xPos, yPos, width, height, bgColor);
         for (String textName : texts.keySet()) {
             TextFrag frag = texts.get(textName);
-            g.setFont(font);
-            g.setColor(frag.color);
-            g.drawString(frag.text, frag.row * charWidth + padX, ((frag.col + 1) * charHeight) + padY);
+            renderer.renderString(xPos + frag.row * charWidth + padX, yPos + (frag.col + 1) * charHeight + padY, frag.color, frag.text);
         }
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(textRows * font.getSize(), textColumns * font.getSize());
-    }
-
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        renderImage();
-        g.drawImage(image, 0, 0, this);
     }
 }

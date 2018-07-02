@@ -138,6 +138,6 @@ public abstract class URETerrain implements Cloneable, UAnimator {
         animationFrame++;
         if (animationFrame >= animationFrames)
             animationFrame = 0;
-        cell.area().redrawCell(cell.areaX(), cell.areaY());
-    }
+        //cell.area().redrawCell(cell.areaX(), cell.areaY());
+}
 }

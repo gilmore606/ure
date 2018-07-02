@@ -4,12 +4,15 @@ import ure.actors.UREActor;
 import ure.things.UREThing;
 import ure.ui.UIModal;
 import ure.ui.UREScrollPanel;
+import ure.ui.UREStatusPanel;
 
-import javax.swing.*;
 import java.awt.event.KeyListener;
 import java.awt.event.*;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 /**
  * Receive input and dispatch game commands or UI controls.
@@ -21,9 +24,13 @@ public class URECommander implements KeyListener {
     private HashMap<Character, String> keyBinds;
     private HashSet<UTimeListener> timeListeners;
     private HashSet<UAnimator> animators;
-    private URERenderer renderer;
+    private URERendererOGL renderer;
     private UREActor player;
     private UREScrollPanel scrollPrinter;
+
+    private UREScrollPanel scrollPanel;
+    private UREStatusPanel statusPanel;
+
     private int turnCounter;
     private int turnsPerDay = 512;
 
@@ -32,7 +39,7 @@ public class URECommander implements KeyListener {
     private LinkedBlockingQueue<Character> keyBuffer;
     private int keyBufferSize = 2;
 
-    public URECommander(UREActor theplayer, URERenderer theRenderer) {
+    public URECommander(UREActor theplayer, URERendererOGL theRenderer) {
         renderer = theRenderer;
         timeListeners = new HashSet<UTimeListener>();
         animators = new HashSet<UAnimator>();
@@ -69,13 +76,13 @@ public class URECommander implements KeyListener {
         // TODO: Actually read keybinds.txt
         //
         keyBinds = new HashMap<Character, String>();
-        keyBinds.put('w', "MOVE_N");
-        keyBinds.put('s', "MOVE_S");
-        keyBinds.put('a', "MOVE_W");
-        keyBinds.put('d', "MOVE_E");
-        keyBinds.put('g', "GET");
-        keyBinds.put('i', "INVENTORY");
-        keyBinds.put('e', "DEBUG");
+        keyBinds.put('W', "MOVE_N");
+        keyBinds.put('S', "MOVE_S");
+        keyBinds.put('A', "MOVE_W");
+        keyBinds.put('D', "MOVE_E");
+        keyBinds.put('G', "GET");
+        keyBinds.put('I', "INVENTORY");
+        keyBinds.put('E', "DEBUG");
         keyBinds.put('1', "DEBUG_1");
         keyBinds.put('2', "DEBUG_2");
         keyBinds.put('3', "DEBUG_3");
@@ -86,12 +93,9 @@ public class URECommander implements KeyListener {
         keyPressed(c);
     }
 
+
     public void keyPressed(char c) {
-        if (keyBinds.containsKey((Character)c)) {
-            //hearCommand(keyBinds.get((Character)c));
-            if (keyBuffer.size() < keyBufferSize)
-                keyBuffer.add((Character)c);
-        }
+        hearCommand(keyBinds.get(c));
     }
 
     public void keyReleased(KeyEvent e) {
@@ -110,6 +114,8 @@ public class URECommander implements KeyListener {
     }
 
     void hearCommand(String command) {
+        if(command == null) return;
+        System.out.println("cmd: " + command);
         if (player.camera.modal != null) {
             player.camera.modal.hearCommand(command);
         } else {
@@ -189,7 +195,9 @@ public class URECommander implements KeyListener {
         int i = 1;
         while (things.hasNext()) {
             UREThing thing = things.next();
-            modal.addText("item" + Integer.toString(i), thing.name, 2, i + 1, renderer.UItextColor.makeAWTColor());
+            modal.addText("item" + Integer.toString(i), thing.name, 2, i + 1);
+            // TODO: figure out what to do with the color here
+            //modal.addText("item" + Integer.toString(i), thing.name, 2, i + 1, renderer.UItextColor.makeAWTColor());
             i++;
         }
         return modal;
@@ -222,20 +230,38 @@ public class URECommander implements KeyListener {
             printScroll(text);
     }
 
-    void animationFrame(JFrame frame) {
+    void animationFrame() {
         for (UAnimator anim : animators) {
             anim.animationTick();
         }
-        player.camera.paintFrameBuffer(); // TODO: make this more generic and notify all cameras
+        //player.camera.paintFrameBuffer(); // TODO: make this more generic and notify all cameras
     }
 
-    public void gameLoop(JFrame frame) {
-        long tickRate = 1000000 / 30;
+    void setStatusPanel(UREStatusPanel panel){
+        statusPanel = panel;
+    }
+
+    void setScrollPanel(UREScrollPanel panel){
+        scrollPanel = panel;
+    }
+
+    public void gameLoop() {
+        long tickRate = 1000000000 / 60;
         long gameTime = System.nanoTime();
-        while (true) {
+        while (!glfwWindowShouldClose(renderer.window)) {
+            glfwPollEvents();
+
+
+            renderer.renderCamera(player.camera);
+            scrollPanel.renderImage();
+            statusPanel.renderImage();
+
+
+            //Finalize and flush what we've rendered above to screen.
+            renderer.render();
             long curTime = System.nanoTime();
             if (curTime - gameTime > animationMillis*1000)
-                animationFrame(frame);
+                animationFrame();
             if (curTime > gameTime + tickRate * 2) gameTime = curTime;
             else gameTime += tickRate;
             while (System.nanoTime() < gameTime) {
@@ -245,7 +271,7 @@ public class URECommander implements KeyListener {
             }
             if (!keyBuffer.isEmpty()) {
                 consumeKeyFromBuffer();
-                frame.repaint();
+                //frame.repaint();
             }
         }
     }
