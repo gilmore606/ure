@@ -1,6 +1,7 @@
 package ure;
 
 import ure.actors.UREActor;
+import ure.actors.UREActorCzar;
 import ure.actors.UREPlayer;
 import ure.terrain.URETerrainCzar;
 import ure.things.UREThingCzar;
@@ -23,6 +24,7 @@ public class ExampleGame implements UTimeListener {
 
     static URETerrainCzar terrainCzar;
     static UREThingCzar thingCzar;
+    static UREActorCzar actorCzar;
 
     private void makeWindow() {
         camera = new URECamera(renderer, 1200, 800);
@@ -65,6 +67,8 @@ public class ExampleGame implements UTimeListener {
         terrainCzar.loadTerrains("/terrains.json");
         thingCzar = new UREThingCzar();
         thingCzar.loadThings("/things.json");
+        actorCzar = new UREActorCzar();
+        actorCzar.loadActors("/actors.json");
 
         area = new UREArea(100, 100, terrainCzar, "wall");
         URELandscaper scaper = new URELandscaper(terrainCzar, thingCzar);
@@ -113,6 +117,12 @@ public class ExampleGame implements UTimeListener {
         UCell startcell = scaper.randomCell(area, new String[]{"floor"});
         player.moveToCell(area, startcell.x, startcell.y);
         player.attachCamera(camera, URECamera.PINSTYLE_HARD);
+
+        UREActor monk = actorCzar.getActorByName("monk");
+        UCell monkdest = scaper.randomCell(area, new String[]{"floor"});
+        monk.moveToCell(area, monkdest.x, monkdest.y);
+        UPath pather = new UPath();
+        pather.nextStep(area, startcell.x, startcell.y, monkdest.x, monkdest.y, new String[]{"water","floor","floormoss","carvings"});
 
         commander.gameLoop();
     }
