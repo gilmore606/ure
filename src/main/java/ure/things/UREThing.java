@@ -2,6 +2,7 @@ package ure.things;
 
 import ure.*;
 import ure.actors.UREActor;
+import ure.render.URERenderer;
 
 import java.util.Iterator;
 
@@ -144,13 +145,14 @@ public class UREThing implements UContainer, Cloneable {
     public String walkMsg(UREActor actor) { return "You see " + iname() + "."; }
 
     //The camera class will call this, and tell where in screen coords to draw it.
-    public void render(URERendererOGL renderer, int x, int y, UColor light, float vis){
+    // TODO: Things should probably not be tied directly to the rendering system.  Ideally they would just be part of the data layer, not the presentation layer
+    public void render(URERenderer renderer, int x, int y, UColor light, float vis){
         char icon = this.getGlyph();
         UColor color = new UColor(this.getGlyphColor());
         if (this.drawGlyphOutline())
-            renderer.stampGlyphOutline(icon, x, y, UColor.COLOR_BLACK, 0, 0);
+            renderer.drawGlyphOutline(icon, x, y, UColor.COLOR_BLACK, 0, 0);
         color.illuminateWith(light, vis);
-        //stampGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color, 0, 0);
-        renderer.stampGlyph(icon, x, y, color, 0, 0);
+        //drawGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color, 0, 0);
+        renderer.drawGlyph(icon, x, y, color, 0, 0);
     }
 }

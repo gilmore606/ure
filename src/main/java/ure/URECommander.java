@@ -1,6 +1,7 @@
 package ure;
 
 import ure.actors.UREActor;
+import ure.render.URERenderer;
 import ure.things.UREThing;
 import ure.ui.UIModal;
 import ure.ui.UREScrollPanel;
@@ -11,8 +12,6 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 /**
  * Receive input and dispatch game commands or UI controls.
@@ -24,7 +23,7 @@ public class URECommander implements KeyListener {
     private HashMap<Character, String> keyBinds;
     private HashSet<UTimeListener> timeListeners;
     private HashSet<UAnimator> animators;
-    private URERendererOGL renderer;
+    private URERenderer renderer;
     private UREActor player;
     private UREScrollPanel scrollPrinter;
 
@@ -39,7 +38,7 @@ public class URECommander implements KeyListener {
     private LinkedBlockingQueue<Character> keyBuffer;
     private int keyBufferSize = 2;
 
-    public URECommander(UREActor theplayer, URERendererOGL theRenderer) {
+    public URECommander(UREActor theplayer, URERenderer theRenderer) {
         renderer = theRenderer;
         timeListeners = new HashSet<UTimeListener>();
         animators = new HashSet<UAnimator>();
@@ -248,11 +247,10 @@ public class URECommander implements KeyListener {
     public void gameLoop() {
         long tickRate = 1000000000 / 60;
         long gameTime = System.nanoTime();
-        while (!glfwWindowShouldClose(renderer.window)) {
-            glfwPollEvents();
+        while (!renderer.windowShouldClose()) {
+            renderer.pollEvents();
 
-
-            renderer.renderCamera(player.camera);
+            renderer.drawCamera(player.camera);
             scrollPanel.renderImage();
             statusPanel.renderImage();
 

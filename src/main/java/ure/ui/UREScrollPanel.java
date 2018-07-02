@@ -1,7 +1,7 @@
 package ure.ui;
 
 import ure.UColor;
-import ure.URERendererOGL;
+import ure.render.URERenderer;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -21,7 +21,7 @@ public class UREScrollPanel {
     ArrayList<String> lines;
     ArrayList<UColor> lineFades;
     BufferedImage image;
-    URERendererOGL renderer;
+    URERenderer renderer;
 
     int xPos, yPos, width, height;
     public void setBounds(int x, int y, int xx, int yy) {
@@ -31,7 +31,7 @@ public class UREScrollPanel {
         width = xx - x;
         height = yy - y;
     }
-    public UREScrollPanel(URERendererOGL theRenderer, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg) {
+    public UREScrollPanel(URERenderer theRenderer, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg) {
         lines = new ArrayList<String>();
         lineFades = new ArrayList<UColor>();
         textRows = rows;
@@ -70,7 +70,7 @@ public class UREScrollPanel {
                     col = lineFades.get(i);
                 else
                     col = lineFades.get(lineFades.size() - 1);
-                renderer.renderString(xPos + padX, yPos + (padY + pixelh + 4) - ((i + 1) * (charHeight + spacing)), col, lines.get(i));
+                renderer.drawString(xPos + padX, yPos + (padY + pixelh + 4) - ((i + 1) * (charHeight + spacing)), col, lines.get(i));
                 //g.drawString(lines.get(i), padX, (padY + pixelh + 4) - ((i + 1) * (charHeight + spacing)));
 
             }

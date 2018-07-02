@@ -1,9 +1,12 @@
-package ure;
+package ure.render;
 
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
+import ure.UColor;
+import ure.URECamera;
+import ure.URECommander;
 import ure.actors.UREActor;
 import ure.terrain.URETerrain;
 import ure.things.UREThing;
@@ -20,41 +23,43 @@ import static org.lwjgl.system.MemoryUtil.*;
 import java.awt.image.*;
 import java.util.Iterator;
 
-public class URERendererOGL {
+public class URERendererOGL implements URERenderer {
+
     //To store matrix data for uploading into OpenGLVille
-    FloatBuffer fb = BufferUtils.createFloatBuffer(16);
-    Matrix4f matrix = new Matrix4f();
-    Matrix4f dummyMatrix = new Matrix4f();
+    private FloatBuffer fb = BufferUtils.createFloatBuffer(16);
+    private Matrix4f matrix = new Matrix4f();
+    private Matrix4f dummyMatrix = new Matrix4f();
 
-    long window;
-    int screenWidth = 1400;
-    int screenHeight = 1000;
+    private long window;
 
-    GLFWErrorCallback errorCallback;
-    GLFWKeyCallback   keyCallback;
-    GLFWFramebufferSizeCallback fbCallback;
+    // TODO: These should be customizable at a higher level
+    private int screenWidth = 1400;
+    private int screenHeight = 1000;
 
-    int tris = 0;
-    int maxTris = 65536; // THIS CAN BE HIGHER IF NEEDED
+    private GLFWErrorCallback errorCallback;
+    private GLFWKeyCallback   keyCallback;
+    private GLFWFramebufferSizeCallback fbCallback;
 
-    float[] verts_pos = new float[3 * maxTris * 3];
-    float[] verts_col = new float[3 * maxTris * 4];
-    float[] verts_uv  = new float[3 * maxTris * 3];
+    private int tris = 0;
+    private int maxTris = 65536; // THIS CAN BE HIGHER IF NEEDED
 
-    int textureAtlas = -1;
+    private float[] verts_pos = new float[3 * maxTris * 3];
+    private float[] verts_col = new float[3 * maxTris * 4];
+    private float[] verts_uv  = new float[3 * maxTris * 3];
 
-    static Font font;
+    private int textureAtlas = -1;
+
+    private static Font font;
     private int fontPadX = 3;
     private int fontPadY = 1;
     private int cellPadX = 0;
     private int cellPadY = 1;
     private int fontSize;
-    public UColor UIframeColor;
+    private UColor UIframeColor;
 
     URECommander commander;
-    public void setCommander(URECommander cmdr) {
-        commander = cmdr;
-    }
+
+    private boolean rendering = false;
 
     public URERendererOGL(Font f){
         font = f;
@@ -62,15 +67,35 @@ public class URERendererOGL {
         UIframeColor = new UColor(1f, 1f, 0f);
     }
 
+    // URERenderer methods
+
+    @Override
+    public boolean windowShouldClose() {
+        return glfwWindowShouldClose(window);
+    }
+
+    @Override
+    public void pollEvents() {
+        glfwPollEvents();
+    }
+
+    @Override
+    public void setCommander(URECommander cmdr) {
+        commander = cmdr;
+    }
+
+    @Override
     public int cellWidth() {
         return fontSize + cellPadX;
     }
+
+    @Override
     public int cellHeight() {
         return fontSize + cellPadY;
     }
 
-
-    public void init(){
+    @Override
+    public void initialize(){
 
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
@@ -191,34 +216,137 @@ public class URERendererOGL {
 
     }
 
-    public void resize(int width, int height){
-        screenWidth = width;
-        screenHeight = height;
-        matrix.setOrtho2D(0, screenWidth, screenHeight, 0);
-    }
-
-    public void destroy(){
-        glfwDestroyWindow(window);
-        glfwTerminate();
-        errorCallback.free();
-    }
-    public void renderString(int x, int y, UColor col, String str){
+    @Override
+    public void drawString(int x, int y, UColor col, String str){
         //TODO: HANDLE FONT CHANGES
         for(int i = 0; i < str.length(); i++){
             addQuad(x, y, cellWidth(), cellHeight(), col, str.charAt(i));
             x += 8;
         }
     }
-    public void addQuad(int x, int y, int w, int h, UColor col){
+
+    @Override
+    public void drawCamera(URECamera camera) {
+
+        camera.rendering = true;
+        rendering = true;
+        int cellw = cellWidth();
+        int cellh = cellHeight();
+        int camw = camera.getWidthInCells();
+        int camh = camera.getHeightInCells();
+
+        // Render Cells.
+        for (int x=0;x<camw;x++) {
+            for (int y=0;y<camh;y++) {
+                renderCell(camera, x, y, cellw, cellh);
+            }
+        }
+
+        camera.rendering = false;
+        rendering = false;
+    }
+
+    @Override
+    public void drawGlyph(char glyph, int destx, int desty, UColor tint, int offX, int offY) {
+        //tint.r = 1.0f;
+        addQuad(destx + offX, desty + offY, cellWidth(), cellHeight(), tint, glyph);
+    }
+
+    @Override
+    public void drawGlyphOutline(char glyph, int destx, int desty, UColor tint, int offX, int offY) {
+        //tint.r = 1.0f;
+        for(int y = -1; y < 2; y += 1)
+            for(int x = -1; x < 2; x += 1)
+                if(x != 0 && y != 0)
+                    addQuad(destx + offX + x, desty + offY + y, cellWidth(), cellHeight(), tint, glyph);
+    }
+
+    static boolean slowMethod = true;
+    public void render(){
+
+        glViewport(0, 0, screenWidth, screenHeight);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        if (tris == 0) return; //Nothing to draw
+
+        glLoadIdentity();
+
+        glMatrixMode(GL_PROJECTION);
+        glLoadMatrixf(matrix.get(fb));
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadMatrixf(dummyMatrix.get(fb));
+
+        glBindTexture(GL_TEXTURE_2D, textureAtlas);
+
+        if(!slowMethod) {
+            FloatBuffer v = BufferUtils.createFloatBuffer(tris * 3 * 3);
+            FloatBuffer c = BufferUtils.createFloatBuffer(tris * 3 * 4);
+            FloatBuffer u = BufferUtils.createFloatBuffer(tris * 3 * 2);
+
+            v.put(verts_pos, 0, v.capacity());
+            c.put(verts_col, 0, c.capacity());
+            u.put(verts_uv, 0, u.capacity());
+
+            v.flip();
+            c.flip();
+            u.flip();
+
+            GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+            GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
+            GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+
+            GL11.glVertexPointer(3, GL_FLOAT, 0, v);
+            GL11.glColorPointer(4, GL_FLOAT, 0, c);
+            GL11.glTexCoordPointer(2, GL_FLOAT, 0, u);
+
+
+            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, tris * 3);
+        }else{
+            glBegin(GL_TRIANGLES);
+            int pp = 0;
+            int pc = 0;
+            int pu = 0;
+            for(int t = 0; t < tris * 3; t++){
+                GL11.glVertex3f(verts_pos[pp++], verts_pos[pp++], verts_pos[pp++]);
+                GL11.glColor4f(verts_col[pc++], verts_col[pc++], verts_col[pc++], verts_col[pc++]);
+                GL11.glTexCoord2f(verts_uv[pu++], verts_uv[pu++]);
+            }
+            glEnd();
+        }
+        glFinish();
+
+        glfwSwapBuffers(window);
+
+        tris = 0;
+    }
+
+    // internals
+
+    private void resize(int width, int height){
+        screenWidth = width;
+        screenHeight = height;
+        matrix.setOrtho2D(0, screenWidth, screenHeight, 0);
+    }
+
+    private void destroy(){
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        errorCallback.free();
+    }
+
+    private void addQuad(int x, int y, int w, int h, UColor col){
         addQuad(x, y, w, h, col, 0.0f, 0.0f, 32.f / 1024.f, 32.f / 1024.f);
     }
-    public void addQuad(int x, int y, int w, int h, UColor col, char glyph){
+
+    private void addQuad(int x, int y, int w, int h, UColor col, char glyph){
         float u = (float)(glyph % 16) / 32.0f + 0.00390625f;
         float v = (float)(glyph / 16) / 32.0f + 0.0078125f;
         addQuad(x, y, w, h, col, u, v, (float)cellWidth() / 1024.f, (float)cellHeight() / 1024.f);
     }
+
     // I don't think we'll have any triangle data for awhile/ever, so I'm just gonna do quads.
-    public void addQuad(int x, int y, int w, int h, UColor col, float u, float v, float uw, float vh){
+    private void addQuad(int x, int y, int w, int h, UColor col, float u, float v, float uw, float vh){
         //   1---2
         //   | / |
         //   3---4
@@ -290,39 +418,9 @@ public class URERendererOGL {
 
         tris += 2;
     }
-    public void stampGlyph(char glyph, int destx, int desty, UColor tint, int offX, int offY) {
-        //tint.r = 1.0f;
-        addQuad(destx + offX, desty + offY, cellWidth(), cellHeight(), tint, glyph);
-    }
-    public void stampGlyphOutline(char glyph, int destx, int desty, UColor tint, int offX, int offY) {
-        //tint.r = 1.0f;
-        for(int y = -1; y < 2; y += 1)
-            for(int x = -1; x < 2; x += 1)
-                if(x != 0 && y != 0)
-                    addQuad(destx + offX + x, desty + offY + y, cellWidth(), cellHeight(), tint, glyph);
-    }
 
-    public boolean rendering = false;
-    public void renderCamera(URECamera camera) {
 
-        camera.rendering = true;
-        rendering = true;
-        int cellw = cellWidth();
-        int cellh = cellHeight();
-        int camw = camera.getWidthInCells();
-        int camh = camera.getHeightInCells();
-
-        // Render Cells.
-        for (int x=0;x<camw;x++) {
-            for (int y=0;y<camh;y++) {
-                renderCell(camera, x, y, cellw, cellh);
-            }
-        }
-
-        camera.rendering = false;
-        rendering = false;
-    }
-    void renderCell(URECamera camera, int x, int y, int cellw, int cellh) {
+    private void renderCell(URECamera camera, int x, int y, int cellw, int cellh) {
         float vis = camera.visibilityAt(x,y);
         float visSeen = camera.getSeenOpacity();
         UColor light = camera.lightAt(x,y);
@@ -340,7 +438,7 @@ public class URERendererOGL {
             addQuad(x * cellw, y * cellh, cellw, cellh, t.bgColorBuffer);
             t.fgColorBuffer.set(t.fgColor.r, t.fgColor.g, t.fgColor.b);
             t.fgColorBuffer.illuminateWith(terrainLight, tOpacity);
-            stampGlyph(t.glyph, x * cellw, y * cellh, t.fgColorBuffer, t.glyphOffsetX(), t.glyphOffsetY() + 2);
+            drawGlyph(t.glyph, x * cellw, y * cellh, t.fgColorBuffer, t.glyphOffsetX(), t.glyphOffsetY() + 2);
         }
 
         //TODO: Define this magic value somewhere?
@@ -358,63 +456,4 @@ public class URERendererOGL {
         }
     }
 
-    static boolean slowMethod = true;
-    public void render(){
-
-        glViewport(0, 0, screenWidth, screenHeight);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        if (tris == 0) return; //Nothing to draw
-
-        glLoadIdentity();
-
-        glMatrixMode(GL_PROJECTION);
-        glLoadMatrixf(matrix.get(fb));
-
-        glMatrixMode(GL_MODELVIEW);
-        glLoadMatrixf(dummyMatrix.get(fb));
-
-        glBindTexture(GL_TEXTURE_2D, textureAtlas);
-
-        if(!slowMethod) {
-            FloatBuffer v = BufferUtils.createFloatBuffer(tris * 3 * 3);
-            FloatBuffer c = BufferUtils.createFloatBuffer(tris * 3 * 4);
-            FloatBuffer u = BufferUtils.createFloatBuffer(tris * 3 * 2);
-
-            v.put(verts_pos, 0, v.capacity());
-            c.put(verts_col, 0, c.capacity());
-            u.put(verts_uv, 0, u.capacity());
-
-            v.flip();
-            c.flip();
-            u.flip();
-
-            GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-            GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
-            GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-
-            GL11.glVertexPointer(3, GL_FLOAT, 0, v);
-            GL11.glColorPointer(4, GL_FLOAT, 0, c);
-            GL11.glTexCoordPointer(2, GL_FLOAT, 0, u);
-
-
-            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, tris * 3);
-        }else{
-            glBegin(GL_TRIANGLES);
-            int pp = 0;
-            int pc = 0;
-            int pu = 0;
-            for(int t = 0; t < tris * 3; t++){
-                GL11.glVertex3f(verts_pos[pp++], verts_pos[pp++], verts_pos[pp++]);
-                GL11.glColor4f(verts_col[pc++], verts_col[pc++], verts_col[pc++], verts_col[pc++]);
-                GL11.glTexCoord2f(verts_uv[pu++], verts_uv[pu++]);
-            }
-            glEnd();
-        }
-        glFinish();
-
-        glfwSwapBuffers(window);
-
-        tris = 0;
-    }
 }
