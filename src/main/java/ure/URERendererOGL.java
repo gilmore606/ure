@@ -99,12 +99,8 @@ public class URERendererOGL {
                     System.out.println("OMG I SHOULD EXIT NOW!");
                 }
                 if(key < 256 && key >= 0 && (action == GLFW_PRESS || action == GLFW_REPEAT)){
-                    System.out.println(Character.toString((char)key) + (char)key);
                     commander.keyPressed((char)key);
-                    //commander.hearCommand("MOVE_N");
                 }
-                //System.out.println(key);
-                //System.out.println(action);
             }
         });
         glfwSetFramebufferSizeCallback(window,
