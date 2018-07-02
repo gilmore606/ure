@@ -4,6 +4,7 @@ version := "0.1"
 description := "UnRoguelike Engine"
 
 javaOptions += "-XstartOnFirstThread"
+javaOptions += "-Dorg.lwjgl.util.Debug=true"
 
 Compile / run / fork := true
 

@@ -74,12 +74,17 @@ public class URERendererOGL {
 
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
+
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
         // Configure our window
         glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 1);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 0);
+        //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
         window = glfwCreateWindow(screenWidth, screenHeight, "UREasonable example!", NULL, NULL);
         if ( window == NULL )
@@ -121,16 +126,23 @@ public class URERendererOGL {
 
         resize(screenWidth, screenHeight);
 
-
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
         GL.createCapabilities();
+        GLUtil.setupDebugMessageCallback();
 
         //Lets quickly blank the screen.
         glViewport(0, 0, screenWidth, screenHeight);
         glClearColor(0.03f, 0.05f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        //The 2d stuff we're doing doens't need depth, or culling of faces.
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
+
+        //Flush a blank image to the screen quickly.
         glfwSwapBuffers(window);
 
         //Lets create our glyph atlas
@@ -176,8 +188,6 @@ public class URERendererOGL {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         //glBindTexture(GL_TEXTURE_2D, 0);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     }
 
