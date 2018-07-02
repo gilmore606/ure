@@ -23,7 +23,7 @@ libraryDependencies ++= {
     module => {
       Seq(
         "org.lwjgl" % module % version,
-        "org.lwjgl" % module % version classifier "natives-linux" classifier "natives-macos" classifier "natives-windows"
+        "org.lwjgl" % module % version  classifier "natives-linux" classifier "natives-macos" classifier "natives-windows"
       )
     }
   }
@@ -33,22 +33,7 @@ libraryDependencies += "org.reflections" % "reflections" % "0.9.11"
 libraryDependencies += "org.joml" % "joml" % "1.9.9"
 
 
-
-libraryDependencies ++= {
-  val version = "3.1.6"
-
-  Seq(
-    "lwjgl",
-    "lwjgl-glfw",
-    "lwjgl-opengl"
-  ).flatMap {
-    module => {
-      Seq(
-        "org.lwjgl" % module % version,
-        "org.lwjgl" % module % version classifier "natives-linux" classifier "natives-macos" classifier "natives-windows"
-      )
-    }
-  }
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case x => MergeStrategy.first
 }
-
-libraryDependencies += "org.joml" % "joml" % "1.9.9"
