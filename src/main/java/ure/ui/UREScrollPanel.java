@@ -61,8 +61,7 @@ public class UREScrollPanel {
     }
 
     public void renderImage() {
-        renderer.addQuad(xPos, yPos, width, height, fgColor);
-        renderer.addQuad(xPos+1, yPos+1, width-2, height-2, bgColor);
+        renderer.drawRectBorder(xPos+1, yPos+1, width-2, height-2, 1, bgColor, fgColor);
         int i = 0;
         while (i < textRows) {
             if (i < lines.size()) {

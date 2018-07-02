@@ -257,7 +257,7 @@ public class URERendererOGL implements URERenderer {
                     addQuad(destx + offX + x, desty + offY + y, cellWidth(), cellHeight(), tint, glyph);
     }
 
-    static boolean slowMethod = true;
+    static boolean slowMethod = false;
     public void render(){
 
         glViewport(0, 0, screenWidth, screenHeight);
@@ -330,6 +330,17 @@ public class URERendererOGL implements URERenderer {
         glfwTerminate();
         errorCallback.free();
     }
+
+    @Override
+    public void drawRect(int x, int y, int w, int h, UColor col){
+        addQuad(x, y, w, h, col);
+    }
+    @Override
+    public void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor){
+        addQuad(x, y, w, h, borderColor);
+        addQuad(x + borderThickness, y + borderThickness, w - borderThickness * 2, h - borderThickness * 2, bgColor);
+    }
+
 
     private void addQuad(int x, int y, int w, int h, UColor col){
         addQuad(x, y, w, h, col, 0.0f, 0.0f, 32.f / 1024.f, 32.f / 1024.f);
@@ -452,64 +463,4 @@ public class URERendererOGL implements URERenderer {
         }
     }
 
-<<<<<<< HEAD:src/main/java/ure/URERendererOGL.java
-    static boolean slowMethod = false;
-    public void render(){
-
-        glViewport(0, 0, screenWidth, screenHeight);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        if (tris == 0) return; //Nothing to draw
-
-        glLoadIdentity();
-
-        glMatrixMode(GL_PROJECTION);
-        glLoadMatrixf(matrix.get(fb));
-
-        glMatrixMode(GL_MODELVIEW);
-        glLoadMatrixf(dummyMatrix.get(fb));
-
-        glBindTexture(GL_TEXTURE_2D, textureAtlas);
-
-        if(!slowMethod) {
-            FloatBuffer v = BufferUtils.createFloatBuffer(tris * 3 * 3);
-            FloatBuffer c = BufferUtils.createFloatBuffer(tris * 3 * 4);
-            FloatBuffer u = BufferUtils.createFloatBuffer(tris * 3 * 2);
-
-            v.put(verts_pos, 0, v.capacity());
-            c.put(verts_col, 0, c.capacity());
-            u.put(verts_uv, 0, u.capacity());
-
-            v.flip();
-            c.flip();
-            u.flip();
-
-            GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-            GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
-            GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-
-            GL11.glVertexPointer(3, GL_FLOAT, 0, v);
-            GL11.glColorPointer(4, GL_FLOAT, 0, c);
-            GL11.glTexCoordPointer(2, GL_FLOAT, 0, u);
-
-
-            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, tris * 3);
-        }else{
-            glBegin(GL_TRIANGLES);
-            int pp = 0;
-            int pc = 0;
-            int pu = 0;
-            for(int t = 0; t < tris * 3; t++){
-                GL11.glVertex3f(verts_pos[pp++], verts_pos[pp++], verts_pos[pp++]);
-                GL11.glColor4f(verts_col[pc++], verts_col[pc++], verts_col[pc++], verts_col[pc++]);
-                GL11.glTexCoord2f(verts_uv[pu++], verts_uv[pu++]);
-            }
-            glEnd();
-        }
-        glFinish();
-
-        glfwSwapBuffers(window);
-
-        tris = 0;
-    }
 }
