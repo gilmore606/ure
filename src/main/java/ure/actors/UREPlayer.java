@@ -3,6 +3,7 @@ package ure.actors;
 import ure.UColor;
 import ure.UREArea;
 import ure.URELight;
+import ure.URERendererOGL;
 import ure.actors.UREActor;
 import ure.things.UREThing;
 
