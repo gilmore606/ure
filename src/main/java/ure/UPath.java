@@ -57,9 +57,9 @@ public class UPath {
         return Math.abs(x2-x1) + Math.abs(y2-y1);
     }
 
-    public int[] nextStep(UREArea area, int x1, int y1, int x2, int y2, String[] terrains, int maxrange) {
-        if (mdist(x1,y1,x2,y2) > maxrange)
-            return new int[]{0,0};
+    public int[] nextStep(UREArea area, int x1, int y1, int x2, int y2, String[] terrains) {
+        //if (mdist(x1,y1,x2,y2) > maxrange)
+        //    return new int[]{0,0};
         Nodelist openlist = new Nodelist();
         Nodelist closedlist = new Nodelist();
         Node start = new Node(x1,y1);
