@@ -6,9 +6,16 @@ import ure.things.UREThing;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.TreeSet;
 
 public class UPath {
+
+    Random random;
+
+    public UPath() {
+        random = new Random();
+    }
 
     class Nodelist extends TreeSet<Node> {
         public Nodelist() {
@@ -70,11 +77,21 @@ public class UPath {
             stepcount++;
             Node q = openlist.pollFirst();
             openlist.remove(q);
-            Node[] steps = new Node[4];
+            Node[] steps = new Node[5];
             steps[0] = NodeIfOpen(area, q.x-1, q.y, q, actor);
             steps[1] = NodeIfOpen(area, q.x+1, q.y, q, actor);
             steps[2] = NodeIfOpen(area, q.x, q.y-1, q, actor);
             steps[3] = NodeIfOpen(area, q.x, q.y+1, q, actor);
+            if (random.nextFloat() < 0.5f) {
+                steps[4] = steps[1];
+                steps[1] = steps[3];
+                steps[3] = steps[4];
+            }
+            if (random.nextFloat() < 0.5f) {
+                steps[4] = steps[0];
+                steps[0] = steps[2];
+                steps[2] = steps[4];
+            }
             for (int i=0;i<4;i++) {
                 Node step = steps[i];
                 if (step != null) {

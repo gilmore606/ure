@@ -19,13 +19,8 @@ public class URENPC extends UREActor {
     @Override
     public void hearTick() {
         float act = random.nextFloat();
-        act = 1f;
-        if (act < 0.5) {
-            Wander();
-        } else if (act < 0.7) {
-            Ambient();
-        }
-        HuntPlayer();
+        if (act < 0.8f)
+            HuntPlayer();
     }
 
     void HuntPlayer() {
