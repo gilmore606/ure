@@ -168,14 +168,6 @@ public class URERendererOGL implements URERenderer {
 
         FontTexture fontTexture = new FontTexture();
         textureAtlas = fontTexture.loadTexture("/font.png");
-
-//        textureAtlas = glGenTextures();
-//        glBindTexture(GL_TEXTURE_2D, textureAtlas);
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fontTexture.width, fontTexture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, fontTexture.data);
-//        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//        //glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     @Override
@@ -447,18 +439,14 @@ public class URERendererOGL implements URERenderer {
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this.width, this.height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
             } else {
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this.width, this.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-                //glEnable(GL_BLEND);
-                //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             }
 
             glBindTexture(0, GL_TEXTURE_2D);
-            //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-            //glEnable(GL_TEXTURE_2D);
-
-            //return glGenTextures();
             return texId;
         }
 
