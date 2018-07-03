@@ -3,6 +3,8 @@ package ure;
 import ure.actors.UREActor;
 import ure.actors.UREActorCzar;
 import ure.actors.UREPlayer;
+import ure.render.URERenderer;
+import ure.render.URERendererOGL;
 import ure.terrain.URETerrainCzar;
 import ure.things.UREThingCzar;
 import ure.ui.UREScrollPanel;
@@ -20,7 +22,7 @@ public class ExampleGame implements UTimeListener {
     static UREScrollPanel scrollPanel;
     static Font font;
     //static URERenderer renderer;
-    static URERendererOGL renderer;
+    static URERenderer renderer;
 
     static URETerrainCzar terrainCzar;
     static UREThingCzar thingCzar;
@@ -61,7 +63,7 @@ public class ExampleGame implements UTimeListener {
         }
         //renderer = new URERenderer(font);
         renderer = new URERendererOGL(font);
-        renderer.init();
+        renderer.initialize();
 
         terrainCzar = new URETerrainCzar();
         terrainCzar.loadTerrains("/terrains.json");
@@ -126,7 +128,6 @@ public class ExampleGame implements UTimeListener {
     }
 
     public void hearTick(URECommander commander) {
-
         statusPanel.setText("turn", "T " + Integer.toString(commander.getTurn()));
         statusPanel.setText("time", commander.timeString(true, " "));
     }
