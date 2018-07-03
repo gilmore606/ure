@@ -7,8 +7,6 @@ import ure.ui.UIModal;
 import ure.ui.UREScrollPanel;
 import ure.ui.UREStatusPanel;
 
-import java.awt.event.KeyListener;
-import java.awt.event.*;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -18,7 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 
 
-public class URECommander implements KeyListener {
+public class URECommander {
 
     private HashMap<Character, String> keyBinds;
     private HashSet<UTimeListener> timeListeners;
@@ -87,22 +85,8 @@ public class URECommander implements KeyListener {
         keyBinds.put('3', "DEBUG_3");
     }
 
-    public void keyPressed(KeyEvent e) {
-        char c = e.getKeyChar();
-        keyPressed(c);
-    }
-
-
     public void keyPressed(char c) {
         hearCommand(keyBinds.get(c));
-    }
-
-    public void keyReleased(KeyEvent e) {
-
-    }
-
-    public void keyTyped(KeyEvent e) {
-
     }
 
     public void consumeKeyFromBuffer() {
@@ -249,7 +233,6 @@ public class URECommander implements KeyListener {
         long gameTime = System.nanoTime();
         while (!renderer.windowShouldClose()) {
             renderer.pollEvents();
-
             renderer.drawCamera(player.camera);
             scrollPanel.renderImage();
             statusPanel.renderImage();

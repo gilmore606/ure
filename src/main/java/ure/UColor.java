@@ -1,7 +1,5 @@
 package ure;
 
-import java.awt.*;
-
 public class UColor {
     public float r, g, b, a;
 
@@ -13,9 +11,6 @@ public class UColor {
     }
     public UColor(float fr, float fg, float fb) {
         set(fr,fg,fb);
-    }
-    public UColor(Color color) {
-        set(color.getRed(),color.getGreen(),color.getBlue());
     }
     public UColor(UColor color) { set(color.fR(),color.fG(),color.fB()); }
 
@@ -77,9 +72,6 @@ public class UColor {
         BoundsCheck();
     }
 
-    public void addLights(Color light, float intensity) {
-        addLights((float)light.getRed() / 255f, (float)light.getGreen() / 255f, (float)light.getBlue() / 255f, intensity);
-    }
     public void addLights(UColor light, float intensity) {
         addLights(light.fR(), light.fG(), light.fB(), intensity);
     }
@@ -100,7 +92,4 @@ public class UColor {
         set(or,og,ob);
     }
 
-    public Color makeAWTColor() {
-        return new Color((int)(r * 255f), (int)(g * 255f), (int)(b * 255f));
-    }
 }

@@ -1,9 +1,11 @@
 package ure.render;
 
+import org.apache.commons.io.IOUtils;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
+import org.lwjgl.stb.STBImage;
 import ure.UColor;
 import ure.URECamera;
 import ure.URECommander;
@@ -11,7 +13,8 @@ import ure.actors.UREActor;
 import ure.terrain.URETerrain;
 import ure.things.UREThing;
 
-import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
@@ -20,7 +23,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 
-import java.awt.image.*;
+import java.nio.IntBuffer;
 import java.util.Iterator;
 
 public class URERendererOGL implements URERenderer {
@@ -49,21 +52,18 @@ public class URERendererOGL implements URERenderer {
 
     private int textureAtlas = -1;
 
-    private static Font font;
     private int fontPadX = 3;
     private int fontPadY = 1;
     private int cellPadX = 0;
     private int cellPadY = 1;
-    private int fontSize;
+    private int fontSize = 16;
     private UColor UIframeColor;
 
     URECommander commander;
 
     private boolean rendering = false;
 
-    public URERendererOGL(Font f){
-        font = f;
-        fontSize = font.getSize();
+    public URERendererOGL() {
         UIframeColor = new UColor(1f, 1f, 0f);
     }
 
@@ -166,50 +166,16 @@ public class URERendererOGL implements URERenderer {
         //Flush a blank image to the screen quickly.
         glfwSwapBuffers(window);
 
-        //Lets create our glyph atlas
-        /*try {
-            font = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResourceAsStream("/Px437_Phoenix_BIOS-2y.ttf")).deriveFont(Font.PLAIN, 16);
-        } catch (Exception e) {
-            System.out.println("Failed to load font");
-        }*/
-        BufferedImage bitmap = new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = bitmap.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setFont(font);
-        g.setPaint(Color.WHITE);
+        FontTexture fontTexture = new FontTexture();
+        textureAtlas = fontTexture.loadTexture("/font.png");
 
-        for(int c = 32; c < 256; c+=1){
-            if(c == 127) continue;
-            g.drawString(String.valueOf((char)c), (c % 16) * 32 + 8, (c / 16) * 32 - 10 + 32);
-        }
-        g.fillRect(0,0,32,32);
-
-        //From: http://www.java-gaming.org/index.php?topic=25516.0
-        int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
-        bitmap.getRGB(0, 0, bitmap.getWidth(), bitmap.getHeight(), pixels, 0, bitmap.getWidth());
-
-        ByteBuffer buffer = BufferUtils.createByteBuffer(bitmap.getWidth() * bitmap.getHeight() * 4);
-
-        for(int y = 0; y < bitmap.getHeight(); y++){
-            for(int x = 0; x < bitmap.getWidth(); x++){
-                int pixel = pixels[y * bitmap.getWidth() + x];
-                buffer.put((byte) ((pixel >> 16) & 0xFF));     // Red component
-                buffer.put((byte) ((pixel >>  8) & 0xFF));     // Green component
-                buffer.put((byte) (pixel & 0xFF));             // Blue component
-                buffer.put((byte) ((pixel >> 24) & 0xFF));     // Alpha component. Only for RGBA
-            }
-        }
-
-        buffer.flip();
-
-        textureAtlas = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, textureAtlas);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bitmap.getWidth(), bitmap.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        //glBindTexture(GL_TEXTURE_2D, 0);
-
+//        textureAtlas = glGenTextures();
+//        glBindTexture(GL_TEXTURE_2D, textureAtlas);
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fontTexture.width, fontTexture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, fontTexture.data);
+//        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//        //glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     @Override
@@ -257,7 +223,7 @@ public class URERendererOGL implements URERenderer {
                     addQuad(destx + offX + x, desty + offY + y, cellWidth(), cellHeight(), tint, glyph);
     }
 
-    static boolean slowMethod = false;
+    static boolean slowMethod = true;
     public void render(){
 
         glViewport(0, 0, screenWidth, screenHeight);
@@ -463,4 +429,61 @@ public class URERendererOGL implements URERenderer {
         }
     }
 
+    public class FontTexture {
+        int width;
+        int height;
+        int channels;
+
+        public int loadTexture(String filename) {
+            ByteBuffer imageBuffer;
+            try {
+                imageBuffer = readFile(filename);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            IntBuffer w = BufferUtils.createIntBuffer(1);
+            IntBuffer h = BufferUtils.createIntBuffer(1);
+            IntBuffer comp = BufferUtils.createIntBuffer(1);
+
+            ByteBuffer image = STBImage.stbi_load_from_memory(imageBuffer, w, h, comp, 0);
+            if(image == null){
+                throw new RuntimeException("Failed to load image: " + STBImage.stbi_failure_reason());
+            }
+
+            width = w.get(0);
+            height = h.get(0);
+            channels = comp.get(0);
+
+            int texId = glGenTextures();
+            glBindTexture(GL_TEXTURE_2D, texId);
+            if (channels == 3) {
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this.width, this.height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+            } else {
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this.width, this.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+                //glEnable(GL_BLEND);
+                //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            }
+
+            glBindTexture(0, GL_TEXTURE_2D);
+            //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+            //glEnable(GL_TEXTURE_2D);
+
+            //return glGenTextures();
+            return texId;
+        }
+
+        private ByteBuffer readFile(String filename) throws IOException{
+            InputStream is = this.getClass().getResourceAsStream(filename);
+            byte[] bytes = IOUtils.toByteArray(is);
+            ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length + 1);
+            buffer.put(bytes);
+            buffer.flip();
+            return buffer;
+        }
+
+    }
 }
