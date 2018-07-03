@@ -28,8 +28,8 @@ public class URERendererOGL implements URERenderer {
     private long window;
 
     // TODO: These should be customizable at a higher level
-    private int screenWidth = 1400;
-    private int screenHeight = 1000;
+    private int screenWidth = 1120;
+    private int screenHeight = 800;
 
     private GLFWErrorCallback errorCallback;
 
@@ -255,7 +255,7 @@ public class URERendererOGL implements URERenderer {
     private void resize(int width, int height){
         screenWidth = width;
         screenHeight = height;
-        matrix.setOrtho2D(0, screenWidth, screenHeight, 0);
+        matrix.setOrtho2D(0, 1400, 1000, 0);
     }
 
     private void destroy(){
