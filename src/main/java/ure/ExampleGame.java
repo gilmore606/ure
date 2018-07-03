@@ -121,8 +121,6 @@ public class ExampleGame implements UTimeListener {
         UREActor monk = actorCzar.getActorByName("monk");
         UCell monkdest = scaper.randomCell(area, new String[]{"floor"});
         monk.moveToCell(area, monkdest.x, monkdest.y);
-        UPath pather = new UPath();
-        pather.nextStep(area, startcell.x, startcell.y, monkdest.x, monkdest.y, new String[]{"water","floor","floormoss","carvings"});
 
         commander.gameLoop();
     }

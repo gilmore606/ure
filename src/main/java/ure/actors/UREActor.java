@@ -10,6 +10,7 @@ public class UREActor  extends UREThing {
 
     public URECamera camera;
     int cameraPinStyle;
+    UPath path;
 
     public static boolean isActor = true;
 
@@ -17,6 +18,7 @@ public class UREActor  extends UREThing {
     public void initialize() {
         super.initialize();
         glyphOutline = true;
+        path = new UPath();
     }
 
     @Override

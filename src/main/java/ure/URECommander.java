@@ -169,6 +169,7 @@ public class URECommander implements KeyListener {
         }
         turnCounter++;
         System.out.println("tick");
+        player.camera.renderImage();
         //System.gc();
     }
 

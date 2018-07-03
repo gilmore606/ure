@@ -1,6 +1,8 @@
 package ure;
 
+import ure.actors.UREActor;
 import ure.terrain.URETerrain;
+import ure.things.UREThing;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -29,7 +31,8 @@ public class UPath {
             parent = theparent;
         }
         public void recalc(int goalx, int goaly) {
-            g = parent.g + 1;
+            if (parent != null)
+                g = parent.g + 1;
             h = Math.abs(x - goalx) + Math.abs(y - goaly);
             f = g + h;
         }
@@ -43,13 +46,11 @@ public class UPath {
         }
     }
 
-    public Node NodeIfOpen(UREArea area, int x, int y, Node parent, String[] terrains) {
+    public Node NodeIfOpen(UREArea area, int x, int y, Node parent, UREActor actor) {
         if (x < 0 || y < 0 || x >= area.xsize || y >= area.ysize)
             return null;
-        URETerrain t = area.terrainAt(x,y);
-        for (int i=0;i<terrains.length;i++)
-            if (terrains[i].equals(t.name))
-                return new Node(x,y,parent);
+        if (area.willAcceptThing((UREThing)actor, x, y))
+            return new Node(x,y,parent);
         return null;
     }
 
@@ -57,44 +58,52 @@ public class UPath {
         return Math.abs(x2-x1) + Math.abs(y2-y1);
     }
 
-    public int[] nextStep(UREArea area, int x1, int y1, int x2, int y2, String[] terrains) {
-        //if (mdist(x1,y1,x2,y2) > maxrange)
-        //    return new int[]{0,0};
+    public int[] nextStep(UREArea area, int x1, int y1, int x2, int y2, UREActor actor, int range) {
+        if (mdist(x1,y1,x2,y2) > range)
+            return null;
         Nodelist openlist = new Nodelist();
         Nodelist closedlist = new Nodelist();
+        Nodelist nodecache = new Nodelist();
         Node start = new Node(x1,y1);
         openlist.add(start);
         int stepcount = 0;
-        while (!openlist.isEmpty() && stepcount < 10000) {
+        while (!openlist.isEmpty() && stepcount < 2000) {
             stepcount++;
             Node q = openlist.pollFirst();
+            openlist.remove(q);
             Node[] steps = new Node[4];
-            steps[0] = NodeIfOpen(area, q.x-1, q.y, q, terrains);
-            steps[1] = NodeIfOpen(area, q.x+1, q.y, q, terrains);
-            steps[2] = NodeIfOpen(area, q.x, q.y-1, q, terrains);
-            steps[3] = NodeIfOpen(area, q.x, q.y+1, q, terrains);
+            steps[0] = NodeIfOpen(area, q.x-1, q.y, q, actor);
+            steps[1] = NodeIfOpen(area, q.x+1, q.y, q, actor);
+            steps[2] = NodeIfOpen(area, q.x, q.y-1, q, actor);
+            steps[3] = NodeIfOpen(area, q.x, q.y+1, q, actor);
             for (int i=0;i<4;i++) {
                 Node step = steps[i];
                 if (step != null) {
                     if (step.x == x2 && step.y == y2) { // FOUND IT
                         while (step.parent.x != x1 && step.parent.y != y1) {
+                            System.out.println("step " + Integer.toString(step.x - x1) + "," + Integer.toString(step.y - y1));
                             step = step.parent;
                         }
                         System.out.println("found path in " + Integer.toString(stepcount) + " steps");
+                        System.out.println("walk " + Integer.toString(step.x - x1) + "," + Integer.toString(step.y - y1));
+
                         return new int[]{step.x, step.y};
                     }
                     step.recalc(x2,y2);
+                    nodecache.add(step);
                     boolean skipstep = false;
                     for (Node o : openlist) {
-                        if (o.x == step.x && o.y == step.y && o.f < step.f) {
+                        if ((o.x == step.x) && (o.y == step.y) && (o.f < step.f)) {
                             skipstep = true;
                         }
                     }
                     for (Node c : closedlist) {
-                        if (c.x == step.x && c.y == step.y && c.f < step.f) {
+                        if ((c.x == step.x) && (c.y == step.y) && (c.f < step.f)) {
                             skipstep = true;
                         }
                     }
+                    if (mdist(x1,y1,step.x,step.y) > range)
+                        skipstep = true;
                     if (!skipstep) {
                         openlist.add(step);
                     }
@@ -102,6 +111,7 @@ public class UPath {
             }
             closedlist.add(q);
         }
-        return new int[]{0,0};
+        System.out.println("failed path in max stepcount");
+        return null;
     }
 }
