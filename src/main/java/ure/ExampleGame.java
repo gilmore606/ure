@@ -28,15 +28,15 @@ public class ExampleGame implements UTimeListener {
         camera = new URECamera(renderer, 1200, 800);
         camera.moveTo(area, 40,20);
 
-        statusPanel = new UREStatusPanel(renderer, 15, 10, 16, 16, 10, 10, new UColor(1f,1f,1f), new UColor(0f,0f,0f));
-        statusPanel.addText("name", "Player 1",0,0);
-        statusPanel.addText("race", "Elf",0,1);
-        statusPanel.addText("class", "Homo",0,2);
+        statusPanel = new UREStatusPanel(renderer, 15, 10, 16, 16, 10, 10, new UColor(1f,1f,1f), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
+        statusPanel.addText("name", "Player 2",0,0);
+        statusPanel.addText("race", "Dorf",0,1);
+        statusPanel.addText("class", "Hetero",0,2);
         statusPanel.addText("turn", "T 1", 0, 5);
         statusPanel.addText("time", "", 0, 6);
         statusPanel.setBounds(1200,0,200,800);
 
-        scrollPanel = new UREScrollPanel(renderer, 5, 80, 16, 16, 5, 5, new UColor(1f,1f,1f), new UColor(0f,0f,0f));
+        scrollPanel = new UREScrollPanel(renderer, 5, 80, 16, 16, 5, 5, new UColor(1f,1f,1f), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
         scrollPanel.addLineFade(new UColor(1.0f, 1.0f, 1.0f));
         scrollPanel.addLineFade(new UColor(0.6f, 0.6f, 0.6f));
         scrollPanel.addLineFade(new UColor(0.4f, 0.4f, 0.4f));
@@ -112,8 +112,6 @@ public class ExampleGame implements UTimeListener {
         UREActor monk = actorCzar.getActorByName("monk");
         UCell monkdest = scaper.randomCell(area, new String[]{"floor"});
         monk.moveToCell(area, monkdest.x, monkdest.y);
-        UPath pather = new UPath();
-        pather.nextStep(area, startcell.x, startcell.y, monkdest.x, monkdest.y, new String[]{"water","floor","floormoss","carvings"});
 
         commander.gameLoop();
     }

@@ -19,13 +19,17 @@ public class URENPC extends UREActor {
     @Override
     public void hearTick() {
         float act = random.nextFloat();
-        if (act < 0.5) {
-            Wander();
-        } else if (act < 0.7) {
-            Ambient();
-        }
+        if (act < 0.8f)
+            HuntPlayer();
     }
 
+    void HuntPlayer() {
+        System.out.println("hunt from " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
+        int[] step = path.nextStep(area(), areaX(), areaY(), area().commander().player().areaX(), area().commander().player().areaY(), this, 25);
+        if (step != null) {
+            walkDir(step[0] - areaX(), step[1] - areaY());
+        }
+    }
     void Wander() {
         int dir = random.nextInt(4);
         if (dir == 0) {

@@ -152,6 +152,7 @@ public class URECommander {
         }
         turnCounter++;
         System.out.println("tick");
+        player.camera.renderImage();
         //System.gc();
     }
 

@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class UREStatusPanel /*extends JPanel */{
 
-    UColor fgColor, bgColor;
+    UColor fgColor, bgColor, borderColor;
     int textRows,textColumns;
     int pixelw, pixelh;
     int padX, padY;
@@ -32,7 +32,7 @@ public class UREStatusPanel /*extends JPanel */{
         }
     }
 
-    public UREStatusPanel(URERenderer theRenderer, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg) {
+    public UREStatusPanel(URERenderer theRenderer, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg, UColor borderc) {
         super();
         texts = new HashMap<String,TextFrag>();
         textRows = rows;
@@ -46,6 +46,7 @@ public class UREStatusPanel /*extends JPanel */{
         pixelh = textColumns * ch;
         fgColor = fg;
         bgColor = bg;
+        borderColor = borderc;
     }
 
     public void setBounds(int x, int y, int xx, int yy) {
@@ -72,7 +73,7 @@ public class UREStatusPanel /*extends JPanel */{
     }
 
     public void renderImage() {
-        renderer.drawRectBorder(xPos+1, yPos+1, width-2, height-2, 1, bgColor, fgColor);
+        renderer.drawRectBorder(xPos+1, yPos+1, width-2, height-2, 1, bgColor, borderColor);
         //renderer.addQuad(xPos, yPos, width, height, bgColor);
         for (String textName : texts.keySet()) {
             TextFrag frag = texts.get(textName);
