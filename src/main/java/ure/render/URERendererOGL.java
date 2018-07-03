@@ -47,6 +47,8 @@ public class URERendererOGL implements URERenderer {
     private int fontSize = 16;
     private UColor uiFrameColor = new UColor(1f, 1f, 0f);
 
+    private double densityMultiplier = 1;
+
     private KeyListener keyListener;
 
     // URERenderer methods
@@ -127,6 +129,13 @@ public class URERendererOGL implements URERenderer {
         glfwSwapInterval(0);
         glfwShowWindow(window);
 
+        // Get the actual framebuffer width/height in order to deal with different pixel densities
+        int[] width = new int[1];
+        int[] height = new int[1];
+        glfwGetFramebufferSize(window, width, height);
+        densityMultiplier = width[0] / screenWidth;
+        System.out.println("Setting density multiplier to " + densityMultiplier);
+
         resize(screenWidth, screenHeight);
 
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
@@ -134,7 +143,7 @@ public class URERendererOGL implements URERenderer {
         GLUtil.setupDebugMessageCallback();
 
         //Lets quickly blank the screen.
-        glViewport(0, 0, screenWidth, screenHeight);
+        glViewport(0, 0, (int)(screenWidth*densityMultiplier), (int)(screenHeight*densityMultiplier));
         glClearColor(0.03f, 0.05f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_TEXTURE_2D);
@@ -195,9 +204,9 @@ public class URERendererOGL implements URERenderer {
                     addQuad(destx + offX + x, desty + offY + y, cellWidth(), cellHeight(), tint, glyph);
     }
 
-    public void render(){
+    public void render() {
 
-        glViewport(0, 0, screenWidth, screenHeight);
+        glViewport(0, 0, (int)(screenWidth*densityMultiplier), (int)(screenHeight*densityMultiplier));
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (tris == 0) return; //Nothing to draw

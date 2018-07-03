@@ -3,11 +3,10 @@ package ure.render;
 
 import ure.UColor;
 import ure.URECamera;
-import ure.URECommander;
 
 public interface URERenderer {
 
-    public interface KeyListener {
+    interface KeyListener {
         void keyPressed(char key);
     }
 
