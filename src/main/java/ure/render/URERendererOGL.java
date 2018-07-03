@@ -223,7 +223,7 @@ public class URERendererOGL implements URERenderer {
                     addQuad(destx + offX + x, desty + offY + y, cellWidth(), cellHeight(), tint, glyph);
     }
 
-    static boolean slowMethod = true;
+    static boolean slowMethod = false;
     public void render(){
 
         glViewport(0, 0, screenWidth, screenHeight);
