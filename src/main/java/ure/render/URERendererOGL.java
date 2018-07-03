@@ -95,7 +95,7 @@ public class URERendererOGL implements URERenderer {
     }
 
     @Override
-    public void initialize(){
+    public void initialize() {
 
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
@@ -223,7 +223,6 @@ public class URERendererOGL implements URERenderer {
                     addQuad(destx + offX + x, desty + offY + y, cellWidth(), cellHeight(), tint, glyph);
     }
 
-    static boolean slowMethod = false;
     public void render(){
 
         glViewport(0, 0, screenWidth, screenHeight);
@@ -241,41 +240,28 @@ public class URERendererOGL implements URERenderer {
 
         glBindTexture(GL_TEXTURE_2D, textureAtlas);
 
-        if(!slowMethod) {
-            FloatBuffer v = BufferUtils.createFloatBuffer(tris * 3 * 3);
-            FloatBuffer c = BufferUtils.createFloatBuffer(tris * 3 * 4);
-            FloatBuffer u = BufferUtils.createFloatBuffer(tris * 3 * 2);
+        FloatBuffer v = BufferUtils.createFloatBuffer(tris * 3 * 3);
+        FloatBuffer c = BufferUtils.createFloatBuffer(tris * 3 * 4);
+        FloatBuffer u = BufferUtils.createFloatBuffer(tris * 3 * 2);
 
-            v.put(verts_pos, 0, v.capacity());
-            c.put(verts_col, 0, c.capacity());
-            u.put(verts_uv, 0, u.capacity());
+        v.put(verts_pos, 0, v.capacity());
+        c.put(verts_col, 0, c.capacity());
+        u.put(verts_uv, 0, u.capacity());
 
-            v.flip();
-            c.flip();
-            u.flip();
+        v.flip();
+        c.flip();
+        u.flip();
 
-            GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-            GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
-            GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+        GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+        GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
+        GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 
-            GL11.glVertexPointer(3, GL_FLOAT, 0, v);
-            GL11.glColorPointer(4, GL_FLOAT, 0, c);
-            GL11.glTexCoordPointer(2, GL_FLOAT, 0, u);
+        GL11.glVertexPointer(3, GL_FLOAT, 0, v);
+        GL11.glColorPointer(4, GL_FLOAT, 0, c);
+        GL11.glTexCoordPointer(2, GL_FLOAT, 0, u);
 
 
-            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, tris * 3);
-        }else{
-            glBegin(GL_TRIANGLES);
-            int pp = 0;
-            int pc = 0;
-            int pu = 0;
-            for(int t = 0; t < tris * 3; t++){
-                GL11.glVertex3f(verts_pos[pp++], verts_pos[pp++], verts_pos[pp++]);
-                GL11.glColor4f(verts_col[pc++], verts_col[pc++], verts_col[pc++], verts_col[pc++]);
-                GL11.glTexCoord2f(verts_uv[pu++], verts_uv[pu++]);
-            }
-            glEnd();
-        }
+        GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, tris * 3);
         glFinish();
 
         glfwSwapBuffers(window);
