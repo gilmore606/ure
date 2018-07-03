@@ -63,7 +63,6 @@ public class UPath {
             return null;
         Nodelist openlist = new Nodelist();
         Nodelist closedlist = new Nodelist();
-        Nodelist nodecache = new Nodelist();
         Node start = new Node(x1,y1);
         openlist.add(start);
         int stepcount = 0;
@@ -80,7 +79,7 @@ public class UPath {
                 Node step = steps[i];
                 if (step != null) {
                     if (step.x == x2 && step.y == y2) { // FOUND IT
-                        while (step.parent.x != x1 && step.parent.y != y1) {
+                        while (step.parent != start) {
                             System.out.println("step " + Integer.toString(step.x - x1) + "," + Integer.toString(step.y - y1));
                             step = step.parent;
                         }
@@ -90,7 +89,6 @@ public class UPath {
                         return new int[]{step.x, step.y};
                     }
                     step.recalc(x2,y2);
-                    nodecache.add(step);
                     boolean skipstep = false;
                     for (Node o : openlist) {
                         if ((o.x == step.x) && (o.y == step.y) && (o.f < step.f)) {
