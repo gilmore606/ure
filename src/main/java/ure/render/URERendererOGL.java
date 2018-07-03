@@ -1,29 +1,21 @@
 package ure.render;
 
-import org.apache.commons.io.IOUtils;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
-import org.lwjgl.stb.STBImage;
 import ure.UColor;
 import ure.URECamera;
-import ure.URECommander;
 import ure.actors.UREActor;
 import ure.terrain.URETerrain;
 import ure.things.UREThing;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
-
-import java.nio.IntBuffer;
 import java.util.Iterator;
 
 public class URERendererOGL implements URERenderer {
@@ -40,8 +32,6 @@ public class URERendererOGL implements URERenderer {
     private int screenHeight = 1000;
 
     private GLFWErrorCallback errorCallback;
-    private GLFWKeyCallback   keyCallback;
-    private GLFWFramebufferSizeCallback fbCallback;
 
     private int tris = 0;
     private int maxTris = 65536; // THIS CAN BE HIGHER IF NEEDED
@@ -52,20 +42,12 @@ public class URERendererOGL implements URERenderer {
 
     private int textureAtlas = -1;
 
-    private int fontPadX = 3;
-    private int fontPadY = 1;
-    private int cellPadX = 0;
-    private int cellPadY = 1;
+    private final static int cellPadX = 0;
+    private final static int cellPadY = 1;
     private int fontSize = 16;
-    private UColor UIframeColor;
+    private UColor uiFrameColor = new UColor(1f, 1f, 0f);
 
-    URECommander commander;
-
-    private boolean rendering = false;
-
-    public URERendererOGL() {
-        UIframeColor = new UColor(1f, 1f, 0f);
-    }
+    private KeyListener keyListener;
 
     // URERenderer methods
 
@@ -80,8 +62,8 @@ public class URERendererOGL implements URERenderer {
     }
 
     @Override
-    public void setCommander(URECommander cmdr) {
-        commander = cmdr;
+    public void setKeyListener(KeyListener listener) {
+        this.keyListener = listener;
     }
 
     @Override
@@ -107,7 +89,6 @@ public class URERendererOGL implements URERenderer {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 1);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 0);
-        //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
@@ -115,7 +96,7 @@ public class URERendererOGL implements URERenderer {
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
-        glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
+        glfwSetKeyCallback(window, new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key,
                                int scancode, int action, int mods) {
@@ -123,13 +104,14 @@ public class URERendererOGL implements URERenderer {
                     glfwSetWindowShouldClose(window, true);
                     System.out.println("OMG I SHOULD EXIT NOW!");
                 }
-                if(key < 256 && key >= 0 && (action == GLFW_PRESS || action == GLFW_REPEAT)){
-                    commander.keyPressed((char)key);
+                if (keyListener != null && key < 256 && key >= 0 && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+                    keyListener.keyPressed((char)key);
                 }
             }
         });
+
         glfwSetFramebufferSizeCallback(window,
-                fbCallback = new GLFWFramebufferSizeCallback() {
+                new GLFWFramebufferSizeCallback() {
                     @Override
                     public void invoke(long window, int w, int h) {
                         if (w > 0 && h > 0) {
@@ -183,7 +165,6 @@ public class URERendererOGL implements URERenderer {
     public void drawCamera(URECamera camera) {
 
         camera.rendering = true;
-        rendering = true;
         int cellw = cellWidth();
         int cellh = cellHeight();
         int camw = camera.getWidthInCells();
@@ -197,7 +178,6 @@ public class URERendererOGL implements URERenderer {
         }
 
         camera.rendering = false;
-        rendering = false;
     }
 
     @Override
@@ -407,57 +387,4 @@ public class URERendererOGL implements URERenderer {
         }
     }
 
-    public class FontTexture {
-        int width;
-        int height;
-        int channels;
-
-        public int loadTexture(String filename) {
-            ByteBuffer imageBuffer;
-            try {
-                imageBuffer = readFile(filename);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            IntBuffer w = BufferUtils.createIntBuffer(1);
-            IntBuffer h = BufferUtils.createIntBuffer(1);
-            IntBuffer comp = BufferUtils.createIntBuffer(1);
-
-            ByteBuffer image = STBImage.stbi_load_from_memory(imageBuffer, w, h, comp, 0);
-            if(image == null){
-                throw new RuntimeException("Failed to load image: " + STBImage.stbi_failure_reason());
-            }
-
-            width = w.get(0);
-            height = h.get(0);
-            channels = comp.get(0);
-
-            int texId = glGenTextures();
-            glBindTexture(GL_TEXTURE_2D, texId);
-            if (channels == 3) {
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this.width, this.height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-            } else {
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this.width, this.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            }
-
-            glBindTexture(0, GL_TEXTURE_2D);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-            return texId;
-        }
-
-        private ByteBuffer readFile(String filename) throws IOException{
-            InputStream is = this.getClass().getResourceAsStream(filename);
-            byte[] bytes = IOUtils.toByteArray(is);
-            ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length + 1);
-            buffer.put(bytes);
-            buffer.flip();
-            return buffer;
-        }
-
-    }
 }

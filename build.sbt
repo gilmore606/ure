@@ -4,8 +4,6 @@ version := "0.1"
 description := "UnRoguelike Engine"
 
 javaOptions += "-XstartOnFirstThread"
-javaOptions += "-Dorg.lwjgl.util.Debug=true"
-javaOptions += "-Dorg.lwjgl.opengl.Display.enableHighDPI=true"
 
 Compile / run / fork := true
 

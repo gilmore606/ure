@@ -16,7 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 
 
-public class URECommander {
+public class URECommander implements URERenderer.KeyListener {
 
     private HashMap<Character, String> keyBinds;
     private HashSet<UTimeListener> timeListeners;

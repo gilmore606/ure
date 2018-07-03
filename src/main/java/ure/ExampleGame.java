@@ -96,7 +96,7 @@ public class ExampleGame implements UTimeListener {
         player = new UREPlayer("Player", '@', UColor.COLOR_WHITE, true, 4, 6);
 
         commander = new URECommander(player, renderer);
-        renderer.setCommander(commander);
+        renderer.setKeyListener(commander);
         area.setCommander(commander);
         makeWindow();//.getContentPane().addKeyListener(commander);
 
