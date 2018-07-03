@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class UREScrollPanel {
 
     Font font;
-    UColor fgColor, bgColor;
+    UColor fgColor, bgColor, borderColor;
     int textRows, textColumns;
     int pixelw, pixelh;
     int padX, padY;
@@ -31,7 +31,7 @@ public class UREScrollPanel {
         width = xx;
         height = yy;
     }
-    public UREScrollPanel(URERenderer theRenderer, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg) {
+    public UREScrollPanel(URERenderer theRenderer, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg, UColor borderc) {
         lines = new ArrayList<String>();
         lineFades = new ArrayList<UColor>();
         textRows = rows;
@@ -44,6 +44,7 @@ public class UREScrollPanel {
         pixelh = textRows * (ch + spacing) + padY;
         fgColor = fg;
         bgColor = bg;
+        borderColor = borderc;
         renderer = theRenderer;
     }
 
@@ -61,7 +62,7 @@ public class UREScrollPanel {
     }
 
     public void renderImage() {
-        renderer.drawRectBorder(xPos+1, yPos+1, width-2, height-2, 1, bgColor, fgColor);
+        renderer.drawRectBorder(xPos+1, yPos+1, width-2, height-2, 1, bgColor, borderColor);
         int i = 0;
         while (i < textRows) {
             if (i < lines.size()) {
