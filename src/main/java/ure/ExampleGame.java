@@ -104,9 +104,9 @@ public class ExampleGame implements UTimeListener {
         scaper.simplexScatterThings(area, "skull", new String[]{"floor","floormoss"}, 0.6f, 0.15f + scaper.random.nextFloat() * 0.3f);
         scaper.scatterThings(area, new String[]{"trucker hat", "butcher knife", "rock", "apple"}, new String[]{"floor"}, 10 + scaper.random.nextInt(40));
 
-        player = new UREPlayer("Player", '@', new UColor(Color.WHITE), true, 4, 6);
+        player = new UREPlayer("Player", '@', new UColor(Color.WHITE), true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
 
-        commander = new URECommander(player, renderer);
+        commander = new URECommander(player, renderer, thingCzar, actorCzar);
         renderer.setCommander(commander);
         area.setCommander(commander);
         makeWindow();//.getContentPane().addKeyListener(commander);

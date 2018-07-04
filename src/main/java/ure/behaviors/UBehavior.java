@@ -6,7 +6,7 @@ import ure.actors.URENPC;
 
 public class UBehavior {
 
-    public static String name = "";
+    public static String TYPE = "";
 
     public UAction action(URENPC actor) {
         return null;

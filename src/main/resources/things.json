@@ -8,6 +8,18 @@
     "value": 0
   },
   {
+    "name": "torch",
+    "type": "lightsource",
+    "glyph": "t",
+    "description": "A wooden torch dipped in pitch.",
+    "color": [200,155,55],
+    "lightcolor": [255,255,240],
+    "lightrange": 15,
+    "lightfalloff": 2,
+    "weight": 2,
+    "value": 5
+  },
+  {
     "name": "butcher knife",
     "type": "weapon",
     "glyph": "t",

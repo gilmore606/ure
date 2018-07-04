@@ -11,12 +11,12 @@ public class UREPlayer extends UREActor {
 
     URELight light;
 
-    public UREPlayer(String thename, char theicon, UColor thecolor, boolean addOutline, int selfLight, int selfLightFalloff) {
+    public UREPlayer(String thename, char theicon, UColor thecolor, boolean addOutline, UColor selfLightColor, int selfLight, int selfLightFalloff) {
         super();
         initialize();
         setDisplayFields(thename, theicon, thecolor, addOutline);
         if (selfLight > 0) {
-            light = new URELight(UColor.COLOR_WHITE, selfLightFalloff + selfLight, selfLight);
+            light = new URELight(selfLightColor, selfLightFalloff + selfLight, selfLight);
         }
     }
 
