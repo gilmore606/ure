@@ -88,11 +88,12 @@
     {
       "name": "tree",
       "filechar": "T",
-      "passable": true,
+      "passable": false,
       "opaque": true,
       "sunvis": 0.5,
       "glyph": "$",
       "fgcolor": [0,220,0],
+      "fgvariants": [ [50,220,0],[40,180,0],[0,240,0]],
       "bgcolor": [0,40,0],
       "walkmsg": "Tall pine trees."
     },

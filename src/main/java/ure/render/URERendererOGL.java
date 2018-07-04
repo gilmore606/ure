@@ -447,7 +447,7 @@ public class URERendererOGL implements URERenderer {
             addQuad(x * cellw, y * cellh, cellw, cellh, t.bgColorBuffer);
             t.fgColorBuffer.set(t.fgColor.r, t.fgColor.g, t.fgColor.b);
             t.fgColorBuffer.illuminateWith(terrainLight, tOpacity);
-            drawGlyph(t.glyph(x,y), x * cellw, y * cellh, t.fgColorBuffer, t.glyphOffsetX(), t.glyphOffsetY() + 2);
+            drawGlyph(t.glyph(x+camera.x1,y+camera.y1), x * cellw, y * cellh, t.fgColorBuffer, t.glyphOffsetX(), t.glyphOffsetY() + 2);
         }
 
         //TODO: Define this magic value somewhere?

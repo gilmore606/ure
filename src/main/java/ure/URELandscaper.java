@@ -1,5 +1,6 @@
 package ure;
 
+import ure.actors.UREActor;
 import ure.terrain.URETerrain;
 import ure.terrain.URETerrainCzar;
 import ure.things.UREThing;
@@ -158,6 +159,16 @@ public class URELandscaper {
         while (cell == null || !match) {
             cell = area.cellAt(random.nextInt(area.xsize), random.nextInt(area.ysize));
             match = cellHasTerrain(area, cell, terrains);
+        }
+        return cell;
+    }
+
+    public UCell randomOpenCell(UREArea area, UREThing thing) {
+        UCell cell = null;
+        boolean match = false;
+        while (cell == null || !match) {
+            cell = area.cellAt(random.nextInt(area.xsize), random.nextInt(area.ysize));
+            match = cell.willAcceptThing(thing);
         }
         return cell;
     }

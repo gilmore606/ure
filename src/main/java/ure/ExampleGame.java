@@ -73,6 +73,7 @@ public class ExampleGame implements UTimeListener {
         actorCzar.loadActors("/actors.json");
 
         area = new UREArea(100, 100, terrainCzar, "wall");
+        //URELandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
         URELandscaper scaper = new ExampleCaveScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
 
@@ -88,19 +89,19 @@ public class ExampleGame implements UTimeListener {
         commander.registerTimeListener(this);
         commander.addAnimator(camera);
 
-        UCell startcell = scaper.randomCell(area, new String[]{"floor"});
+        UCell startcell = scaper.randomOpenCell(area, player);
         player.moveToCell(area, startcell.x, startcell.y);
         player.attachCamera(camera, URECamera.PINSTYLE_HARD);
         player.startActing(commander);
 
         UREActor monk = actorCzar.getActorByName("monk");
-        UCell monkdest = scaper.randomCell(area, new String[]{"floor"});
+        UCell monkdest = scaper.randomOpenCell(area, monk);
         monk.moveToCell(area, monkdest.x, monkdest.y);
         monk.startActing(commander);
 
         for (int i=0;i<30;i++) {
-            UCell ratdest = scaper.randomCell(area, new String[]{"floor"});
             UREActor rat = actorCzar.getActorByName("rat");
+            UCell ratdest = scaper.randomOpenCell(area, rat);
             rat.moveToCell(area, ratdest.x, ratdest.y);
             rat.startActing(commander);
         }
