@@ -72,9 +72,12 @@ public class UREThing implements UContainer, Cloneable {
         return name + "s";
     }
 
-    public char getGlyph() {
+    public char glyph() {
         return glyph;
     }
+    public int glyphOffsetX() { return 0; }
+    public int glyphOffsetY() { return 0; }
+
     public UColor getGlyphColor() {
         return glyphColor;
     }
@@ -147,10 +150,11 @@ public class UREThing implements UContainer, Cloneable {
     //The camera class will call this, and tell where in screen coords to draw it.
     // TODO: Things should probably not be tied directly to the rendering system.  Ideally they would just be part of the data layer, not the presentation layer
     public void render(URERenderer renderer, int x, int y, UColor light, float vis){
-        char icon = this.getGlyph();
+        char icon = this.glyph();
         UColor color = new UColor(this.getGlyphColor());
-        if (this.drawGlyphOutline())
+        if (this.drawGlyphOutline()) {
             renderer.drawGlyphOutline(icon, x, y, UColor.COLOR_BLACK, 0, 0);
+        }
         color.illuminateWith(light, vis);
         //drawGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color, 0, 0);
         renderer.drawGlyph(icon, x, y, color, 0, 0);

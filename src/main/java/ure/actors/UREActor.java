@@ -1,6 +1,7 @@
 package ure.actors;
 
 import ure.*;
+import ure.actions.UAction;
 import ure.terrain.URETerrain;
 import ure.things.UREThing;
 
@@ -11,6 +12,8 @@ public class UREActor  extends UREThing {
     public URECamera camera;
     int cameraPinStyle;
     UPath path;
+
+    float actionTime = 0f;
 
     public static boolean isActor = true;
 
@@ -35,6 +38,10 @@ public class UREActor  extends UREThing {
     public void detachCamera() {
         camera.removeVisibilitySource(this);
         camera = null;
+    }
+
+    public void addActionTime(float amount) {
+        actionTime += amount;
     }
 
     public void walkDir(int xdir, int ydir) {
@@ -104,6 +111,15 @@ public class UREActor  extends UREThing {
                 area().commander().printScrollIfSeen(this, this.dnamec() + " picks up " + thing.iname() + ".");
             thing.gotBy(this);
         }
+    }
+
+    public float actionSpeed() {
+        return 1f;
+    }
+
+    public void doAction(UAction action) {
+        float timecost = action.doneBy(this);
+        this.actionTime = this.actionTime - timecost;
     }
 
     public void hearTick() {
