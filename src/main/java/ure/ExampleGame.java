@@ -119,6 +119,7 @@ public class ExampleGame implements UTimeListener {
         UCell startcell = scaper.randomCell(area, new String[]{"floor"});
         player.moveToCell(area, startcell.x, startcell.y);
         player.attachCamera(camera, URECamera.PINSTYLE_HARD);
+        player.startActing(commander);
 
         UREActor monk = actorCzar.getActorByName("monk");
         UCell monkdest = scaper.randomCell(area, new String[]{"floor"});

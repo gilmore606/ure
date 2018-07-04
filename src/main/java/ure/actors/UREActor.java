@@ -30,6 +30,10 @@ public class UREActor  extends UREThing {
         return true;
     }
 
+    public float actionTime() {
+        return actionTime;
+    }
+
     public void attachCamera(URECamera thecamera, int pinstyle) {
         camera = thecamera;
         cameraPinStyle = pinstyle;
@@ -42,7 +46,7 @@ public class UREActor  extends UREThing {
     }
 
     public void addActionTime(float amount) {
-        actionTime += amount;
+        actionTime = actionTime + amount;
     }
 
     public void walkDir(int xdir, int ydir) {

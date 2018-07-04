@@ -42,7 +42,7 @@ public class URECommander implements KeyListener {
     private LinkedBlockingQueue<Character> keyBuffer;
     private int keyBufferSize = 2;
 
-    private boolean waitingForInput = true;
+    private boolean waitingForInput = false;
 
     public URECommander(UREActor theplayer, URERenderer theRenderer) {
         renderer = theRenderer;
@@ -105,7 +105,7 @@ public class URECommander implements KeyListener {
 
 
     public void keyPressed(char c) {
-        hearCommand(keyBinds.get(c));
+        keyBuffer.add(c);
     }
 
     public void keyReleased(KeyEvent e) {
@@ -117,6 +117,7 @@ public class URECommander implements KeyListener {
     }
 
     public void consumeKeyFromBuffer() {
+        System.out.println("consumeKeyFromBuffer");
         if (!keyBuffer.isEmpty()) {
             Character c = keyBuffer.remove();
             hearCommand(keyBinds.get(c));
@@ -125,11 +126,10 @@ public class URECommander implements KeyListener {
 
     void hearCommand(String command) {
         if(command == null) return;
-        System.out.println("cmd: " + command);
+        System.out.println("actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command);
         if (player.camera.modal != null) {
             player.camera.modal.hearCommand(command);
         } else {
-            boolean acted = true;
             switch (command) {
                 case "MOVE_N":
                     walkPlayer(0, -1);
@@ -154,33 +154,17 @@ public class URECommander implements KeyListener {
                     break;
                 case "DEBUG_1":
                     debug_1();
-                    acted = false;
                     break;
                 case "DEBUG_2":
                     debug_2();
-                    acted = false;
                     break;
                 case "DEBUG_3":
                     debug_3();
-                    acted = false;
                     break;
-            }
-            if (acted) {
-                tickTime();
             }
         }
     }
 
-    public void tickTime() {
-        Iterator<UTimeListener> timeI = timeListeners.iterator();
-        while (timeI.hasNext()) {
-            timeI.next().hearTimeTick(this);
-        }
-        turnCounter++;
-        System.out.println("tick");
-        player.camera.renderImage();
-        //System.gc();
-    }
 
     void walkPlayer(int xdir, int ydir) {
         player.doAction(new UActionWalk(xdir, ydir));
@@ -264,22 +248,49 @@ public class URECommander implements KeyListener {
             renderer.render();
 
             long curTime = System.nanoTime();
-            if (curTime - gameTime > animationMillis*1000)
+            if (curTime - gameTime > animationMillis * 1000)
                 animationFrame();
             if (curTime > gameTime + tickRate * 2) gameTime = curTime;
             else gameTime += tickRate;
             while (System.nanoTime() < gameTime) {
                 try {
                     Thread.sleep(1);
-                } catch (InterruptedException e) { }
+                } catch (InterruptedException e) {
+                }
             }
 
+            if (!waitingForInput) {
+                for (UREActor actor : actors) {
+                    actor.act();
+                }
+                waitingForInput = true;
+            }
             // if it's the player's turn, do a command if we have one
             if (waitingForInput && !keyBuffer.isEmpty()) {
+                System.out.println("consuming");
                 consumeKeyFromBuffer();
+                player.camera.renderImage();
+                if (player.actionTime() <= 0f) {
+                    TickTime();
+                    waitingForInput = false;
+                }
             }
         }
     }
+
+    void TickTime() {
+        for (UREActor actor : actors) {
+            actor.addActionTime(1f);
+        }
+        Iterator<UTimeListener> timeI = timeListeners.iterator();
+        while (timeI.hasNext()) {
+            timeI.next().hearTimeTick(this);
+        }
+        turnCounter++;
+        System.out.println("time:tick " + Integer.toString(turnCounter));
+        player.camera.renderImage();
+    }
+
 
     public int daytimeMinutes() {
         return (int)(((float)(turnCounter % turnsPerDay) / (float)turnsPerDay) * 1440f);
