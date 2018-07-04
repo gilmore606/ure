@@ -10,8 +10,6 @@ import ure.things.UREThingCzar;
 import ure.ui.UREScrollPanel;
 import ure.ui.UREStatusPanel;
 
-import java.awt.*;
-
 public class ExampleGame implements UTimeListener {
 
     static UREArea area;
@@ -20,8 +18,6 @@ public class ExampleGame implements UTimeListener {
     static UREActor player;
     static UREStatusPanel statusPanel;
     static UREScrollPanel scrollPanel;
-    static Font font;
-    //static URERenderer renderer;
     static URERenderer renderer;
 
     static URETerrainCzar terrainCzar;
@@ -31,7 +27,6 @@ public class ExampleGame implements UTimeListener {
     private void makeWindow() {
         camera = new URECamera(renderer, 1200, 800);
         camera.moveTo(area, 40,20);
-        camera.setBounds(0,0,1200,800);
 
         statusPanel = new UREStatusPanel(renderer, 15, 10, 16, 16, 10, 10, new UColor(1f,1f,1f), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
         statusPanel.addText("name", "Player 2",0,0);
@@ -56,13 +51,7 @@ public class ExampleGame implements UTimeListener {
     }
 
     public void startUp()  {
-        try {
-            font = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResourceAsStream("/Px437_Phoenix_BIOS-2y.ttf")).deriveFont(Font.PLAIN, 16);
-        } catch (Exception e) {
-            System.out.println("Failed to load font");
-        }
-        //renderer = new URERenderer(font);
-        renderer = new URERendererOGL(font);
+        renderer = new URERendererOGL();
         renderer.initialize();
 
         terrainCzar = new URETerrainCzar();
@@ -77,10 +66,10 @@ public class ExampleGame implements UTimeListener {
         URELandscaper scaper = new ExampleCaveScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
 
-        player = new UREPlayer("Player", '@', new UColor(Color.WHITE), true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
+        player = new UREPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
 
         commander = new URECommander(player, renderer, thingCzar, actorCzar);
-        renderer.setCommander(commander);
+        renderer.setKeyListener(commander);
         area.setCommander(commander);
         makeWindow();//.getContentPane().addKeyListener(commander);
 

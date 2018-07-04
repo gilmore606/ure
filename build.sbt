@@ -4,7 +4,6 @@ version := "0.1"
 description := "UnRoguelike Engine"
 
 javaOptions += "-XstartOnFirstThread"
-javaOptions += "-Dorg.lwjgl.util.Debug=true"
 
 Compile / run / fork := true
 
@@ -18,7 +17,8 @@ libraryDependencies ++= {
   Seq(
     "lwjgl",
     "lwjgl-glfw",
-    "lwjgl-opengl"
+    "lwjgl-opengl",
+    "lwjgl-stb"
   ).flatMap {
     module => {
       Seq(
@@ -31,7 +31,7 @@ libraryDependencies ++= {
 
 libraryDependencies += "org.reflections" % "reflections" % "0.9.11"
 libraryDependencies += "org.joml" % "joml" % "1.9.9"
-
+libraryDependencies += "commons-io" % "commons-io" % "2.6"
 
 assemblyMergeStrategy in assembly := {
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
