@@ -39,8 +39,9 @@ public class URECommander implements KeyListener {
     public UREThingCzar thingCzar;
     public UREActorCzar actorCzar;
 
-    private int turnCounter;
+    public int turnCounter;
     private int turnsPerDay = 512;
+    public int frameCounter;
 
     private int animationMillis = 33;
 
@@ -244,6 +245,7 @@ public class URECommander implements KeyListener {
         long tickRate = 1000000000 / 60;
         long gameTime = System.nanoTime();
         while (!renderer.windowShouldClose()) {
+            frameCounter++;
             renderer.pollEvents();
 
             renderer.drawCamera(player.camera);

@@ -412,7 +412,7 @@ public class URECamera extends Canvas implements UAnimator {
         if (allLit) {
             total = UColor.COLOR_WHITE;
         } else {
-            total = lightcells[x][y].light();
+            total = lightcells[x][y].light(area.commander().frameCounter);
             for (int i = -1;i < 2;i++) {
                 for (int j = -1;j < 2;j++) {
                     URETerrain t = area.terrainAt(x + x1 + i, y + y1 + j);

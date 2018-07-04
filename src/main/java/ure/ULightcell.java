@@ -55,11 +55,12 @@ public class ULightcell {
 
     public float getRenderedSun() { return sunBuffer; }
 
-    public UColor light() {
+    public UColor light() { return light(0); }
+    public UColor light(int time) {
         lightBuffer.set(0f,0f,0f);
         lightBuffer.addLights(camera.area.sunColor, getRenderedSun());
         for (URELight source : sources.keySet()) {
-            float intensity = sources.get(source);
+            float intensity = sources.get(source) * source.intensityAtTime(time);
             lightBuffer.addLights(source.color, intensity);
         }
         return lightBuffer;

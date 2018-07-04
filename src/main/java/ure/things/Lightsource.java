@@ -5,6 +5,8 @@ import ure.UContainer;
 import ure.UREArea;
 import ure.URELight;
 
+import java.util.Random;
+
 public class Lightsource extends UREThing {
 
     public static final String TYPE = "lightsource";
@@ -13,6 +15,9 @@ public class Lightsource extends UREThing {
     public boolean lightcolorUseGlyph = false;
     public int lightrange;
     public int lightfalloff;
+    public int lightflicker;
+    public float lightflickerspeed, lightflickerintensity;
+    public int lightflickeroffset;
     public boolean spawnOn = false;
 
     public boolean on;
@@ -32,6 +37,9 @@ public class Lightsource extends UREThing {
         } else {
             light = new URELight(new UColor(lightcolor[0], lightcolor[1], lightcolor[2]), lightrange, lightfalloff);
         }
+        Random random = new Random();
+        if (lightflicker > 0)
+            light.setFlicker(lightflicker, lightflickerspeed, lightflickerintensity, random.nextInt(lightflickeroffset));
     }
 
     public boolean on() {

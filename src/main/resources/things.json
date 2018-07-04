@@ -74,6 +74,10 @@
     "lightcolorUseGlyph": true,
     "lightrange": 7,
     "lightfalloff": 1,
+    "lightflicker": 2,
+    "lightflickerspeed": 1.5,
+    "lightflickerintensity": 0.5,
+    "lightflickeroffset": 60,
     "movable": false,
     "spawnOn": true
   },

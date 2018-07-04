@@ -9,9 +9,19 @@ import java.lang.Math;
  */
 
 public class URELight {
+    public static final int FLICKER_NONE = 0;
+    public static final int FLICKER_FIRE = 1;
+    public static final int FLICKER_PULSE = 2;
+    public static final int FLICKER_FRITZ = 3;
+    public static final int FLICKER_BLINK = 4;
+
     public UColor color;
     public int falloff = 1;
     public int range;
+    int flickerStyle = 0;
+    float flickerSpeed = 0f;
+    float flickerIntensity = 0f;
+    int flickerOffset = 0;
 
     UREArea area;
     public int x,y;
@@ -31,6 +41,13 @@ public class URELight {
         color = thecolor;
         range = therange;
         falloff = thefalloff;
+    }
+
+    public void setFlicker(int style, float speed, float intensity, int offset) {
+        flickerStyle = style;
+        flickerSpeed = speed;
+        flickerIntensity = intensity;
+        flickerOffset = offset;
     }
 
     public void close() {
@@ -71,6 +88,35 @@ public class URELight {
         if (intensityAtOffset(x - tx, y - ty) > 0.01f)
             return true;
         return false;
+    }
+
+    public float intensityAtTime(int time) {
+        if (flickerStyle == FLICKER_NONE) return 1f;
+        float i = 0f;
+        time = (int)((float)(time + flickerOffset) * (1f / flickerSpeed));
+        //if (true)
+        //    return 1f - (float)Math.sin((double)time * 0.05);
+        switch (flickerStyle) {
+            case FLICKER_FIRE: i =  intensityFlickerFire(time); break;
+            case FLICKER_PULSE: i = intensityFlickerPulse(time); break;
+            case FLICKER_FRITZ: i = intensityFlickerFritz(time); break;
+            case FLICKER_BLINK: i = intensityFlickerBlink(time); break;
+        }
+        return 1f - (i * flickerIntensity);
+    }
+
+    float intensityFlickerFire(int time) {
+        return 0f;
+    }
+    float intensityFlickerPulse(int time) {
+        float i = (float)Math.sin((double)time * 0.05);
+        return i;
+    }
+    float intensityFlickerFritz(int time) {
+        return 0f;
+    }
+    float intensityFlickerBlink(int time) {
+        return 0f;
     }
 
     public float intensityAtOffset(int xoff, int yoff) {
