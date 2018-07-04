@@ -92,7 +92,7 @@ public class UCell implements UContainer {
 
     public boolean hasA(String thing) {
         for (UREThing t : contents.things) {
-            if (t.name == thing)
+            if (t.name.equals(thing))
                 return true;
         }
         return false;

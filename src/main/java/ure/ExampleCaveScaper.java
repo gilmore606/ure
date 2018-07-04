@@ -17,6 +17,10 @@ public class ExampleCaveScaper extends URELandscaper {
     public void buildCaves(UREArea area, String floorTerrain,
                            int x1, int x2, int y1, int y2) {
 
+        float lavaFactor = randf(0.2f);
+        if (randf() < 0.1f)
+            lavaFactor = 1f;
+
         digCaves(area, floorTerrain, x1, x2, y1, y2,
                 0.38f + randf(0.14f),
                 4 + rand(3), 3 + rand(3),
@@ -26,7 +30,7 @@ public class ExampleCaveScaper extends URELandscaper {
             int rivers = rand(3) + 1;
             if (randf() < 0.1) rivers = rivers + rand(4);
             String water = "water";
-            if (randf() < 0.1)
+            if (randf() < lavaFactor)
                 water = "lava";
             digRiver(area, water, x1, x2, y1, y2,
                     2f + randf(4f),
@@ -52,7 +56,15 @@ public class ExampleCaveScaper extends URELandscaper {
             }
         }
 
-        simplexScatterThings(area, "crystal stalagmite", new String[]{"floor"}, randf(0.4f)+0.3f, randf(0.07f),
+        String lights = "crystal stalagmite";
+        if (random.nextFloat() < lavaFactor) {
+            lights = "magma vent";
+            if (randf() < 0.3f) {
+                simplexScatterThings(area, "crystal stalagmite", new String[]{"floor"}, randf(0.4f) + 0.3f, randf(0.07f),
+                        new float[]{8f, 21f, randf(120f)}, 3);
+            }
+        }
+        simplexScatterThings(area, lights, new String[]{"floor"}, randf(0.4f)+0.3f, randf(0.07f),
                 new float[]{9f, 23f, randf(100f) + 60f}, 3);
 
         simplexScatterThings(area, "skull", new String[]{floorTerrain},
