@@ -133,17 +133,14 @@ public class URERendererOGL implements URERenderer {
         int[] width = new int[1];
         int[] height = new int[1];
         glfwGetFramebufferSize(window, width, height);
-        densityMultiplier = width[0] / screenWidth;
-        System.out.println("Setting density multiplier to " + densityMultiplier);
-
-        resize(screenWidth, screenHeight);
+        resize(width[0], height[0]);
 
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
         GL.createCapabilities();
         GLUtil.setupDebugMessageCallback();
 
         //Lets quickly blank the screen.
-        glViewport(0, 0, (int)(screenWidth*densityMultiplier), (int)(screenHeight*densityMultiplier));
+        glViewport(0, 0, screenWidth, screenHeight);
         glClearColor(0.03f, 0.05f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_TEXTURE_2D);
