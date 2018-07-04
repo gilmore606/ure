@@ -62,8 +62,8 @@ public class ExampleGame implements UTimeListener {
         actorCzar.loadActors("/actors.json");
 
         area = new UREArea(100, 100, terrainCzar, "wall");
-        //URELandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
-        URELandscaper scaper = new ExampleCaveScaper(terrainCzar, thingCzar);
+        URELandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
+        //URELandscaper scaper = new ExampleCaveScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
 
         player = new UREPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);

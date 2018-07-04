@@ -8,8 +8,20 @@
       "glyph": ".",
       "variants": ".....,",
       "fgcolor": [0,150,0],
-      "bgcolor": [0,40,0]
+      "bgcolor": [0,40,0],
+      "bgvariants": [ [0,45,0], [0,60,0], [8, 50, 5], [5, 60, 5], [5, 45, 9] ]
     },
+  {
+    "name": "dirt",
+    "filechar": ",",
+    "passable": true,
+    "opaque": false,
+    "sunvis": 1.0,
+    "glyph": " ",
+    "variants": " .",
+    "fgcolor": [120,110,35],
+    "bgcolor": [70,55,15]
+  },
     {
       "name": "wall",
       "filechar": "#",
