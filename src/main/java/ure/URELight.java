@@ -102,10 +102,9 @@ public class URELight {
     }
 
     float intensityFlickerFire(int time) {
-        float i = random.nextFloat() * 0.5f;
-        if (random.nextFloat() < 0.1f)
-            i = i * 0.5f;
-        return i;
+        float f = (float)time / 6.0f;
+        f = .75f + Math.max((float)(Math.sin(f * 2.7777)), (float)(Math.sin(f * 3.1117))) * .25f;
+        return f;
     }
     float intensityFlickerPulse(int time) {
         float i = (float)Math.sin((double)time * 0.05);
