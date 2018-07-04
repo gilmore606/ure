@@ -28,8 +28,8 @@ public class URERendererOGL implements URERenderer {
     private long window;
 
     // TODO: These should be customizable at a higher level
-    private int screenWidth = 1120;
-    private int screenHeight = 800;
+    private int screenWidth = 1400;
+    private int screenHeight = 1000;
 
     private GLFWErrorCallback errorCallback;
 
@@ -46,8 +46,6 @@ public class URERendererOGL implements URERenderer {
     private final static int cellPadY = 1;
     private int fontSize = 16;
     private UColor uiFrameColor = new UColor(1f, 1f, 0f);
-
-    private double densityMultiplier = 1;
 
     private KeyListener keyListener;
 
@@ -203,7 +201,7 @@ public class URERendererOGL implements URERenderer {
 
     public void render() {
 
-        glViewport(0, 0, (int)(screenWidth*densityMultiplier), (int)(screenHeight*densityMultiplier));
+        glViewport(0, 0, screenWidth, screenHeight);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (tris == 0) return; //Nothing to draw
@@ -247,6 +245,17 @@ public class URERendererOGL implements URERenderer {
         tris = 0;
     }
 
+    @Override
+    public void drawRect(int x, int y, int w, int h, UColor col){
+        addQuad(x, y, w, h, col);
+    }
+
+    @Override
+    public void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor){
+        addQuad(x, y, w, h, borderColor);
+        addQuad(x + borderThickness, y + borderThickness, w - borderThickness * 2, h - borderThickness * 2, bgColor);
+    }
+
     // internals
 
     private void resize(int width, int height){
@@ -259,16 +268,6 @@ public class URERendererOGL implements URERenderer {
         glfwDestroyWindow(window);
         glfwTerminate();
         errorCallback.free();
-    }
-
-    @Override
-    public void drawRect(int x, int y, int w, int h, UColor col){
-        addQuad(x, y, w, h, col);
-    }
-    @Override
-    public void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor){
-        addQuad(x, y, w, h, borderColor);
-        addQuad(x + borderThickness, y + borderThickness, w - borderThickness * 2, h - borderThickness * 2, bgColor);
     }
 
 
