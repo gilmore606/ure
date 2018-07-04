@@ -1,6 +1,7 @@
 package ure;
 
 import java.lang.Math;
+import java.util.Random;
 
 /**
  * An instance of a light source somewhere in an area
@@ -22,6 +23,7 @@ public class URELight {
     float flickerIntensity = 0f;
     int flickerOffset = 0;
 
+    Random random;
     UREArea area;
     public int x,y;
 
@@ -41,6 +43,7 @@ public class URELight {
         flickerSpeed = speed;
         flickerIntensity = intensity;
         flickerOffset = offset;
+        random = new Random();
     }
 
     public void close() {
@@ -99,7 +102,10 @@ public class URELight {
     }
 
     float intensityFlickerFire(int time) {
-        return 0f;
+        float i = random.nextFloat() * 0.5f;
+        if (random.nextFloat() < 0.1f)
+            i = i * 0.5f;
+        return i;
     }
     float intensityFlickerPulse(int time) {
         float i = (float)Math.sin((double)time * 0.05);

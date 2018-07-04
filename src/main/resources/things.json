@@ -16,6 +16,10 @@
     "lightcolor": [240,235,215],
     "lightrange": 20,
     "lightfalloff": 2,
+    "lightflicker": 1,
+    "lightflickerspeed": 1.0,
+    "lightflickerintensity": 0.4,
+    "lightflickeroffset": 10,
     "weight": 2,
     "value": 5
   },
