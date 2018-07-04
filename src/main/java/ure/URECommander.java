@@ -117,7 +117,6 @@ public class URECommander implements KeyListener {
     }
 
     public void consumeKeyFromBuffer() {
-        System.out.println("consumeKeyFromBuffer");
         if (!keyBuffer.isEmpty()) {
             Character c = keyBuffer.remove();
             hearCommand(keyBinds.get(c));
@@ -267,7 +266,6 @@ public class URECommander implements KeyListener {
             }
             // if it's the player's turn, do a command if we have one
             if (waitingForInput && !keyBuffer.isEmpty()) {
-                System.out.println("consuming");
                 consumeKeyFromBuffer();
                 player.camera.renderImage();
                 if (player.actionTime() <= 0f) {
@@ -290,7 +288,6 @@ public class URECommander implements KeyListener {
         System.out.println("time:tick " + Integer.toString(turnCounter));
         player.camera.renderImage();
     }
-
 
     public int daytimeMinutes() {
         return (int)(((float)(turnCounter % turnsPerDay) / (float)turnsPerDay) * 1440f);
