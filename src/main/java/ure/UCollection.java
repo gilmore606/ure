@@ -16,8 +16,8 @@ import java.util.Iterator;
 public class UCollection {
 
     private UContainer container;
-    private ArrayList<UREThing> things;
-    private ArrayList<UREActor> actors;
+    ArrayList<UREThing> things;
+    ArrayList<UREActor> actors;
 
     public UCollection(UContainer cont) {
         container = cont;

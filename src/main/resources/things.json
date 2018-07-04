@@ -13,8 +13,8 @@
     "glyph": "t",
     "description": "A wooden torch dipped in pitch.",
     "color": [200,155,55],
-    "lightcolor": [255,255,240],
-    "lightrange": 15,
+    "lightcolor": [240,235,215],
+    "lightrange": 20,
     "lightfalloff": 2,
     "weight": 2,
     "value": 5
@@ -62,5 +62,17 @@
     "color": [240,240,2],
     "weight": 3,
     "value": 10
+  },
+  {
+    "name": "crystal stalagmite",
+    "type": "lightsource",
+    "glyph": "`",
+    "color": [65,170,200],
+    "colorvariance": [60,55,45],
+    "lightcolorUseGlyph": true,
+    "lightrange": 7,
+    "lightfalloff": 1,
+    "movable": false,
+    "spawnOn": true
   }
 ]

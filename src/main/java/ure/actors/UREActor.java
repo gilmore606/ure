@@ -34,6 +34,8 @@ public class UREActor  extends UREThing {
         return true;
     }
 
+    public URECommander commander() { return commander; }
+
     public float actionTime() {
         return actionTime;
     }

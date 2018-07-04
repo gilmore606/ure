@@ -10,8 +10,10 @@ public class Lightsource extends UREThing {
     public static final String TYPE = "lightsource";
 
     public int[] lightcolor;
+    public boolean lightcolorUseGlyph = false;
     public int lightrange;
     public int lightfalloff;
+    public boolean spawnOn = false;
 
     public boolean on;
 
@@ -24,12 +26,21 @@ public class Lightsource extends UREThing {
     }
 
     void makeLight() {
-        light = new URELight(new UColor(lightcolor[0],lightcolor[1],lightcolor[2]),lightrange,lightfalloff);
+        if (lightcolorUseGlyph) {
+            SetupColors();
+            light = new URELight(glyphColor, lightrange, lightfalloff);
+        } else {
+            light = new URELight(new UColor(lightcolor[0], lightcolor[1], lightcolor[2]), lightrange, lightfalloff);
+        }
     }
 
     public boolean on() {
         if (location == null)
             return false;
+        if (light == null)
+            makeLight();
+        if (spawnOn)
+            on = true;
         return on;
     }
 
@@ -37,8 +48,6 @@ public class Lightsource extends UREThing {
     public void moveToCell(UREArea area, int x, int y) {
         super.moveToCell(area, x, y);
         if (on()) {
-            if (light == null)
-                makeLight();
             light.moveTo(area, x, y);
         }
     }
@@ -56,10 +65,12 @@ public class Lightsource extends UREThing {
     }
 
     public void turnOn() {
-        on = true;
-        if (light == null)
-            makeLight();
-        light.moveTo(area(), areaX(), areaY());
+        if (!on()) {
+            on = true;
+            if (location != null) {
+                light.moveTo(area(), areaX(), areaY());
+            }
+        }
     }
 
     public void turnOff() {

@@ -17,7 +17,7 @@ public class UCell implements UContainer {
     int x,y;
     URETerrain terrain;
     float sunBrightness;
-    public UCollection contents;
+    private UCollection contents;
     boolean isSeen = false;
 
     public UCell(UREArea theArea, int thex, int they, URETerrain theTerrain) {
@@ -86,6 +86,14 @@ public class UCell implements UContainer {
             if (terrain.isPassable()) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    public boolean hasA(String thing) {
+        for (UREThing t : contents.things) {
+            if (t.name == thing)
+                return true;
         }
         return false;
     }
