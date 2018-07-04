@@ -123,11 +123,12 @@ public class ExampleGame implements UTimeListener {
         UREActor monk = actorCzar.getActorByName("monk");
         UCell monkdest = scaper.randomCell(area, new String[]{"floor"});
         monk.moveToCell(area, monkdest.x, monkdest.y);
+        monk.startActing(commander);
 
         commander.gameLoop();
     }
 
-    public void hearTick(URECommander commander) {
+    public void hearTimeTick(URECommander commander) {
         statusPanel.setText("turn", "T " + Integer.toString(commander.getTurn()));
         statusPanel.setText("time", commander.timeString(true, " "));
     }

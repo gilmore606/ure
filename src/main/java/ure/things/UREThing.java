@@ -159,4 +159,8 @@ public class UREThing implements UContainer, Cloneable {
         //drawGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color, 0, 0);
         renderer.drawGlyph(icon, x, y, color, 0, 0);
     }
+
+    public void emote(String text) {
+        area().commander().printScrollIfSeen(this, text);
+    }
 }

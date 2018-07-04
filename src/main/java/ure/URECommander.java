@@ -25,6 +25,8 @@ public class URECommander implements KeyListener {
     private HashMap<Character, String> keyBinds;
     private HashSet<UTimeListener> timeListeners;
     private HashSet<UAnimator> animators;
+    private ArrayList<UREActor> actors;
+
     private URERenderer renderer;
     private UREActor player;
     private UREScrollPanel scrollPrinter;
@@ -46,6 +48,8 @@ public class URECommander implements KeyListener {
         renderer = theRenderer;
         timeListeners = new HashSet<UTimeListener>();
         animators = new HashSet<UAnimator>();
+        actors = new ArrayList<UREActor>();
+
         setPlayer(theplayer);
         readKeyBinds();
         turnCounter = 0;
@@ -61,14 +65,17 @@ public class URECommander implements KeyListener {
     public void registerTimeListener(UTimeListener listener) {
         timeListeners.add(listener);
     }
-
     public void unRegisterTimeListener(UTimeListener listener) {
         timeListeners.remove(listener);
     }
 
+    public void registerActor(UREActor actor) { actors.add(actor); }
+    public void unRegisterActor(UREActor actor) { actors.remove(actor); }
+
     public void registerScrollPrinter(UREScrollPanel printer) {
         scrollPrinter = printer;
     }
+
 
     public void addAnimator(UAnimator animator) { animators.add(animator); }
     public void removeAnimator(UAnimator animator) { animators.remove(animator); }
@@ -167,7 +174,7 @@ public class URECommander implements KeyListener {
     public void tickTime() {
         Iterator<UTimeListener> timeI = timeListeners.iterator();
         while (timeI.hasNext()) {
-            timeI.next().hearTick(this);
+            timeI.next().hearTimeTick(this);
         }
         turnCounter++;
         System.out.println("tick");

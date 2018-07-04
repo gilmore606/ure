@@ -12,6 +12,7 @@ public class UREActor  extends UREThing {
     public URECamera camera;
     int cameraPinStyle;
     UPath path;
+    URECommander commander;
 
     float actionTime = 0f;
 
@@ -122,7 +123,15 @@ public class UREActor  extends UREThing {
         this.actionTime = this.actionTime - timecost;
     }
 
-    public void hearTick() {
+    public void startActing(URECommander thecommander) {
+        commander = thecommander;
+        commander.registerActor(this);
+    }
+    public void stopActing() {
+        commander.unRegisterActor(this);
+    }
+
+    public void act() {
 
     }
 
