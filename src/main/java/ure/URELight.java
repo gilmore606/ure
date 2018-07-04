@@ -14,6 +14,7 @@ public class URELight {
     public static final int FLICKER_PULSE = 2;
     public static final int FLICKER_FRITZ = 3;
     public static final int FLICKER_BLINK = 4;
+    public static final int FLICKER_COMPULSE = 5;
 
     public UColor color;
     public int falloff = 1;
@@ -89,14 +90,13 @@ public class URELight {
     public float intensityAtTime(int time) {
         if (flickerStyle == FLICKER_NONE) return 1f;
         float i = 0f;
-        time = (int)((float)(time + flickerOffset) * (1f / flickerSpeed));
-        //if (true)
-        //    return 1f - (float)Math.sin((double)time * 0.05);
+        time = (int)((float)(time + flickerOffset) * (flickerSpeed));
         switch (flickerStyle) {
             case FLICKER_FIRE: i =  intensityFlickerFire(time); break;
             case FLICKER_PULSE: i = intensityFlickerPulse(time); break;
             case FLICKER_FRITZ: i = intensityFlickerFritz(time); break;
             case FLICKER_BLINK: i = intensityFlickerBlink(time); break;
+            case FLICKER_COMPULSE: i = intensityFlickerCompulse(time); break;
         }
         return 1f - (i * flickerIntensity);
     }
@@ -116,7 +116,10 @@ public class URELight {
     float intensityFlickerBlink(int time) {
         return 0f;
     }
-
+    float intensityFlickerCompulse(int time) {
+        float i = (float)Math.sin((double)time*0.05) + (float)Math.sin((double)time*0.03);
+        return i;
+    }
     public float intensityAtOffset(int xoff, int yoff) {
         xoff = (int)Math.pow(Math.abs(xoff),2);
         yoff = (int)Math.pow(Math.abs(yoff),2);
