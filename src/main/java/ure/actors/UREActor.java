@@ -2,8 +2,11 @@ package ure.actors;
 
 import ure.*;
 import ure.actions.UAction;
+import ure.behaviors.UBehavior;
 import ure.terrain.URETerrain;
 import ure.things.UREThing;
+
+import java.util.ArrayList;
 
 public class UREActor  extends UREThing {
 
@@ -12,6 +15,7 @@ public class UREActor  extends UREThing {
     public URECamera camera;
     int cameraPinStyle;
     UPath path;
+    URECommander commander;
 
     float actionTime = 0f;
 
@@ -29,6 +33,10 @@ public class UREActor  extends UREThing {
         return true;
     }
 
+    public float actionTime() {
+        return actionTime;
+    }
+
     public void attachCamera(URECamera thecamera, int pinstyle) {
         camera = thecamera;
         cameraPinStyle = pinstyle;
@@ -41,7 +49,7 @@ public class UREActor  extends UREThing {
     }
 
     public void addActionTime(float amount) {
-        actionTime += amount;
+        actionTime = actionTime + amount;
     }
 
     public void walkDir(int xdir, int ydir) {
@@ -122,7 +130,15 @@ public class UREActor  extends UREThing {
         this.actionTime = this.actionTime - timecost;
     }
 
-    public void hearTick() {
+    public void startActing(URECommander thecommander) {
+        commander = thecommander;
+        commander.registerActor(this);
+    }
+    public void stopActing() {
+        commander.unRegisterActor(this);
+    }
+
+    public void act() {
 
     }
 

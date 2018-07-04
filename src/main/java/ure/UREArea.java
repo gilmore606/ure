@@ -256,13 +256,8 @@ public class UREArea implements UTimeListener {
         return null;
     }
 
-    public void hearTick(URECommander commander) {
+    public void hearTimeTick(URECommander commander) {
         setSunColor(commander.daytimeMinutes());
-        HashSet<UREActor> tempactors = (HashSet<UREActor>)actors.clone();
-        Iterator<UREActor> actori = tempactors.iterator();
-        while (actori.hasNext()) {
-            actori.next().hearTick();
-        }
         UpdateCameras();
     }
 

@@ -41,7 +41,8 @@ public abstract class URETerrain implements Cloneable, UAnimator {
     public boolean passable;
     public boolean opaque;
     public boolean glow = false;
-    public float sunvis;
+    public float sunvis = 0.0f;
+    public float movespeed = 1.0f;
 
     public int animationFrame, animationFrames;
 
@@ -110,6 +111,10 @@ public abstract class URETerrain implements Cloneable, UAnimator {
 
     public boolean preventMoveFrom(UREActor actor) {
         return false;
+    }
+
+    public float moveSpeed(UREActor actor) {
+        return this.movespeed;
     }
 
     public void walkedOnBy(UREActor actor, UCell cell) {

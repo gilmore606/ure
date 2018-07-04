@@ -108,15 +108,24 @@ public class ExampleGame implements UTimeListener {
         UCell startcell = scaper.randomCell(area, new String[]{"floor"});
         player.moveToCell(area, startcell.x, startcell.y);
         player.attachCamera(camera, URECamera.PINSTYLE_HARD);
+        player.startActing(commander);
 
         UREActor monk = actorCzar.getActorByName("monk");
         UCell monkdest = scaper.randomCell(area, new String[]{"floor"});
         monk.moveToCell(area, monkdest.x, monkdest.y);
+        monk.startActing(commander);
+
+        for (int i=0;i<30;i++) {
+            UCell ratdest = scaper.randomCell(area, new String[]{"floor"});
+            UREActor rat = actorCzar.getActorByName("rat");
+            rat.moveToCell(area, ratdest.x, ratdest.y);
+            rat.startActing(commander);
+        }
 
         commander.gameLoop();
     }
 
-    public void hearTick(URECommander commander) {
+    public void hearTimeTick(URECommander commander) {
         statusPanel.setText("turn", "T " + Integer.toString(commander.getTurn()));
         statusPanel.setText("time", commander.timeString(true, " "));
     }

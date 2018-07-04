@@ -15,6 +15,8 @@ public class UActionWalk extends UAction {
 
     public float doneBy(UREActor actor) {
         actor.walkDir(xdir, ydir);
-        return super.doneBy(actor);
+        float time = super.doneBy(actor);
+        time = time * (1f / actor.myCell().terrain().moveSpeed(actor));
+        return time;
     }
 }
