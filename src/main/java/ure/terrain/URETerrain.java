@@ -105,7 +105,8 @@ public abstract class URETerrain implements Cloneable, UAnimator {
         if (isPassable(actor)) {
             actor.moveToCell(cell.areaX(), cell.areaY());
         } else {
-            cell.area().commander().printScroll(bonkmsg);
+            if (actor.isPlayer())
+                cell.area().commander().printScroll(bonkmsg);
         }
     }
 

@@ -103,7 +103,8 @@ public class UREActor  extends UREThing {
   }
 
     public void moveTriggerFrom(UREActor actor) {
-        area().commander().printScroll("Ow!");
+        if (actor.isPlayer())
+            area().commander().printScroll("Ow!");
     }
 
     public void tryGetThing(UREThing thing) {

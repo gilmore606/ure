@@ -55,6 +55,7 @@ public class URERendererOGL implements URERenderer {
     private int cellPadX = 0;
     private int cellPadY = 1;
     private int fontSize;
+    private UColor cameraBgColor;
     private UColor UIframeColor;
 
     URECommander commander;
@@ -65,6 +66,7 @@ public class URERendererOGL implements URERenderer {
         font = f;
         fontSize = font.getSize();
         UIframeColor = new UColor(1f, 1f, 0f);
+        cameraBgColor = UColor.COLOR_BLACK;
     }
 
     // URERenderer methods
@@ -153,7 +155,7 @@ public class URERendererOGL implements URERenderer {
 
         //Lets quickly blank the screen.
         glViewport(0, 0, screenWidth, screenHeight);
-        glClearColor(0.03f, 0.05f, 0.1f, 1.0f);
+        glClearColor(cameraBgColor.fR(), cameraBgColor.fG(), cameraBgColor.fB(), 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);
