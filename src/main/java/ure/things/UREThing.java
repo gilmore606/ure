@@ -75,6 +75,9 @@ public class UREThing implements UContainer, Cloneable {
     public char glyph() {
         return glyph;
     }
+    public int glyphOffsetX() { return 0; }
+    public int glyphOffsetY() { return 0; }
+
     public UColor getGlyphColor() {
         return glyphColor;
     }

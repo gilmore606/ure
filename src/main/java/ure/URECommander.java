@@ -1,5 +1,7 @@
 package ure;
 
+import ure.actions.UActionGet;
+import ure.actions.UActionWalk;
 import ure.actors.UREActor;
 import ure.render.URERenderer;
 import ure.things.UREThing;
@@ -37,6 +39,8 @@ public class URECommander implements KeyListener {
 
     private LinkedBlockingQueue<Character> keyBuffer;
     private int keyBufferSize = 2;
+
+    private boolean waitingForInput = true;
 
     public URECommander(UREActor theplayer, URERenderer theRenderer) {
         renderer = theRenderer;
@@ -153,7 +157,6 @@ public class URECommander implements KeyListener {
                     debug_3();
                     acted = false;
                     break;
-
             }
             if (acted) {
                 tickTime();
@@ -173,15 +176,11 @@ public class URECommander implements KeyListener {
     }
 
     void walkPlayer(int xdir, int ydir) {
-        player.walkDir(xdir,ydir);
+        player.doAction(new UActionWalk(xdir, ydir));
     }
 
     void commandGet() {
-        //UIModal modal = new UIModal(20,10, renderer, player.camera, UColor.COLOR_BLACK);
-        //UIModal modal = UIModal.popMessage("Nothing happened.", renderer, player.camera, UColor.COLOR_BLACK);
-        //showModal(modal);
-        if (player.myCell() != null)
-            player.tryGetThing(player.myCell().topThingAt());
+        player.doAction(new UActionGet());
     }
 
     void commandInventory() {
@@ -234,7 +233,6 @@ public class URECommander implements KeyListener {
         for (UAnimator anim : animators) {
             anim.animationTick();
         }
-        //player.camera.paintFrameBuffer(); // TODO: make this more generic and notify all cameras
     }
 
     void setStatusPanel(UREStatusPanel panel){
@@ -255,9 +253,9 @@ public class URECommander implements KeyListener {
             scrollPanel.renderImage();
             statusPanel.renderImage();
 
-
             //Finalize and flush what we've rendered above to screen.
             renderer.render();
+
             long curTime = System.nanoTime();
             if (curTime - gameTime > animationMillis*1000)
                 animationFrame();
@@ -268,9 +266,10 @@ public class URECommander implements KeyListener {
                     Thread.sleep(1);
                 } catch (InterruptedException e) { }
             }
-            if (!keyBuffer.isEmpty()) {
+
+            // if it's the player's turn, do a command if we have one
+            if (waitingForInput && !keyBuffer.isEmpty()) {
                 consumeKeyFromBuffer();
-                //frame.repaint();
             }
         }
     }
