@@ -62,40 +62,12 @@ public class ExampleGame implements UTimeListener {
         actorCzar.loadActors("/actors.json");
 
         area = new UREArea(100, 100, terrainCzar, "wall");
-        URELandscaper scaper = new URELandscaper(terrainCzar, thingCzar);
-        // TODO: make a custom URECaveScaper that just calls all this stuff with some params
-        scaper.digCaves(area, "floor",2, 2, 98, 98, 0.38f + scaper.random.nextFloat() * 0.14f,
-                4 + scaper.random.nextInt(3), 3 + scaper.random.nextInt(3),
-                2 + scaper.random.nextInt(3));
-        if (scaper.random.nextFloat() < 0.4f)
-            scaper.digRiver(area, "water", 0, 0, 99, 99, 2f + scaper.random.nextFloat() * 4f,
-                    0.7f, 1.4f);
-        if (scaper.random.nextFloat() < 0.3f)
-            scaper.digRiver(area, "water", 0, 0, 99, 99, 3f, 0.9f, 2f);
-        if (scaper.random.nextFloat() < 0.3f)
-            scaper.digRiver(area, "lava", 0, 0, 99, 99, scaper.random.nextFloat() * 4f + 1f,
-                    0.5f + scaper.random.nextFloat()*2f, 1f + scaper.random.nextFloat());
-        scaper.addDoors(area, "door", new String[]{"wall"}, 0.1f + scaper.random.nextFloat());
-        for (int i=0;i<scaper.random.nextInt(6);i++) {
-            int width = scaper.random.nextInt(5)+2;
-            int height = scaper.random.nextInt(5)+2;
-            int[] boxloc = scaper.locateBox(area, width, height, new String[]{"floor"});
-            if (boxloc != null) {
-                scaper.drawRect(area, "carvings", boxloc[0], boxloc[1], boxloc[0] + width, boxloc[1] + height);
-                if (scaper.random.nextFloat() < 0.5f) {
-                    scaper.spawnThingAt(area, boxloc[0] + (width / 2), boxloc[1] + (height / 2), "gold statue");
-                    scaper.spawnLightAt(area, boxloc[0] + (width/2), boxloc[1] + (height/2),
-                            new UColor(1f, 1f, 0.7f), (width+height)/2, 15);
-                }
-            }
-        }
-        scaper.simplexScatterTerrain(area, "floormoss", new String[]{"floor"}, 0.4f + scaper.random.nextFloat() * 0.3f, scaper.random.nextFloat() * 0.6f);
-        scaper.simplexScatterThings(area, "skull", new String[]{"floor","floormoss"}, 0.6f, 0.15f + scaper.random.nextFloat() * 0.3f);
-        scaper.scatterThings(area, new String[]{"trucker hat", "butcher knife", "rock", "apple"}, new String[]{"floor"}, 10 + scaper.random.nextInt(40));
+        URELandscaper scaper = new ExampleCaveScaper(terrainCzar, thingCzar);
+        scaper.buildArea(area);
 
-        player = new UREPlayer("Player", '@', UColor.COLOR_WHITE, true, 4, 6);
+        player = new UREPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
 
-        commander = new URECommander(player, renderer);
+        commander = new URECommander(player, renderer, thingCzar, actorCzar);
         renderer.setKeyListener(commander);
         area.setCommander(commander);
         makeWindow();//.getContentPane().addKeyListener(commander);

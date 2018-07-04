@@ -4,6 +4,7 @@ import ure.*;
 import ure.actions.UAction;
 import ure.behaviors.UBehavior;
 import ure.terrain.URETerrain;
+import ure.things.Lightsource;
 import ure.things.UREThing;
 
 import java.util.ArrayList;
@@ -32,6 +33,8 @@ public class UREActor  extends UREThing {
     public boolean isActor() {
         return true;
     }
+
+    public URECommander commander() { return commander; }
 
     public float actionTime() {
         return actionTime;
@@ -97,13 +100,15 @@ public class UREActor  extends UREThing {
         return null;
     }
     public void debug() {
-        URELight newlight = new URELight(new UColor(1f,1f,0.9f), 12, 3);
-        newlight.moveTo(area(), areaX(), areaY());
-        area().commander().printScroll("You dropped a glowstick at " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
+        Lightsource torch = (Lightsource)commander.thingCzar.getThingByName("torch");
+        torch.moveToCell(area(), areaX(), areaY());
+        torch.turnOn();
+        area().commander().printScroll("You drop a torch.");
   }
 
     public void moveTriggerFrom(UREActor actor) {
-        area().commander().printScroll("Ow!");
+        if (actor.isPlayer())
+            area().commander().printScroll("Ow!");
     }
 
     public void tryGetThing(UREThing thing) {

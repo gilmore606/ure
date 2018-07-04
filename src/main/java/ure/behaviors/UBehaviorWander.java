@@ -6,7 +6,7 @@ import ure.actors.URENPC;
 
 public class UBehaviorWander extends UBehavior {
 
-    public static String name = "wander";
+    public static String TYPE = "wander";
 
     @Override
     public UAction action(URENPC actor) {

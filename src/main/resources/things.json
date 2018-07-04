@@ -8,6 +8,18 @@
     "value": 0
   },
   {
+    "name": "torch",
+    "type": "lightsource",
+    "glyph": "t",
+    "description": "A wooden torch dipped in pitch.",
+    "color": [200,155,55],
+    "lightcolor": [240,235,215],
+    "lightrange": 20,
+    "lightfalloff": 2,
+    "weight": 2,
+    "value": 5
+  },
+  {
     "name": "butcher knife",
     "type": "weapon",
     "glyph": "t",
@@ -50,5 +62,33 @@
     "color": [240,240,2],
     "weight": 3,
     "value": 10
+  },
+  {
+    "name": "crystal stalagmite",
+    "type": "lightsource",
+    "glyph": "`",
+    "description": "Faceted crystal glows with unearthly light.",
+    "getFailMsg": "The stalagmite won't budge from the ceiling.  You'd need tools.",
+    "color": [65,170,200],
+    "colorvariance": [60,55,45],
+    "lightcolorUseGlyph": true,
+    "lightrange": 7,
+    "lightfalloff": 1,
+    "movable": false,
+    "spawnOn": true
+  },
+  {
+    "name": "magma vent",
+    "type": "lightsource",
+    "glyph": "~",
+    "description": "Magma glows from the cracked rock.",
+    "getFailMsg": "You see no reason to pick up hot magma.",
+    "color": [160,20,0],
+    "colorvariance": [50,30,0],
+    "lightcolorUseGlyph": true,
+    "lightrange": 8,
+    "lightfalloff": 2,
+    "movable": false,
+    "spawnOn": true
   }
 ]

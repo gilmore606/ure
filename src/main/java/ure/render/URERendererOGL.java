@@ -48,6 +48,8 @@ public class URERendererOGL implements URERenderer {
     private UColor uiFrameColor = new UColor(1f, 1f, 0f);
 
     private KeyListener keyListener;
+    private UColor cameraBgColor = UColor.COLOR_BLACK;
+    private UColor UIframeColor;
 
     // URERenderer methods
 
@@ -139,7 +141,7 @@ public class URERendererOGL implements URERenderer {
 
         //Lets quickly blank the screen.
         glViewport(0, 0, screenWidth, screenHeight);
-        glClearColor(0.03f, 0.05f, 0.1f, 1.0f);
+        glClearColor(cameraBgColor.fR(), cameraBgColor.fG(), cameraBgColor.fB(), 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);

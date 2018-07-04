@@ -3,8 +3,10 @@ package ure;
 import ure.actions.UActionGet;
 import ure.actions.UActionWalk;
 import ure.actors.UREActor;
+import ure.actors.UREActorCzar;
 import ure.render.URERenderer;
 import ure.things.UREThing;
+import ure.things.UREThingCzar;
 import ure.ui.UIModal;
 import ure.ui.UREScrollPanel;
 import ure.ui.UREStatusPanel;
@@ -32,6 +34,9 @@ public class URECommander implements URERenderer.KeyListener {
     private UREScrollPanel scrollPanel;
     private UREStatusPanel statusPanel;
 
+    public UREThingCzar thingCzar;
+    public UREActorCzar actorCzar;
+
     private int turnCounter;
     private int turnsPerDay = 512;
 
@@ -42,11 +47,13 @@ public class URECommander implements URERenderer.KeyListener {
 
     private boolean waitingForInput = false;
 
-    public URECommander(UREActor theplayer, URERenderer theRenderer) {
+    public URECommander(UREActor theplayer, URERenderer theRenderer, UREThingCzar thingczar, UREActorCzar actorczar) {
         renderer = theRenderer;
         timeListeners = new HashSet<UTimeListener>();
         animators = new HashSet<UAnimator>();
         actors = new ArrayList<UREActor>();
+        thingCzar = thingczar;
+        actorCzar = actorczar;
 
         setPlayer(theplayer);
         readKeyBinds();
@@ -251,7 +258,7 @@ public class URECommander implements URERenderer.KeyListener {
             if (waitingForInput && !keyBuffer.isEmpty()) {
                 consumeKeyFromBuffer();
                 player.camera.renderImage();
-                if (player.actionTime() <= 0f) {
+                while (player.actionTime() <= 0f) {
                     TickTime();
                     waitingForInput = false;
                 }

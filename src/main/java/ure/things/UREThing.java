@@ -5,6 +5,7 @@ import ure.actors.UREActor;
 import ure.render.URERenderer;
 
 import java.util.Iterator;
+import java.util.Random;
 
 /**
  * Created by gilmore on 6/20/2018.
@@ -21,8 +22,11 @@ public class UREThing implements UContainer, Cloneable {
     public char glyph;
     public String description = "A thing.";
     public int weight;
+    public boolean movable = true;
     public int value;
     public int[] color;
+    public int[] colorvariance = new int[]{0,0,0};
+    public String getFailMsg = "You can't pick that up.";
 
     public static final String TYPE = "";
 
@@ -41,8 +45,19 @@ public class UREThing implements UContainer, Cloneable {
 
     public void initialize() {
         contents = new UCollection(this);
-        if (glyphColor == null && color != null)
-            glyphColor = new UColor(color[0],color[1],color[2]);
+        if (glyphColor == null && color != null) {
+            SetupColors();
+        }
+    }
+
+    void SetupColors() {
+        Random random = new Random();
+        int[] thecolor = new int[]{color[0], color[1], color[2]};
+        for (int i=0;i<3;i++) {
+            if (colorvariance[i] > 0)
+                thecolor[i] += (random.nextInt(colorvariance[i]) - colorvariance[i]/2);
+        }
+        glyphColor = new UColor(thecolor[0],thecolor[1],thecolor[2]);
     }
 
     public void setDisplayFields(String thename, char theglyph, UColor thecolor, boolean addOutline) {
@@ -133,11 +148,16 @@ public class UREThing implements UContainer, Cloneable {
     }
 
     public boolean tryGetBy(UREActor actor) {
+        if (!movable) {
+            if (actor.isPlayer())
+                actor.commander().printScroll(getFailMsg);
+            return false;
+        }
         return true;
     }
 
     public void gotBy(UREActor actor) {
-        if (this.getMsg(actor) != null)
+        if (getMsg(actor) != null)
             area().commander().printScroll(this.getMsg(actor));
     }
 

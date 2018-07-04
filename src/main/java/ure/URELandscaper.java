@@ -6,6 +6,7 @@ import ure.things.UREThing;
 import ure.things.UREThingCzar;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 public class URELandscaper {
@@ -178,8 +179,7 @@ public class URELandscaper {
         }
     }
 
-    public void simplexScatterTerrain(UREArea area, String terrain, String[] targets, float threshold, float scatterChance) {
-        float[] noiseScales = new float[]{5f, 10f, 40f, 120f};
+    public void simplexScatterTerrain(UREArea area, String terrain, String[] targets, float threshold, float scatterChance, float[] noiseScales) {
         for (int x=0;x<area.xsize;x++) {
             for (int y=0;y<area.ysize;y++) {
                 if (cellHasTerrain(area, area.cellAt(x,y), targets)) {
@@ -194,21 +194,37 @@ public class URELandscaper {
         }
     }
 
-    public void simplexScatterThings(UREArea area, String thing, String[] targets, float threshold, float scatterChance) {
-        float[] noiseScales = new float[]{5f, 10f, 40f, 120f};
+    public void simplexScatterThings(UREArea area, String thing, String[] targets, float threshold, float scatterChance, float[] noiseScales, int separateBy) {
         for (int x=0;x<area.xsize;x++) {
             for (int y=0;y<area.ysize;y++) {
                 if (cellHasTerrain(area, area.cellAt(x,y), targets)) {
                     float sample = simplexNoise.multi(x, y, noiseScales);
                     if (sample > threshold) {
                         if (random.nextFloat() <= scatterChance) {
-                            UREThing thingobj = thingCzar.getThingByName(thing);
-                            thingobj.moveToCell(area,x,y);
+                            if (!isNearA(area,x,y,thing,separateBy)) {
+                                UREThing thingobj = thingCzar.getThingByName(thing);
+                                thingobj.moveToCell(area, x, y);
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    public boolean isNearA(UREArea area, int x, int y, String thing, int range) {
+        if (range < 1)
+            return false;
+        for (int ix = x - range; ix < x + range; ix++) {
+            for (int iy = y - range; iy < y + range; iy++) {
+                if (area.isValidXY(ix,iy)) {
+                    if (area.cellAt(ix,iy).hasA(thing)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public void digRiver(UREArea area, String t, int x1, int y1, int x2, int y2, float riverWidth, float twist, float twistmax) {
