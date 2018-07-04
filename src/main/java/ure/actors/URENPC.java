@@ -11,7 +11,6 @@ import java.util.Random;
 public class URENPC extends UREActor {
 
     public int visionRange = 12;
-    public int wakeRange = 20;
     public String[] ambients;
     public String[] behaviors;
 

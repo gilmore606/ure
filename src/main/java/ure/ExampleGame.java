@@ -86,13 +86,13 @@ public class ExampleGame implements UTimeListener {
         UREActor monk = actorCzar.getActorByName("monk");
         UCell monkdest = scaper.randomOpenCell(area, monk);
         monk.moveToCell(area, monkdest.x, monkdest.y);
-        monk.startActing(commander);
+        //monk.startActing(commander);
 
         for (int i=0;i<30;i++) {
             UREActor rat = actorCzar.getActorByName("rat");
             UCell ratdest = scaper.randomOpenCell(area, rat);
             rat.moveToCell(area, ratdest.x, ratdest.y);
-            rat.startActing(commander);
+            //rat.startActing(commander);
         }
 
         commander.gameLoop();

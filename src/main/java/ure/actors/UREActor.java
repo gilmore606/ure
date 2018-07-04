@@ -11,7 +11,9 @@ import java.util.ArrayList;
 
 public class UREActor  extends UREThing {
 
-    public boolean awake;
+    public boolean awake = false;
+    public int wakerange = 20;
+    public int sleeprange = 30;
 
     public URECamera camera;
     int cameraPinStyle;
@@ -138,9 +140,13 @@ public class UREActor  extends UREThing {
     public void startActing(URECommander thecommander) {
         commander = thecommander;
         commander.registerActor(this);
+        awake = true;
+        System.out.println(this.name + ": waking up!");
     }
     public void stopActing() {
         commander.unRegisterActor(this);
+        awake = false;
+        System.out.println(this.name + ": going to sleep.");
     }
 
     public void act() {
@@ -149,5 +155,15 @@ public class UREActor  extends UREThing {
 
     public boolean canSee(UREThing thing) {
         return true;
+    }
+
+    public void wakeCheck(int playerx, int playery) {
+        if (location == null) return;
+        int dist = Math.abs(areaX() - playerx) + Math.abs(areaY() - playery);
+        if (awake && (sleeprange > 0) && (dist > sleeprange)) {
+            stopActing();
+        } else if (!awake && (wakerange > 0) && (dist < wakerange)) {
+            startActing(area().commander());
+        }
     }
 }

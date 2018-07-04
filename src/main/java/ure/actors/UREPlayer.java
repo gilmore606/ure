@@ -7,6 +7,8 @@ import ure.things.UREThing;
 
 public class UREPlayer extends UREActor {
 
+    public boolean awake = true;
+
     public static boolean isActor = true;
 
     URELight light;

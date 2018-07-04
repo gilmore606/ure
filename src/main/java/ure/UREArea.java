@@ -1,6 +1,7 @@
 package ure;
 
 import ure.actors.UREActor;
+import ure.actors.UREPlayer;
 import ure.terrain.URETerrain;
 import ure.terrain.URETerrainCzar;
 import ure.things.UREThing;
@@ -233,10 +234,22 @@ public class UREArea implements UTimeListener {
     }
 
     public UCell addThing(UREThing thing, int x, int y) {
-        if (thing.isActor())
-            actors.add((UREActor)thing);
         cells[x][y].addThing(thing);
+        if (thing.isActor()) {
+            actors.add((UREActor) thing);
+            if (((UREActor) thing).isPlayer()) {
+                wakeCheckAll(x,y);
+            } else {
+                ((UREActor)thing).wakeCheck(x,y);
+            }
+        }
         return cells[x][y];
+    }
+
+    void wakeCheckAll(int playerx, int playery) {
+        for (UREActor actor : actors) {
+            actor.wakeCheck(playerx, playery);
+        }
     }
 
     public void hearRemoveThing(UREThing thing) {

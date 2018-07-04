@@ -80,7 +80,7 @@
     "lightfalloff": 1,
     "lightflicker": 2,
     "lightflickerspeed": 0.6,
-    "lightflickerintensity": 0.5,
+    "lightflickerintensity": 0.6,
     "lightflickeroffset": 120,
     "movable": false,
     "spawnOn": true
