@@ -9,6 +9,12 @@
                   "The monk eyes you warily.",
                   "The monk mutters a soft chant.",
                   "The monk hums a discordant melody."]
+  },
+  {
+    "name": "rat",
+    "glyph": "r",
+    "description": "A big wet rat.",
+    "color": [10,10,180]
   }
 
 ]
