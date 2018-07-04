@@ -3,13 +3,10 @@ package ure.ui;
 import ure.UColor;
 import ure.render.URERenderer;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class UREScrollPanel {
 
-    Font font;
     UColor fgColor, bgColor, borderColor;
     int textRows, textColumns;
     int pixelw, pixelh;
@@ -20,7 +17,6 @@ public class UREScrollPanel {
     String lastMessage;
     ArrayList<String> lines;
     ArrayList<UColor> lineFades;
-    BufferedImage image;
     URERenderer renderer;
 
     int xPos, yPos, width, height;

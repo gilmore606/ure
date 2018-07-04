@@ -3,12 +3,10 @@ package ure.ui;
 import ure.UColor;
 import ure.render.URERenderer;
 
-import java.awt.*;
 import java.util.HashMap;
 
 public class UREStatusPanel /*extends JPanel */{
 
-    Font font;
     UColor fgColor, bgColor, borderColor;
     int textRows,textColumns;
     int pixelw, pixelh;

@@ -6,10 +6,6 @@ import ure.terrain.URETerrain;
 import ure.things.UREThing;
 import ure.ui.UIModal;
 
-import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import javax.swing.*;
-import java.awt.*;
 import java.util.*;
 
 /**
@@ -17,13 +13,11 @@ import java.util.*;
  *
  */
 
-public class URECamera extends Canvas implements UAnimator {
+public class URECamera implements UAnimator {
     public UREArea area;
     URERenderer renderer;
-    BufferedImage image;
     float zoom = 1.0f;
     int pixelWidth, pixelHeight;
-    Dimension preferredSize;
     public int width, height;
     int centerX, centerY;
     public int x1, y1, x2, y2;
@@ -46,7 +40,6 @@ public class URECamera extends Canvas implements UAnimator {
     public static int PINSTYLE_HARD = 3;
 
     public boolean rendering;
-    private BufferStrategy frameBuffer;
 
     private class UShadow {
         float start, end;
@@ -114,23 +107,15 @@ public class URECamera extends Canvas implements UAnimator {
     }
 
     public URECamera(URERenderer theRenderer, int thePixW, int thePixH) {
-        setFocusable(false);
         renderer = theRenderer;
         pixelWidth = thePixW;
         pixelHeight = thePixH;
-        preferredSize = new Dimension(pixelWidth, pixelHeight);
-        image = new BufferedImage(pixelWidth*8,pixelHeight*8, BufferedImage.TYPE_INT_RGB);
-        visibilitySources = new HashSet<UREActor>();
+        visibilitySources = new HashSet<>();
         setBounds();
         lightcells = new ULightcell[width][height];
         for (int x=0;x<width;x++)
             for (int y=0;y<height;y++)
                 lightcells[x][y] = new ULightcell(this);
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        return preferredSize;
     }
 
     public void setAllVisible(boolean val) {
@@ -172,8 +157,6 @@ public class URECamera extends Canvas implements UAnimator {
 
     public int getWidthInCells() { return width; }
     public int getHeightInCells() { return height; }
-    public Graphics getGraphics() { return image.getGraphics(); }
-    public BufferedImage getImage() { return image; }
     public float getSeenOpacity() { return seenOpacity; }
 
     void renderLights() {

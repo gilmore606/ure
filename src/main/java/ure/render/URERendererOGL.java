@@ -6,21 +6,16 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import ure.UColor;
 import ure.URECamera;
-import ure.URECommander;
 import ure.actors.UREActor;
 import ure.terrain.URETerrain;
 import ure.things.UREThing;
 
-import java.awt.*;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
-
-import java.awt.image.*;
 import java.util.Iterator;
 
 public class URERendererOGL implements URERenderer {
@@ -37,8 +32,6 @@ public class URERendererOGL implements URERenderer {
     private int screenHeight = 1000;
 
     private GLFWErrorCallback errorCallback;
-    private GLFWKeyCallback   keyCallback;
-    private GLFWFramebufferSizeCallback fbCallback;
 
     private int tris = 0;
     private int maxTris = 65536; // THIS CAN BE HIGHER IF NEEDED
@@ -49,25 +42,14 @@ public class URERendererOGL implements URERenderer {
 
     private int textureAtlas = -1;
 
-    private static Font font;
-    private int fontPadX = 3;
-    private int fontPadY = 1;
-    private int cellPadX = 0;
-    private int cellPadY = 1;
-    private int fontSize;
-    private UColor cameraBgColor;
+    private final static int cellPadX = 0;
+    private final static int cellPadY = 1;
+    private int fontSize = 16;
+    private UColor uiFrameColor = new UColor(1f, 1f, 0f);
+
+    private KeyListener keyListener;
+    private UColor cameraBgColor = UColor.COLOR_BLACK;
     private UColor UIframeColor;
-
-    URECommander commander;
-
-    private boolean rendering = false;
-
-    public URERendererOGL(Font f){
-        font = f;
-        fontSize = font.getSize();
-        UIframeColor = new UColor(1f, 1f, 0f);
-        cameraBgColor = UColor.COLOR_BLACK;
-    }
 
     // URERenderer methods
 
@@ -82,8 +64,8 @@ public class URERendererOGL implements URERenderer {
     }
 
     @Override
-    public void setCommander(URECommander cmdr) {
-        commander = cmdr;
+    public void setKeyListener(KeyListener listener) {
+        this.keyListener = listener;
     }
 
     @Override
@@ -97,7 +79,7 @@ public class URERendererOGL implements URERenderer {
     }
 
     @Override
-    public void initialize(){
+    public void initialize() {
 
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
@@ -109,7 +91,6 @@ public class URERendererOGL implements URERenderer {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 1);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 0);
-        //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
@@ -117,7 +98,7 @@ public class URERendererOGL implements URERenderer {
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
-        glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
+        glfwSetKeyCallback(window, new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key,
                                int scancode, int action, int mods) {
@@ -125,13 +106,14 @@ public class URERendererOGL implements URERenderer {
                     glfwSetWindowShouldClose(window, true);
                     System.out.println("OMG I SHOULD EXIT NOW!");
                 }
-                if(key < 256 && key >= 0 && (action == GLFW_PRESS || action == GLFW_REPEAT)){
-                    commander.keyPressed((char)key);
+                if (keyListener != null && key < 256 && key >= 0 && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+                    keyListener.keyPressed((char)key);
                 }
             }
         });
+
         glfwSetFramebufferSizeCallback(window,
-                fbCallback = new GLFWFramebufferSizeCallback() {
+                new GLFWFramebufferSizeCallback() {
                     @Override
                     public void invoke(long window, int w, int h) {
                         if (w > 0 && h > 0) {
@@ -147,7 +129,11 @@ public class URERendererOGL implements URERenderer {
         glfwSwapInterval(0);
         glfwShowWindow(window);
 
-        resize(screenWidth, screenHeight);
+        // Get the actual framebuffer width/height in order to deal with different pixel densities
+        int[] width = new int[1];
+        int[] height = new int[1];
+        glfwGetFramebufferSize(window, width, height);
+        resize(width[0], height[0]);
 
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
         GL.createCapabilities();
@@ -168,50 +154,8 @@ public class URERendererOGL implements URERenderer {
         //Flush a blank image to the screen quickly.
         glfwSwapBuffers(window);
 
-        //Lets create our glyph atlas
-        /*try {
-            font = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResourceAsStream("/Px437_Phoenix_BIOS-2y.ttf")).deriveFont(Font.PLAIN, 16);
-        } catch (Exception e) {
-            System.out.println("Failed to load font");
-        }*/
-        BufferedImage bitmap = new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = bitmap.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setFont(font);
-        g.setPaint(Color.WHITE);
-
-        for(int c = 32; c < 256; c+=1){
-            if(c == 127) continue;
-            g.drawString(String.valueOf((char)c), (c % 16) * 32 + 8, (c / 16) * 32 - 10 + 32);
-        }
-        g.fillRect(0,0,32,32);
-
-        //From: http://www.java-gaming.org/index.php?topic=25516.0
-        int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
-        bitmap.getRGB(0, 0, bitmap.getWidth(), bitmap.getHeight(), pixels, 0, bitmap.getWidth());
-
-        ByteBuffer buffer = BufferUtils.createByteBuffer(bitmap.getWidth() * bitmap.getHeight() * 4);
-
-        for(int y = 0; y < bitmap.getHeight(); y++){
-            for(int x = 0; x < bitmap.getWidth(); x++){
-                int pixel = pixels[y * bitmap.getWidth() + x];
-                buffer.put((byte) ((pixel >> 16) & 0xFF));     // Red component
-                buffer.put((byte) ((pixel >>  8) & 0xFF));     // Green component
-                buffer.put((byte) (pixel & 0xFF));             // Blue component
-                buffer.put((byte) ((pixel >> 24) & 0xFF));     // Alpha component. Only for RGBA
-            }
-        }
-
-        buffer.flip();
-
-        textureAtlas = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, textureAtlas);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bitmap.getWidth(), bitmap.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        //glBindTexture(GL_TEXTURE_2D, 0);
-
+        FontTexture fontTexture = new FontTexture();
+        textureAtlas = fontTexture.loadTexture("/font.png");
     }
 
     @Override
@@ -227,7 +171,6 @@ public class URERendererOGL implements URERenderer {
     public void drawCamera(URECamera camera) {
 
         camera.rendering = true;
-        rendering = true;
         int cellw = cellWidth();
         int cellh = cellHeight();
         int camw = camera.getWidthInCells();
@@ -241,7 +184,6 @@ public class URERendererOGL implements URERenderer {
         }
 
         camera.rendering = false;
-        rendering = false;
     }
 
     @Override
@@ -259,8 +201,7 @@ public class URERendererOGL implements URERenderer {
                     addQuad(destx + offX + x, desty + offY + y, cellWidth(), cellHeight(), tint, glyph);
     }
 
-    static boolean slowMethod = false;
-    public void render(){
+    public void render() {
 
         glViewport(0, 0, screenWidth, screenHeight);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -277,41 +218,28 @@ public class URERendererOGL implements URERenderer {
 
         glBindTexture(GL_TEXTURE_2D, textureAtlas);
 
-        if(!slowMethod) {
-            FloatBuffer v = BufferUtils.createFloatBuffer(tris * 3 * 3);
-            FloatBuffer c = BufferUtils.createFloatBuffer(tris * 3 * 4);
-            FloatBuffer u = BufferUtils.createFloatBuffer(tris * 3 * 2);
+        FloatBuffer v = BufferUtils.createFloatBuffer(tris * 3 * 3);
+        FloatBuffer c = BufferUtils.createFloatBuffer(tris * 3 * 4);
+        FloatBuffer u = BufferUtils.createFloatBuffer(tris * 3 * 2);
 
-            v.put(verts_pos, 0, v.capacity());
-            c.put(verts_col, 0, c.capacity());
-            u.put(verts_uv, 0, u.capacity());
+        v.put(verts_pos, 0, v.capacity());
+        c.put(verts_col, 0, c.capacity());
+        u.put(verts_uv, 0, u.capacity());
 
-            v.flip();
-            c.flip();
-            u.flip();
+        v.flip();
+        c.flip();
+        u.flip();
 
-            GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-            GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
-            GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+        GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+        GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
+        GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 
-            GL11.glVertexPointer(3, GL_FLOAT, 0, v);
-            GL11.glColorPointer(4, GL_FLOAT, 0, c);
-            GL11.glTexCoordPointer(2, GL_FLOAT, 0, u);
+        GL11.glVertexPointer(3, GL_FLOAT, 0, v);
+        GL11.glColorPointer(4, GL_FLOAT, 0, c);
+        GL11.glTexCoordPointer(2, GL_FLOAT, 0, u);
 
 
-            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, tris * 3);
-        }else{
-            glBegin(GL_TRIANGLES);
-            int pp = 0;
-            int pc = 0;
-            int pu = 0;
-            for(int t = 0; t < tris * 3; t++){
-                GL11.glVertex3f(verts_pos[pp++], verts_pos[pp++], verts_pos[pp++]);
-                GL11.glColor4f(verts_col[pc++], verts_col[pc++], verts_col[pc++], verts_col[pc++]);
-                GL11.glTexCoord2f(verts_uv[pu++], verts_uv[pu++]);
-            }
-            glEnd();
-        }
+        GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, tris * 3);
         glFinish();
 
         glfwSwapBuffers(window);
@@ -319,28 +247,29 @@ public class URERendererOGL implements URERenderer {
         tris = 0;
     }
 
+    @Override
+    public void drawRect(int x, int y, int w, int h, UColor col){
+        addQuad(x, y, w, h, col);
+    }
+
+    @Override
+    public void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor){
+        addQuad(x, y, w, h, borderColor);
+        addQuad(x + borderThickness, y + borderThickness, w - borderThickness * 2, h - borderThickness * 2, bgColor);
+    }
+
     // internals
 
     private void resize(int width, int height){
         screenWidth = width;
         screenHeight = height;
-        matrix.setOrtho2D(0, screenWidth, screenHeight, 0);
+        matrix.setOrtho2D(0, 1400, 1000, 0);
     }
 
     private void destroy(){
         glfwDestroyWindow(window);
         glfwTerminate();
         errorCallback.free();
-    }
-
-    @Override
-    public void drawRect(int x, int y, int w, int h, UColor col){
-        addQuad(x, y, w, h, col);
-    }
-    @Override
-    public void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor){
-        addQuad(x, y, w, h, borderColor);
-        addQuad(x + borderThickness, y + borderThickness, w - borderThickness * 2, h - borderThickness * 2, bgColor);
     }
 
 
