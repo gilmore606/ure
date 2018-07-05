@@ -1,5 +1,7 @@
 package ure;
 
+import ure.ui.URECamera;
+
 import java.util.HashMap;
 
 

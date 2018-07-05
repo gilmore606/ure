@@ -1,10 +1,10 @@
-package ure;
+package ure.ui;
 
+import ure.*;
 import ure.actors.UREActor;
 import ure.render.URERenderer;
 import ure.terrain.URETerrain;
 import ure.things.UREThing;
-import ure.ui.UIModal;
 
 import java.util.*;
 
@@ -13,13 +13,15 @@ import java.util.*;
  *
  */
 
-public class URECamera implements UAnimator {
+public class URECamera extends View implements UAnimator, UREArea.Listener {
+
     public UREArea area;
     URERenderer renderer;
     float zoom = 1.0f;
     int pixelWidth, pixelHeight;
     public int width, height;
-    int centerX, centerY;
+    private int centerX, centerY;
+
     public int x1, y1, x2, y2;
     ULightcell lightcells[][];
     HashSet<UREActor> visibilitySources;
@@ -118,6 +120,14 @@ public class URECamera implements UAnimator {
                 lightcells[x][y] = new ULightcell(this);
     }
 
+    public int getCenterX() {
+        return centerX;
+    }
+
+    public int getCenterY() {
+        return centerY;
+    }
+
     public int cellWidth() {
         return renderer.glyphWidth();
     }
@@ -126,23 +136,30 @@ public class URECamera implements UAnimator {
         return renderer.glyphHeight();
     }
 
+    public boolean getAllVisible() {
+        return allVisible;
+    }
 
     public void setAllVisible(boolean val) {
         allVisible = val;
-        draw();
+        renderer.render();
     }
+
+    public boolean getAllLit() {
+        return allLit;
+    }
+
     public void setAllLit(boolean val) {
         allLit = val;
-        draw();
+        renderer.render();
     }
 
     public void moveTo(UREArea theArea, int thex, int they) {
-        if (theArea != area)
-            if (area != null)
-                area.unRegisterCamera(this);
+        if (area != null && theArea != area)
+            area.removeListener(this);
         area = theArea;
+        area.addListener(this);
         moveTo(thex,they);
-        area.registerCamera(this);
     }
 
     public void moveTo(int thex, int they) {
@@ -431,10 +448,11 @@ public class URECamera implements UAnimator {
     }
     public UREActor actorAt(int x, int y) { return area.actorAt(x+x1,y+y1); }
 
-    public void draw() {
+    @Override
+    public void draw(URERenderer renderer) {
 
-        if (modal != null)
-            modal.renderImage();
+        //if (modal != null)
+        //    modal.renderImage();
         renderLights();
 
         rendering = true;
@@ -446,13 +464,13 @@ public class URECamera implements UAnimator {
         // Render Cells.
         for (int x=0;x<camw;x++) {
             for (int y=0;y<camh;y++) {
-                drawCell(x, y, cellw, cellh);
+                drawCell(renderer, x, y, cellw, cellh);
             }
         }
         rendering = false;
     }
 
-    private void drawCell(int x, int y, int cellw, int cellh) {
+    private void drawCell(URERenderer renderer, int x, int y, int cellw, int cellh) {
         float vis = visibilityAt(x,y);
         float visSeen = getSeenOpacity();
         UColor light = lightAt(x,y);
@@ -505,18 +523,8 @@ public class URECamera implements UAnimator {
         }
     }
 
-    public void attachModal(UIModal modal) {
-        if (this.modal != null) {
-            this.detachModal();
-        }
-        this.modal = modal;
-        renderLights();
-        draw();
+    public void areaChanged() {
+        renderer.render();
     }
 
-    public void detachModal() {
-        this.modal = null;
-        renderLights();
-        draw();
-    }
 }

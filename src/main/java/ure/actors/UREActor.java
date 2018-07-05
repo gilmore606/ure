@@ -2,12 +2,10 @@ package ure.actors;
 
 import ure.*;
 import ure.actions.UAction;
-import ure.behaviors.UBehavior;
 import ure.terrain.URETerrain;
 import ure.things.Lightsource;
 import ure.things.UREThing;
-
-import java.util.ArrayList;
+import ure.ui.URECamera;
 
 public class UREActor  extends UREThing {
 

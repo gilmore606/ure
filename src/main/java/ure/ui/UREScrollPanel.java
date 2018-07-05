@@ -5,7 +5,7 @@ import ure.render.URERenderer;
 
 import java.util.ArrayList;
 
-public class UREScrollPanel {
+public class UREScrollPanel extends View {
 
     UColor fgColor, bgColor, borderColor;
     int textRows, textColumns;
@@ -17,7 +17,6 @@ public class UREScrollPanel {
     String lastMessage;
     ArrayList<String> lines;
     ArrayList<UColor> lineFades;
-    URERenderer renderer;
 
     int xPos, yPos, width, height;
     public void setBounds(int x, int y, int xx, int yy) {
@@ -27,7 +26,7 @@ public class UREScrollPanel {
         width = xx;
         height = yy;
     }
-    public UREScrollPanel(URERenderer theRenderer, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg, UColor borderc) {
+    public UREScrollPanel(int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg, UColor borderc) {
         lines = new ArrayList<String>();
         lineFades = new ArrayList<UColor>();
         textRows = rows;
@@ -41,7 +40,6 @@ public class UREScrollPanel {
         fgColor = fg;
         bgColor = bg;
         borderColor = borderc;
-        renderer = theRenderer;
     }
 
     public void addLineFade(UColor fade) {
@@ -57,7 +55,8 @@ public class UREScrollPanel {
         }
     }
 
-    public void renderImage() {
+    @Override
+    public void draw(URERenderer renderer) {
         renderer.drawRectBorder(xPos+1, yPos+1, width-2, height-2, 1, bgColor, borderColor);
         int i = 0;
         while (i < textRows) {

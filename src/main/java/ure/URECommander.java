@@ -48,6 +48,8 @@ public class URECommander implements URERenderer.KeyListener {
 
     private boolean waitingForInput = false;
 
+    private UIModal modal;
+
     public URECommander(UREActor theplayer, URERenderer theRenderer, UREThingCzar thingczar, UREActorCzar actorczar) {
         renderer = theRenderer;
         timeListeners = new HashSet<UTimeListener>();
@@ -119,8 +121,8 @@ public class URECommander implements URERenderer.KeyListener {
     void hearCommand(String command) {
         if(command == null) return;
         System.out.println("actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command);
-        if (player.camera.modal != null) {
-            player.camera.modal.hearCommand(command);
+        if (modal != null) {
+            modal.hearCommand(command);
         } else {
             switch (command) {
                 case "MOVE_N":
@@ -193,7 +195,7 @@ public class URECommander implements URERenderer.KeyListener {
     }
 
     void showModal(UIModal modal) {
-        player.camera.attachModal(modal);
+        attachModal(modal);
     }
 
     void debug() {
@@ -201,11 +203,11 @@ public class URECommander implements URERenderer.KeyListener {
     }
 
     void debug_1() {
-        player.camera.setAllVisible(!player.camera.allVisible);
+        player.camera.setAllVisible(!player.camera.getAllVisible());
     }
 
     void debug_2() {
-        player.camera.setAllLit(!player.camera.allLit);
+        player.camera.setAllLit(!player.camera.getAllLit());
     }
 
     void debug_3() { }
@@ -239,9 +241,6 @@ public class URECommander implements URERenderer.KeyListener {
         while (!renderer.windowShouldClose()) {
             frameCounter++;
             renderer.pollEvents();
-            player.camera.draw();
-            scrollPanel.renderImage();
-            statusPanel.renderImage();
 
             //Finalize and flush what we've rendered above to screen.
             renderer.render();
@@ -267,7 +266,7 @@ public class URECommander implements URERenderer.KeyListener {
             // if it's the player's turn, do a command if we have one
             if (waitingForInput && !keyBuffer.isEmpty()) {
                 consumeKeyFromBuffer();
-                player.camera.draw();
+                renderer.render();
                 while (player.actionTime() <= 0f) {
                     TickTime();
                     waitingForInput = false;
@@ -286,7 +285,7 @@ public class URECommander implements URERenderer.KeyListener {
         }
         turnCounter++;
         System.out.println("time:tick " + Integer.toString(turnCounter));
-        player.camera.draw();
+        renderer.render();
     }
 
     public int daytimeMinutes() {
@@ -325,4 +324,16 @@ public class URECommander implements URERenderer.KeyListener {
         }
         return t;
     }
+
+    public void attachModal(UIModal modal) {
+        if (this.modal != null) {
+            this.detachModal();
+        }
+        this.modal = modal;
+    }
+
+    public void detachModal() {
+        this.modal = null;
+    }
+
 }

@@ -1,5 +1,7 @@
 package ure;
 
+import ure.ui.URECamera;
+
 import java.lang.Math;
 import java.util.Random;
 
@@ -71,8 +73,8 @@ public class URELight {
     }
 
     public boolean canTouch(URECamera camera) {
-        int circleDistX = Math.abs(x - camera.centerX);
-        int circleDistY = Math.abs(y - camera.centerY);
+        int circleDistX = Math.abs(x - camera.getCenterX());
+        int circleDistY = Math.abs(y - camera.getCenterY());
         if (circleDistX > (camera.width/2 + range)) return false;
         if (circleDistY > (camera.height/2 + range)) return false;
         if (circleDistX <= (camera.width/2)) return true;

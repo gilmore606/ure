@@ -5,6 +5,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import ure.UColor;
+import ure.ui.View;
 
 import java.nio.FloatBuffer;
 
@@ -13,6 +14,8 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class URERendererOGL implements URERenderer {
+
+    private View rootView;
 
     //To store matrix data for uploading into OpenGLVille
     private FloatBuffer fb = BufferUtils.createFloatBuffer(16);
@@ -42,6 +45,11 @@ public class URERendererOGL implements URERenderer {
     private UColor cameraBgColor = UColor.COLOR_BLACK;
 
     // URERenderer methods
+
+    @Override
+    public void setRootView(View root) {
+        rootView = root;
+    }
 
     @Override
     public boolean windowShouldClose() {
@@ -166,6 +174,13 @@ public class URERendererOGL implements URERenderer {
 
     @Override
     public void render() {
+        if (rootView != null) {
+            rootView.draw(this);
+        }
+        paintScreen();
+    }
+
+    public void paintScreen() {
 
         glViewport(0, 0, screenWidth, screenHeight);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

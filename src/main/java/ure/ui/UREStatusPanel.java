@@ -5,7 +5,7 @@ import ure.render.URERenderer;
 
 import java.util.HashMap;
 
-public class UREStatusPanel /*extends JPanel */{
+public class UREStatusPanel extends View {
 
     UColor fgColor, bgColor, borderColor;
     int textRows,textColumns;
@@ -13,7 +13,6 @@ public class UREStatusPanel /*extends JPanel */{
     int padX, padY;
     int charWidth, charHeight;
     HashMap<String,TextFrag> texts;
-    URERenderer renderer;
     int xPos, yPos, width, height;
 
     class TextFrag {
@@ -32,12 +31,11 @@ public class UREStatusPanel /*extends JPanel */{
         }
     }
 
-    public UREStatusPanel(URERenderer theRenderer, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg, UColor borderc) {
+    public UREStatusPanel(int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg, UColor borderc) {
         super();
         texts = new HashMap<String,TextFrag>();
         textRows = rows;
         textColumns = columns;
-        renderer = theRenderer;
         charWidth = cw;
         charHeight = ch;
         padX = px;
@@ -72,7 +70,8 @@ public class UREStatusPanel /*extends JPanel */{
         frag.text = text;
     }
 
-    public void renderImage() {
+    @Override
+    public void draw(URERenderer renderer) {
         renderer.drawRectBorder(xPos+1, yPos+1, width-2, height-2, 1, bgColor, borderColor);
         //renderer.addQuad(xPos, yPos, width, height, bgColor);
         for (String textName : texts.keySet()) {
