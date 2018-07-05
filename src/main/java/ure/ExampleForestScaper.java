@@ -35,9 +35,9 @@ public class ExampleForestScaper extends URELandscaper {
             System.out.println("building rock formation");
             int x1 = 10 + rand(area.xsize - 20);
             int y1 = 10 + rand(area.ysize - 20);
-            int w = 4+rand(12);
-            int h = 4+rand(12);
-            digCaves(area, "wall", x1, y1, x1+w,y1+h,0.35f + randf(0.1f), 4+rand(3), 5, 4+rand(3));
+            int w = 7+rand(9);
+            int h = 7+rand(9);
+            digCaves(area, "wall", x1, y1, x1+w,y1+h,0.38f + randf(0.1f), 4+rand(3), 5, 4+rand(3));
             if (randf() < 0.6f) {
                 System.out.println("digging cave entrance");
                 UCell doorcell = findAnextToB(area, "wall", "grass", x1, y1, x1 + w, y1 + h);
