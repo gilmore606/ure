@@ -73,13 +73,13 @@ public class URELight {
     }
 
     public boolean canTouch(URECamera camera) {
-        int circleDistX = Math.abs(x - camera.getCenterX());
-        int circleDistY = Math.abs(y - camera.getCenterY());
-        if (circleDistX > (camera.width/2 + range)) return false;
-        if (circleDistY > (camera.height/2 + range)) return false;
-        if (circleDistX <= (camera.width/2)) return true;
-        if (circleDistY <= (camera.height/2)) return true;
-        double cornerDistSq = Math.pow(circleDistX - camera.width/2, 2) + Math.pow(circleDistY - camera.height/2, 2);
+        int circleDistX = Math.abs(x - camera.getCenterColumn());
+        int circleDistY = Math.abs(y - camera.getCenterRow());
+        if (circleDistX > (camera.columns /2 + range)) return false;
+        if (circleDistY > (camera.rows /2 + range)) return false;
+        if (circleDistX <= (camera.columns /2)) return true;
+        if (circleDistY <= (camera.rows /2)) return true;
+        double cornerDistSq = Math.pow(circleDistX - camera.columns /2, 2) + Math.pow(circleDistY - camera.rows /2, 2);
         if (cornerDistSq <= Math.pow(range,2)) return true;
         return false;
     }

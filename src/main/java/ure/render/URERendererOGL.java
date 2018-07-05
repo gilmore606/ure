@@ -16,6 +16,7 @@ import static org.lwjgl.system.MemoryUtil.*;
 public class URERendererOGL implements URERenderer {
 
     private View rootView;
+    private View context;
 
     //To store matrix data for uploading into OpenGLVille
     private FloatBuffer fb = BufferUtils.createFloatBuffer(16);
@@ -83,7 +84,7 @@ public class URERendererOGL implements URERenderer {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 0);
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
         window = glfwCreateWindow(screenWidth, screenHeight, "UREasonable example!", NULL, NULL);
         if ( window == NULL )
@@ -150,8 +151,27 @@ public class URERendererOGL implements URERenderer {
     }
 
     @Override
+    public void render() {
+        if (rootView != null) {
+            render(rootView);
+        }
+        paintScreen();
+    }
+
+    @Override
+    public void render(View view) {
+        context = view;
+        view.draw(this);
+        for (View child : view.children()) {
+            render(child);
+        }
+    }
+
+    @Override
     public void drawString(int x, int y, UColor col, String str){
         //TODO: HANDLE FONT CHANGES
+        x += context.absoluteX();
+        y += context.absoluteY();
         for(int i = 0; i < str.length(); i++){
             // TODO: pass in the size
             addQuad(x, y, glyphWidth, glyphHeight, col, str.charAt(i));
@@ -176,12 +196,31 @@ public class URERendererOGL implements URERenderer {
     }
 
     @Override
-    public void render() {
-        if (rootView != null) {
-            rootView.draw(this);
-        }
-        paintScreen();
+    public void drawRect(int x, int y, int w, int h, UColor col){
+        x += context.absoluteX();
+        y += context.absoluteY();
+        addQuad(x, y, w, h, col);
     }
+
+    @Override
+    public void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor){
+        x += context.absoluteX();
+        y += context.absoluteY();
+        addQuad(x, y, w, h, borderColor);
+        addQuad(x + borderThickness, y + borderThickness, w - borderThickness * 2, h - borderThickness * 2, bgColor);
+    }
+
+    @Override
+    public int glyphWidth() {
+        return glyphWidth;
+    }
+
+    @Override
+    public int glyphHeight() {
+        return glyphHeight;
+    }
+
+    // internals
 
     public void paintScreen() {
 
@@ -236,29 +275,6 @@ public class URERendererOGL implements URERenderer {
             lastUpdateTime = now;
         }
     }
-
-    @Override
-    public void drawRect(int x, int y, int w, int h, UColor col){
-        addQuad(x, y, w, h, col);
-    }
-
-    @Override
-    public void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor){
-        addQuad(x, y, w, h, borderColor);
-        addQuad(x + borderThickness, y + borderThickness, w - borderThickness * 2, h - borderThickness * 2, bgColor);
-    }
-
-    @Override
-    public int glyphWidth() {
-        return glyphWidth;
-    }
-
-    @Override
-    public int glyphHeight() {
-        return glyphHeight;
-    }
-
-    // internals
 
     private void resize(int width, int height){
         screenWidth = width;

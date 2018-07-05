@@ -30,7 +30,7 @@ public class ExampleGame implements UTimeListener {
 
         View rootView = new View();
 
-        camera = new URECamera(renderer, 1200, 800);
+        camera = new URECamera(renderer, 0, 0, 1200, 800);
         camera.moveTo(area, 40,20);
         rootView.addChild(camera);
 

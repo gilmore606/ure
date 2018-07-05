@@ -13,7 +13,6 @@ public class UREStatusPanel extends View {
     int padX, padY;
     int charWidth, charHeight;
     HashMap<String,TextFrag> texts;
-    int xPos, yPos, width, height;
 
     class TextFrag {
         String name;
@@ -47,14 +46,6 @@ public class UREStatusPanel extends View {
         borderColor = borderc;
     }
 
-    public void setBounds(int x, int y, int xx, int yy) {
-        //Hacky?
-        xPos = x;
-        yPos = y;
-        width = xx;
-        height = yy;
-    }
-
     public void addText(String name, String text, int row, int col) {
         addTextFrag(new TextFrag(name, text, row, col, fgColor));
     }
@@ -72,11 +63,11 @@ public class UREStatusPanel extends View {
 
     @Override
     public void draw(URERenderer renderer) {
-        renderer.drawRectBorder(xPos+1, yPos+1, width-2, height-2, 1, bgColor, borderColor);
+        renderer.drawRectBorder(1, 1, width-2, height-2, 1, bgColor, borderColor);
         //renderer.addQuad(xPos, yPos, width, height, bgColor);
         for (String textName : texts.keySet()) {
             TextFrag frag = texts.get(textName);
-            renderer.drawString(xPos + frag.row * charWidth + padX, yPos + (frag.col + 1) * charHeight + padY, frag.color, frag.text);
+            renderer.drawString(frag.row * charWidth + padX, (frag.col + 1) * charHeight + padY, frag.color, frag.text);
         }
     }
 }

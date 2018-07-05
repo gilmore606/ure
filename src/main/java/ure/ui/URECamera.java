@@ -18,11 +18,10 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
     public UREArea area;
     URERenderer renderer;
     float zoom = 1.0f;
-    int pixelWidth, pixelHeight;
-    public int width, height;
-    private int centerX, centerY;
+    public int columns, rows;
+    private int centerColumn, centerRow;
 
-    public int x1, y1, x2, y2;
+    public int leftEdge, topEdge, rightEdge, bottomEdge;
     ULightcell lightcells[][];
     HashSet<UREActor> visibilitySources;
 
@@ -108,24 +107,24 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
         }
     }
 
-    public URECamera(URERenderer theRenderer, int thePixW, int thePixH) {
+    public URECamera(URERenderer theRenderer, int x, int y, int width, int height) {
         renderer = theRenderer;
-        pixelWidth = thePixW;
-        pixelHeight = thePixH;
         visibilitySources = new HashSet<>();
-        setBounds();
-        lightcells = new ULightcell[width][height];
-        for (int x=0;x<width;x++)
-            for (int y=0;y<height;y++)
-                lightcells[x][y] = new ULightcell(this);
+        setBounds(x, y, width, height);
+        setupGrid();
+        lightcells = new ULightcell[columns][rows];
+        for (int col = 0; col<columns; col++)
+            for (int row = 0; row<rows; row++) {
+                lightcells[col][row] = new ULightcell(this);
+            }
     }
 
-    public int getCenterX() {
-        return centerX;
+    public int getCenterColumn() {
+        return centerColumn;
     }
 
-    public int getCenterY() {
-        return centerY;
+    public int getCenterRow() {
+        return centerRow;
     }
 
     public int cellWidth() {
@@ -163,35 +162,36 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
     }
 
     public void moveTo(int thex, int they) {
-        centerX = thex;
-        centerY = they;
-        setBounds();
+        centerColumn = thex;
+        centerRow = they;
+        setupGrid();
     }
 
-    private void setBounds() {
+    private void setupGrid() {
         float cellWidth = (float)cellWidth() * zoom;
         float cellHeight = (float)cellHeight() * zoom;
-        width = (int)(pixelWidth / cellWidth) + 2;
-        height = (int)(pixelHeight / cellHeight) + 2;
-        x1 = centerX - (width / 2);
-        y1 = centerY - (height / 2);
-        x2 = x1 + width;
-        y2 = y1 + height;
+        columns = (int)(width / cellWidth) + 2;
+        rows = (int)(height / cellHeight) + 2;
+        System.out.println("cell: " + cellWidth + "," + cellHeight + "  cols: " + columns + " rows: " + rows);
+        leftEdge = centerColumn - (columns / 2);
+        topEdge = centerRow - (rows / 2);
+        rightEdge = leftEdge + columns;
+        bottomEdge = topEdge + rows;
     }
 
-    public int getWidthInCells() { return width; }
-    public int getHeightInCells() { return height; }
+    public int getWidthInCells() { return columns; }
+    public int getHeightInCells() { return rows; }
     public float getSeenOpacity() { return seenOpacity; }
 
     void renderLights() {
-        for (int i=0;i<width;i++) {
-            for (int j=0;j<height;j++) {
+        for (int i = 0; i< columns; i++) {
+            for (int j = 0; j< rows; j++) {
                 lightcells[i][j].wipe();
-                lightcells[i][j].setSunBrightness(area.sunBrightnessAt(x1+i,y1+j));
+                lightcells[i][j].setSunBrightness(area.sunBrightnessAt(leftEdge +i, topEdge +j));
             }
         }
-        RenderSun();
-        RenderVisible();
+        renderSun();
+        renderVisible();
         for (URELight light : area.lights()) {
             if (light.canTouch(this)) {
                 projectLight(light);
@@ -199,40 +199,40 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
         }
     }
 
-    void RenderSun() {
-        for (int x=0;x<width;x++) {
-            for (int y=0;y<height;y++) {
-                float sun = getSunBrightnessAt(x,y);
+    void renderSun() {
+        for (int col = 0; col < columns; col++) {
+            for (int row = 0; row < rows; row++) {
+                float sun = getSunBrightnessAt(col,row);
                 if (sun < 0.1f) {
                     int litnear = 0;
                     for (int k = -1;k < 2;k++) {
                         for (int l = -1;l < 2;l++) {
-                            if (getSunBrightnessAt(x + k, y + l) > 0.9f) {
+                            if (getSunBrightnessAt(col + k, row + l) > 0.9f) {
                                 litnear++;
                             }
                         }
                     }
                     if (litnear > 0) {
-                        if (area.blocksLight(x + x1, y + y1))
+                        if (area.blocksLight(col + leftEdge, row + topEdge))
                             sun = 1f;
                         else
                             sun = 0.5f;
                     }
                 }
-                lightcells[x][y].setRenderedSun(sun);
+                lightcells[col][row].setRenderedSun(sun);
             }
         }
     }
-    float getSunBrightnessAt(int x, int y) {
-        if (isValidXY(x, y))
-            return lightcells[x][y].getSunBrightness();
+    float getSunBrightnessAt(int col, int row) {
+        if (isValidCell(col, row))
+            return lightcells[col][row].getSunBrightness();
         return 0f;
     }
 
-    void RenderVisible() {
-        for (int x=0;x<width;x++) {
-            for (int y=0;y<height;y++) {
-                setVisibilityAt(x,y,0f);
+    void renderVisible() {
+        for (int col = 0; col < columns; col++) {
+            for (int row = 0; row < rows; row++) {
+                setVisibilityAt(col, row, 0f);
             }
         }
         Iterator<UREActor> players = visibilitySources.iterator();
@@ -246,27 +246,27 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
     void renderVisibleFor(UREActor actor) {
         for (int i=-1;i<2;i++) {
             for (int j=-1;j<2;j++) {
-                int dx = (actor.areaX() - x1) + i;
-                int dy = (actor.areaY() - y1) + j;
+                int dx = (actor.areaX() - leftEdge) + i;
+                int dy = (actor.areaY() - topEdge) + j;
                 setVisibilityAt(dx, dy, 1.0f);
             }
         }
-        projectVisibility(actor.areaX() - x1, actor.areaY() - y1);
+        projectVisibility(actor.areaX() - leftEdge, actor.areaY() - topEdge);
     }
 
 
-    public float visibilityAt(int x, int y) {
+    public float visibilityAt(int col, int row) {
         if (allVisible)
             return 1.0f;
-        if (!isValidXY(x, y))
+        if (!isValidCell(col, row))
             return 0f;
-        return lightcells[x][y].visibility();
+        return lightcells[col][row].visibility();
     }
-    void setVisibilityAt(int x, int y, float vis) {
-        if (isValidXY(x, y)) {
-            lightcells[x][y].setVisibility(vis);
+    void setVisibilityAt(int col, int row, float vis) {
+        if (isValidCell(col, row)) {
+            lightcells[col][row].setVisibility(vis);
             if (vis > 0.5f)
-                area.setSeen(x+x1, y+y1);
+                area.setSeen(col + leftEdge, row + topEdge);
         }
     }
 
@@ -282,7 +282,7 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
         projectLight(ox, oy, null, true);
     }
     void projectLight(URELight light) {
-        projectLight(light.x - x1, light.y - y1, light, false);
+        projectLight(light.x - leftEdge, light.y - topEdge, light, false);
     }
 
     void projectLight(int ox, int oy, URELight light, boolean projectVisibility) {
@@ -294,14 +294,14 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
             boolean inFrame = true;
             while (inFrame) {
                 row++;
-                if (!isValidXY(ox + transformOctantCol(row, 0, octant),oy + transformOctantRow(row, 0, octant)))
+                if (!isValidCell(ox + transformOctantCol(row, 0, octant),oy + transformOctantRow(row, 0, octant)))
                     inFrame = false;
                 else {
                     boolean inRow = true;
                     for (int col = 0; col <= row; col++) {
                         int dy = oy + transformOctantRow(row, col, octant);
                         int dx = ox + transformOctantCol(row, col, octant);
-                        if (!isValidXY(dx, dy))
+                        if (!isValidCell(dx, dy))
                             inRow = false;
                         else {
                             if (fullShadow) {
@@ -312,7 +312,7 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
                                 boolean visible = !line.isInShadow(projection);
                                 if (visible) {
                                     projectToCell(dx, dy, light, projectVisibility, 1f);
-                                    if (area.blocksLight(dx + x1, dy + y1)) {
+                                    if (area.blocksLight(dx + leftEdge, dy + topEdge)) {
                                         line.add(projection);
                                         fullShadow = line.isFullShadow();
                                     }
@@ -323,37 +323,37 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
                 }
             }
         }
-        for (int x=0;x<width;x++) {
-            for (int y=0;y<height;y++) {
-                float v = visibilityAt(x,y);
+        for (int col = 0; col < columns; col++) {
+            for (int row = 0; row < rows; row++) {
+                float v = visibilityAt(col,row);
                 if (v == 0f) {
                     int neigh = 0;
-                    if (visibilityAt(x-1,y) == 1f && !area.blocksLight(x+x1-1, y+y1)) neigh++;
-                    if (visibilityAt(x+1, y) == 1f && !area.blocksLight(x+x1+1, y+y1)) neigh++;
-                    if (visibilityAt(x,y-1) == 1f && !area.blocksLight(x+x1, y+y1-1)) neigh++;
-                    if (visibilityAt(x, y+1) == 1f && !area.blocksLight(x+x1, y+y1+1)) neigh++;
+                    if (visibilityAt(col-1,row) == 1f && !area.blocksLight(col+ leftEdge -1, row+ topEdge)) neigh++;
+                    if (visibilityAt(col+1, row) == 1f && !area.blocksLight(col+ leftEdge +1, row+ topEdge)) neigh++;
+                    if (visibilityAt(col,row-1) == 1f && !area.blocksLight(col+ leftEdge, row+ topEdge -1)) neigh++;
+                    if (visibilityAt(col, row+1) == 1f && !area.blocksLight(col+ leftEdge, row+ topEdge +1)) neigh++;
                     if (neigh > 2)
-                        projectToCell(x, y, light, projectVisibility, 0.75f);
+                        projectToCell(col, row, light, projectVisibility, 0.75f);
                     else if (neigh > 1)
-                        projectToCell(x, y, light, projectVisibility, 0.6f);
+                        projectToCell(col, row, light, projectVisibility, 0.6f);
                 }
             }
         }
 
     }
-    void projectToCell(int x, int y, URELight light, boolean projectVisibility, float intensity) {
+    void projectToCell(int col, int row, URELight light, boolean projectVisibility, float intensity) {
         if (projectVisibility)
-            setVisibilityAt(x, y, intensity);
+            setVisibilityAt(col, row, intensity);
         else {
-            if (light.canTouch(x + x1, y + y1)) {
+            if (light.canTouch(col + leftEdge, row + topEdge)) {
                 boolean blockedWallGlow = false;
-                if (area.blocksLight(x+x1, y+y1)) {
-                    if (visibilityAt(light.x - x1, light.y - y1) < 0.1f) {
+                if (area.blocksLight(col+ leftEdge, row+ topEdge)) {
+                    if (visibilityAt(light.x - leftEdge, light.y - topEdge) < 0.1f) {
                         blockedWallGlow = true;
                     }
                 }
                 if (!blockedWallGlow) {
-                    receiveLight(x, y, light, intensity * light.intensityAtOffset((x + x1) - light.x, (y + y1) - light.y));
+                    receiveLight(col, row, light, intensity * light.intensityAtOffset((col + leftEdge) - light.x, (row + topEdge) - light.y));
                 }
             }
         }
@@ -400,29 +400,29 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
         }
         return 0;
     }
-    boolean isValidXY(int x, int y) {
-        if (x >= 0 && y >= 0 && x < width && y < height)
+    boolean isValidCell(int col, int row) {
+        if (col >= 0 && row >= 0 && col < columns && row < rows)
             return true;
         return false;
     }
 
-    void receiveLight(int x, int y, URELight source, float intensity) {
-        if (isValidXY(x, y)) {
-            lightcells[x][y].receiveLight(source, intensity);
+    void receiveLight(int col, int row, URELight source, float intensity) {
+        if (isValidCell(col, row)) {
+            lightcells[col][row].receiveLight(source, intensity);
         }
     }
 
-    public UColor lightAt(int x, int y) {
+    public UColor lightAt(int col, int row) {
         UColor total;
-        if (!isValidXY(x,y))
+        if (!isValidCell(col,row))
             return UColor.COLOR_BLACK;
         if (allLit) {
             total = UColor.COLOR_WHITE;
         } else {
-            total = lightcells[x][y].light(area.commander().frameCounter);
+            total = lightcells[col][row].light(area.commander().frameCounter);
             for (int i = -1;i < 2;i++) {
                 for (int j = -1;j < 2;j++) {
-                    URETerrain t = area.terrainAt(x + x1 + i, y + y1 + j);
+                    URETerrain t = area.terrainAt(col + leftEdge + i, row + topEdge + j);
                     if (t != null)
                         if (t.glow)
                             total.addLights(t.bgColor, 0.5f);
@@ -430,8 +430,8 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
             }
         }
         if (modal != null) {
-            if (x >= modal.cellx+1 && x <= modal.cellx+modal.width-1) {
-                if (y >= modal.celly + 1 && y <= modal.celly + modal.height-1) {
+            if (col >= modal.cellx+1 && col <= modal.cellx+modal.width-1) {
+                if (row >= modal.celly + 1 && row <= modal.celly + modal.height-1) {
                     total = new UColor(total.fR() * 0.6f, total.fG() * 0.6f, total.fB() * 0.6f);
                 }
             }
@@ -439,14 +439,14 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
         return total;
     }
 
-    public URETerrain terrainAt(int localX, int localY) {
-        return area.terrainAt(localX + x1, localY + y1);
+    public URETerrain terrainAt(int localCol, int localRow) {
+        return area.terrainAt(localCol + leftEdge, localRow + topEdge);
     }
 
-    public Iterator<UREThing> thingsAt(int x, int y) {
-        return area.thingsAt(x + x1, y + y1);
+    public Iterator<UREThing> thingsAt(int localCol, int localRow) {
+        return area.thingsAt(localCol + leftEdge, localRow + topEdge);
     }
-    public UREActor actorAt(int x, int y) { return area.actorAt(x+x1,y+y1); }
+    public UREActor actorAt(int localCol, int localRow) { return area.actorAt(localCol+ leftEdge,localRow+ topEdge); }
 
     @Override
     public void draw(URERenderer renderer) {
@@ -462,22 +462,22 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
         int camh = getHeightInCells();
 
         // Render Cells.
-        for (int x=0;x<camw;x++) {
-            for (int y=0;y<camh;y++) {
-                drawCell(renderer, x, y, cellw, cellh);
+        for (int col=0; col<camw; col++) {
+            for (int row=0; row<camh; row++) {
+                drawCell(renderer, col, row, cellw, cellh);
             }
         }
         rendering = false;
     }
 
-    private void drawCell(URERenderer renderer, int x, int y, int cellw, int cellh) {
-        float vis = visibilityAt(x,y);
+    private void drawCell(URERenderer renderer, int col, int row, int cellw, int cellh) {
+        float vis = visibilityAt(col,row);
         float visSeen = getSeenOpacity();
-        UColor light = lightAt(x,y);
-        URETerrain t = terrainAt(x,y);
+        UColor light = lightAt(col,row);
+        URETerrain t = terrainAt(col,row);
         if (t != null) {
             float tOpacity = vis;
-            if ((vis < visSeen) && area.seenCell(x + x1, y + y1))
+            if ((vis < visSeen) && area.seenCell(col + leftEdge, row + topEdge))
                 tOpacity = visSeen;
             UColor terrainLight = light;
             if (t.glow)
@@ -485,29 +485,29 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
             t.bgColorBuffer.set(t.bgColor.r, t.bgColor.g, t.bgColor.b);
             t.bgColorBuffer.illuminateWith(terrainLight, tOpacity);
 
-            renderer.drawRect(x * cellw, y * cellh, cellw, cellh, t.bgColorBuffer);
+            renderer.drawRect(col * cellw, row * cellh, cellw, cellh, t.bgColorBuffer);
             t.fgColorBuffer.set(t.fgColor.r, t.fgColor.g, t.fgColor.b);
             t.fgColorBuffer.illuminateWith(terrainLight, tOpacity);
-            renderer.drawGlyph(t.glyph(x+x1,y+y1), x * cellw, y * cellh, t.fgColorBuffer, t.glyphOffsetX(), t.glyphOffsetY() + 2);
+            renderer.drawGlyph(t.glyph(col+ leftEdge,row+ topEdge), col * cellw, row * cellh, t.fgColorBuffer, t.glyphOffsetX(), t.glyphOffsetY() + 2);
         }
 
         //TODO: Define this magic value somewhere?
         if (vis < 0.3f)
             return;
-        Iterator<UREThing> things = thingsAt(x,y);
+        Iterator<UREThing> things = thingsAt(col,row);
         if (things != null) {
             while (things.hasNext()) {
-                things.next().render(renderer, x * cellw, y * cellh, light, vis);
+                things.next().render(renderer, col * cellw, row * cellh, light, vis);
             }
         }
-        UREActor actor = actorAt(x,y);
+        UREActor actor = actorAt(col,row);
         if (actor != null) {
-            actor.render(renderer, x * cellw, y * cellh, light, vis);
+            actor.render(renderer, col * cellw, row * cellh, light, vis);
         }
     }
 
 /*    public void redrawAreaCell(int ax, int ay) {
-        redrawCell(ax - x1, ay - y1);
+        redrawCell(ax - leftEdge, ay - topEdge);
     }
     public void redrawCell(int x, int y) {
         //MM TODO THIS -- We cannot redraw cells any more.
@@ -515,10 +515,10 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
     }*/
 
     public void animationTick() {
-        for (int x=x1;x<x2;x++) {
-            for (int y=y1;y<y2;y++) {
-                if (area.isValidXY(x,y) && lightcells[x-x1][y-y1].visibility() > 0.1f)
-                    area.cellAt(x,y).animationTick();
+        for (int col = leftEdge; col< rightEdge; col++) {
+            for (int row = topEdge; row< bottomEdge; row++) {
+                if (area.isValidXY(col,row) && lightcells[col- leftEdge][row- topEdge].visibility() > 0.1f)
+                    area.cellAt(col,row).animationTick();
             }
         }
     }
