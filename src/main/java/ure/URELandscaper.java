@@ -255,6 +255,34 @@ public class URELandscaper {
         return null;
     }
 
+    public UCell findAreaWithout(UREArea area, int x1, int y1, int x2, int y2, int w, int h, String[] terrains) {
+        int tries = 0;
+        while (tries < 500) {
+            tries++;
+            int x = rand(x2-x1)+x1;
+            int y = rand(y2-y1)+y1;
+            if (!rectHasTerrain(area, x, y, x+w, y+h, terrains)) {
+                System.out.println("found area without at " + Integer.toString(x) + "," + Integer.toString(y));
+                return area.cellAt(x,y);
+            }
+        }
+        return null;
+    }
+
+    public boolean rectHasTerrain(UREArea area, int x1, int y1, int x2, int y2, String[] terrains) {
+        for (;x1<=x2;x1++) {
+            for (;y1<=y2;y1++) {
+                if (area.isValidXY(x1,y1)) {
+                    String ts = area.terrainAt(x1,y1).name;
+                    for (String s : terrains) {
+                        if (s.equals(ts))
+                            return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     public String terrainNameAt(UREArea area, int x, int y) {
         UCell cell = area.cellAt(x,y);
         if (cell != null) {
@@ -311,7 +339,9 @@ public class URELandscaper {
         Grid map = new Grid(width,height);
         Grid scratchmap = new Grid(width,height);
         float fillratio = 0f;
-        while (fillratio < 0.2f) {
+        int tries = 0;
+        while ((fillratio < 0.15f) && (tries < 10)) {
+            tries++;
             int gapY = random.nextInt(height / 2) + height / 3;
             for (int x = 0;x < width;x++) {
                 for (int y = 0;y < height;y++) {
