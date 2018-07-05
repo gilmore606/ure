@@ -239,7 +239,7 @@ public class URECommander implements URERenderer.KeyListener {
         while (!renderer.windowShouldClose()) {
             frameCounter++;
             renderer.pollEvents();
-            renderer.drawCamera(player.camera);
+            player.camera.draw();
             scrollPanel.renderImage();
             statusPanel.renderImage();
 
@@ -267,7 +267,7 @@ public class URECommander implements URERenderer.KeyListener {
             // if it's the player's turn, do a command if we have one
             if (waitingForInput && !keyBuffer.isEmpty()) {
                 consumeKeyFromBuffer();
-                player.camera.renderImage();
+                player.camera.draw();
                 while (player.actionTime() <= 0f) {
                     TickTime();
                     waitingForInput = false;
@@ -286,7 +286,7 @@ public class URECommander implements URERenderer.KeyListener {
         }
         turnCounter++;
         System.out.println("time:tick " + Integer.toString(turnCounter));
-        player.camera.renderImage();
+        player.camera.draw();
     }
 
     public int daytimeMinutes() {

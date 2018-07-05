@@ -278,7 +278,7 @@ public class UREArea implements UTimeListener {
         Iterator<URECamera> camI = cameras.iterator();
         while (camI.hasNext()) {
             URECamera camera = camI.next();
-            camera.renderImage();
+            camera.draw();
         }
     }
 

@@ -118,15 +118,22 @@ public class URECamera implements UAnimator {
                 lightcells[x][y] = new ULightcell(this);
     }
 
+    public int cellWidth() {
+        return renderer.glyphWidth();
+    }
+
+    public int cellHeight() {
+        return renderer.glyphHeight();
+    }
+
+
     public void setAllVisible(boolean val) {
         allVisible = val;
-        renderLights();
-        renderImage();
+        draw();
     }
     public void setAllLit(boolean val) {
         allLit = val;
-        renderLights();
-        renderImage();
+        draw();
     }
 
     public void moveTo(UREArea theArea, int thex, int they) {
@@ -145,8 +152,8 @@ public class URECamera implements UAnimator {
     }
 
     private void setBounds() {
-        float cellWidth = (float)renderer.cellWidth() * zoom;
-        float cellHeight = (float)renderer.cellHeight() * zoom;
+        float cellWidth = (float)cellWidth() * zoom;
+        float cellHeight = (float)cellHeight() * zoom;
         width = (int)(pixelWidth / cellWidth) + 2;
         height = (int)(pixelHeight / cellHeight) + 2;
         x1 = centerX - (width / 2);
@@ -424,11 +431,61 @@ public class URECamera implements UAnimator {
     }
     public UREActor actorAt(int x, int y) { return area.actorAt(x+x1,y+y1); }
 
-    public void renderImage() {
+    public void draw() {
+
         if (modal != null)
             modal.renderImage();
         renderLights();
-        renderer.drawCamera(this);
+
+        rendering = true;
+        int cellw = cellWidth();
+        int cellh = cellHeight();
+        int camw = getWidthInCells();
+        int camh = getHeightInCells();
+
+        // Render Cells.
+        for (int x=0;x<camw;x++) {
+            for (int y=0;y<camh;y++) {
+                drawCell(x, y, cellw, cellh);
+            }
+        }
+        rendering = false;
+    }
+
+    private void drawCell(int x, int y, int cellw, int cellh) {
+        float vis = visibilityAt(x,y);
+        float visSeen = getSeenOpacity();
+        UColor light = lightAt(x,y);
+        URETerrain t = terrainAt(x,y);
+        if (t != null) {
+            float tOpacity = vis;
+            if ((vis < visSeen) && area.seenCell(x + x1, y + y1))
+                tOpacity = visSeen;
+            UColor terrainLight = light;
+            if (t.glow)
+                terrainLight.set(1f,1f,1f);
+            t.bgColorBuffer.set(t.bgColor.r, t.bgColor.g, t.bgColor.b);
+            t.bgColorBuffer.illuminateWith(terrainLight, tOpacity);
+
+            renderer.drawRect(x * cellw, y * cellh, cellw, cellh, t.bgColorBuffer);
+            t.fgColorBuffer.set(t.fgColor.r, t.fgColor.g, t.fgColor.b);
+            t.fgColorBuffer.illuminateWith(terrainLight, tOpacity);
+            renderer.drawGlyph(t.glyph(x+x1,y+y1), x * cellw, y * cellh, t.fgColorBuffer, t.glyphOffsetX(), t.glyphOffsetY() + 2);
+        }
+
+        //TODO: Define this magic value somewhere?
+        if (vis < 0.3f)
+            return;
+        Iterator<UREThing> things = thingsAt(x,y);
+        if (things != null) {
+            while (things.hasNext()) {
+                things.next().render(renderer, x * cellw, y * cellh, light, vis);
+            }
+        }
+        UREActor actor = actorAt(x,y);
+        if (actor != null) {
+            actor.render(renderer, x * cellw, y * cellh, light, vis);
+        }
     }
 
 /*    public void redrawAreaCell(int ax, int ay) {
@@ -454,12 +511,12 @@ public class URECamera implements UAnimator {
         }
         this.modal = modal;
         renderLights();
-        renderImage();
+        draw();
     }
 
     public void detachModal() {
         this.modal = null;
         renderLights();
-        renderImage();
+        draw();
     }
 }

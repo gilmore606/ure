@@ -38,8 +38,8 @@ public class UIModal {
         height = theCharHeight;
         bgColor = thebgColor;
         texts = new HashMap<>();
-        pixelWidth = theRenderer.cellWidth() * width;
-        pixelHeight = theRenderer.cellHeight() * height;
+        //pixelWidth = theRenderer.cellWidth() * width;
+        //pixelHeight = theRenderer.cellHeight() * height;
         cellx = camera.getWidthInCells()/2 - width/2;
         celly = camera.getHeightInCells()/2 - height/2;
         //image = new BufferedImage(pixelWidth, pixelHeight, BufferedImage.TYPE_INT_RGB);
