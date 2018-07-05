@@ -44,6 +44,9 @@ public class URERendererOGL implements URERenderer {
     private KeyListener keyListener;
     private UColor cameraBgColor = UColor.COLOR_BLACK;
 
+    private int frameCount = 0;
+    private long lastUpdateTime = System.currentTimeMillis();
+
     // URERenderer methods
 
     @Override
@@ -224,6 +227,14 @@ public class URERendererOGL implements URERenderer {
         glfwSwapBuffers(window);
 
         tris = 0;
+
+        frameCount++;
+        long now = System.currentTimeMillis();
+        if (now - lastUpdateTime > 1000) {
+            System.out.println("[ " + frameCount + " fps ]");
+            frameCount = 0;
+            lastUpdateTime = now;
+        }
     }
 
     @Override
