@@ -97,6 +97,7 @@ public class URECommander implements URERenderer.KeyListener {
         keyBinds.put('A', "MOVE_W");
         keyBinds.put('D', "MOVE_E");
         keyBinds.put('G', "GET");
+        keyBinds.put('>', "STAIRS");
         keyBinds.put('I', "INVENTORY");
         keyBinds.put('E', "DEBUG");
         keyBinds.put('1', "DEBUG_1");
@@ -137,6 +138,9 @@ public class URECommander implements URERenderer.KeyListener {
                 case "GET":
                     commandGet();
                     break;
+                case "STAIRS":
+                    commandStairs();
+                    break;
                 case "INVENTORY":
                     commandInventory();
                     break;
@@ -163,6 +167,10 @@ public class URECommander implements URERenderer.KeyListener {
 
     void commandGet() {
         player.doAction(new UActionGet());
+    }
+
+    void commandStairs() {
+
     }
 
     void commandInventory() {

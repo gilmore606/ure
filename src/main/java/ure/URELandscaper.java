@@ -238,6 +238,31 @@ public class URELandscaper {
         return false;
     }
 
+    public UCell findAnextToB(UREArea area, String ta, String tb, int x1, int y1, int x2, int y2) {
+        int tries = 0;
+        while (tries < ((x2-x1)*(y2-y1))) {
+            tries++;
+            UCell cell = area.cellAt(x1+rand(x2-x1),y1+rand(y2-y1));
+            if (cell != null) {
+                if (terrainNameAt(area, cell.x, cell.y).equals(ta)) {
+                    if (terrainNameAt(area, cell.x + 1, cell.y).equals(tb)) return cell;
+                    if (terrainNameAt(area, cell.x - 1, cell.y).equals(tb)) return cell;
+                    if (terrainNameAt(area, cell.x, cell.y + 1).equals(tb)) return cell;
+                    if (terrainNameAt(area, cell.x, cell.y - 1).equals(tb)) return cell;
+                }
+            }
+        }
+        return null;
+    }
+
+    public String terrainNameAt(UREArea area, int x, int y) {
+        UCell cell = area.cellAt(x,y);
+        if (cell != null) {
+            return cell.terrain().name;
+        }
+        return null;
+    }
+
     public void digRiver(UREArea area, String t, int x1, int y1, int x2, int y2, float riverWidth, float twist, float twistmax) {
         int width = x2-x1; int height = y2-y1;
         int edge = random.nextInt(4);

@@ -18,9 +18,10 @@
     "opaque": false,
     "sunvis": 1.0,
     "glyph": " ",
-    "variants": " .",
-    "fgcolor": [120,110,35],
-    "bgcolor": [70,55,15]
+    "variants": "     .",
+    "fgcolor": [100,80,35],
+    "bgcolor": [70,55,15],
+    "bgvariants": [ [70,55,15],[60,55,15],[50,55,10],[55,65,0]]
   },
     {
       "name": "wall",
@@ -176,5 +177,17 @@
       "glow": true,
       "walkmsg": "Oh god it burns!  It BURNS!",
       "animationFrames": 2
-    }
+    },
+  {
+    "name": "cave entrance",
+    "type": "stairs",
+    "filechar": ">",
+    "passable": true,
+    "opaque": false,
+    "sunvis": 0.5,
+    "glyph": ">",
+    "fgcolor": [255,255,255],
+    "bgcolor": [60,60,60],
+    "walkmsg": "The trail slopes down into a dark cave."
+  }
 ]
