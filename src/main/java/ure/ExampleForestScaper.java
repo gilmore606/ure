@@ -46,5 +46,9 @@ public class ExampleForestScaper extends URELandscaper {
                 }
             }
         }
+        UCell townloc = findAreaWithout(area, 1,1,area.xsize, area.ysize, 20, 20, new String[]{"water", "wall"});
+        if (townloc != null) {
+
+        }
     }
 }
