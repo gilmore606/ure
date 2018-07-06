@@ -2,12 +2,10 @@ package ure.actors;
 
 import ure.*;
 import ure.actions.UAction;
-import ure.behaviors.UBehavior;
 import ure.terrain.URETerrain;
 import ure.things.Lightsource;
 import ure.things.UREThing;
-
-import java.util.ArrayList;
+import ure.ui.URECamera;
 
 public class UREActor  extends UREThing {
 
@@ -82,10 +80,10 @@ public class UREActor  extends UREThing {
             if (cameraPinStyle == URECamera.PINSTYLE_HARD)
                 camera.moveTo(area(), destX, destY);
             if (cameraPinStyle == URECamera.PINSTYLE_SOFT) {
-                int cameraX = Math.min(destX, thearea.xsize - camera.width / 2);
-                int cameraY = Math.min(destY, thearea.ysize - camera.height / 2);
-                cameraX = Math.max(camera.width / 2, cameraX);
-                cameraY = Math.max(camera.height / 2, cameraY);
+                int cameraX = Math.min(destX, thearea.xsize - camera.columns / 2);
+                int cameraY = Math.min(destY, thearea.ysize - camera.rows / 2);
+                cameraX = Math.max(camera.columns / 2, cameraX);
+                cameraY = Math.max(camera.rows / 2, cameraY);
                 camera.moveTo(area(), cameraX, cameraY);
             }
             if (cameraPinStyle == URECamera.PINSTYLE_SCREENS) {
