@@ -1,18 +1,16 @@
 package ure.ui;
 
-import org.lwjgl.system.CallbackI;
 import ure.render.URERenderer;
 
 import java.lang.ref.WeakReference;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class View {
 
     protected int x, y, width, height;
-    // not used yet, but eventually we'll take these into account so our own draw method can use local coordinates
 
-    protected Set<View> children = new HashSet<>();
+    protected LinkedHashSet<View> children = new LinkedHashSet<>();
     protected WeakReference<View> parent = new WeakReference<>(null);
 
     /**
@@ -63,6 +61,10 @@ public class View {
         this.parent = new WeakReference<>(view);
     }
 
+    /**
+     * Gets the view that contains this view, if any.
+     * @return The parent view, or null if this view is at the root.
+     */
     public View getParent() {
         return this.parent.get();
     }

@@ -158,7 +158,6 @@ public class URERendererOGL implements URERenderer {
         paintScreen();
     }
 
-    @Override
     public void render(View view) {
         context = view;
         view.draw(this);

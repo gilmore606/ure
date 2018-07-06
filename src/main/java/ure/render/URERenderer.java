@@ -41,15 +41,9 @@ public interface URERenderer {
     void setKeyListener(KeyListener listener);
 
     /**
-     * Repaint the entire game window.
+     * Repaint the game window.
      */
     void render();
-
-    /**
-     * Repaint a particular view.
-     * @param view
-     */
-    void render(View view);
 
     // These will go away one we've worked out font rendering, views, etc.
     int glyphWidth();
