@@ -79,7 +79,6 @@ public class ExampleCaveScaper extends ULandscaper {
         scatterThings(area, new String[]{"trucker hat", "butcher knife", "apple", "rock", "rock"},
                 new String[]{floorTerrain}, 10 + rand(40));
 
-        SetStairsLabels(area);
     }
 
     @Override

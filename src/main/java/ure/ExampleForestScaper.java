@@ -50,7 +50,6 @@ public class ExampleForestScaper extends ULandscaper {
         }
         //UCell townloc = findAreaWithout(area, 1,1,area.xsize, area.ysize, 20, 20, new String[]{"water", "wall"});
 
-        SetStairsLabels(area);
     }
 
     @Override

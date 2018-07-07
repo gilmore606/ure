@@ -29,14 +29,17 @@ public class UCartographer {
         int[] labeldata = GetLabelData(label);
 
         System.out.println("CARTO : making area for " + labelname + " (" + labeldata[0] + ")");
+        UArea area;
         switch (labelname) {
             case "forest":
-                return MakeForest();
+                area = MakeForest(); break;
             case "cavern":
-                return MakeCavern(labeldata[0]);
+                area = MakeCavern(labeldata[0]); break;
             default:
-                return MakeForest();
+                area = MakeForest(); break;
         }
+        area.setLabel(label);
+        return area;
     }
 
     public String GetLabelName(String label) {
@@ -69,6 +72,7 @@ public class UCartographer {
         area.setCommander(commander);
         ULandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
+        scaper.SetStairsLabels(area);
         for (int i=0;i<30;i++) {
             UActor rat = actorCzar.getActorByName("rat");
             UCell ratdest = scaper.randomOpenCell(area, rat);
@@ -82,6 +86,7 @@ public class UCartographer {
         area.setCommander(commander);
         ULandscaper scaper = new ExampleCaveScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
+        scaper.SetStairsLabels(area);
         UActor monk = actorCzar.getActorByName("monk");
         UCell monkdest = scaper.randomOpenCell(area, monk);
         monk.moveToCell(area, monkdest.x, monkdest.y);

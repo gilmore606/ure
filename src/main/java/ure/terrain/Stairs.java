@@ -27,6 +27,7 @@ public class Stairs extends TerrainI implements UTerrain {
     public void transportActor(UActor actor, UCartographer carto) {
         // TODO: cool transition bullshit i dunno
         UArea destarea = carto.getArea(label);
+        System.out.println("CARTO : stairs got an area " + destarea.label);
         UCell dest = destarea.randomOpenCell(actor);
         actor.moveToCell(destarea, dest.areaX(), dest.areaY());
     }
