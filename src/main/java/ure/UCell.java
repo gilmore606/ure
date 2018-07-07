@@ -29,7 +29,7 @@ public class UCell implements UContainer {
     }
 
     public float sunBrightness() {
-        return terrain.sunvis;
+        return terrain.sunvis();
     }
 
     public void setSeen(boolean theseen) {
@@ -107,7 +107,6 @@ public class UCell implements UContainer {
     }
 
     public void animationTick() {
-        if (terrain.animationFrames > 0)
-            terrain.animationTick();
+        terrain.animationTick();
     }
 }

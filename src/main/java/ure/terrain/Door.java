@@ -3,7 +3,7 @@ package ure.terrain;
 import ure.UCell;
 import ure.actors.UREActor;
 
-public class Door extends URETerrain {
+public class Door extends TerrainI implements URETerrain {
 
     public static final String TYPE = "door";
 

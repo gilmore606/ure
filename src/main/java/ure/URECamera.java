@@ -400,8 +400,8 @@ public class URECamera implements UAnimator {
                 for (int j = -1;j < 2;j++) {
                     URETerrain t = area.terrainAt(x + x1 + i, y + y1 + j);
                     if (t != null)
-                        if (t.glow)
-                            total.addLights(t.bgColor, 0.5f);
+                        if (t.glow())
+                            total.addLights(t.bgColor(), 0.5f);
                 }
             }
         }
