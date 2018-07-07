@@ -2,8 +2,8 @@ package ure.things;
 
 import ure.math.UColor;
 import ure.UContainer;
-import ure.UArea;
-import ure.ULight;
+import ure.areas.UArea;
+import ure.ui.ULight;
 
 import java.util.Random;
 

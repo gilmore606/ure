@@ -1,5 +1,6 @@
 package ure;
 
+import ure.areas.UArea;
 import ure.things.UThing;
 
 import java.util.Iterator;

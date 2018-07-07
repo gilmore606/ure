@@ -1,5 +1,6 @@
-package ure;
+package ure.areas;
 
+import ure.UCommander;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.examplegame.ExampleCaveScaper;

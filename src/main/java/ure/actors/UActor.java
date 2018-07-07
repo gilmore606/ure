@@ -2,6 +2,8 @@ package ure.actors;
 
 import ure.*;
 import ure.actions.UAction;
+import ure.areas.UArea;
+import ure.areas.UCell;
 import ure.math.UPath;
 import ure.terrain.UTerrain;
 import ure.things.Lightsource;

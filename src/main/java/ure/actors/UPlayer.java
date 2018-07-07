@@ -1,8 +1,8 @@
 package ure.actors;
 
 import ure.math.UColor;
-import ure.UArea;
-import ure.ULight;
+import ure.areas.UArea;
+import ure.ui.ULight;
 import ure.things.UThing;
 
 public class UPlayer extends UActor {

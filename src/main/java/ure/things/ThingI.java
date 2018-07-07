@@ -2,6 +2,7 @@ package ure.things;
 
 import ure.*;
 import ure.actors.UActor;
+import ure.areas.UArea;
 import ure.math.UColor;
 import ure.render.URenderer;
 

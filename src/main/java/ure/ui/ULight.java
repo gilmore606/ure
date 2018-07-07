@@ -1,5 +1,6 @@
-package ure;
+package ure.ui;
 
+import ure.areas.UArea;
 import ure.math.UColor;
 import ure.ui.UCamera;
 

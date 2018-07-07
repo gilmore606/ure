@@ -1,8 +1,8 @@
 package ure.terrain;
 
-import ure.UArea;
-import ure.UCartographer;
-import ure.UCell;
+import ure.areas.UArea;
+import ure.areas.UCartographer;
+import ure.areas.UCell;
 import ure.actors.UActor;
 
 public class Stairs extends TerrainI implements UTerrain {

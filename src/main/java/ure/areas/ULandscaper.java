@@ -1,5 +1,6 @@
-package ure;
+package ure.areas;
 
+import ure.ui.ULight;
 import ure.math.UColor;
 import ure.math.USimplexNoise;
 import ure.terrain.Stairs;

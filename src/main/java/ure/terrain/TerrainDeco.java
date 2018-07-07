@@ -1,6 +1,6 @@
 package ure.terrain;
 
-import ure.UCell;
+import ure.areas.UCell;
 import ure.math.UColor;
 import ure.actors.UActor;
 

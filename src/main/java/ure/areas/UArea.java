@@ -1,5 +1,8 @@
-package ure;
+package ure.areas;
 
+import ure.UCommander;
+import ure.ui.ULight;
+import ure.UTimeListener;
 import ure.actors.UActor;
 import ure.math.UColor;
 import ure.terrain.Stairs;
@@ -127,11 +130,11 @@ public class UArea implements UTimeListener {
         return lights;
     }
 
-    void addLight(ULight light) {
+    public void addLight(ULight light) {
         lights.add(light);
     }
 
-    void removeLight(ULight light) {
+    public void removeLight(ULight light) {
         lights.remove(light);
     }
 

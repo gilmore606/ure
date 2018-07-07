@@ -1,9 +1,9 @@
 package ure.examplegame;
 
-import ure.UArea;
-import ure.UCell;
+import ure.areas.UArea;
+import ure.areas.UCell;
 import ure.math.UColor;
-import ure.ULandscaper;
+import ure.areas.ULandscaper;
 import ure.terrain.Stairs;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;

@@ -4,6 +4,7 @@ import ure.actions.UActionGet;
 import ure.actions.UActionWalk;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
+import ure.areas.UCartographer;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.terrain.Stairs;

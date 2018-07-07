@@ -1,7 +1,6 @@
 package ure.ui;
 
 import ure.math.UColor;
-import ure.ULight;
 
 import java.util.HashMap;
 
