@@ -2,6 +2,7 @@ package ure.terrain;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Set;
@@ -30,10 +31,13 @@ public class URETerrainCzar {
     private ObjectMapper objectMapper = new ObjectMapper();
     private Reflections reflections = new Reflections("ure", new SubTypesScanner());
 
-    public URETerrainCzar() {
+    private Class<TerrainDeco> decorator;
+
+    public URETerrainCzar(Class<TerrainDeco> myDecorator) {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(TerrainI.class, new TerrainDeserializer());
         objectMapper.registerModule(module);
+        decorator = myDecorator;
     }
 
     public void loadTerrains(String resourceName) {
@@ -59,7 +63,17 @@ public class URETerrainCzar {
     }
 
     public URETerrain getTerrainForFilechar(char thechar) {
-        return (URETerrain)(terrains.get(thechar).getClone());
+        URETerrain terrain = (URETerrain)(terrains.get(thechar).getClone());
+        if (decorator != null) {
+            TerrainDeco decoInstance = null;
+            try {
+                decoInstance = decorator.getDeclaredConstructor(new Class[]{decorator.getClass()}).newInstance(terrain);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return (URETerrain)decoInstance;
+        }
+        return terrain;
     }
 
     public URETerrain getTerrainByName(String name) {

@@ -63,7 +63,7 @@ public class ExampleGame implements UTimeListener {
         renderer = new URERendererOGL();
         renderer.initialize();
 
-        terrainCzar = new URETerrainCzar();
+        terrainCzar = new URETerrainCzar(null);
         terrainCzar.loadTerrains("/terrains.json");
         thingCzar = new UREThingCzar();
         thingCzar.loadThings("/things.json");
