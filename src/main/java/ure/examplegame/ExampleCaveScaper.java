@@ -92,7 +92,7 @@ public class ExampleCaveScaper extends ULandscaper {
 
     @Override
     public void SetStairsLabel(UArea area, int x, int y, Stairs t) {
-        if (t.name() == "cave exit") {
+        if (t.name().equals("cave exit")) {
             t.setLabel("forest");
         } else {
             t.setLabel("cavern");
