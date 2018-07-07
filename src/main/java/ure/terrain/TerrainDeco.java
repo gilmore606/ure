@@ -1,7 +1,7 @@
 package ure.terrain;
 
 import ure.UCell;
-import ure.UColor;
+import ure.math.UColor;
 import ure.actors.UActor;
 
 public class TerrainDeco implements UTerrain {

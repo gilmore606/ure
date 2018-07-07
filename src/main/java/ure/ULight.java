@@ -1,5 +1,6 @@
 package ure;
 
+import ure.math.UColor;
 import ure.ui.UCamera;
 
 import java.lang.Math;

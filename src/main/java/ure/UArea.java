@@ -1,10 +1,12 @@
 package ure;
 
 import ure.actors.UActor;
+import ure.math.UColor;
 import ure.terrain.Stairs;
 import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
+import ure.ui.UParticle;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

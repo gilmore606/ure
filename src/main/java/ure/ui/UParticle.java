@@ -1,4 +1,7 @@
-package ure;
+package ure.ui;
+
+import ure.UAnimator;
+import ure.UArea;
 
 public class UParticle implements UAnimator {
 

@@ -1,6 +1,6 @@
 package ure.ui;
 
-import ure.UColor;
+import ure.math.UColor;
 import ure.render.URenderer;
 
 import java.util.ArrayList;

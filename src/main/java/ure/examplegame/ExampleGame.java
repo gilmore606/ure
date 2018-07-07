@@ -4,6 +4,7 @@ import ure.*;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
+import ure.math.UColor;
 import ure.render.URenderer;
 import ure.render.URendererOGL;
 import ure.terrain.UTerrainCzar;

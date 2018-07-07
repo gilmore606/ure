@@ -1,7 +1,7 @@
 package ure.render;
 
 
-import ure.UColor;
+import ure.math.UColor;
 import ure.ui.View;
 
 public interface URenderer {

@@ -4,7 +4,7 @@ import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
-import ure.UColor;
+import ure.math.UColor;
 import ure.ui.View;
 
 import java.nio.FloatBuffer;

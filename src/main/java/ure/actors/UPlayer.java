@@ -1,6 +1,6 @@
 package ure.actors;
 
-import ure.UColor;
+import ure.math.UColor;
 import ure.UArea;
 import ure.ULight;
 import ure.things.UThing;
