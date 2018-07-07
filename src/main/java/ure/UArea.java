@@ -299,6 +299,9 @@ public class UArea implements UTimeListener {
         }
     }
 
+    public void setLabel(String thelabel) {
+        label = thelabel;
+    }
     public void addParticle(UParticle particle) {
         particles.add(particle);
     }

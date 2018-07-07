@@ -87,6 +87,7 @@ public class UActor extends ThingI {
                 cameraY = Math.max(camera.rows / 2, cameraY);
                 camera.moveTo(area(), cameraX, cameraY);
             }
+            // TODO: implement binding of isaac style camera move by screens
             if (cameraPinStyle == UCamera.PINSTYLE_SCREENS) {
                 System.out.println("ERROR: Camera.PINSTYLE_SCREENS not implemented!");
             }
@@ -138,9 +139,11 @@ public class UActor extends ThingI {
 
     public void startActing(UCommander thecommander) {
         commander = thecommander;
-        commander.registerActor(this);
-        awake = true;
-        System.out.println(this.name + ": waking up!");
+        if (commander != null) {
+            commander.registerActor(this);
+            awake = true;
+            System.out.println(this.name + ": waking up!");
+        }
     }
     public void stopActing() {
         commander.unRegisterActor(this);

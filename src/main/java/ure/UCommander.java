@@ -5,6 +5,8 @@ import ure.actions.UActionWalk;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.render.URenderer;
+import ure.terrain.Stairs;
+import ure.terrain.UTerrain;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.UModal;
@@ -36,6 +38,7 @@ public class UCommander implements URenderer.KeyListener {
 
     public UThingCzar thingCzar;
     public UActorCzar actorCzar;
+    public UCartographer cartographer;
 
     public int turnCounter;
     private int turnsPerDay = 512;
@@ -50,13 +53,14 @@ public class UCommander implements URenderer.KeyListener {
 
     private UModal modal;
 
-    public UCommander(UActor theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar) {
+    public UCommander(UActor theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
         renderer = theRenderer;
         timeListeners = new HashSet<UTimeListener>();
         animators = new HashSet<UAnimator>();
         actors = new ArrayList<UActor>();
         thingCzar = thingczar;
         actorCzar = actorczar;
+        cartographer = carto;
 
         setPlayer(theplayer);
         readKeyBinds();
@@ -99,7 +103,7 @@ public class UCommander implements URenderer.KeyListener {
         keyBinds.put('A', "MOVE_W");
         keyBinds.put('D', "MOVE_E");
         keyBinds.put('G', "GET");
-        keyBinds.put('>', "STAIRS");
+        keyBinds.put('.', "STAIRS");
         keyBinds.put('I', "INVENTORY");
         keyBinds.put('E', "DEBUG");
         keyBinds.put('1', "DEBUG_1");
@@ -172,7 +176,12 @@ public class UCommander implements URenderer.KeyListener {
     }
 
     void commandStairs() {
-
+        UTerrain t = player.area().terrainAt(player.areaX(), player.areaY());
+        if (t instanceof Stairs) {
+            ((Stairs)t).transportActor(player, cartographer);
+        } else {
+            printScroll("You don't see anything to move through.");
+        }
     }
 
     void commandInventory() {

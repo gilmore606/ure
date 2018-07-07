@@ -418,6 +418,9 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
             return UColor.COLOR_BLACK;
         if (allLit) {
             total = UColor.COLOR_WHITE;
+        } else if (lightcells[col][row] == null) {
+            System.out.println("WARNING!  nonexistent lightcell");
+            total = UColor.COLOR_BLACK;
         } else {
             total = lightcells[col][row].light(area.commander().frameCounter);
             for (int i = -1;i < 2;i++) {

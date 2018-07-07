@@ -1,5 +1,6 @@
 package ure;
 
+import ure.terrain.Stairs;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
 
@@ -78,5 +79,10 @@ public class ExampleCaveScaper extends ULandscaper {
         scatterThings(area, new String[]{"trucker hat", "butcher knife", "apple", "rock", "rock"},
                 new String[]{floorTerrain}, 10 + rand(40));
 
+    }
+
+    @Override
+    void SetStairsLabel(UArea area, int x, int y, Stairs t) {
+        t.setLabel("forest");
     }
 }
