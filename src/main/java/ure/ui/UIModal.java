@@ -1,12 +1,12 @@
 package ure.ui;
 
 import ure.UColor;
-import ure.URECamera;
 import ure.render.URERenderer;
 
 import java.util.HashMap;
 
-public class UIModal {
+public class UIModal extends View {
+
     URERenderer renderer;
     URECamera camera;
     public int width, height;
@@ -38,8 +38,8 @@ public class UIModal {
         height = theCharHeight;
         bgColor = thebgColor;
         texts = new HashMap<>();
-        pixelWidth = theRenderer.cellWidth() * width;
-        pixelHeight = theRenderer.cellHeight() * height;
+        //pixelWidth = theRenderer.cellWidth() * width;
+        //pixelHeight = theRenderer.cellHeight() * height;
         cellx = camera.getWidthInCells()/2 - width/2;
         celly = camera.getHeightInCells()/2 - height/2;
         //image = new BufferedImage(pixelWidth, pixelHeight, BufferedImage.TYPE_INT_RGB);
@@ -56,8 +56,8 @@ public class UIModal {
     }
     //public Graphics getGraphics() { return image.getGraphics(); }
 
-    public void renderImage() {
-
+    @Override
+    public void draw(URERenderer renderer) {
         DrawFrame();
         DrawContent();
     }
@@ -82,12 +82,12 @@ public class UIModal {
     //}
 
     public void hearCommand(String command) {
-        Dismiss();
+        //Dismiss();
     }
 
-    void Dismiss() {
-        camera.detachModal();
-    }
+    //void Dismiss() {
+    //    camera.detachModal();
+    //}
 
     public void addText(String name, String text, int row, int col) {
         // TODO: Fix for new renderer

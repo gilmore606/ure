@@ -1,19 +1,16 @@
 package ure;
 
 import ure.actors.UREActor;
-import ure.actors.UREPlayer;
 import ure.terrain.URETerrain;
 import ure.terrain.URETerrainCzar;
 import ure.things.UREThing;
+import ure.ui.URECamera;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -25,10 +22,13 @@ import java.util.stream.Stream;
 
 public class UREArea implements UTimeListener {
 
+    public interface Listener {
+        void areaChanged();
+    }
+
     private UCell cells[][];
     public int xsize, ysize;
     private HashSet<URELight> lights;
-    private HashSet<URECamera> cameras;
     private HashSet<UREActor> actors;
     private HashSet<UParticle> particles;
     private URECommander commander;
@@ -40,6 +40,8 @@ public class UREArea implements UTimeListener {
     ArrayList<UColor> sunColorLerps;
     HashMap<Integer,String> sunCycleMessages;
     int sunCycleLastAnnounceMarker;
+
+    private Set<Listener> listeners;
 
     public UREArea(int thexsize, int theysize, URETerrainCzar tczar, String defaultTerrain) {
         xsize = thexsize;
@@ -73,13 +75,13 @@ public class UREArea implements UTimeListener {
     }
 
     void initLists() {
-        lights = new HashSet<URELight>();
-        cameras = new HashSet<URECamera>();
-        actors = new HashSet<UREActor>();
-        particles = new HashSet<UParticle>();
-        sunColorLerps = new ArrayList<UColor>();
-        sunColorLerpMarkers = new ArrayList<Integer>();
-        sunCycleMessages = new HashMap<Integer,String>();
+        lights = new HashSet<>();
+        listeners = new HashSet<>();
+        actors = new HashSet<>();
+        particles = new HashSet<>();
+        sunColorLerps = new ArrayList<>();
+        sunColorLerpMarkers = new ArrayList<>();
+        sunCycleMessages = new HashMap<>();
         sunColor = new UColor(130,50,25);
         addSunColorLerp(0, new UColor(0.1f, 0.1f, 0.3f));
         addSunColorLerp(4*60, new UColor(0.2f, 0.2f, 0.3f));
@@ -95,9 +97,17 @@ public class UREArea implements UTimeListener {
 
     public void close() {
         lights = null;
-        cameras = null;
+        listeners = null;
         actors = null;
         cells = null;
+    }
+
+    public void addListener(Listener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(Listener listener) {
+        listeners.remove(listener);
     }
 
     public void setCommander(URECommander cmdr) {
@@ -105,13 +115,6 @@ public class UREArea implements UTimeListener {
     }
     public URECommander commander() {
         return commander;
-    }
-
-    public void registerCamera(URECamera thecam) {
-        cameras.add(thecam);
-    }
-    public void unRegisterCamera(URECamera thecam) {
-        cameras.remove(thecam);
     }
 
     public HashSet<URELight> lights() {
@@ -179,7 +182,7 @@ public class UREArea implements UTimeListener {
         return false;
     }
 
-    URETerrain terrainAt(int x, int y) {
+    public URETerrain terrainAt(int x, int y) {
         if (isValidXY(x, y))
             if (cells[x][y] != null)
                 return cells[x][y].terrain();
@@ -200,7 +203,7 @@ public class UREArea implements UTimeListener {
         return null;
     }
 
-    boolean blocksLight(int x, int y) {
+    public boolean blocksLight(int x, int y) {
         URETerrain t = terrainAt(x, y);
         if (t != null)
             return t.isOpaque();
@@ -210,17 +213,20 @@ public class UREArea implements UTimeListener {
     public void setSeen(int x, int y) {
         setSeen(x, y, true);
     }
+
     public void setSeen(int x, int y, boolean seen) {
         if (isValidXY(x, y))
             cells[x][y].setSeen(seen);
 
     }
+
     public boolean seenCell(int x, int y) {
         if (isValidXY(x, y))
             return cells[x][y].isSeen();
         return false;
     }
-    float sunBrightnessAt(int x, int y) {
+
+    public float sunBrightnessAt(int x, int y) {
         if (isValidXY(x,y))
             if (cells[x][y] != null)
                 return cells[x][y].sunBrightness();
@@ -246,7 +252,7 @@ public class UREArea implements UTimeListener {
         return cells[x][y];
     }
 
-    void wakeCheckAll(int playerx, int playery) {
+    private void wakeCheckAll(int playerx, int playery) {
         for (UREActor actor : actors) {
             actor.wakeCheck(playerx, playery);
         }
@@ -271,14 +277,12 @@ public class UREArea implements UTimeListener {
 
     public void hearTimeTick(URECommander commander) {
         setSunColor(commander.daytimeMinutes());
-        UpdateCameras();
+        updateListeners();
     }
 
-    void UpdateCameras() {
-        Iterator<URECamera> camI = cameras.iterator();
-        while (camI.hasNext()) {
-            URECamera camera = camI.next();
-            camera.renderImage();
+    void updateListeners() {
+        for (Listener listener : listeners) {
+            listener.areaChanged();
         }
     }
 
