@@ -10,10 +10,12 @@ public class UCartographer {
 
     UTerrainCzar terrainCzar;
     UThingCzar thingCzar;
+    UCommander commander;
 
-    public UCartographer(UTerrainCzar theTerrainCzar, UThingCzar theThingCzar) {
+    public UCartographer(UTerrainCzar theTerrainCzar, UThingCzar theThingCzar, UCommander theCommander) {
         terrainCzar = theTerrainCzar;
         thingCzar = theThingCzar;
+        commander = theCommander;
     }
 
     public UArea getArea(String label) {
@@ -61,6 +63,7 @@ public class UCartographer {
 
     public UArea MakeForest() {
         UArea area = new UArea(140, 140, terrainCzar, "grass");
+        area.setCommander(commander);
         ULandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
         for (int i=0;i<30;i++) {
@@ -73,6 +76,7 @@ public class UCartographer {
 
     public UArea MakeCavern(int depth) {
         UArea area = new UArea(120, 120, terrainCzar, "wall");
+        area.setCommander(commander);
         ULandscaper scaper = new ExampleCaveScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
         UActor monk = actorCzar.getActorByName("monk");
