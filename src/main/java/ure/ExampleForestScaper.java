@@ -54,6 +54,6 @@ public class ExampleForestScaper extends ULandscaper {
 
     @Override
     void SetStairsLabel(UArea area, int x, int y, Stairs t) {
-        t.setLabel("cavern " + Integer.toString(x*y) + ",1");
+        t.setLabel("cavern");
     }
 }
