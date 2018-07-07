@@ -72,7 +72,7 @@ public class UCartographer {
     }
 
     public UArea MakeForest() {
-        UArea area = new UArea(140, 140, terrainCzar, "grass");
+        UArea area = new UArea(150, 150, terrainCzar, "grass");
         area.setCommander(commander);
         ULandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
@@ -86,7 +86,7 @@ public class UCartographer {
     }
 
     public UArea MakeCavern(int depth) {
-        UArea area = new UArea(120, 120, terrainCzar, "wall");
+        UArea area = new UArea(180, 180, terrainCzar, "wall");
         area.setCommander(commander);
         ULandscaper scaper = new ExampleCaveScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);

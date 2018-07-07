@@ -9,6 +9,7 @@ import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class ULandscaper {
@@ -28,9 +29,15 @@ public class ULandscaper {
             width = w;
             height = h;
         }
+        public void set(int[] c, boolean val) {
+            set(c[0],c[1],val);
+        }
         public void set(int x, int y, boolean val) {
             if (x>=0 && x<width && y>=0 && y<height)
                 cells[x][y] = val;
+        }
+        public boolean get(int[] c) {
+            return get(c[0],c[1]);
         }
         public boolean get(int x, int y) {
             if (x>=0 && x<width && y>=0 && y<height)
@@ -55,7 +62,8 @@ public class ULandscaper {
             }
             return neighbors;
         }
-        public int flood(int x, int y) {
+        public int flood_deprecated(int x, int y) {
+            // recursive, blows out the stack
             int total = 0;
             if (x<0 || x>=width || y<0 || y>= height)
                 return 0;
@@ -67,6 +75,39 @@ public class ULandscaper {
             total += flood(x-1,y);
             total += flood(x,y+1);
             total += flood(x,y-1);
+            System.out.println("GEN : flood_deprecated found " + Integer.toString(total) + " cells");
+            return total;
+        }
+        public int flood(int x, int y) {
+            ArrayList<int[]> q = new ArrayList<int[]>();
+            if (cells[x][y]) return 0;
+            int total = 0;
+            q.add(new int[]{x,y});
+            int[] n = new int[]{0,0};
+            ArrayList<int[]> noobs = new ArrayList<int[]>();
+            while (!q.isEmpty()) {
+                noobs.clear();
+                for (int[] N : q) {
+                    int[] w = new int[]{N[0],N[1]};
+                    int[] e = new int[]{N[0],N[1]};
+                    while (!get(w[0] - 1, w[1]))
+                        w[0] = w[0] - 1;
+                    while (!get(e[0] + 1, e[1]))
+                        e[0] = e[0] + 1;
+                    for (int i = w[0];i <= e[0];i++) {
+                        n[0] = i;
+                        n[1] = w[1];
+                        set(n, true); total++;
+                        if (!get(n[0], n[1] - 1)) noobs.add(new int[]{n[0], n[1] - 1});
+                        if (!get(n[0], n[1] + 1)) noobs.add(new int[]{n[0], n[1] + 1});
+                    }
+                }
+                q.clear();
+                for (int[] noob : noobs) {
+                    q.add(noob);
+                }
+            }
+            System.out.println("GEN : flood found " + Integer.toString(total) + " cells");
             return total;
         }
     }
@@ -341,7 +382,7 @@ public class ULandscaper {
         Grid scratchmap = new Grid(width,height);
         float fillratio = 0f;
         int tries = 0;
-        while ((fillratio < 0.15f) && (tries < 5)) {
+        while ((fillratio < 0.25f) && (tries < 8)) {
             tries++;
             int gapY = random.nextInt(height / 2) + height / 3;
             for (int x = 0;x < width;x++) {
