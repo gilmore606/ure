@@ -2,7 +2,6 @@ package ure.terrain;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Set;
@@ -22,7 +21,7 @@ import org.reflections.scanners.SubTypesScanner;
  * Load and manage all the terrain types and dole them out as needed.
  */
 
-public class URETerrainCzar {
+public class UTerrainCzar {
 
     private  HashMap<Character,TerrainI> terrains;
     private  HashMap<String,TerrainI> terrainsByName;
@@ -33,7 +32,7 @@ public class URETerrainCzar {
 
     private Class<TerrainDeco> decorator;
 
-    public URETerrainCzar(Class<TerrainDeco> myDecorator) {
+    public UTerrainCzar(Class<TerrainDeco> myDecorator) {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(TerrainI.class, new TerrainDeserializer());
         objectMapper.registerModule(module);
@@ -62,8 +61,8 @@ public class URETerrainCzar {
         }
     }
 
-    public URETerrain getTerrainForFilechar(char thechar) {
-        URETerrain terrain = (URETerrain)(terrains.get(thechar).getClone());
+    public UTerrain getTerrainForFilechar(char thechar) {
+        UTerrain terrain = (UTerrain)(terrains.get(thechar).getClone());
         if (decorator != null) {
             TerrainDeco decoInstance = null;
             try {
@@ -71,13 +70,13 @@ public class URETerrainCzar {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return (URETerrain)decoInstance;
+            return (UTerrain)decoInstance;
         }
         return terrain;
     }
 
-    public URETerrain getTerrainByName(String name) {
-        return (URETerrain)(getTerrainForFilechar(terrainsByName.get(name).filechar));
+    public UTerrain getTerrainByName(String name) {
+        return (UTerrain)(getTerrainForFilechar(terrainsByName.get(name).filechar));
     }
 
     public class TerrainDeserializer extends JsonDeserializer<TerrainI> {

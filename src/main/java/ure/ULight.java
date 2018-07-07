@@ -1,6 +1,6 @@
 package ure;
 
-import ure.ui.URECamera;
+import ure.ui.UCamera;
 
 import java.lang.Math;
 import java.util.Random;
@@ -10,7 +10,7 @@ import java.util.Random;
  * Not a thing, but a thing can create one
  */
 
-public class URELight {
+public class ULight {
     public static final int FLICKER_NONE = 0;
     public static final int FLICKER_FIRE = 1;
     public static final int FLICKER_PULSE = 2;
@@ -27,15 +27,15 @@ public class URELight {
     int flickerOffset = 0;
 
     Random random;
-    UREArea area;
+    UArea area;
     public int x,y;
 
-    public URELight(int[] thecolor, int therange, int thefalloff) {
+    public ULight(int[] thecolor, int therange, int thefalloff) {
         color = new UColor(thecolor[0],thecolor[1],thecolor[2]);
         range = therange;
         falloff = thefalloff;
     }
-    public URELight(UColor thecolor, int therange, int thefalloff) {
+    public ULight(UColor thecolor, int therange, int thefalloff) {
         color = thecolor;
         range = therange;
         falloff = thefalloff;
@@ -53,7 +53,7 @@ public class URELight {
         removeFromArea();
     }
 
-    public void moveTo(UREArea thearea, int thex, int they) {
+    public void moveTo(UArea thearea, int thex, int they) {
         x = thex;
         y = they;
         if (area != thearea) {
@@ -72,7 +72,7 @@ public class URELight {
         area = null;
     }
 
-    public boolean canTouch(URECamera camera) {
+    public boolean canTouch(UCamera camera) {
         int circleDistX = Math.abs(x - camera.getCenterColumn());
         int circleDistY = Math.abs(y - camera.getCenterRow());
         if (circleDistX > (camera.columns /2 + range)) return false;

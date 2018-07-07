@@ -17,7 +17,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Set;
 
-public class UREThingCzar {
+public class UThingCzar {
 
     private HashMap<String,ThingI> thingsByName;
 
@@ -25,7 +25,7 @@ public class UREThingCzar {
     private ObjectMapper objectMapper = new ObjectMapper();
     private Reflections reflections = new Reflections("ure", new SubTypesScanner());
 
-    public UREThingCzar() {
+    public UThingCzar() {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(ThingI.class, new ThingDeserializer());
         objectMapper.registerModule(module);
@@ -47,8 +47,8 @@ public class UREThingCzar {
         }
     }
 
-    public UREThing getThingByName(String name) {
-        return (UREThing)(thingsByName.get(name).getClone());
+    public UThing getThingByName(String name) {
+        return (UThing)(thingsByName.get(name).getClone());
     }
 
     public class ThingDeserializer extends JsonDeserializer<ThingI> {

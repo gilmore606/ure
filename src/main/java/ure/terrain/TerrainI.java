@@ -3,7 +3,7 @@ package ure.terrain;
 import ure.UAnimator;
 import ure.UCell;
 import ure.UColor;
-import ure.actors.UREActor;
+import ure.actors.UActor;
 
 import java.util.Random;
 
@@ -14,7 +14,7 @@ import java.util.Random;
  *
  */
 
-public abstract class TerrainI implements URETerrain, Cloneable, UAnimator {
+public abstract class TerrainI implements UTerrain, Cloneable, UAnimator {
 
     public static final String TYPE = "";
 
@@ -49,7 +49,7 @@ public abstract class TerrainI implements URETerrain, Cloneable, UAnimator {
     public boolean isPassable() {
         return passable;
     }
-    public boolean isPassable(UREActor actor) { return isPassable(); }
+    public boolean isPassable(UActor actor) { return isPassable(); }
     public boolean isOpaque() {
         return opaque;
     }
@@ -102,7 +102,7 @@ public abstract class TerrainI implements URETerrain, Cloneable, UAnimator {
         return 0;
     }
 
-    public void moveTriggerFrom(UREActor actor, UCell cell) {
+    public void moveTriggerFrom(UActor actor, UCell cell) {
         if (isPassable(actor)) {
             actor.moveToCell(cell.areaX(), cell.areaY());
         } else {
@@ -111,15 +111,15 @@ public abstract class TerrainI implements URETerrain, Cloneable, UAnimator {
         }
     }
 
-    public boolean preventMoveFrom(UREActor actor) {
+    public boolean preventMoveFrom(UActor actor) {
         return false;
     }
 
-    public float moveSpeed(UREActor actor) {
+    public float moveSpeed(UActor actor) {
         return this.movespeed;
     }
 
-    public void walkedOnBy(UREActor actor, UCell cell) {
+    public void walkedOnBy(UActor actor, UCell cell) {
         if (actor.isPlayer()) {
             printScroll(walkmsg, cell);
         }

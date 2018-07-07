@@ -1,7 +1,7 @@
 package ure;
 
-import ure.actors.UREActor;
-import ure.things.UREThing;
+import ure.actors.UActor;
+import ure.things.UThing;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,28 +16,28 @@ import java.util.Iterator;
 public class UCollection {
 
     private UContainer container;
-    ArrayList<UREThing> things;
-    ArrayList<UREActor> actors;
+    ArrayList<UThing> things;
+    ArrayList<UActor> actors;
 
     public UCollection(UContainer cont) {
         container = cont;
-        things = new ArrayList<UREThing>();
-        actors = new ArrayList<UREActor>();
+        things = new ArrayList<UThing>();
+        actors = new ArrayList<UActor>();
     }
 
-    public void remove(UREThing thing) {
+    public void remove(UThing thing) {
         actors.remove(thing);
         things.remove(thing);
     }
 
-    public void add(UREThing thing) {
+    public void add(UThing thing) {
         if (thing.isActor())
-            actors.add((UREActor)thing);
+            actors.add((UActor)thing);
         else
             things.add(thing);
     }
 
-    public Iterator<UREThing> iterator() {
+    public Iterator<UThing> iterator() {
         return things.iterator();
     }
 
@@ -49,13 +49,13 @@ public class UCollection {
         return !actors.isEmpty();
     }
 
-    public UREThing topThing() {
+    public UThing topThing() {
         if (things.isEmpty())
             return null;
         return things.get(0);
     }
 
-    public UREActor actor() {
+    public UActor actor() {
         if (actors.isEmpty())
             return null;
         return actors.get(0);

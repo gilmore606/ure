@@ -1,6 +1,6 @@
 package ure.actions;
 
-import ure.actors.UREActor;
+import ure.actors.UActor;
 
 public class UActionWalk extends UAction {
 
@@ -13,7 +13,7 @@ public class UActionWalk extends UAction {
         ydir = yd;
     }
 
-    public float doneBy(UREActor actor) {
+    public float doneBy(UActor actor) {
         actor.walkDir(xdir, ydir);
         float time = super.doneBy(actor);
         time = time * (1f / actor.myCell().terrain().moveSpeed(actor));

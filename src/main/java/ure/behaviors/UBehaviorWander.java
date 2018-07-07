@@ -2,14 +2,14 @@ package ure.behaviors;
 
 import ure.actions.UAction;
 import ure.actions.UActionWalk;
-import ure.actors.URENPC;
+import ure.actors.UNPC;
 
 public class UBehaviorWander extends UBehavior {
 
     public static String TYPE = "wander";
 
     @Override
-    public UAction action(URENPC actor) {
+    public UAction action(UNPC actor) {
         int dir = actor.random.nextInt(4);
         int wx,wy;
         if (dir == 0) {

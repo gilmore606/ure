@@ -1,6 +1,6 @@
 package ure.ui;
 
-import ure.render.URERenderer;
+import ure.render.URenderer;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedHashSet;
@@ -133,7 +133,7 @@ public class View {
      * Draw this view.  The renderer will handle drawing any child views.
      * @param renderer The renderer that will provide drawing primitives.
      */
-    public void draw(URERenderer renderer) {
+    public void draw(URenderer renderer) {
         // Do any drawing required for this view, then draw children
     }
 

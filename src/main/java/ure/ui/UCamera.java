@@ -1,10 +1,10 @@
 package ure.ui;
 
 import ure.*;
-import ure.actors.UREActor;
-import ure.render.URERenderer;
-import ure.terrain.URETerrain;
-import ure.things.UREThing;
+import ure.actors.UActor;
+import ure.render.URenderer;
+import ure.terrain.UTerrain;
+import ure.things.UThing;
 
 import java.util.*;
 
@@ -13,19 +13,19 @@ import java.util.*;
  *
  */
 
-public class URECamera extends View implements UAnimator, UREArea.Listener {
+public class UCamera extends View implements UAnimator, UArea.Listener {
 
-    public UREArea area;
-    URERenderer renderer;
+    public UArea area;
+    URenderer renderer;
     float zoom = 1.0f;
     public int columns, rows;
     private int centerColumn, centerRow;
 
     public int leftEdge, topEdge, rightEdge, bottomEdge;
     ULightcell lightcells[][];
-    HashSet<UREActor> visibilitySources;
+    HashSet<UActor> visibilitySources;
 
-    UIModal modal;
+    UModal modal;
 
     boolean allVisible = false;
     boolean allLit = false;
@@ -107,7 +107,7 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
         }
     }
 
-    public URECamera(URERenderer theRenderer, int x, int y, int width, int height) {
+    public UCamera(URenderer theRenderer, int x, int y, int width, int height) {
         renderer = theRenderer;
         visibilitySources = new HashSet<>();
         setBounds(x, y, width, height);
@@ -153,7 +153,7 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
         renderer.render();
     }
 
-    public void moveTo(UREArea theArea, int thex, int they) {
+    public void moveTo(UArea theArea, int thex, int they) {
         if (area != null && theArea != area)
             area.removeListener(this);
         area = theArea;
@@ -192,7 +192,7 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
         }
         renderSun();
         renderVisible();
-        for (URELight light : area.lights()) {
+        for (ULight light : area.lights()) {
             if (light.canTouch(this)) {
                 projectLight(light);
             }
@@ -235,7 +235,7 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
                 setVisibilityAt(col, row, 0f);
             }
         }
-        Iterator<UREActor> players = visibilitySources.iterator();
+        Iterator<UActor> players = visibilitySources.iterator();
         while (players.hasNext()) {
             renderVisibleFor(players.next());
         }
@@ -243,7 +243,7 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
     }
 
 
-    void renderVisibleFor(UREActor actor) {
+    void renderVisibleFor(UActor actor) {
         for (int i=-1;i<2;i++) {
             for (int j=-1;j<2;j++) {
                 int dx = (actor.areaX() - leftEdge) + i;
@@ -270,10 +270,10 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
         }
     }
 
-    public void addVisibilitySource(UREActor actor) {
+    public void addVisibilitySource(UActor actor) {
         visibilitySources.add(actor);
     }
-    public void removeVisibilitySource(UREActor actor) {
+    public void removeVisibilitySource(UActor actor) {
         visibilitySources.remove(actor);
     }
 
@@ -281,11 +281,11 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
     void projectVisibility(int ox, int oy) {
         projectLight(ox, oy, null, true);
     }
-    void projectLight(URELight light) {
+    void projectLight(ULight light) {
         projectLight(light.x - leftEdge, light.y - topEdge, light, false);
     }
 
-    void projectLight(int ox, int oy, URELight light, boolean projectVisibility) {
+    void projectLight(int ox, int oy, ULight light, boolean projectVisibility) {
         projectToCell(ox, oy, light, projectVisibility, 1f);
         for (int octant=0;octant<8;octant++) {
             UShadowLine line = new UShadowLine();
@@ -341,7 +341,7 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
         }
 
     }
-    void projectToCell(int col, int row, URELight light, boolean projectVisibility, float intensity) {
+    void projectToCell(int col, int row, ULight light, boolean projectVisibility, float intensity) {
         if (projectVisibility)
             setVisibilityAt(col, row, intensity);
         else {
@@ -406,7 +406,7 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
         return false;
     }
 
-    void receiveLight(int col, int row, URELight source, float intensity) {
+    void receiveLight(int col, int row, ULight source, float intensity) {
         if (isValidCell(col, row)) {
             lightcells[col][row].receiveLight(source, intensity);
         }
@@ -422,7 +422,7 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
             total = lightcells[col][row].light(area.commander().frameCounter);
             for (int i = -1;i < 2;i++) {
                 for (int j = -1;j < 2;j++) {
-                    URETerrain t = area.terrainAt(col + leftEdge + i, row + topEdge + j);
+                    UTerrain t = area.terrainAt(col + leftEdge + i, row + topEdge + j);
                     if (t != null)
                         if (t.glow())
                             total.addLights(t.bgColor(), 0.5f);
@@ -439,17 +439,17 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
         return total;
     }
 
-    public URETerrain terrainAt(int localCol, int localRow) {
+    public UTerrain terrainAt(int localCol, int localRow) {
         return area.terrainAt(localCol + leftEdge, localRow + topEdge);
     }
 
-    public Iterator<UREThing> thingsAt(int localCol, int localRow) {
+    public Iterator<UThing> thingsAt(int localCol, int localRow) {
         return area.thingsAt(localCol + leftEdge, localRow + topEdge);
     }
-    public UREActor actorAt(int localCol, int localRow) { return area.actorAt(localCol+ leftEdge,localRow+ topEdge); }
+    public UActor actorAt(int localCol, int localRow) { return area.actorAt(localCol+ leftEdge,localRow+ topEdge); }
 
     @Override
-    public void draw(URERenderer renderer) {
+    public void draw(URenderer renderer) {
 
         //if (modal != null)
         //    modal.renderImage();
@@ -470,11 +470,11 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
         rendering = false;
     }
 
-    private void drawCell(URERenderer renderer, int col, int row, int cellw, int cellh) {
+    private void drawCell(URenderer renderer, int col, int row, int cellw, int cellh) {
         float vis = visibilityAt(col,row);
         float visSeen = getSeenOpacity();
         UColor light = lightAt(col,row);
-        URETerrain t = terrainAt(col,row);
+        UTerrain t = terrainAt(col,row);
         if (t != null) {
             float tOpacity = vis;
             if ((vis < visSeen) && area.seenCell(col + leftEdge, row + topEdge))
@@ -495,13 +495,13 @@ public class URECamera extends View implements UAnimator, UREArea.Listener {
         //TODO: Define this magic value somewhere?
         if (vis < 0.3f)
             return;
-        Iterator<UREThing> things = thingsAt(col,row);
+        Iterator<UThing> things = thingsAt(col,row);
         if (things != null) {
             while (things.hasNext()) {
                 things.next().render(renderer, col * cellw, row * cellh, light, vis);
             }
         }
-        UREActor actor = actorAt(col,row);
+        UActor actor = actorAt(col,row);
         if (actor != null) {
             actor.render(renderer, col * cellw, row * cellh, light, vis);
         }

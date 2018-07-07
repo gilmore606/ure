@@ -2,13 +2,13 @@ package ure.things;
 
 import ure.UColor;
 import ure.UContainer;
-import ure.UREArea;
-import ure.actors.UREActor;
-import ure.render.URERenderer;
+import ure.UArea;
+import ure.actors.UActor;
+import ure.render.URenderer;
 
 import java.util.Iterator;
 
-public interface UREThing {
+public interface UThing {
     boolean isActor();
     boolean isPlayer();
     void initialize();
@@ -23,21 +23,21 @@ public interface UREThing {
     UColor getGlyphColor();
     boolean drawGlyphOutline();
     void moveToCell(int x, int y);
-    void moveToCell(UREArea area, int x, int y);
+    void moveToCell(UArea area, int x, int y);
     void moveToContainer(UContainer container);
     void leaveCurrentLocation();
-    void addThing(UREThing thing);
-    void removeThing(UREThing thing);
-    Iterator<UREThing> iterator();
-    boolean willAcceptThing(UREThing thing);
+    void addThing(UThing thing);
+    void removeThing(UThing thing);
+    Iterator<UThing> iterator();
+    boolean willAcceptThing(UThing thing);
     int areaX();
     int areaY();
-    UREArea area();
-    boolean tryGetBy(UREActor actor);
-    void gotBy(UREActor actor);
-    String getMsg(UREActor actor);
-    String walkMsg(UREActor actor);
-    void render(URERenderer renderer, int x, int y, UColor light, float vis);
+    UArea area();
+    boolean tryGetBy(UActor actor);
+    void gotBy(UActor actor);
+    String getMsg(UActor actor);
+    String walkMsg(UActor actor);
+    void render(URenderer renderer, int x, int y, UColor light, float vis);
     void emote(String text);
     String name();
 }

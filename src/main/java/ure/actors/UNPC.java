@@ -8,7 +8,7 @@ import ure.behaviors.UBehavior;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class URENPC extends UREActor {
+public class UNPC extends UActor {
 
     public int visionRange = 12;
     public String[] ambients;

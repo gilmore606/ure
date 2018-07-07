@@ -2,11 +2,11 @@ package ure.terrain;
 
 import ure.UCell;
 import ure.UColor;
-import ure.actors.UREActor;
+import ure.actors.UActor;
 
-public interface URETerrain {
+public interface UTerrain {
     boolean isPassable();
-    boolean isPassable(UREActor actor);
+    boolean isPassable(UActor actor);
     boolean isOpaque();
     void initialize();
     void becomeReal(UCell c);
@@ -14,10 +14,10 @@ public interface URETerrain {
     char glyph(int x, int y);
     int glyphOffsetX();
     int glyphOffsetY();
-    void moveTriggerFrom(UREActor actor, UCell cell);
-    boolean preventMoveFrom(UREActor actor);
-    float moveSpeed(UREActor actor);
-    void walkedOnBy(UREActor actor, UCell cell);
+    void moveTriggerFrom(UActor actor, UCell cell);
+    boolean preventMoveFrom(UActor actor);
+    float moveSpeed(UActor actor);
+    void walkedOnBy(UActor actor, UCell cell);
     void printScroll(String msg, UCell cell);
     float sunvis();
     void animationTick();

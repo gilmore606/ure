@@ -2,22 +2,22 @@ package ure.actors;
 
 import ure.*;
 import ure.actions.UAction;
-import ure.terrain.URETerrain;
+import ure.terrain.UTerrain;
 import ure.things.Lightsource;
 import ure.things.ThingI;
-import ure.things.UREThing;
-import ure.ui.URECamera;
+import ure.things.UThing;
+import ure.ui.UCamera;
 
-public class UREActor extends ThingI {
+public class UActor extends ThingI {
 
     public boolean awake = false;
     public int wakerange = 20;
     public int sleeprange = 30;
 
-    public URECamera camera;
+    public UCamera camera;
     int cameraPinStyle;
     UPath path;
-    URECommander commander;
+    UCommander commander;
 
     float actionTime = 0f;
 
@@ -35,13 +35,13 @@ public class UREActor extends ThingI {
         return true;
     }
 
-    public URECommander commander() { return commander; }
+    public UCommander commander() { return commander; }
 
     public float actionTime() {
         return actionTime;
     }
 
-    public void attachCamera(URECamera thecamera, int pinstyle) {
+    public void attachCamera(UCamera thecamera, int pinstyle) {
         camera = thecamera;
         cameraPinStyle = pinstyle;
         camera.addVisibilitySource(this);
@@ -68,7 +68,7 @@ public class UREActor extends ThingI {
         }
     }
 
-    public URETerrain myTerrain() {
+    public UTerrain myTerrain() {
         UCell c = area().cellAt(areaX(), areaY());
         if (c != null)
             return c.terrain();
@@ -76,18 +76,18 @@ public class UREActor extends ThingI {
     }
 
     @Override
-    public void moveToCell(UREArea thearea, int destX, int destY) {
+    public void moveToCell(UArea thearea, int destX, int destY) {
         if (camera != null) {
-            if (cameraPinStyle == URECamera.PINSTYLE_HARD)
+            if (cameraPinStyle == UCamera.PINSTYLE_HARD)
                 camera.moveTo(area(), destX, destY);
-            if (cameraPinStyle == URECamera.PINSTYLE_SOFT) {
+            if (cameraPinStyle == UCamera.PINSTYLE_SOFT) {
                 int cameraX = Math.min(destX, thearea.xsize - camera.columns / 2);
                 int cameraY = Math.min(destY, thearea.ysize - camera.rows / 2);
                 cameraX = Math.max(camera.columns / 2, cameraX);
                 cameraY = Math.max(camera.rows / 2, cameraY);
                 camera.moveTo(area(), cameraX, cameraY);
             }
-            if (cameraPinStyle == URECamera.PINSTYLE_SCREENS) {
+            if (cameraPinStyle == UCamera.PINSTYLE_SCREENS) {
                 System.out.println("ERROR: Camera.PINSTYLE_SCREENS not implemented!");
             }
         }
@@ -107,12 +107,12 @@ public class UREActor extends ThingI {
         area().commander().printScroll("You drop a torch.");
   }
 
-    public void moveTriggerFrom(UREActor actor) {
+    public void moveTriggerFrom(UActor actor) {
         if (actor.isPlayer())
             area().commander().printScroll("Ow!");
     }
 
-    public void tryGetThing(UREThing thing) {
+    public void tryGetThing(UThing thing) {
         if (thing == null) {
             area().commander().printScroll("Nothing to get.");
             return;
@@ -136,7 +136,7 @@ public class UREActor extends ThingI {
         this.actionTime = this.actionTime - timecost;
     }
 
-    public void startActing(URECommander thecommander) {
+    public void startActing(UCommander thecommander) {
         commander = thecommander;
         commander.registerActor(this);
         awake = true;
@@ -152,7 +152,7 @@ public class UREActor extends ThingI {
 
     }
 
-    public boolean canSee(UREThing thing) {
+    public boolean canSee(UThing thing) {
         return true;
     }
 
@@ -166,7 +166,7 @@ public class UREActor extends ThingI {
         }
     }
 
-    public boolean willAcceptThing(UREThing thing) {
+    public boolean willAcceptThing(UThing thing) {
         return true;
     }
 }

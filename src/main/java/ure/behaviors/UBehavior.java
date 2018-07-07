@@ -1,14 +1,13 @@
 package ure.behaviors;
 
 import ure.actions.UAction;
-import ure.actors.UREActor;
-import ure.actors.URENPC;
+import ure.actors.UNPC;
 
 public class UBehavior {
 
     public static String TYPE = "";
 
-    public UAction action(URENPC actor) {
+    public UAction action(UNPC actor) {
         return null;
     }
 }

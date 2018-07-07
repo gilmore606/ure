@@ -1,12 +1,12 @@
 package ure.terrain;
 
-import ure.UREArea;
+import ure.UArea;
 
-public class Stairs extends TerrainI implements URETerrain {
+public class Stairs extends TerrainI implements UTerrain {
 
     public static final String TYPE = "stairs";
 
-    UREArea destArea;
+    UArea destArea;
     int destX, destY;
     boolean onstep = false;
     boolean confirm = true;

@@ -2,17 +2,17 @@ package ure.things;
 
 import ure.UColor;
 import ure.UContainer;
-import ure.UREArea;
-import ure.actors.UREActor;
-import ure.render.URERenderer;
+import ure.UArea;
+import ure.actors.UActor;
+import ure.render.URenderer;
 
 import java.util.Iterator;
 
-public class ThingDeco implements UREThing {
+public class ThingDeco implements UThing {
 
-    private UREThing thing;
+    private UThing thing;
 
-    public ThingDeco(UREThing realThing) {
+    public ThingDeco(UThing realThing) {
         thing = realThing;
     }
 
@@ -30,21 +30,21 @@ public class ThingDeco implements UREThing {
     public UColor getGlyphColor() { return thing.getGlyphColor(); }
     public boolean drawGlyphOutline() { return thing.drawGlyphOutline(); }
     public void moveToCell(int x, int y) { thing.moveToCell(x, y); }
-    public void moveToCell(UREArea area, int x, int y) { thing.moveToCell(area, x ,y); }
+    public void moveToCell(UArea area, int x, int y) { thing.moveToCell(area, x ,y); }
     public void moveToContainer(UContainer container) { thing.moveToContainer(container); }
     public void leaveCurrentLocation() { thing.leaveCurrentLocation(); }
-    public void addThing(UREThing thething) { thing.addThing(thething); }
-    public void removeThing(UREThing thething) { thing.removeThing(thething); }
-    public Iterator<UREThing> iterator() { return thing.iterator(); }
-    public boolean willAcceptThing(UREThing thething) { return thing.willAcceptThing(thething); }
+    public void addThing(UThing thething) { thing.addThing(thething); }
+    public void removeThing(UThing thething) { thing.removeThing(thething); }
+    public Iterator<UThing> iterator() { return thing.iterator(); }
+    public boolean willAcceptThing(UThing thething) { return thing.willAcceptThing(thething); }
     public int areaX() { return thing.areaX(); }
     public int areaY() { return thing.areaY(); }
-    public UREArea area() { return thing.area(); }
-    public boolean tryGetBy(UREActor actor) { return thing.tryGetBy(actor); }
-    public void gotBy(UREActor actor) { thing.gotBy(actor); }
-    public String getMsg(UREActor actor) { return thing.getMsg(actor); }
-    public String walkMsg(UREActor actor) { return thing.walkMsg(actor); }
-    public void render(URERenderer renderer, int x, int y, UColor light, float vis) { thing.render(renderer, x, y, light, vis); }
+    public UArea area() { return thing.area(); }
+    public boolean tryGetBy(UActor actor) { return thing.tryGetBy(actor); }
+    public void gotBy(UActor actor) { thing.gotBy(actor); }
+    public String getMsg(UActor actor) { return thing.getMsg(actor); }
+    public String walkMsg(UActor actor) { return thing.walkMsg(actor); }
+    public void render(URenderer renderer, int x, int y, UColor light, float vis) { thing.render(renderer, x, y, light, vis); }
     public void emote(String text) { thing.emote(text); }
     public String name() { return thing.name(); }
 }

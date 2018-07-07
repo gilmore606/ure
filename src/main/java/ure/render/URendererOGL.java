@@ -13,7 +13,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
-public class URERendererOGL implements URERenderer {
+public class URendererOGL implements URenderer {
 
     private View rootView;
     private View context;

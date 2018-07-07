@@ -2,13 +2,13 @@ package ure;
 
 import ure.actions.UActionGet;
 import ure.actions.UActionWalk;
-import ure.actors.UREActor;
-import ure.actors.UREActorCzar;
-import ure.render.URERenderer;
-import ure.things.UREThing;
-import ure.things.UREThingCzar;
-import ure.ui.UIModal;
-import ure.ui.UREScrollPanel;
+import ure.actors.UActor;
+import ure.actors.UActorCzar;
+import ure.render.URenderer;
+import ure.things.UThing;
+import ure.things.UThingCzar;
+import ure.ui.UModal;
+import ure.ui.UScrollPanel;
 import ure.ui.UREStatusPanel;
 
 import java.util.*;
@@ -20,22 +20,22 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 
 
-public class URECommander implements URERenderer.KeyListener {
+public class UCommander implements URenderer.KeyListener {
 
     private HashMap<Character, String> keyBinds;
     private HashSet<UTimeListener> timeListeners;
     private HashSet<UAnimator> animators;
-    private ArrayList<UREActor> actors;
+    private ArrayList<UActor> actors;
 
-    private URERenderer renderer;
-    private UREActor player;
-    private UREScrollPanel scrollPrinter;
+    private URenderer renderer;
+    private UActor player;
+    private UScrollPanel scrollPrinter;
 
-    private UREScrollPanel scrollPanel;
+    private UScrollPanel scrollPanel;
     private UREStatusPanel statusPanel;
 
-    public UREThingCzar thingCzar;
-    public UREActorCzar actorCzar;
+    public UThingCzar thingCzar;
+    public UActorCzar actorCzar;
 
     public int turnCounter;
     private int turnsPerDay = 512;
@@ -48,13 +48,13 @@ public class URECommander implements URERenderer.KeyListener {
 
     private boolean waitingForInput = false;
 
-    private UIModal modal;
+    private UModal modal;
 
-    public URECommander(UREActor theplayer, URERenderer theRenderer, UREThingCzar thingczar, UREActorCzar actorczar) {
+    public UCommander(UActor theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar) {
         renderer = theRenderer;
         timeListeners = new HashSet<UTimeListener>();
         animators = new HashSet<UAnimator>();
-        actors = new ArrayList<UREActor>();
+        actors = new ArrayList<UActor>();
         thingCzar = thingczar;
         actorCzar = actorczar;
 
@@ -66,7 +66,7 @@ public class URECommander implements URERenderer.KeyListener {
 
     public int getTurn() { return turnCounter; };
 
-    public void setPlayer(UREActor theplayer) {
+    public void setPlayer(UActor theplayer) {
         player = theplayer;
     }
 
@@ -77,10 +77,10 @@ public class URECommander implements URERenderer.KeyListener {
         timeListeners.remove(listener);
     }
 
-    public void registerActor(UREActor actor) { actors.add(actor); }
-    public void unRegisterActor(UREActor actor) { actors.remove(actor); }
+    public void registerActor(UActor actor) { actors.add(actor); }
+    public void unRegisterActor(UActor actor) { actors.remove(actor); }
 
-    public void registerScrollPrinter(UREScrollPanel printer) {
+    public void registerScrollPrinter(UScrollPanel printer) {
         scrollPrinter = printer;
     }
 
@@ -88,7 +88,7 @@ public class URECommander implements URERenderer.KeyListener {
     public void addAnimator(UAnimator animator) { animators.add(animator); }
     public void removeAnimator(UAnimator animator) { animators.remove(animator); }
 
-    public UREActor player() { return player; }
+    public UActor player() { return player; }
 
     public void readKeyBinds() {
         // TODO: Actually read keybinds.txt
@@ -176,16 +176,16 @@ public class URECommander implements URERenderer.KeyListener {
     }
 
     void commandInventory() {
-        UIModal modal = makeInventoryModal();
+        UModal modal = makeInventoryModal();
         showModal(modal);
     }
 
-    UIModal makeInventoryModal() {
-        UIModal modal = new UIModal(30,30, renderer, player.camera, UColor.COLOR_BLACK);
-        Iterator<UREThing> things = player.iterator();
+    UModal makeInventoryModal() {
+        UModal modal = new UModal(30,30, renderer, player.camera, UColor.COLOR_BLACK);
+        Iterator<UThing> things = player.iterator();
         int i = 1;
         while (things.hasNext()) {
-            UREThing thing = things.next();
+            UThing thing = things.next();
             modal.addText("item" + Integer.toString(i), thing.name(), 2, i + 1);
             // TODO: figure out what to do with the color here
             //modal.addText("item" + Integer.toString(i), thing.name, 2, i + 1, renderer.UItextColor.makeAWTColor());
@@ -194,7 +194,7 @@ public class URECommander implements URERenderer.KeyListener {
         return modal;
     }
 
-    void showModal(UIModal modal) {
+    void showModal(UModal modal) {
         attachModal(modal);
     }
 
@@ -216,7 +216,7 @@ public class URECommander implements URERenderer.KeyListener {
         scrollPrinter.print(text);
     }
 
-    public void printScrollIfSeen(UREThing source, String text) {
+    public void printScrollIfSeen(UThing source, String text) {
         if (player.canSee(source))
             printScroll(text);
     }
@@ -231,7 +231,7 @@ public class URECommander implements URERenderer.KeyListener {
         statusPanel = panel;
     }
 
-    void setScrollPanel(UREScrollPanel panel){
+    void setScrollPanel(UScrollPanel panel){
         scrollPanel = panel;
     }
 
@@ -258,7 +258,7 @@ public class URECommander implements URERenderer.KeyListener {
             }
 
             if (!waitingForInput) {
-                for (UREActor actor : actors) {
+                for (UActor actor : actors) {
                     actor.act();
                 }
                 waitingForInput = true;
@@ -276,7 +276,7 @@ public class URECommander implements URERenderer.KeyListener {
     }
 
     void TickTime() {
-        for (UREActor actor : actors) {
+        for (UActor actor : actors) {
             actor.addActionTime(1f);
         }
         Iterator<UTimeListener> timeI = timeListeners.iterator();
@@ -325,7 +325,7 @@ public class URECommander implements URERenderer.KeyListener {
         return t;
     }
 
-    public void attachModal(UIModal modal) {
+    public void attachModal(UModal modal) {
         if (this.modal != null) {
             this.detachModal();
         }

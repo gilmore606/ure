@@ -17,27 +17,27 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 
-public class UREActorCzar {
+public class UActorCzar {
 
-    private HashMap<String,UREActor> actorsByName;
+    private HashMap<String,UActor> actorsByName;
 
-    private Set<Class<? extends UREActor>> actorClasses;
+    private Set<Class<? extends UActor>> actorClasses;
     private ObjectMapper objectMapper = new ObjectMapper();
     private Reflections reflections = new Reflections("ure", new SubTypesScanner());
 
-    public UREActorCzar() {
+    public UActorCzar() {
         SimpleModule module = new SimpleModule();
-        module.addDeserializer(UREActor.class, new ActorDeserializer());
+        module.addDeserializer(UActor.class, new ActorDeserializer());
         objectMapper.registerModule(module);
     }
 
     public void loadActors(String resourceName) {
-        actorClasses = reflections.getSubTypesOf(UREActor.class);
+        actorClasses = reflections.getSubTypesOf(UActor.class);
         actorsByName = new HashMap<>();
         try {
             InputStream inputStream = getClass().getResourceAsStream("/actors.json");
-            UREActor[] actorObjs = objectMapper.readValue(inputStream, UREActor[].class);
-            for (UREActor actor: actorObjs) {
+            UActor[] actorObjs = objectMapper.readValue(inputStream, UActor[].class);
+            for (UActor actor: actorObjs) {
                 actor.initialize();
                 actorsByName.put(actor.name, actor);
             }
@@ -46,28 +46,28 @@ public class UREActorCzar {
         }
     }
 
-    public UREActor getActorByName(String name) {
-        return (UREActor)actorsByName.get(name).getClone();
+    public UActor getActorByName(String name) {
+        return (UActor)actorsByName.get(name).getClone();
     }
 
-    public class ActorDeserializer extends JsonDeserializer<UREActor> {
+    public class ActorDeserializer extends JsonDeserializer<UActor> {
 
         @Override
-        public UREActor deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
+        public UActor deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
             ObjectCodec codec = parser.getCodec();
             JsonNode node = codec.readTree(parser);
             JsonNode typeNode = node.get("type");
             String type = typeNode != null ? node.get("type").asText() : null;
-            Class<? extends UREActor> actorClass = classForType(type);
+            Class<? extends UActor> actorClass = classForType(type);
             return objectMapper.treeToValue(node, actorClass);
         }
 
-        private Class<? extends UREActor> classForType(String type) {
+        private Class<? extends UActor> classForType(String type) {
             if (type == null || type.equals("")) {
                 return Blank.class;
             }
             try {
-                for (Class<? extends UREActor> actorClass : actorClasses) {
+                for (Class<? extends UActor> actorClass : actorClasses) {
                     Field typeField = actorClass.getField("TYPE");
                     String typeValue = (String) typeField.get(null);
                     if (type.equals(typeValue)) {

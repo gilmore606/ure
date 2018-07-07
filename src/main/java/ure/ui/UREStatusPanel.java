@@ -1,7 +1,7 @@
 package ure.ui;
 
 import ure.UColor;
-import ure.render.URERenderer;
+import ure.render.URenderer;
 
 import java.util.HashMap;
 
@@ -62,7 +62,7 @@ public class UREStatusPanel extends View {
     }
 
     @Override
-    public void draw(URERenderer renderer) {
+    public void draw(URenderer renderer) {
         renderer.drawRectBorder(1, 1, width-2, height-2, 1, bgColor, borderColor);
         //renderer.addQuad(xPos, yPos, width, height, bgColor);
         for (String textName : texts.keySet()) {

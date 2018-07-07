@@ -2,18 +2,18 @@ package ure.terrain;
 
 import ure.UCell;
 import ure.UColor;
-import ure.actors.UREActor;
+import ure.actors.UActor;
 
-public class TerrainDeco implements URETerrain {
+public class TerrainDeco implements UTerrain {
 
-    private URETerrain terrain;
+    private UTerrain terrain;
 
-    public TerrainDeco(URETerrain realTerrain) {
+    public TerrainDeco(UTerrain realTerrain) {
         terrain = realTerrain;
     }
 
     public boolean isPassable() { return terrain.isPassable(); }
-    public boolean isPassable(UREActor actor) { return terrain.isPassable(actor); }
+    public boolean isPassable(UActor actor) { return terrain.isPassable(actor); }
     public boolean isOpaque() { return terrain.isOpaque(); }
     public void initialize() { terrain.initialize(); }
     public void becomeReal(UCell c) { terrain.becomeReal(c); }
@@ -21,10 +21,10 @@ public class TerrainDeco implements URETerrain {
     public char glyph(int x, int y) { return terrain.glyph(x, y); }
     public int glyphOffsetX() { return terrain.glyphOffsetX(); }
     public int glyphOffsetY() { return terrain.glyphOffsetY(); }
-    public void moveTriggerFrom(UREActor actor, UCell cell) { terrain.moveTriggerFrom(actor, cell); }
-    public boolean preventMoveFrom(UREActor actor) { return terrain.preventMoveFrom(actor); }
-    public float moveSpeed(UREActor actor) { return terrain.moveSpeed(actor); }
-    public void walkedOnBy(UREActor actor, UCell cell) { terrain.walkedOnBy(actor, cell); }
+    public void moveTriggerFrom(UActor actor, UCell cell) { terrain.moveTriggerFrom(actor, cell); }
+    public boolean preventMoveFrom(UActor actor) { return terrain.preventMoveFrom(actor); }
+    public float moveSpeed(UActor actor) { return terrain.moveSpeed(actor); }
+    public void walkedOnBy(UActor actor, UCell cell) { terrain.walkedOnBy(actor, cell); }
     public void printScroll(String msg, UCell cell) { terrain.printScroll(msg, cell); }
     public float sunvis() { return terrain.sunvis(); }
     public void animationTick() { terrain.animationTick(); }

@@ -1,36 +1,36 @@
 package ure;
 
-import ure.actors.UREActor;
-import ure.actors.UREActorCzar;
-import ure.actors.UREPlayer;
-import ure.render.URERenderer;
-import ure.render.URERendererOGL;
-import ure.terrain.URETerrainCzar;
-import ure.things.UREThingCzar;
-import ure.ui.URECamera;
-import ure.ui.UREScrollPanel;
+import ure.actors.UActor;
+import ure.actors.UActorCzar;
+import ure.actors.UPlayer;
+import ure.render.URenderer;
+import ure.render.URendererOGL;
+import ure.terrain.UTerrainCzar;
+import ure.things.UThingCzar;
+import ure.ui.UCamera;
+import ure.ui.UScrollPanel;
 import ure.ui.UREStatusPanel;
 import ure.ui.View;
 
 public class ExampleGame implements UTimeListener {
 
-    static UREArea area;
-    static URECamera camera;
-    static URECommander commander;
-    static UREActor player;
+    static UArea area;
+    static UCamera camera;
+    static UCommander commander;
+    static UActor player;
     static UREStatusPanel statusPanel;
-    static UREScrollPanel scrollPanel;
-    static URERenderer renderer;
+    static UScrollPanel scrollPanel;
+    static URenderer renderer;
 
-    static URETerrainCzar terrainCzar;
-    static UREThingCzar thingCzar;
-    static UREActorCzar actorCzar;
+    static UTerrainCzar terrainCzar;
+    static UThingCzar thingCzar;
+    static UActorCzar actorCzar;
 
     private void makeWindow() {
 
         View rootView = new View();
 
-        camera = new URECamera(renderer, 0, 0, 1200, 800);
+        camera = new UCamera(renderer, 0, 0, 1200, 800);
         camera.moveTo(area, 40,20);
         rootView.addChild(camera);
 
@@ -43,7 +43,7 @@ public class ExampleGame implements UTimeListener {
         statusPanel.setBounds(1200,0,200,800);
         rootView.addChild(statusPanel);
 
-        scrollPanel = new UREScrollPanel(5, 80, 16, 16, 5, 5, new UColor(1f,1f,1f), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
+        scrollPanel = new UScrollPanel(5, 80, 16, 16, 5, 5, new UColor(1f,1f,1f), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
         scrollPanel.addLineFade(new UColor(1.0f, 1.0f, 1.0f));
         scrollPanel.addLineFade(new UColor(0.6f, 0.6f, 0.6f));
         scrollPanel.addLineFade(new UColor(0.4f, 0.4f, 0.4f));
@@ -60,24 +60,24 @@ public class ExampleGame implements UTimeListener {
     }
 
     public void startUp()  {
-        renderer = new URERendererOGL();
+        renderer = new URendererOGL();
         renderer.initialize();
 
-        terrainCzar = new URETerrainCzar(null);
+        terrainCzar = new UTerrainCzar(null);
         terrainCzar.loadTerrains("/terrains.json");
-        thingCzar = new UREThingCzar();
+        thingCzar = new UThingCzar();
         thingCzar.loadThings("/things.json");
-        actorCzar = new UREActorCzar();
+        actorCzar = new UActorCzar();
         actorCzar.loadActors("/actors.json");
 
-        area = new UREArea(100, 100, terrainCzar, "wall");
-        URELandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
+        area = new UArea(100, 100, terrainCzar, "wall");
+        ULandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
         //URELandscaper scaper = new ExampleCaveScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
 
-        player = new UREPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
+        player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
 
-        commander = new URECommander(player, renderer, thingCzar, actorCzar);
+        commander = new UCommander(player, renderer, thingCzar, actorCzar);
         renderer.setKeyListener(commander);
         area.setCommander(commander);
         makeWindow();//.getContentPane().addKeyListener(commander);
@@ -89,16 +89,16 @@ public class ExampleGame implements UTimeListener {
 
         UCell startcell = scaper.randomOpenCell(area, player);
         player.moveToCell(area, startcell.x, startcell.y);
-        player.attachCamera(camera, URECamera.PINSTYLE_HARD);
+        player.attachCamera(camera, UCamera.PINSTYLE_HARD);
         player.startActing(commander);
 
-        UREActor monk = actorCzar.getActorByName("monk");
+        UActor monk = actorCzar.getActorByName("monk");
         UCell monkdest = scaper.randomOpenCell(area, monk);
         monk.moveToCell(area, monkdest.x, monkdest.y);
         //monk.startActing(commander);
 
         for (int i=0;i<30;i++) {
-            UREActor rat = actorCzar.getActorByName("rat");
+            UActor rat = actorCzar.getActorByName("rat");
             UCell ratdest = scaper.randomOpenCell(area, rat);
             rat.moveToCell(area, ratdest.x, ratdest.y);
             //rat.startActing(commander);
@@ -107,7 +107,7 @@ public class ExampleGame implements UTimeListener {
         commander.gameLoop();
     }
 
-    public void hearTimeTick(URECommander commander) {
+    public void hearTimeTick(UCommander commander) {
         statusPanel.setText("turn", "T " + Integer.toString(commander.getTurn()));
         statusPanel.setText("time", commander.timeString(true, " "));
     }
