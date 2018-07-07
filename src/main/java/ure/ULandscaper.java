@@ -338,7 +338,7 @@ public class ULandscaper {
         Grid scratchmap = new Grid(width,height);
         float fillratio = 0f;
         int tries = 0;
-        while ((fillratio < 0.15f) && (tries < 10)) {
+        while ((fillratio < 0.15f) && (tries < 5)) {
             tries++;
             int gapY = random.nextInt(height / 2) + height / 3;
             for (int x = 0;x < width;x++) {
@@ -378,13 +378,16 @@ public class ULandscaper {
             scratchmap.copyFrom(map);
             int x = width / 2;
             int y = height / 2;
-            while (scratchmap.get(x, y)) {
+            int rantries = 0;
+            while (scratchmap.get(x, y) && rantries < 500) {
+                rantries++;
                 x = random.nextInt(width - 2) + 2;
                 y = random.nextInt(height - 2) + 2;
             }
             int spacecount = scratchmap.flood(x, y);
             fillratio = (float) spacecount / (float) (width * height);
         }
+        System.out.println("printing cave dig into area");
         for (int x=0;x<width;x++) {
             for (int y=0;y<height;y++) {
                 if (!map.get(x,y) && scratchmap.get(x,y))
@@ -421,6 +424,7 @@ public class ULandscaper {
     }
 
     void SetStairsLabels(UArea area) {
+        System.out.println("setting stairs labels");
         for (int x=0;x<area.xsize;x++) {
             for (int y=0;y<area.ysize;y++) {
                 UTerrain t = area.terrainAt(x,y);

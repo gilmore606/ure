@@ -12,10 +12,13 @@ public class UCartographer {
     UThingCzar thingCzar;
     UCommander commander;
 
-    public UCartographer(UTerrainCzar theTerrainCzar, UThingCzar theThingCzar, UCommander theCommander) {
+    public UCartographer(UTerrainCzar theTerrainCzar, UThingCzar theThingCzar) {
         terrainCzar = theTerrainCzar;
         thingCzar = theThingCzar;
-        commander = theCommander;
+    }
+
+    public void setCommander(UCommander cmdr) {
+        commander = cmdr;
     }
 
     public UArea getArea(String label) {
@@ -39,7 +42,7 @@ public class UCartographer {
     public String GetLabelName(String label) {
         int i = label.indexOf(" ");
         if (i < 1) return label;
-        return label.substring(0,i-1);
+        return label.substring(0,i);
     }
     public int[] GetLabelData(String label) {
         int di = 0;

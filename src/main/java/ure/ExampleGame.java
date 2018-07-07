@@ -71,13 +71,14 @@ public class ExampleGame implements UTimeListener {
         actorCzar = new UActorCzar();
         actorCzar.loadActors("/actors.json");
 
-        cartographer = new UCartographer(terrainCzar, thingCzar, commander);
+        cartographer = new UCartographer(terrainCzar, thingCzar);
         area = cartographer.getArea("start");
 
         player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
 
         commander = new UCommander(player, renderer, thingCzar, actorCzar, cartographer);
         renderer.setKeyListener(commander);
+        cartographer.setCommander(commander);
         area.setCommander(commander);
         makeWindow();//.getContentPane().addKeyListener(commander);
 

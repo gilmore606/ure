@@ -1,5 +1,7 @@
-package ure;
+package ure.ui;
 
+import ure.UColor;
+import ure.ULight;
 import ure.ui.UCamera;
 
 import java.util.HashMap;

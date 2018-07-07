@@ -2,6 +2,7 @@ package ure.terrain;
 
 import ure.UArea;
 import ure.UCartographer;
+import ure.UCell;
 import ure.actors.UActor;
 
 public class Stairs extends TerrainI implements UTerrain {
@@ -26,6 +27,7 @@ public class Stairs extends TerrainI implements UTerrain {
     public void transportActor(UActor actor, UCartographer carto) {
         // TODO: cool transition bullshit i dunno
         UArea destarea = carto.getArea(label);
-        actor.moveToCell(destarea, 20, 20);
+        UCell dest = destarea.randomOpenCell(actor);
+        actor.moveToCell(destarea, dest.areaX(), dest.areaY());
     }
 }

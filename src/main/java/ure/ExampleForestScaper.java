@@ -32,14 +32,15 @@ public class ExampleForestScaper extends ULandscaper {
                 digCaves(area, "water", lakeloc.x, lakeloc.y, lakeloc.x + lakew, lakeloc.y + lakeh, 0.49f, 4, 5, 5);
             }
         }
-        for (int i=0;i<rand(7)+3;i++) {
+        for (int i=0;i<rand(7)+5;i++) {
             System.out.println("building rock formation");
             int x1 = 10 + rand(area.xsize - 20);
             int y1 = 10 + rand(area.ysize - 20);
             int w = 7+rand(9);
             int h = 7+rand(9);
-            digCaves(area, "wall", x1, y1, x1+w,y1+h,0.38f + randf(0.1f), 4+rand(3), 5, 4+rand(3));
-            if (randf() < 0.6f) {
+            digCaves(area, "wall", x1, y1, x1+w,y1+h,0.38f + randf(0.1f), 4+rand(3), 5, 3+rand(3));
+            System.out.println("built rock formation!");
+            if (randf() < 0.9f) {
                 System.out.println("digging cave entrance");
                 UCell doorcell = findAnextToB(area, "wall", "grass", x1, y1, x1 + w, y1 + h);
                 if (doorcell != null) {
@@ -47,10 +48,7 @@ public class ExampleForestScaper extends ULandscaper {
                 }
             }
         }
-        UCell townloc = findAreaWithout(area, 1,1,area.xsize, area.ysize, 20, 20, new String[]{"water", "wall"});
-        if (townloc != null) {
-
-        }
+        //UCell townloc = findAreaWithout(area, 1,1,area.xsize, area.ysize, 20, 20, new String[]{"water", "wall"});
 
         SetStairsLabels(area);
     }
