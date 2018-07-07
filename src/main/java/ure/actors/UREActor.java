@@ -5,11 +5,12 @@ import ure.actions.UAction;
 import ure.behaviors.UBehavior;
 import ure.terrain.URETerrain;
 import ure.things.Lightsource;
+import ure.things.ThingI;
 import ure.things.UREThing;
 
 import java.util.ArrayList;
 
-public class UREActor  extends UREThing {
+public class UREActor extends ThingI {
 
     public boolean awake = false;
     public int wakerange = 20;
@@ -165,5 +166,9 @@ public class UREActor  extends UREThing {
         } else if (!awake && (wakerange > 0) && (dist < wakerange)) {
             startActing(area().commander());
         }
+    }
+
+    public boolean willAcceptThing(UREThing thing) {
+        return true;
     }
 }

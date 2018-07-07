@@ -14,7 +14,7 @@ import java.util.Random;
  *
  */
 
-public abstract class TerrainI implements Cloneable, UAnimator {
+public abstract class TerrainI implements URETerrain, Cloneable, UAnimator {
 
     public static final String TYPE = "";
 
