@@ -1,13 +1,16 @@
-package ure;
+package ure.examplegame;
 
-import ure.terrain.URETerrain;
-import ure.terrain.URETerrainCzar;
-import ure.things.UREThingCzar;
+import ure.areas.UArea;
+import ure.areas.ULandscaper;
+import ure.math.UColor;
+import ure.terrain.UTerrain;
+import ure.terrain.UTerrainCzar;
+import ure.things.UThingCzar;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class ExampleDungeonScaper extends URELandscaper {
+public class ExampleDungeonScaper extends ULandscaper {
 
 
     class RoomStruct{
@@ -41,7 +44,7 @@ public class ExampleDungeonScaper extends URELandscaper {
         }
     }
 
-    UREArea area;
+    UArea area;
     int roomMultiplier = 5;
     int totalRooms = 0;
     int[][] roomPointers;
@@ -83,7 +86,7 @@ public class ExampleDungeonScaper extends URELandscaper {
         rooms.add(room);
     }
 
-    public ExampleDungeonScaper(URETerrainCzar theTerrainCzar, UREThingCzar theThingCzar) {
+    public ExampleDungeonScaper(UTerrainCzar theTerrainCzar, UThingCzar theThingCzar) {
         super(theTerrainCzar, theThingCzar);
     }
 
@@ -93,7 +96,7 @@ public class ExampleDungeonScaper extends URELandscaper {
         int x, y;
         for(y = roomMultiplier * r.y; y < roomMultiplier * (r.y + r.h); y++){
             for(x = roomMultiplier * r.x; x < roomMultiplier * (r.x + r.w); x++){
-                URETerrain t = area.terrainAt(x, y);
+                UTerrain t = area.terrainAt(x, y);
                 if (t != null) {
                     if (x == roomMultiplier * r.x || y == roomMultiplier * r.y) {
                         //t.bgColor.set(0, 0, 0);
@@ -114,12 +117,13 @@ public class ExampleDungeonScaper extends URELandscaper {
         }
     }
 
-    void colorRoom(RoomStruct r, UColor c){
+    //TODO: SOMEONE FIX THIS.  MM:A
+/*    void colorRoom(RoomStruct r, UColor c){
         if(r.entered == 0) return;
         int x, y;
         for(y = roomMultiplier * r.y; y < roomMultiplier * (r.y + r.h); y++){
             for(x = roomMultiplier * r.x; x < roomMultiplier * (r.x + r.w); x++){
-                URETerrain t = area.terrainAt(x, y);
+                UTerrain t = area.terrainAt(x, y);
                 if (t != null) {
                     if (x == roomMultiplier * r.x || y == roomMultiplier * r.y) {
                     }else{
@@ -130,12 +134,13 @@ public class ExampleDungeonScaper extends URELandscaper {
             }
         }
     }
-
+*/
     void floodRooms(){
         for(RoomStruct r: rooms){
             float f = ((float)(r.weight & 255)) / 255.f;
             floodRoom(r, new UColor(f, f, f), true);
-            if(r.forceColor != null) colorRoom(r, r.forceColor);
+            //MM:A
+            //if(r.forceColor != null) colorRoom(r, r.forceColor);
         }
     }
 
@@ -227,7 +232,7 @@ public class ExampleDungeonScaper extends URELandscaper {
     }
 
     @Override
-    public void buildArea(UREArea area_) {
+    public void buildArea(UArea area_) {
         //NOTE:  Ideally you'd want to create this as a divisor of roomMultiplier + 1 so the east/south walls can be walls.
         area = area_;
         fillRect(area, "wall", 0,0,area.xsize - 1,area.ysize - 1);
@@ -256,10 +261,12 @@ public class ExampleDungeonScaper extends URELandscaper {
             System.out.println("Something happened, we couldn't connect start to exit.");
         }
 
-        //Debug, color all rooms from start to exit, then the start and exit.
+
+
+        /*MM:A//Debug, color all rooms from start to exit, then the start and exit.
         for(RoomStruct room : rooms) if (room.entered == 1) room.forceColor = new UColor(.3f, .3f, .15f);
         start.forceColor = new UColor(.13f, .23f, .13f);
-        exit.forceColor = new UColor(.23f, .13f, .13f);
+        exit.forceColor = new UColor(.23f, .13f, .13f);*/
 
         //Connect random rooms.
         ArrayList<RoomStruct> branches = new ArrayList<RoomStruct>();
