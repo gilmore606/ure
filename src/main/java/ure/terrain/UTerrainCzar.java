@@ -66,7 +66,7 @@ public class UTerrainCzar {
         if (decorator != null) {
             TerrainDeco decoInstance = null;
             try {
-                decoInstance = decorator.getDeclaredConstructor(new Class[]{decorator.getClass()}).newInstance(terrain);
+                decoInstance = decorator.getDeclaredConstructor(new Class[]{UTerrain.class}).newInstance(terrain);
             } catch (Exception e) {
                 e.printStackTrace();
             }
