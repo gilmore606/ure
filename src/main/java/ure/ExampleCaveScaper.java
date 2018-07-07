@@ -79,6 +79,9 @@ public class ExampleCaveScaper extends ULandscaper {
         scatterThings(area, new String[]{"trucker hat", "butcher knife", "apple", "rock", "rock"},
                 new String[]{floorTerrain}, 10 + rand(40));
 
+        UCell upstairs = area.randomOpenCell(null);
+        area.setTerrain(upstairs.x, upstairs.y, "cave exit");
+
     }
 
     @Override

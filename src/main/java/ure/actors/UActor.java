@@ -77,6 +77,7 @@ public class UActor extends ThingI {
 
     @Override
     public void moveToCell(UArea thearea, int destX, int destY) {
+        super.moveToCell(thearea, destX, destY);
         if (camera != null) {
             if (cameraPinStyle == UCamera.PINSTYLE_HARD)
                 camera.moveTo(area(), destX, destY);
@@ -92,7 +93,7 @@ public class UActor extends ThingI {
                 System.out.println("ERROR: Camera.PINSTYLE_SCREENS not implemented!");
             }
         }
-        super.moveToCell(thearea, destX, destY);
+
         thearea.cellAt(destX, destY).walkedOnBy(this);
     }
 

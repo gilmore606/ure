@@ -1,6 +1,7 @@
 package ure;
 
 import ure.actors.UActor;
+import ure.terrain.Stairs;
 import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
@@ -284,6 +285,19 @@ public class UArea implements UTimeListener {
     public UActor actorAt(int x, int y) {
         if (isValidXY(x,y)) {
             return cells[x][y].actorAt();
+        }
+        return null;
+    }
+
+    public UCell findExitTo(String label) {
+        for (int x=0;x<xsize;x++) {
+            for (int y=0;y<ysize;y++) {
+                if (cells[x][y].terrain() instanceof Stairs) {
+                    if (((Stairs)cells[x][y].terrain()).label() == label) {
+                        return cells[x][y];
+                    }
+                }
+            }
         }
         return null;
     }

@@ -72,7 +72,7 @@ public class ExampleGame implements UTimeListener {
         actorCzar.loadActors("/actors.json");
 
         cartographer = new UCartographer(terrainCzar, thingCzar);
-        area = cartographer.getArea("start");
+        area = cartographer.getArea("forest");
 
         player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
 

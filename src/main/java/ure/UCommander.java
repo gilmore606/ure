@@ -277,14 +277,14 @@ public class UCommander implements URenderer.KeyListener {
                 consumeKeyFromBuffer();
                 renderer.render();
                 while (player.actionTime() <= 0f) {
-                    TickTime();
+                    tickTime();
                     waitingForInput = false;
                 }
             }
         }
     }
 
-    void TickTime() {
+    public void tickTime() {
         for (UActor actor : actors) {
             actor.addActionTime(1f);
         }

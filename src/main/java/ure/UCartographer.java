@@ -52,6 +52,7 @@ public class UCartographer {
         int[] data = new int[20];
         int i = label.indexOf(" ");
         if (i >= label.length()-1) return data;
+        if (i < 1) return data;
         int lc = i;
         System.out.println(label);
         for (;i<=label.length();i++) {

@@ -154,11 +154,16 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
     }
 
     public void moveTo(UArea theArea, int thex, int they) {
-        if (area != null && theArea != area)
+        boolean areachange = false;
+        if (area != null && theArea != area) {
+            areachange = true;
             area.removeListener(this);
+        }
         area = theArea;
         area.addListener(this);
         moveTo(thex,they);
+        if (areachange)
+            area.commander().tickTime();
     }
 
     public void moveTo(int thex, int they) {
