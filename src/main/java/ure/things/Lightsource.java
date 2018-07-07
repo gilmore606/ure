@@ -7,7 +7,7 @@ import ure.URELight;
 
 import java.util.Random;
 
-public class Lightsource extends UREThing {
+public class Lightsource extends ThingI implements UREThing {
 
     public static final String TYPE = "lightsource";
 

@@ -184,7 +184,7 @@ public class URECommander implements URERenderer.KeyListener {
         int i = 1;
         while (things.hasNext()) {
             UREThing thing = things.next();
-            modal.addText("item" + Integer.toString(i), thing.name, 2, i + 1);
+            modal.addText("item" + Integer.toString(i), thing.name(), 2, i + 1);
             // TODO: figure out what to do with the color here
             //modal.addText("item" + Integer.toString(i), thing.name, 2, i + 1, renderer.UItextColor.makeAWTColor());
             i++;
