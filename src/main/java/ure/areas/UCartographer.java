@@ -4,6 +4,7 @@ import ure.UCommander;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.examplegame.ExampleCaveScaper;
+import ure.examplegame.ExampleDungeonScaper;
 import ure.examplegame.ExampleForestScaper;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
@@ -36,6 +37,8 @@ public class UCartographer {
                 area = MakeForest(); break;
             case "cavern":
                 area = MakeCavern(labeldata[0]); break;
+            case "dungeon":
+                area = MakeDungeon(); break;
             default:
                 area = MakeForest(); break;
         }
@@ -94,6 +97,14 @@ public class UCartographer {
         UActor monk = actorCzar.getActorByName("monk");
         UCell monkdest = scaper.randomOpenCell(area, monk);
         monk.moveToCell(area, monkdest.x, monkdest.y);
+        return area;
+    }
+
+    public UArea MakeDungeon() {
+        UArea area = new UArea(101, 101, terrainCzar, "wall");
+        area.setCommander(commander);
+        ULandscaper scaper = new ExampleDungeonScaper(terrainCzar, thingCzar);
+        scaper.buildArea(area);
         return area;
     }
 }
