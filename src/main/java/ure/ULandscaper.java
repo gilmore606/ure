@@ -1,5 +1,7 @@
 package ure;
 
+import ure.terrain.Stairs;
+import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.things.UThingCzar;
@@ -416,5 +418,19 @@ public class ULandscaper {
             }
         }
         return null;
+    }
+
+    void SetStairsLabels(UArea area) {
+        for (int x=0;x<area.xsize;x++) {
+            for (int y=0;y<area.ysize;y++) {
+                UTerrain t = area.terrainAt(x,y);
+                if (t instanceof Stairs && ((Stairs)t).label() == "")
+                    SetStairsLabel(area, x,y,(Stairs)t);
+            }
+        }
+    }
+
+    void SetStairsLabel(UArea area, int x, int y, Stairs t) {
+        t.setLabel("");
     }
 }

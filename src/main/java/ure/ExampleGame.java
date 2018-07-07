@@ -73,14 +73,10 @@ public class ExampleGame implements UTimeListener {
 
         cartographer = new UCartographer(terrainCzar, thingCzar);
         area = cartographer.getArea("start");
-        //area = new UArea(100, 100, terrainCzar, "wall");
-        //ULandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
-        //URELandscaper scaper = new ExampleCaveScaper(terrainCzar, thingCzar);
-        //scaper.buildArea(area);
 
         player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
 
-        commander = new UCommander(player, renderer, thingCzar, actorCzar);
+        commander = new UCommander(player, renderer, thingCzar, actorCzar, cartographer);
         renderer.setKeyListener(commander);
         area.setCommander(commander);
         makeWindow();//.getContentPane().addKeyListener(commander);

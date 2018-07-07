@@ -1,5 +1,6 @@
 package ure;
 
+import ure.terrain.Stairs;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
 
@@ -50,5 +51,12 @@ public class ExampleForestScaper extends ULandscaper {
         if (townloc != null) {
 
         }
+
+        SetStairsLabels(area);
+    }
+
+    @Override
+    void SetStairsLabel(UArea area, int x, int y, Stairs t) {
+        t.setLabel("cavern " + Integer.toString(x*y) + ",1");
     }
 }
