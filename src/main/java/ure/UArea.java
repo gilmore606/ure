@@ -303,6 +303,7 @@ public class UArea implements UTimeListener {
     }
 
     public void hearTimeTick(UCommander commander) {
+        System.out.println(label + " tick");
         setSunColor(commander.daytimeMinutes());
         updateListeners();
     }

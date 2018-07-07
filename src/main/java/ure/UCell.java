@@ -14,7 +14,7 @@ import java.util.Iterator;
  */
 public class UCell implements UContainer {
     UArea area;
-    int x,y;
+    public int x,y;
     UTerrain terrain;
     float sunBrightness;
     private UCollection contents;

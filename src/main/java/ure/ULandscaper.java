@@ -406,7 +406,7 @@ public class ULandscaper {
         return true;
     }
 
-    int[] locateBox(UArea area, int width, int height, String[] floorTerrains) {
+    public int[] locateBox(UArea area, int width, int height, String[] floorTerrains) {
         int tries = 200;
         while (tries > 0) {
             tries--;
@@ -434,7 +434,7 @@ public class ULandscaper {
         }
     }
 
-    void SetStairsLabel(UArea area, int x, int y, Stairs t) {
+    public void SetStairsLabel(UArea area, int x, int y, Stairs t) {
         t.setLabel("");
     }
 }

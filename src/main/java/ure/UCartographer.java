@@ -1,20 +1,23 @@
 package ure;
 
 import ure.actors.UActor;
+import ure.actors.UActorCzar;
+import ure.examplegame.ExampleCaveScaper;
+import ure.examplegame.ExampleForestScaper;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
-
-import static ure.ExampleGame.actorCzar;
 
 public class UCartographer {
 
     UTerrainCzar terrainCzar;
     UThingCzar thingCzar;
+    UActorCzar actorCzar;
     UCommander commander;
 
-    public UCartographer(UTerrainCzar theTerrainCzar, UThingCzar theThingCzar) {
+    public UCartographer(UTerrainCzar theTerrainCzar, UThingCzar theThingCzar, UActorCzar theActorCzar) {
         terrainCzar = theTerrainCzar;
         thingCzar = theThingCzar;
+        actorCzar = theActorCzar;
     }
 
     public void setCommander(UCommander cmdr) {
@@ -22,9 +25,6 @@ public class UCartographer {
     }
 
     public UArea getArea(String label) {
-        if ((label == null) || (label == "start")) {
-            return MakeForest();
-        }
         String labelname = GetLabelName(label);
         int[] labeldata = GetLabelData(label);
 
@@ -39,6 +39,8 @@ public class UCartographer {
                 area = MakeForest(); break;
         }
         area.setLabel(label);
+        area.setCommander(commander);
+        commander.registerTimeListener(area);
         return area;
     }
 

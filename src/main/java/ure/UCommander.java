@@ -236,11 +236,11 @@ public class UCommander implements URenderer.KeyListener {
         }
     }
 
-    void setStatusPanel(UREStatusPanel panel){
+    public void setStatusPanel(UREStatusPanel panel){
         statusPanel = panel;
     }
 
-    void setScrollPanel(UScrollPanel panel){
+    public void setScrollPanel(UScrollPanel panel){
         scrollPanel = panel;
     }
 

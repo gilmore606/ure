@@ -1,5 +1,6 @@
-package ure;
+package ure.examplegame;
 
+import ure.*;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
@@ -71,19 +72,19 @@ public class ExampleGame implements UTimeListener {
         actorCzar = new UActorCzar();
         actorCzar.loadActors("/actors.json");
 
-        cartographer = new UCartographer(terrainCzar, thingCzar);
-        area = cartographer.getArea("forest");
+        cartographer = new UCartographer(terrainCzar, thingCzar, actorCzar);
+
 
         player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
 
         commander = new UCommander(player, renderer, thingCzar, actorCzar, cartographer);
-        renderer.setKeyListener(commander);
         cartographer.setCommander(commander);
-        area.setCommander(commander);
+        area = cartographer.getArea("forest");
+        renderer.setKeyListener(commander);
+
         makeWindow();//.getContentPane().addKeyListener(commander);
 
         commander.registerScrollPrinter(scrollPanel);
-        commander.registerTimeListener(area);
         commander.registerTimeListener(this);
         commander.addAnimator(camera);
 
