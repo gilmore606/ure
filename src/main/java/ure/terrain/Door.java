@@ -1,9 +1,9 @@
 package ure.terrain;
 
 import ure.UCell;
-import ure.actors.UREActor;
+import ure.actors.UActor;
 
-public class Door extends URETerrain {
+public class Door extends TerrainI implements UTerrain {
 
     public static final String TYPE = "door";
 
@@ -32,7 +32,7 @@ public class Door extends URETerrain {
         return super.glyph();
     }
     @Override
-    public void moveTriggerFrom(UREActor actor, UCell cell) {
+    public void moveTriggerFrom(UActor actor, UCell cell) {
         if (!isOpen()) {
             openedBy(actor, cell);
         } else {
@@ -40,7 +40,7 @@ public class Door extends URETerrain {
         }
     }
 
-    public void openedBy(UREActor actor, UCell cell) {
+    public void openedBy(UActor actor, UCell cell) {
         printScroll(openmsg, cell);
         isOpen = true;
     }

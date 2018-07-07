@@ -1,20 +1,20 @@
 package ure;
 
-import ure.terrain.URETerrainCzar;
-import ure.things.UREThingCzar;
+import ure.terrain.UTerrainCzar;
+import ure.things.UThingCzar;
 
-public class ExampleCaveScaper extends URELandscaper {
+public class ExampleCaveScaper extends ULandscaper {
 
-    public ExampleCaveScaper(URETerrainCzar theTerrainCzar, UREThingCzar theThingCzar) {
+    public ExampleCaveScaper(UTerrainCzar theTerrainCzar, UThingCzar theThingCzar) {
         super(theTerrainCzar, theThingCzar);
     }
 
     @Override
-    public void buildArea(UREArea area) {
+    public void buildArea(UArea area) {
         buildCaves(area, "floor", 0,0,area.xsize-4, area.ysize-4);
     }
 
-    public void buildCaves(UREArea area, String floorTerrain,
+    public void buildCaves(UArea area, String floorTerrain,
                            int x1, int x2, int y1, int y2) {
 
         float lavaFactor = randf(0.2f);

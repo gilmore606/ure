@@ -1,6 +1,6 @@
 package ure;
 
-import ure.things.UREThing;
+import ure.things.UThing;
 
 import java.util.Iterator;
 
@@ -10,10 +10,10 @@ public interface UContainer {
 
     public int areaX();
     public int areaY();
-    public UREArea area();
-    public void addThing(UREThing thing);
-    public void removeThing(UREThing thing);
-    public Iterator<UREThing> iterator();
+    public UArea area();
+    public void addThing(UThing thing);
+    public void removeThing(UThing thing);
+    public Iterator<UThing> iterator();
     public int containerType();
-    public boolean willAcceptThing(UREThing thing);
+    public boolean willAcceptThing(UThing thing);
 }

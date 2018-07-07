@@ -1,6 +1,6 @@
 package ure.actions;
 
-import ure.actors.UREActor;
+import ure.actors.UActor;
 
 public class UActionEmote extends UAction {
 
@@ -13,7 +13,7 @@ public class UActionEmote extends UAction {
     }
 
     @Override
-    public float doneBy(UREActor actor) {
+    public float doneBy(UActor actor) {
         actor.emote(text);
         return super.doneBy(actor);
     }

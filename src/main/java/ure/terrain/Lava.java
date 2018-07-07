@@ -2,7 +2,7 @@ package ure.terrain;
 
 import java.util.Random;
 
-public class Lava extends URETerrain {
+public class Lava extends TerrainI implements UTerrain {
 
     public static final String TYPE = "lava";
 

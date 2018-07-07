@@ -4,7 +4,7 @@ package ure.render;
 import ure.UColor;
 import ure.ui.View;
 
-public interface URERenderer {
+public interface URenderer {
 
     interface KeyListener {
         void keyPressed(char key);

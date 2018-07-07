@@ -1,14 +1,14 @@
 package ure.ui;
 
 import ure.UColor;
-import ure.render.URERenderer;
+import ure.render.URenderer;
 
 import java.util.HashMap;
 
-public class UIModal extends View {
+public class UModal extends View {
 
-    URERenderer renderer;
-    URECamera camera;
+    URenderer renderer;
+    UCamera camera;
     public int width, height;
     public int pixelWidth, pixelHeight;
     public int cellx,celly;
@@ -31,7 +31,7 @@ public class UIModal extends View {
         }
     }
 
-    public UIModal(int theCharWidth, int theCharHeight, URERenderer theRenderer, URECamera theCamera, UColor thebgColor) {
+    public UModal(int theCharWidth, int theCharHeight, URenderer theRenderer, UCamera theCamera, UColor thebgColor) {
         renderer = theRenderer;
         camera = theCamera;
         width = theCharWidth;
@@ -48,8 +48,8 @@ public class UIModal extends View {
         //g.fillRect(0,0,pixelWidth,pixelHeight);
     }
 
-    public static UIModal popMessage(String message, URERenderer theRenderer, URECamera theCamera, UColor thebgcolor) {
-        UIModal m = new UIModal(message.length() + 4, 5, theRenderer, theCamera, thebgcolor);
+    public static UModal popMessage(String message, URenderer theRenderer, UCamera theCamera, UColor thebgcolor) {
+        UModal m = new UModal(message.length() + 4, 5, theRenderer, theCamera, thebgcolor);
         // TODO: Fix for new renderer
         //m.addText("message", message, 1, 1, theRenderer.UItextColor.makeAWTColor());
         return m;
@@ -57,7 +57,7 @@ public class UIModal extends View {
     //public Graphics getGraphics() { return image.getGraphics(); }
 
     @Override
-    public void draw(URERenderer renderer) {
+    public void draw(URenderer renderer) {
         DrawFrame();
         DrawContent();
     }

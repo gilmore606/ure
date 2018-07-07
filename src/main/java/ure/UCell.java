@@ -1,8 +1,8 @@
 package ure;
 
-import ure.actors.UREActor;
-import ure.terrain.URETerrain;
-import ure.things.UREThing;
+import ure.actors.UActor;
+import ure.terrain.UTerrain;
+import ure.things.UThing;
 
 import java.util.Iterator;
 
@@ -13,14 +13,14 @@ import java.util.Iterator;
  *
  */
 public class UCell implements UContainer {
-    UREArea area;
+    UArea area;
     int x,y;
-    URETerrain terrain;
+    UTerrain terrain;
     float sunBrightness;
     private UCollection contents;
     boolean isSeen = false;
 
-    public UCell(UREArea theArea, int thex, int they, URETerrain theTerrain) {
+    public UCell(UArea theArea, int thex, int they, UTerrain theTerrain) {
         contents = new UCollection(this);
         area = theArea;
         x = thex;
@@ -29,7 +29,7 @@ public class UCell implements UContainer {
     }
 
     public float sunBrightness() {
-        return terrain.sunvis;
+        return terrain.sunvis();
     }
 
     public void setSeen(boolean theseen) {
@@ -38,23 +38,23 @@ public class UCell implements UContainer {
     public boolean isSeen() {
         return isSeen;
     }
-    public URETerrain terrain() {
+    public UTerrain terrain() {
         return terrain;
     }
 
-    public void addThing(UREThing thing) {
+    public void addThing(UThing thing) {
         contents.add(thing);
     }
-    public void removeThing(UREThing thing) {
+    public void removeThing(UThing thing) {
         contents.remove(thing);
         area.hearRemoveThing(thing);
     }
-    public Iterator<UREThing> iterator() {
+    public Iterator<UThing> iterator() {
         return contents.iterator();
     }
     public int containerType() { return UContainer.TYPE_CELL; }
 
-    public void moveTriggerFrom(UREActor actor) {
+    public void moveTriggerFrom(UActor actor) {
         if (actorAt() != null) {
             actorAt().moveTriggerFrom(actor);
         } else {
@@ -62,26 +62,26 @@ public class UCell implements UContainer {
         }
     }
 
-    public void walkedOnBy(UREActor actor) {
+    public void walkedOnBy(UActor actor) {
         if (actor.isPlayer() && contents.hasThings()) {
-            UREThing thing = contents.topThing();
+            UThing thing = contents.topThing();
             if (area.commander() != null)
                 area.commander().printScroll(thing.walkMsg(actor));
         }
         terrain.walkedOnBy(actor, this);
     }
 
-    public UREActor actorAt() {
+    public UActor actorAt() {
         if (contents.hasActors())
             return contents.actor();
         return null;
     }
 
-    public UREThing topThingAt() {
+    public UThing topThingAt() {
         return contents.topThing();
     }
 
-    public boolean willAcceptThing(UREThing thing) {
+    public boolean willAcceptThing(UThing thing) {
         if (terrain != null) {
             if (terrain.isPassable()) {
                 return true;
@@ -91,23 +91,22 @@ public class UCell implements UContainer {
     }
 
     public boolean hasA(String thing) {
-        for (UREThing t : contents.things) {
-            if (t.name.equals(thing))
+        for (UThing t : contents.things) {
+            if (t.name().equals(thing))
                 return true;
         }
         return false;
     }
     public int areaX() { return x; }
     public int areaY() { return y; }
-    public UREArea area() { return area; }
+    public UArea area() { return area; }
 
-    public void useTerrain(URETerrain t) {
+    public void useTerrain(UTerrain t) {
         terrain = t;
         t.becomeReal(this);
     }
 
     public void animationTick() {
-        if (terrain.animationFrames > 0)
-            terrain.animationTick();
+        terrain.animationTick();
     }
 }

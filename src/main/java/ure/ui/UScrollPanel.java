@@ -1,11 +1,11 @@
 package ure.ui;
 
 import ure.UColor;
-import ure.render.URERenderer;
+import ure.render.URenderer;
 
 import java.util.ArrayList;
 
-public class UREScrollPanel extends View {
+public class UScrollPanel extends View {
 
     UColor fgColor, bgColor, borderColor;
     int textRows, textColumns;
@@ -18,7 +18,7 @@ public class UREScrollPanel extends View {
     ArrayList<String> lines;
     ArrayList<UColor> lineFades;
 
-    public UREScrollPanel(int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg, UColor borderc) {
+    public UScrollPanel(int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg, UColor borderc) {
         lines = new ArrayList<String>();
         lineFades = new ArrayList<UColor>();
         textRows = rows;
@@ -48,7 +48,7 @@ public class UREScrollPanel extends View {
     }
 
     @Override
-    public void draw(URERenderer renderer) {
+    public void draw(URenderer renderer) {
         renderer.drawRectBorder(1, 1, width-2, height-2, 1, bgColor, borderColor);
         int i = 0;
         while (i < textRows) {

@@ -1,7 +1,7 @@
 package ure.actions;
 
-import ure.actors.UREActor;
-import ure.things.UREThing;
+import ure.actors.UActor;
+import ure.things.UThing;
 
 public class UActionGet extends UAction {
 
@@ -9,17 +9,17 @@ public class UActionGet extends UAction {
 
     public static String nothingToGetMsg = "There's nothing here to get.";
 
-    UREThing thing;
+    UThing thing;
 
     public UActionGet() {
         thing = null;
     }
 
-    public UActionGet(UREThing thething) {
+    public UActionGet(UThing thething) {
         thing = thething;
     }
 
-    public float doneBy(UREActor actor) {
+    public float doneBy(UActor actor) {
         if (thing == null) {
             thing = actor.myCell().topThingAt();
             if (thing == null) {
