@@ -25,6 +25,8 @@ public class UArea implements UTimeListener {
         void areaChanged();
     }
 
+    public String label;
+
     private UCell cells[][];
     public int xsize, ysize;
     private HashSet<ULight> lights;
@@ -32,6 +34,7 @@ public class UArea implements UTimeListener {
     private HashSet<UParticle> particles;
     private UCommander commander;
     private UTerrainCzar terrainCzar;
+    private Random random;
 
     public UColor sunColor;
 
@@ -74,6 +77,7 @@ public class UArea implements UTimeListener {
     }
 
     void initLists() {
+        random = new Random();
         lights = new HashSet<>();
         listeners = new HashSet<>();
         actors = new HashSet<>();
@@ -255,6 +259,16 @@ public class UArea implements UTimeListener {
         for (UActor actor : actors) {
             actor.wakeCheck(playerx, playery);
         }
+    }
+
+    public UCell randomOpenCell(UThing thing) {
+        UCell cell = null;
+        boolean match = false;
+        while (cell == null || !match) {
+            cell = cellAt(random.nextInt(xsize), random.nextInt(ysize));
+            match = cell.willAcceptThing(thing);
+        }
+        return cell;
     }
 
     public void hearRemoveThing(UThing thing) {

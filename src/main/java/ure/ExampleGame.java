@@ -25,6 +25,7 @@ public class ExampleGame implements UTimeListener {
     static UTerrainCzar terrainCzar;
     static UThingCzar thingCzar;
     static UActorCzar actorCzar;
+    static UCartographer cartographer;
 
     private void makeWindow() {
 
@@ -70,10 +71,12 @@ public class ExampleGame implements UTimeListener {
         actorCzar = new UActorCzar();
         actorCzar.loadActors("/actors.json");
 
-        area = new UArea(100, 100, terrainCzar, "wall");
-        ULandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
+        cartographer = new UCartographer(terrainCzar, thingCzar);
+        area = cartographer.getArea("start");
+        //area = new UArea(100, 100, terrainCzar, "wall");
+        //ULandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
         //URELandscaper scaper = new ExampleCaveScaper(terrainCzar, thingCzar);
-        scaper.buildArea(area);
+        //scaper.buildArea(area);
 
         player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
 
@@ -87,22 +90,14 @@ public class ExampleGame implements UTimeListener {
         commander.registerTimeListener(this);
         commander.addAnimator(camera);
 
-        UCell startcell = scaper.randomOpenCell(area, player);
+        UCell startcell = area.randomOpenCell(player);
         player.moveToCell(area, startcell.x, startcell.y);
         player.attachCamera(camera, UCamera.PINSTYLE_HARD);
         player.startActing(commander);
 
-        UActor monk = actorCzar.getActorByName("monk");
-        UCell monkdest = scaper.randomOpenCell(area, monk);
-        monk.moveToCell(area, monkdest.x, monkdest.y);
-        //monk.startActing(commander);
 
-        for (int i=0;i<30;i++) {
-            UActor rat = actorCzar.getActorByName("rat");
-            UCell ratdest = scaper.randomOpenCell(area, rat);
-            rat.moveToCell(area, ratdest.x, ratdest.y);
-            //rat.startActing(commander);
-        }
+
+
 
         commander.gameLoop();
     }
