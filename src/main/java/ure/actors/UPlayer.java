@@ -1,24 +1,24 @@
 package ure.actors;
 
-import ure.UColor;
-import ure.UREArea;
-import ure.URELight;
-import ure.things.UREThing;
+import ure.math.UColor;
+import ure.areas.UArea;
+import ure.ui.ULight;
+import ure.things.UThing;
 
-public class UREPlayer extends UREActor {
+public class UPlayer extends UActor {
 
     public boolean awake = true;
 
     public static boolean isActor = true;
 
-    URELight light;
+    ULight light;
 
-    public UREPlayer(String thename, char theicon, UColor thecolor, boolean addOutline, UColor selfLightColor, int selfLight, int selfLightFalloff) {
+    public UPlayer(String thename, char theicon, UColor thecolor, boolean addOutline, UColor selfLightColor, int selfLight, int selfLightFalloff) {
         super();
         initialize();
         setDisplayFields(thename, theicon, thecolor, addOutline);
         if (selfLight > 0) {
-            light = new URELight(selfLightColor, selfLightFalloff + selfLight, selfLight);
+            light = new ULight(selfLightColor, selfLightFalloff + selfLight, selfLight);
         }
     }
 
@@ -26,7 +26,7 @@ public class UREPlayer extends UREActor {
     public boolean isPlayer() { return true; }
 
     @Override
-    public void moveToCell(UREArea area, int destX, int destY) {
+    public void moveToCell(UArea area, int destX, int destY) {
         super.moveToCell(area,destX,destY);
         if (light != null) {
             light.moveTo(area,destX,destY);
@@ -35,10 +35,10 @@ public class UREPlayer extends UREActor {
     }
 
     @Override
-    public boolean canSee(UREThing thing) {
+    public boolean canSee(UThing thing) {
         int x = thing.areaX();
         int y = thing.areaY();
-        if (camera.visibilityAt(x - camera.x1,y - camera.y1) > 0.1f)
+        if (camera.visibilityAt(x - camera.leftEdge, y - camera.topEdge) > 0.1f)
             return true;
         return false;
     }

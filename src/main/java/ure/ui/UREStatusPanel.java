@@ -1,11 +1,11 @@
 package ure.ui;
 
-import ure.UColor;
-import ure.render.URERenderer;
+import ure.math.UColor;
+import ure.render.URenderer;
 
 import java.util.HashMap;
 
-public class UREStatusPanel /*extends JPanel */{
+public class UREStatusPanel extends View {
 
     UColor fgColor, bgColor, borderColor;
     int textRows,textColumns;
@@ -13,8 +13,6 @@ public class UREStatusPanel /*extends JPanel */{
     int padX, padY;
     int charWidth, charHeight;
     HashMap<String,TextFrag> texts;
-    URERenderer renderer;
-    int xPos, yPos, width, height;
 
     class TextFrag {
         String name;
@@ -32,12 +30,11 @@ public class UREStatusPanel /*extends JPanel */{
         }
     }
 
-    public UREStatusPanel(URERenderer theRenderer, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg, UColor borderc) {
+    public UREStatusPanel(int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg, UColor borderc) {
         super();
         texts = new HashMap<String,TextFrag>();
         textRows = rows;
         textColumns = columns;
-        renderer = theRenderer;
         charWidth = cw;
         charHeight = ch;
         padX = px;
@@ -47,14 +44,6 @@ public class UREStatusPanel /*extends JPanel */{
         fgColor = fg;
         bgColor = bg;
         borderColor = borderc;
-    }
-
-    public void setBounds(int x, int y, int xx, int yy) {
-        //Hacky?
-        xPos = x;
-        yPos = y;
-        width = xx;
-        height = yy;
     }
 
     public void addText(String name, String text, int row, int col) {
@@ -72,12 +61,13 @@ public class UREStatusPanel /*extends JPanel */{
         frag.text = text;
     }
 
-    public void renderImage() {
-        renderer.drawRectBorder(xPos+1, yPos+1, width-2, height-2, 1, bgColor, borderColor);
+    @Override
+    public void draw(URenderer renderer) {
+        renderer.drawRectBorder(1, 1, width-2, height-2, 1, bgColor, borderColor);
         //renderer.addQuad(xPos, yPos, width, height, bgColor);
         for (String textName : texts.keySet()) {
             TextFrag frag = texts.get(textName);
-            renderer.drawString(xPos + frag.row * charWidth + padX, yPos + (frag.col + 1) * charHeight + padY, frag.color, frag.text);
+            renderer.drawString(frag.row * charWidth + padX, (frag.col + 1) * charHeight + padY, frag.color, frag.text);
         }
     }
 }

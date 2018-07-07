@@ -1,6 +1,6 @@
 package ure.actions;
 
-import ure.actors.UREActor;
+import ure.actors.UActor;
 
 public class UAction {
 
@@ -8,7 +8,7 @@ public class UAction {
 
     float cost = 1.0f;
 
-    public float doneBy(UREActor actor) {
+    public float doneBy(UActor actor) {
         return cost * (1f / actor.actionSpeed());
     }
 }

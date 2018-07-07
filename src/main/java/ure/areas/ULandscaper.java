@@ -1,19 +1,21 @@
-package ure;
+package ure.areas;
 
-import ure.actors.UREActor;
-import ure.terrain.URETerrain;
-import ure.terrain.URETerrainCzar;
-import ure.things.UREThing;
-import ure.things.UREThingCzar;
+import ure.ui.ULight;
+import ure.math.UColor;
+import ure.math.USimplexNoise;
+import ure.terrain.Stairs;
+import ure.terrain.UTerrain;
+import ure.terrain.UTerrainCzar;
+import ure.things.UThing;
+import ure.things.UThingCzar;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
 
-public class URELandscaper {
+public class ULandscaper {
 
-    private URETerrainCzar terrainCzar;
-    private UREThingCzar thingCzar;
+    private UTerrainCzar terrainCzar;
+    private UThingCzar thingCzar;
 
     public Random random;
     USimplexNoise simplexNoise;
@@ -27,9 +29,15 @@ public class URELandscaper {
             width = w;
             height = h;
         }
+        public void set(int[] c, boolean val) {
+            set(c[0],c[1],val);
+        }
         public void set(int x, int y, boolean val) {
             if (x>=0 && x<width && y>=0 && y<height)
                 cells[x][y] = val;
+        }
+        public boolean get(int[] c) {
+            return get(c[0],c[1]);
         }
         public boolean get(int x, int y) {
             if (x>=0 && x<width && y>=0 && y<height)
@@ -54,7 +62,8 @@ public class URELandscaper {
             }
             return neighbors;
         }
-        public int flood(int x, int y) {
+        public int flood_deprecated(int x, int y) {
+            // recursive, blows out the stack
             int total = 0;
             if (x<0 || x>=width || y<0 || y>= height)
                 return 0;
@@ -66,24 +75,57 @@ public class URELandscaper {
             total += flood(x-1,y);
             total += flood(x,y+1);
             total += flood(x,y-1);
+            System.out.println("GEN : flood_deprecated found " + Integer.toString(total) + " cells");
+            return total;
+        }
+        public int flood(int x, int y) {
+            ArrayList<int[]> q = new ArrayList<int[]>();
+            if (cells[x][y]) return 0;
+            int total = 0;
+            q.add(new int[]{x,y});
+            int[] n = new int[]{0,0};
+            ArrayList<int[]> noobs = new ArrayList<int[]>();
+            while (!q.isEmpty()) {
+                noobs.clear();
+                for (int[] N : q) {
+                    int[] w = new int[]{N[0],N[1]};
+                    int[] e = new int[]{N[0],N[1]};
+                    while (!get(w[0] - 1, w[1]))
+                        w[0] = w[0] - 1;
+                    while (!get(e[0] + 1, e[1]))
+                        e[0] = e[0] + 1;
+                    for (int i = w[0];i <= e[0];i++) {
+                        n[0] = i;
+                        n[1] = w[1];
+                        set(n, true); total++;
+                        if (!get(n[0], n[1] - 1)) noobs.add(new int[]{n[0], n[1] - 1});
+                        if (!get(n[0], n[1] + 1)) noobs.add(new int[]{n[0], n[1] + 1});
+                    }
+                }
+                q.clear();
+                for (int[] noob : noobs) {
+                    q.add(noob);
+                }
+            }
+            System.out.println("GEN : flood found " + Integer.toString(total) + " cells");
             return total;
         }
     }
 
-    public URELandscaper(URETerrainCzar theTerrainCzar, UREThingCzar theThingCzar) {
+    public ULandscaper(UTerrainCzar theTerrainCzar, UThingCzar theThingCzar) {
         terrainCzar = theTerrainCzar;
         thingCzar = theThingCzar;
         random = new Random();
         simplexNoise = new USimplexNoise();
     }
 
-    public void buildArea(UREArea area) {
+    public void buildArea(UArea area) {
         System.out.println("Default landscaper cannot build areas!");
     }
 
-    public void fillRect(UREArea area, String t, int x1, int y1, int x2, int y2) { drawRect(area, t, x1, y1, x2, y2, true); }
-    public void drawRect(UREArea area, String t, int x1, int y1, int x2, int y2) { drawRect(area, t, x1, y1, x2, y2, false); }
-    public void drawRect(UREArea area, String t, int x1, int y1, int x2, int y2, boolean filled) {
+    public void fillRect(UArea area, String t, int x1, int y1, int x2, int y2) { drawRect(area, t, x1, y1, x2, y2, true); }
+    public void drawRect(UArea area, String t, int x1, int y1, int x2, int y2) { drawRect(area, t, x1, y1, x2, y2, false); }
+    public void drawRect(UArea area, String t, int x1, int y1, int x2, int y2, boolean filled) {
         for (int x=x1;x<=x2;x++) {
             for (int y=y1;y<=y2;y++) {
                 if (filled || y == y1 || y == y2 || x == x1 | x == x2) {
@@ -103,36 +145,36 @@ public class URELandscaper {
         return random.nextFloat();
     }
 
-    public void scatterThings(UREArea area, String[] things, String[] terrains, int numberToScatter) {
+    public void scatterThings(UArea area, String[] things, String[] terrains, int numberToScatter) {
         while (numberToScatter > 0) {
             numberToScatter--;
             UCell cell = randomCell(area, terrains);
             String name = things[random.nextInt(things.length)];
-            UREThing thing = thingCzar.getThingByName(name);
+            UThing thing = thingCzar.getThingByName(name);
             thing.moveToCell(area, cell.x, cell.y);
         }
     }
 
-    public void spawnThingAt(UREArea area, int x, int y, String thing) {
-        UREThing thingobj = thingCzar.getThingByName(thing);
+    public void spawnThingAt(UArea area, int x, int y, String thing) {
+        UThing thingobj = thingCzar.getThingByName(thing);
         thingobj.moveToCell(area,x,y);
     }
-    public void spawnLightAt(UREArea area, int x, int y, UColor color, int falloff, int range) {
-        URELight light = new URELight(color, range, falloff);
+    public void spawnLightAt(UArea area, int x, int y, UColor color, int falloff, int range) {
+        ULight light = new ULight(color, range, falloff);
         light.moveTo(area,x,y);
     }
 
-    boolean cellHasTerrain(UREArea area, UCell cell, String[] terrains) {
+    boolean cellHasTerrain(UArea area, UCell cell, String[] terrains) {
         if (cell == null) return false;
         for (int i=0;i<terrains.length;i++) {
-            if (terrains[i].equals(cell.terrain.name)) {
+            if (terrains[i].equals(cell.terrain.name())) {
                 return true;
             }
         }
         return false;
     }
 
-    boolean[][] neighborsHaveTerrain(UREArea area, UCell cell, String[] terrains) {
+    boolean[][] neighborsHaveTerrain(UArea area, UCell cell, String[] terrains) {
         boolean[][] neighbors = new boolean[3][3];
         for (int xo=-1;xo<2;xo++) {
             for (int yo=-1;yo<2;yo++) {
@@ -141,7 +183,7 @@ public class URELandscaper {
         }
         return neighbors;
     }
-    int numNeighborsHaveTerrain(UREArea area, UCell cell, String[] terrains) {
+    int numNeighborsHaveTerrain(UArea area, UCell cell, String[] terrains) {
         boolean[][] neighbors = neighborsHaveTerrain(area, cell, terrains);
         int total = 0;
         for (int xo=-1;xo<2;xo++) {
@@ -153,7 +195,7 @@ public class URELandscaper {
         return total;
     }
 
-    public UCell randomCell(UREArea area, String[] terrains) {
+    public UCell randomCell(UArea area, String[] terrains) {
         UCell cell = null;
         boolean match = false;
         while (cell == null || !match) {
@@ -163,7 +205,7 @@ public class URELandscaper {
         return cell;
     }
 
-    public UCell randomOpenCell(UREArea area, UREThing thing) {
+    public UCell randomOpenCell(UArea area, UThing thing) {
         UCell cell = null;
         boolean match = false;
         while (cell == null || !match) {
@@ -173,7 +215,7 @@ public class URELandscaper {
         return cell;
     }
 
-    public void addDoors(UREArea area, String doorTerrain, String[] wallTerrains, float doorChance) {
+    public void addDoors(UArea area, String doorTerrain, String[] wallTerrains, float doorChance) {
         for (int x=0;x<area.xsize;x++) {
             for (int y=0;y<area.ysize;y++) {
                 if (area.cellAt(x,y).terrain.isPassable()) {
@@ -190,7 +232,7 @@ public class URELandscaper {
         }
     }
 
-    public void simplexScatterTerrain(UREArea area, String terrain, String[] targets, float threshold, float scatterChance, float[] noiseScales) {
+    public void simplexScatterTerrain(UArea area, String terrain, String[] targets, float threshold, float scatterChance, float[] noiseScales) {
         for (int x=0;x<area.xsize;x++) {
             for (int y=0;y<area.ysize;y++) {
                 if (cellHasTerrain(area, area.cellAt(x,y), targets)) {
@@ -205,7 +247,7 @@ public class URELandscaper {
         }
     }
 
-    public void simplexScatterThings(UREArea area, String thing, String[] targets, float threshold, float scatterChance, float[] noiseScales, int separateBy) {
+    public void simplexScatterThings(UArea area, String thing, String[] targets, float threshold, float scatterChance, float[] noiseScales, int separateBy) {
         for (int x=0;x<area.xsize;x++) {
             for (int y=0;y<area.ysize;y++) {
                 if (cellHasTerrain(area, area.cellAt(x,y), targets)) {
@@ -213,7 +255,7 @@ public class URELandscaper {
                     if (sample > threshold) {
                         if (random.nextFloat() <= scatterChance) {
                             if (!isNearA(area,x,y,thing,separateBy)) {
-                                UREThing thingobj = thingCzar.getThingByName(thing);
+                                UThing thingobj = thingCzar.getThingByName(thing);
                                 thingobj.moveToCell(area, x, y);
                             }
                         }
@@ -223,7 +265,7 @@ public class URELandscaper {
         }
     }
 
-    public boolean isNearA(UREArea area, int x, int y, String thing, int range) {
+    public boolean isNearA(UArea area, int x, int y, String thing, int range) {
         if (range < 1)
             return false;
         for (int ix = x - range; ix < x + range; ix++) {
@@ -238,7 +280,7 @@ public class URELandscaper {
         return false;
     }
 
-    public UCell findAnextToB(UREArea area, String ta, String tb, int x1, int y1, int x2, int y2) {
+    public UCell findAnextToB(UArea area, String ta, String tb, int x1, int y1, int x2, int y2) {
         int tries = 0;
         while (tries < ((x2-x1)*(y2-y1))) {
             tries++;
@@ -255,15 +297,43 @@ public class URELandscaper {
         return null;
     }
 
-    public String terrainNameAt(UREArea area, int x, int y) {
-        UCell cell = area.cellAt(x,y);
-        if (cell != null) {
-            return cell.terrain().name;
+    public UCell findAreaWithout(UArea area, int x1, int y1, int x2, int y2, int w, int h, String[] terrains) {
+        int tries = 0;
+        while (tries < 500) {
+            tries++;
+            int x = rand(x2-x1)+x1;
+            int y = rand(y2-y1)+y1;
+            if (!rectHasTerrain(area, x, y, x+w, y+h, terrains)) {
+                System.out.println("found area without at " + Integer.toString(x) + "," + Integer.toString(y));
+                return area.cellAt(x,y);
+            }
         }
         return null;
     }
 
-    public void digRiver(UREArea area, String t, int x1, int y1, int x2, int y2, float riverWidth, float twist, float twistmax) {
+    public boolean rectHasTerrain(UArea area, int x1, int y1, int x2, int y2, String[] terrains) {
+        for (;x1<=x2;x1++) {
+            for (;y1<=y2;y1++) {
+                if (area.isValidXY(x1,y1)) {
+                    String ts = area.terrainAt(x1,y1).name();
+                    for (String s : terrains) {
+                        if (s.equals(ts))
+                            return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public String terrainNameAt(UArea area, int x, int y) {
+        UCell cell = area.cellAt(x,y);
+        if (cell != null) {
+            return cell.terrain().name();
+        }
+        return null;
+    }
+
+    public void digRiver(UArea area, String t, int x1, int y1, int x2, int y2, float riverWidth, float twist, float twistmax) {
         int width = x2-x1; int height = y2-y1;
         int edge = random.nextInt(4);
         float startx, starty, dx, dy, ctwist;
@@ -303,15 +373,17 @@ public class URELandscaper {
         }
     }
 
-    public void digCaves(UREArea area, String t, int x1, int y1, int x2, int y2) {
+    public void digCaves(UArea area, String t, int x1, int y1, int x2, int y2) {
         digCaves(area,t,x1,y1,x2,y2,0.42f,6,4,3);
     }
-    public void digCaves(UREArea area, String t, int x1, int y1, int x2, int y2, float initialDensity, int jumblePasses, int jumbleDensity, int smoothPasses) {
+    public void digCaves(UArea area, String t, int x1, int y1, int x2, int y2, float initialDensity, int jumblePasses, int jumbleDensity, int smoothPasses) {
         int width = x2-x1; int height = y2-y1;
         Grid map = new Grid(width,height);
         Grid scratchmap = new Grid(width,height);
         float fillratio = 0f;
-        while (fillratio < 0.2f) {
+        int tries = 0;
+        while ((fillratio < 0.25f) && (tries < 8)) {
+            tries++;
             int gapY = random.nextInt(height / 2) + height / 3;
             for (int x = 0;x < width;x++) {
                 for (int y = 0;y < height;y++) {
@@ -350,13 +422,16 @@ public class URELandscaper {
             scratchmap.copyFrom(map);
             int x = width / 2;
             int y = height / 2;
-            while (scratchmap.get(x, y)) {
+            int rantries = 0;
+            while (scratchmap.get(x, y) && rantries < 500) {
+                rantries++;
                 x = random.nextInt(width - 2) + 2;
                 y = random.nextInt(height - 2) + 2;
             }
             int spacecount = scratchmap.flood(x, y);
             fillratio = (float) spacecount / (float) (width * height);
         }
+        System.out.println("printing cave dig into area");
         for (int x=0;x<width;x++) {
             for (int y=0;y<height;y++) {
                 if (!map.get(x,y) && scratchmap.get(x,y))
@@ -365,7 +440,7 @@ public class URELandscaper {
         }
     }
 
-    boolean canFitBoxAt(UREArea area, int x, int y, int width, int height, String[] floorTerrains) {
+    boolean canFitBoxAt(UArea area, int x, int y, int width, int height, String[] floorTerrains) {
         for (int xo=0;xo<width;xo++) {
             for (int yo=0;yo<height;yo++) {
                 if (!cellHasTerrain(area, area.cellAt(x+xo,y+yo), floorTerrains))
@@ -375,7 +450,7 @@ public class URELandscaper {
         return true;
     }
 
-    int[] locateBox(UREArea area, int width, int height, String[] floorTerrains) {
+    public int[] locateBox(UArea area, int width, int height, String[] floorTerrains) {
         int tries = 200;
         while (tries > 0) {
             tries--;
@@ -390,5 +465,20 @@ public class URELandscaper {
             }
         }
         return null;
+    }
+
+    void SetStairsLabels(UArea area) {
+        System.out.println("setting stairs labels");
+        for (int x=0;x<area.xsize;x++) {
+            for (int y=0;y<area.ysize;y++) {
+                UTerrain t = area.terrainAt(x,y);
+                if (t instanceof Stairs && ((Stairs)t).label() == "")
+                    SetStairsLabel(area, x,y,(Stairs)t);
+            }
+        }
+    }
+
+    public void SetStairsLabel(UArea area, int x, int y, Stairs t) {
+        t.setLabel("");
     }
 }

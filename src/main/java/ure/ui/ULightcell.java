@@ -1,4 +1,6 @@
-package ure;
+package ure.ui;
+
+import ure.math.UColor;
 
 import java.util.HashMap;
 
@@ -18,13 +20,13 @@ public class ULightcell {
 
     private UColor lightBuffer;
 
-    HashMap<URELight,Float> sources;
-    private URECamera camera;
+    HashMap<ULight,Float> sources;
+    private UCamera camera;
 
-    public ULightcell(URECamera thecam) {
+    public ULightcell(UCamera thecam) {
         camera = thecam;
         visibility = 0f;
-        sources = new HashMap<URELight,Float>();
+        sources = new HashMap<ULight,Float>();
         lightBuffer = new UColor(0f,0f,0f);
     }
 
@@ -33,7 +35,7 @@ public class ULightcell {
         sources.clear();
     }
 
-    public void receiveLight(URELight source, float intensity) {
+    public void receiveLight(ULight source, float intensity) {
         sources.put(source, intensity);
     }
 
@@ -59,7 +61,7 @@ public class ULightcell {
     public UColor light(int time) {
         lightBuffer.set(0f,0f,0f);
         lightBuffer.addLights(camera.area.sunColor, getRenderedSun());
-        for (URELight source : sources.keySet()) {
+        for (ULight source : sources.keySet()) {
             float intensity = sources.get(source) * source.intensityAtTime(time);
             lightBuffer.addLights(source.color, intensity);
         }

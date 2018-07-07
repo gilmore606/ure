@@ -1,9 +1,9 @@
 package ure.terrain;
 
 import ure.UAnimator;
-import ure.UCell;
-import ure.UColor;
-import ure.actors.UREActor;
+import ure.areas.UCell;
+import ure.math.UColor;
+import ure.actors.UActor;
 
 import java.util.Random;
 
@@ -14,7 +14,7 @@ import java.util.Random;
  *
  */
 
-public abstract class URETerrain implements Cloneable, UAnimator {
+public abstract class TerrainI implements UTerrain, Cloneable, UAnimator {
 
     public static final String TYPE = "";
 
@@ -49,7 +49,7 @@ public abstract class URETerrain implements Cloneable, UAnimator {
     public boolean isPassable() {
         return passable;
     }
-    public boolean isPassable(UREActor actor) { return isPassable(); }
+    public boolean isPassable(UActor actor) { return isPassable(); }
     public boolean isOpaque() {
         return opaque;
     }
@@ -82,6 +82,7 @@ public abstract class URETerrain implements Cloneable, UAnimator {
         }
     }
 
+    public float sunvis() { return sunvis; }
     public char glyph() {
         return glyph;
     }
@@ -101,7 +102,7 @@ public abstract class URETerrain implements Cloneable, UAnimator {
         return 0;
     }
 
-    public void moveTriggerFrom(UREActor actor, UCell cell) {
+    public void moveTriggerFrom(UActor actor, UCell cell) {
         if (isPassable(actor)) {
             actor.moveToCell(cell.areaX(), cell.areaY());
         } else {
@@ -110,15 +111,15 @@ public abstract class URETerrain implements Cloneable, UAnimator {
         }
     }
 
-    public boolean preventMoveFrom(UREActor actor) {
+    public boolean preventMoveFrom(UActor actor) {
         return false;
     }
 
-    public float moveSpeed(UREActor actor) {
+    public float moveSpeed(UActor actor) {
         return this.movespeed;
     }
 
-    public void walkedOnBy(UREActor actor, UCell cell) {
+    public void walkedOnBy(UActor actor, UCell cell) {
         if (actor.isPlayer()) {
             printScroll(walkmsg, cell);
         }
@@ -131,9 +132,9 @@ public abstract class URETerrain implements Cloneable, UAnimator {
                     if (cell.area().commander() != null)
                         cell.area().commander().printScroll(msg);
     }
-    public URETerrain getClone() {
+    public TerrainI getClone() {
         try {
-            return (URETerrain) super.clone();
+            return (TerrainI) super.clone();
         } catch (CloneNotSupportedException e) {
             System.out.println(" Cloning not allowed. ");
             return this;
@@ -141,9 +142,22 @@ public abstract class URETerrain implements Cloneable, UAnimator {
     }
 
     public void animationTick() {
+        if (animationFrames < 1) return;
         animationFrame++;
         if (animationFrame >= animationFrames)
             animationFrame = 0;
         //cell.area().redrawCell(cell.areaX(), cell.areaY());
-}
+    }
+
+    public boolean glow() {
+        return glow;
+    }
+
+    public UColor bgColor() { return bgColor; }
+    public UColor bgColorBuffer() { return bgColorBuffer; }
+    public UColor fgColor() { return fgColor; }
+    public UColor fgColorBuffer() { return fgColorBuffer; }
+
+    public String name() { return name; }
+
 }

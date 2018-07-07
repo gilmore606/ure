@@ -1,13 +1,16 @@
-package ure;
+package ure.ui;
+
+import ure.UAnimator;
+import ure.areas.UArea;
 
 public class UParticle implements UAnimator {
 
     private int ticksLeft;
 
-    private UREArea area;
+    private UArea area;
     private int x, y;
 
-    public UParticle(UREArea thearea, int thex, int they, int lifeticks) {
+    public UParticle(UArea thearea, int thex, int they, int lifeticks) {
         area = thearea;
         x = thex;
         y = they;

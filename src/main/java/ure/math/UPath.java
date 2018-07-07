@@ -1,11 +1,10 @@
-package ure;
+package ure.math;
 
-import ure.actors.UREActor;
-import ure.terrain.URETerrain;
-import ure.things.UREThing;
+import ure.areas.UArea;
+import ure.actors.UActor;
+import ure.things.UThing;
 
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.TreeSet;
 
@@ -53,10 +52,10 @@ public class UPath {
         }
     }
 
-    public Node NodeIfOpen(UREArea area, int x, int y, Node parent, UREActor actor) {
+    public Node NodeIfOpen(UArea area, int x, int y, Node parent, UActor actor) {
         if (x < 0 || y < 0 || x >= area.xsize || y >= area.ysize)
             return null;
-        if (area.willAcceptThing((UREThing)actor, x, y))
+        if (area.willAcceptThing((UThing)actor, x, y))
             return new Node(x,y,parent);
         return null;
     }
@@ -65,7 +64,7 @@ public class UPath {
         return Math.abs(x2-x1) + Math.abs(y2-y1);
     }
 
-    public int[] nextStep(UREArea area, int x1, int y1, int x2, int y2, UREActor actor, int range) {
+    public int[] nextStep(UArea area, int x1, int y1, int x2, int y2, UActor actor, int range) {
         if (mdist(x1,y1,x2,y2) > range)
             return null;
         Nodelist openlist = new Nodelist();

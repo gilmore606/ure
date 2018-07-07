@@ -1,4 +1,4 @@
-package ure;
+package ure.math;
 
 public class UColor {
     public float r, g, b, a;

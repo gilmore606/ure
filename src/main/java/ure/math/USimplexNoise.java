@@ -1,4 +1,4 @@
-package ure;
+package ure.math;
 
 /*
  * OpenSimplex Noise in Java.

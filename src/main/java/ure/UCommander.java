@@ -2,13 +2,17 @@ package ure;
 
 import ure.actions.UActionGet;
 import ure.actions.UActionWalk;
-import ure.actors.UREActor;
-import ure.actors.UREActorCzar;
-import ure.render.URERenderer;
-import ure.things.UREThing;
-import ure.things.UREThingCzar;
-import ure.ui.UIModal;
-import ure.ui.UREScrollPanel;
+import ure.actors.UActor;
+import ure.actors.UActorCzar;
+import ure.areas.UCartographer;
+import ure.math.UColor;
+import ure.render.URenderer;
+import ure.terrain.Stairs;
+import ure.terrain.UTerrain;
+import ure.things.UThing;
+import ure.things.UThingCzar;
+import ure.ui.UModal;
+import ure.ui.UScrollPanel;
 import ure.ui.UREStatusPanel;
 
 import java.util.*;
@@ -20,22 +24,23 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 
 
-public class URECommander implements URERenderer.KeyListener {
+public class UCommander implements URenderer.KeyListener {
 
     private HashMap<Character, String> keyBinds;
     private HashSet<UTimeListener> timeListeners;
     private HashSet<UAnimator> animators;
-    private ArrayList<UREActor> actors;
+    private ArrayList<UActor> actors;
 
-    private URERenderer renderer;
-    private UREActor player;
-    private UREScrollPanel scrollPrinter;
+    private URenderer renderer;
+    private UActor player;
+    private UScrollPanel scrollPrinter;
 
-    private UREScrollPanel scrollPanel;
+    private UScrollPanel scrollPanel;
     private UREStatusPanel statusPanel;
 
-    public UREThingCzar thingCzar;
-    public UREActorCzar actorCzar;
+    public UThingCzar thingCzar;
+    public UActorCzar actorCzar;
+    public UCartographer cartographer;
 
     public int turnCounter;
     private int turnsPerDay = 512;
@@ -48,13 +53,16 @@ public class URECommander implements URERenderer.KeyListener {
 
     private boolean waitingForInput = false;
 
-    public URECommander(UREActor theplayer, URERenderer theRenderer, UREThingCzar thingczar, UREActorCzar actorczar) {
+    private UModal modal;
+
+    public UCommander(UActor theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
         renderer = theRenderer;
         timeListeners = new HashSet<UTimeListener>();
         animators = new HashSet<UAnimator>();
-        actors = new ArrayList<UREActor>();
+        actors = new ArrayList<UActor>();
         thingCzar = thingczar;
         actorCzar = actorczar;
+        cartographer = carto;
 
         setPlayer(theplayer);
         readKeyBinds();
@@ -64,7 +72,7 @@ public class URECommander implements URERenderer.KeyListener {
 
     public int getTurn() { return turnCounter; };
 
-    public void setPlayer(UREActor theplayer) {
+    public void setPlayer(UActor theplayer) {
         player = theplayer;
     }
 
@@ -75,10 +83,10 @@ public class URECommander implements URERenderer.KeyListener {
         timeListeners.remove(listener);
     }
 
-    public void registerActor(UREActor actor) { actors.add(actor); }
-    public void unRegisterActor(UREActor actor) { actors.remove(actor); }
+    public void registerActor(UActor actor) { actors.add(actor); }
+    public void unRegisterActor(UActor actor) { actors.remove(actor); }
 
-    public void registerScrollPrinter(UREScrollPanel printer) {
+    public void registerScrollPrinter(UScrollPanel printer) {
         scrollPrinter = printer;
     }
 
@@ -86,7 +94,7 @@ public class URECommander implements URERenderer.KeyListener {
     public void addAnimator(UAnimator animator) { animators.add(animator); }
     public void removeAnimator(UAnimator animator) { animators.remove(animator); }
 
-    public UREActor player() { return player; }
+    public UActor player() { return player; }
 
     public void readKeyBinds() {
         // TODO: Actually read keybinds.txt
@@ -97,7 +105,7 @@ public class URECommander implements URERenderer.KeyListener {
         keyBinds.put('A', "MOVE_W");
         keyBinds.put('D', "MOVE_E");
         keyBinds.put('G', "GET");
-        keyBinds.put('>', "STAIRS");
+        keyBinds.put('.', "STAIRS");
         keyBinds.put('I', "INVENTORY");
         keyBinds.put('E', "DEBUG");
         keyBinds.put('1', "DEBUG_1");
@@ -119,8 +127,8 @@ public class URECommander implements URERenderer.KeyListener {
     void hearCommand(String command) {
         if(command == null) return;
         System.out.println("actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command);
-        if (player.camera.modal != null) {
-            player.camera.modal.hearCommand(command);
+        if (modal != null) {
+            modal.hearCommand(command);
         } else {
             switch (command) {
                 case "MOVE_N":
@@ -170,21 +178,26 @@ public class URECommander implements URERenderer.KeyListener {
     }
 
     void commandStairs() {
-
+        UTerrain t = player.area().terrainAt(player.areaX(), player.areaY());
+        if (t instanceof Stairs) {
+            ((Stairs)t).transportActor(player, cartographer);
+        } else {
+            printScroll("You don't see anything to move through.");
+        }
     }
 
     void commandInventory() {
-        UIModal modal = makeInventoryModal();
+        UModal modal = makeInventoryModal();
         showModal(modal);
     }
 
-    UIModal makeInventoryModal() {
-        UIModal modal = new UIModal(30,30, renderer, player.camera, UColor.COLOR_BLACK);
-        Iterator<UREThing> things = player.iterator();
+    UModal makeInventoryModal() {
+        UModal modal = new UModal(30,30, renderer, player.camera, UColor.COLOR_BLACK);
+        Iterator<UThing> things = player.iterator();
         int i = 1;
         while (things.hasNext()) {
-            UREThing thing = things.next();
-            modal.addText("item" + Integer.toString(i), thing.name, 2, i + 1);
+            UThing thing = things.next();
+            modal.addText("item" + Integer.toString(i), thing.name(), 2, i + 1);
             // TODO: figure out what to do with the color here
             //modal.addText("item" + Integer.toString(i), thing.name, 2, i + 1, renderer.UItextColor.makeAWTColor());
             i++;
@@ -192,8 +205,8 @@ public class URECommander implements URERenderer.KeyListener {
         return modal;
     }
 
-    void showModal(UIModal modal) {
-        player.camera.attachModal(modal);
+    void showModal(UModal modal) {
+        attachModal(modal);
     }
 
     void debug() {
@@ -201,11 +214,11 @@ public class URECommander implements URERenderer.KeyListener {
     }
 
     void debug_1() {
-        player.camera.setAllVisible(!player.camera.allVisible);
+        player.camera.setAllVisible(!player.camera.getAllVisible());
     }
 
     void debug_2() {
-        player.camera.setAllLit(!player.camera.allLit);
+        player.camera.setAllLit(!player.camera.getAllLit());
     }
 
     void debug_3() { }
@@ -214,7 +227,7 @@ public class URECommander implements URERenderer.KeyListener {
         scrollPrinter.print(text);
     }
 
-    public void printScrollIfSeen(UREThing source, String text) {
+    public void printScrollIfSeen(UThing source, String text) {
         if (player.canSee(source))
             printScroll(text);
     }
@@ -225,11 +238,11 @@ public class URECommander implements URERenderer.KeyListener {
         }
     }
 
-    void setStatusPanel(UREStatusPanel panel){
+    public void setStatusPanel(UREStatusPanel panel){
         statusPanel = panel;
     }
 
-    void setScrollPanel(UREScrollPanel panel){
+    public void setScrollPanel(UScrollPanel panel){
         scrollPanel = panel;
     }
 
@@ -239,9 +252,6 @@ public class URECommander implements URERenderer.KeyListener {
         while (!renderer.windowShouldClose()) {
             frameCounter++;
             renderer.pollEvents();
-            renderer.drawCamera(player.camera);
-            scrollPanel.renderImage();
-            statusPanel.renderImage();
 
             //Finalize and flush what we've rendered above to screen.
             renderer.render();
@@ -259,7 +269,7 @@ public class URECommander implements URERenderer.KeyListener {
             }
 
             if (!waitingForInput) {
-                for (UREActor actor : actors) {
+                for (UActor actor : actors) {
                     actor.act();
                 }
                 waitingForInput = true;
@@ -267,17 +277,17 @@ public class URECommander implements URERenderer.KeyListener {
             // if it's the player's turn, do a command if we have one
             if (waitingForInput && !keyBuffer.isEmpty()) {
                 consumeKeyFromBuffer();
-                player.camera.renderImage();
+                renderer.render();
                 while (player.actionTime() <= 0f) {
-                    TickTime();
+                    tickTime();
                     waitingForInput = false;
                 }
             }
         }
     }
 
-    void TickTime() {
-        for (UREActor actor : actors) {
+    public void tickTime() {
+        for (UActor actor : actors) {
             actor.addActionTime(1f);
         }
         Iterator<UTimeListener> timeI = timeListeners.iterator();
@@ -286,7 +296,7 @@ public class URECommander implements URERenderer.KeyListener {
         }
         turnCounter++;
         System.out.println("time:tick " + Integer.toString(turnCounter));
-        player.camera.renderImage();
+        renderer.render();
     }
 
     public int daytimeMinutes() {
@@ -325,4 +335,16 @@ public class URECommander implements URERenderer.KeyListener {
         }
         return t;
     }
+
+    public void attachModal(UModal modal) {
+        if (this.modal != null) {
+            this.detachModal();
+        }
+        this.modal = modal;
+    }
+
+    public void detachModal() {
+        this.modal = null;
+    }
+
 }

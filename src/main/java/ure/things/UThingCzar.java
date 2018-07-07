@@ -17,27 +17,28 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Set;
 
-public class UREThingCzar {
+public class UThingCzar {
 
-    private HashMap<String,UREThing> thingsByName;
+    private HashMap<String,ThingI> thingsByName;
 
-    private Set<Class<? extends UREThing>> thingClasses;
+    private Set<Class<? extends ThingI>> thingClasses;
     private ObjectMapper objectMapper = new ObjectMapper();
     private Reflections reflections = new Reflections("ure", new SubTypesScanner());
 
-    public UREThingCzar() {
+    public UThingCzar() {
         SimpleModule module = new SimpleModule();
-        module.addDeserializer(UREThing.class, new ThingDeserializer());
+        module.addDeserializer(ThingI.class, new ThingDeserializer());
         objectMapper.registerModule(module);
     }
 
     public void loadThings(String resourceName) {
-        thingClasses = reflections.getSubTypesOf(UREThing.class);
+        thingClasses = reflections.getSubTypesOf(ThingI.class);
+        System.out.println("++++++++ " + thingClasses.size() + " ThingI subclasses");
         thingsByName = new HashMap<>();
         try {
             InputStream inputStream = getClass().getResourceAsStream("/things.json");
-            UREThing[] thingObjs = objectMapper.readValue(inputStream, UREThing[].class);
-            for (UREThing thing: thingObjs) {
+            ThingI[] thingObjs = objectMapper.readValue(inputStream, ThingI[].class);
+            for (ThingI thing: thingObjs) {
                 thing.initialize();
                 thingsByName.put(thing.name, thing);
             }
@@ -46,37 +47,37 @@ public class UREThingCzar {
         }
     }
 
-    public UREThing getThingByName(String name) {
-        return thingsByName.get(name).getClone();
+    public UThing getThingByName(String name) {
+        return (UThing)(thingsByName.get(name).getClone());
     }
 
-    public class ThingDeserializer extends JsonDeserializer<UREThing> {
+    public class ThingDeserializer extends JsonDeserializer<ThingI> {
 
         @Override
-        public UREThing deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
+        public ThingI deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
             ObjectCodec codec = parser.getCodec();
             JsonNode node = codec.readTree(parser);
             JsonNode typeNode = node.get("type");
             String type = typeNode != null ? node.get("type").asText() : null;
-            Class<? extends UREThing> thingClass = classForType(type);
+            Class<? extends ThingI> thingClass = classForType(type);
             return objectMapper.treeToValue(node, thingClass);
         }
 
-        private Class<? extends UREThing> classForType(String type) {
+        private Class<? extends ThingI> classForType(String type) {
             if (type == null || type.equals("")) {
                 return Blank.class;
             }
             try {
-                for (Class<? extends UREThing> thingClass : thingClasses) {
+                for (Class<? extends ThingI> thingClass : thingClasses) {
                     Field typeField = thingClass.getField("TYPE");
                     String typeValue = (String) typeField.get(null);
                     if (type.equals(typeValue)) {
                         return thingClass;
                     }
                 }
-                throw new RuntimeException("No UREThing class of type '" + type + "' was found in the classpath");
+                throw new RuntimeException("No ThingI class of type '" + type + "' was found in the classpath");
             } catch (NoSuchFieldException e) {
-                throw new RuntimeException("All sublcasses of UREThing must define a static TYPE field", e);
+                throw new RuntimeException("All sublcasses of ThingI must define a static TYPE field", e);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }

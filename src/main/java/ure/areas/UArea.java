@@ -1,19 +1,21 @@
-package ure;
+package ure.areas;
 
-import ure.actors.UREActor;
-import ure.actors.UREPlayer;
-import ure.terrain.URETerrain;
-import ure.terrain.URETerrainCzar;
-import ure.things.UREThing;
+import ure.UCommander;
+import ure.ui.ULight;
+import ure.UTimeListener;
+import ure.actors.UActor;
+import ure.math.UColor;
+import ure.terrain.Stairs;
+import ure.terrain.UTerrain;
+import ure.terrain.UTerrainCzar;
+import ure.things.UThing;
+import ure.ui.UParticle;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -23,16 +25,22 @@ import java.util.stream.Stream;
  *
  */
 
-public class UREArea implements UTimeListener {
+public class UArea implements UTimeListener {
+
+    public interface Listener {
+        void areaChanged();
+    }
+
+    public String label;
 
     private UCell cells[][];
     public int xsize, ysize;
-    private HashSet<URELight> lights;
-    private HashSet<URECamera> cameras;
-    private HashSet<UREActor> actors;
+    private HashSet<ULight> lights;
+    private HashSet<UActor> actors;
     private HashSet<UParticle> particles;
-    private URECommander commander;
-    private URETerrainCzar terrainCzar;
+    private UCommander commander;
+    private UTerrainCzar terrainCzar;
+    private Random random;
 
     public UColor sunColor;
 
@@ -41,7 +49,9 @@ public class UREArea implements UTimeListener {
     HashMap<Integer,String> sunCycleMessages;
     int sunCycleLastAnnounceMarker;
 
-    public UREArea(int thexsize, int theysize, URETerrainCzar tczar, String defaultTerrain) {
+    private Set<Listener> listeners;
+
+    public UArea(int thexsize, int theysize, UTerrainCzar tczar, String defaultTerrain) {
         xsize = thexsize;
         ysize = theysize;
         terrainCzar = tczar;
@@ -53,7 +63,7 @@ public class UREArea implements UTimeListener {
         initLists();
     }
 
-    public UREArea(String filename, URETerrainCzar tczar) {
+    public UArea(String filename, UTerrainCzar tczar) {
         initLists();
         terrainCzar = tczar;
         cells = new UCell[200][200];
@@ -62,7 +72,7 @@ public class UREArea implements UTimeListener {
         lines.forEach(line -> {
             int cellsX = 0;
             for (char c : line.toCharArray()) {
-                URETerrain terrain = terrainCzar.getTerrainForFilechar(c);
+                UTerrain terrain = terrainCzar.getTerrainForFilechar(c);
                 cells[cellsX][ysize] = new UCell(this, cellsX, ysize, terrain);
                 ++cellsX;
             }
@@ -73,13 +83,14 @@ public class UREArea implements UTimeListener {
     }
 
     void initLists() {
-        lights = new HashSet<URELight>();
-        cameras = new HashSet<URECamera>();
-        actors = new HashSet<UREActor>();
-        particles = new HashSet<UParticle>();
-        sunColorLerps = new ArrayList<UColor>();
-        sunColorLerpMarkers = new ArrayList<Integer>();
-        sunCycleMessages = new HashMap<Integer,String>();
+        random = new Random();
+        lights = new HashSet<>();
+        listeners = new HashSet<>();
+        actors = new HashSet<>();
+        particles = new HashSet<>();
+        sunColorLerps = new ArrayList<>();
+        sunColorLerpMarkers = new ArrayList<>();
+        sunCycleMessages = new HashMap<>();
         sunColor = new UColor(130,50,25);
         addSunColorLerp(0, new UColor(0.1f, 0.1f, 0.3f));
         addSunColorLerp(4*60, new UColor(0.2f, 0.2f, 0.3f));
@@ -95,34 +106,35 @@ public class UREArea implements UTimeListener {
 
     public void close() {
         lights = null;
-        cameras = null;
+        listeners = null;
         actors = null;
         cells = null;
     }
 
-    public void setCommander(URECommander cmdr) {
+    public void addListener(Listener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(Listener listener) {
+        listeners.remove(listener);
+    }
+
+    public void setCommander(UCommander cmdr) {
         commander = cmdr;
     }
-    public URECommander commander() {
+    public UCommander commander() {
         return commander;
     }
 
-    public void registerCamera(URECamera thecam) {
-        cameras.add(thecam);
-    }
-    public void unRegisterCamera(URECamera thecam) {
-        cameras.remove(thecam);
-    }
-
-    public HashSet<URELight> lights() {
+    public HashSet<ULight> lights() {
         return lights;
     }
 
-    void addLight(URELight light) {
+    public void addLight(ULight light) {
         lights.add(light);
     }
 
-    void removeLight(URELight light) {
+    public void removeLight(ULight light) {
         lights.remove(light);
     }
 
@@ -179,7 +191,7 @@ public class UREArea implements UTimeListener {
         return false;
     }
 
-    URETerrain terrainAt(int x, int y) {
+    public UTerrain terrainAt(int x, int y) {
         if (isValidXY(x, y))
             if (cells[x][y] != null)
                 return cells[x][y].terrain();
@@ -188,7 +200,7 @@ public class UREArea implements UTimeListener {
 
     public void setTerrain(int x, int y, String t) {
         if (isValidXY(x, y)) {
-            URETerrain terrain = terrainCzar.getTerrainByName(t);
+            UTerrain terrain = terrainCzar.getTerrainByName(t);
             cells[x][y].useTerrain(terrain);
         }
     }
@@ -200,8 +212,8 @@ public class UREArea implements UTimeListener {
         return null;
     }
 
-    boolean blocksLight(int x, int y) {
-        URETerrain t = terrainAt(x, y);
+    public boolean blocksLight(int x, int y) {
+        UTerrain t = terrainAt(x, y);
         if (t != null)
             return t.isOpaque();
         return true;
@@ -210,78 +222,106 @@ public class UREArea implements UTimeListener {
     public void setSeen(int x, int y) {
         setSeen(x, y, true);
     }
+
     public void setSeen(int x, int y, boolean seen) {
         if (isValidXY(x, y))
             cells[x][y].setSeen(seen);
 
     }
+
     public boolean seenCell(int x, int y) {
         if (isValidXY(x, y))
             return cells[x][y].isSeen();
         return false;
     }
-    float sunBrightnessAt(int x, int y) {
+
+    public float sunBrightnessAt(int x, int y) {
         if (isValidXY(x,y))
             if (cells[x][y] != null)
                 return cells[x][y].sunBrightness();
         return 0.0f;
     }
 
-    public boolean willAcceptThing(UREThing thing, int x, int y) {
+    public boolean willAcceptThing(UThing thing, int x, int y) {
         if (isValidXY(x, y))
             return cells[x][y].willAcceptThing(thing);
         return false;
     }
 
-    public UCell addThing(UREThing thing, int x, int y) {
+    public UCell addThing(UThing thing, int x, int y) {
         cells[x][y].addThing(thing);
         if (thing.isActor()) {
-            actors.add((UREActor) thing);
-            if (((UREActor) thing).isPlayer()) {
+            actors.add((UActor) thing);
+            if (((UActor) thing).isPlayer()) {
                 wakeCheckAll(x,y);
             } else {
-                ((UREActor)thing).wakeCheck(x,y);
+                ((UActor)thing).wakeCheck(x,y);
             }
         }
         return cells[x][y];
     }
 
-    void wakeCheckAll(int playerx, int playery) {
-        for (UREActor actor : actors) {
+    private void wakeCheckAll(int playerx, int playery) {
+        for (UActor actor : actors) {
             actor.wakeCheck(playerx, playery);
         }
     }
 
-    public void hearRemoveThing(UREThing thing) {
+    public UCell randomOpenCell(UThing thing) {
+        UCell cell = null;
+        boolean match = false;
+        while (cell == null || !match) {
+            cell = cellAt(random.nextInt(xsize), random.nextInt(ysize));
+            match = cell.willAcceptThing(thing);
+        }
+        return cell;
+    }
+
+    public void hearRemoveThing(UThing thing) {
         actors.remove(thing);
     }
 
-    public Iterator<UREThing> thingsAt(int x, int y) {
+    public Iterator<UThing> thingsAt(int x, int y) {
         if (isValidXY(x,y)) {
             return cells[x][y].iterator();
         }
         return null;
     }
-    public UREActor actorAt(int x, int y) {
+    public UActor actorAt(int x, int y) {
         if (isValidXY(x,y)) {
             return cells[x][y].actorAt();
         }
         return null;
     }
 
-    public void hearTimeTick(URECommander commander) {
-        setSunColor(commander.daytimeMinutes());
-        UpdateCameras();
+    public UCell findExitTo(String label) {
+        for (int x=0;x<xsize;x++) {
+            for (int y=0;y<ysize;y++) {
+                if (cells[x][y].terrain() instanceof Stairs) {
+                    if (((Stairs)cells[x][y].terrain()).label() == label) {
+                        return cells[x][y];
+                    }
+                }
+            }
+        }
+        return null;
     }
 
-    void UpdateCameras() {
-        Iterator<URECamera> camI = cameras.iterator();
-        while (camI.hasNext()) {
-            URECamera camera = camI.next();
-            camera.renderImage();
+    public void hearTimeTick(UCommander commander) {
+        System.out.println(label + " tick");
+        setSunColor(commander.daytimeMinutes());
+        updateListeners();
+    }
+
+    void updateListeners() {
+        for (Listener listener : listeners) {
+            listener.areaChanged();
         }
     }
 
+    public void setLabel(String thelabel) {
+        label = thelabel;
+    }
     public void addParticle(UParticle particle) {
         particles.add(particle);
     }

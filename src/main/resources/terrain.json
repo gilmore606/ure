@@ -189,5 +189,27 @@
     "fgcolor": [255,255,255],
     "bgcolor": [60,60,60],
     "walkmsg": "The trail slopes down into a dark cave."
+  },
+  {
+    "name": "cave exit",
+    "type": "stairs",
+    "filechar": "<",
+    "passable": true,
+    "opaque": false,
+    "sunvis": 0.5,
+    "glyph": "<",
+    "fgcolor": [
+      255,
+      255,
+      255
+    ],
+    "bgcolor": [
+      60,
+      60,
+      60
+    ],
+    "walkmsg": "Rough stairs cut into the rock lead out of the cavern."
   }
-]
+
+  ]
+

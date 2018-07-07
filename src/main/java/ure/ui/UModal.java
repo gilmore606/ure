@@ -1,14 +1,14 @@
 package ure.ui;
 
-import ure.UColor;
-import ure.URECamera;
-import ure.render.URERenderer;
+import ure.math.UColor;
+import ure.render.URenderer;
 
 import java.util.HashMap;
 
-public class UIModal {
-    URERenderer renderer;
-    URECamera camera;
+public class UModal extends View {
+
+    URenderer renderer;
+    UCamera camera;
     public int width, height;
     public int pixelWidth, pixelHeight;
     public int cellx,celly;
@@ -31,15 +31,15 @@ public class UIModal {
         }
     }
 
-    public UIModal(int theCharWidth, int theCharHeight, URERenderer theRenderer, URECamera theCamera, UColor thebgColor) {
+    public UModal(int theCharWidth, int theCharHeight, URenderer theRenderer, UCamera theCamera, UColor thebgColor) {
         renderer = theRenderer;
         camera = theCamera;
         width = theCharWidth;
         height = theCharHeight;
         bgColor = thebgColor;
         texts = new HashMap<>();
-        pixelWidth = theRenderer.cellWidth() * width;
-        pixelHeight = theRenderer.cellHeight() * height;
+        //pixelWidth = theRenderer.cellWidth() * width;
+        //pixelHeight = theRenderer.cellHeight() * height;
         cellx = camera.getWidthInCells()/2 - width/2;
         celly = camera.getHeightInCells()/2 - height/2;
         //image = new BufferedImage(pixelWidth, pixelHeight, BufferedImage.TYPE_INT_RGB);
@@ -48,16 +48,16 @@ public class UIModal {
         //g.fillRect(0,0,pixelWidth,pixelHeight);
     }
 
-    public static UIModal popMessage(String message, URERenderer theRenderer, URECamera theCamera, UColor thebgcolor) {
-        UIModal m = new UIModal(message.length() + 4, 5, theRenderer, theCamera, thebgcolor);
+    public static UModal popMessage(String message, URenderer theRenderer, UCamera theCamera, UColor thebgcolor) {
+        UModal m = new UModal(message.length() + 4, 5, theRenderer, theCamera, thebgcolor);
         // TODO: Fix for new renderer
         //m.addText("message", message, 1, 1, theRenderer.UItextColor.makeAWTColor());
         return m;
     }
     //public Graphics getGraphics() { return image.getGraphics(); }
 
-    public void renderImage() {
-
+    @Override
+    public void draw(URenderer renderer) {
         DrawFrame();
         DrawContent();
     }
@@ -82,12 +82,12 @@ public class UIModal {
     //}
 
     public void hearCommand(String command) {
-        Dismiss();
+        //Dismiss();
     }
 
-    void Dismiss() {
-        camera.detachModal();
-    }
+    //void Dismiss() {
+    //    camera.detachModal();
+    //}
 
     public void addText(String name, String text, int row, int col) {
         // TODO: Fix for new renderer

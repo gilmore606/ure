@@ -1,20 +1,25 @@
-package ure;
+package ure.examplegame;
 
-import ure.terrain.URETerrainCzar;
-import ure.things.UREThingCzar;
+import ure.areas.UArea;
+import ure.areas.UCell;
+import ure.math.UColor;
+import ure.areas.ULandscaper;
+import ure.terrain.Stairs;
+import ure.terrain.UTerrainCzar;
+import ure.things.UThingCzar;
 
-public class ExampleCaveScaper extends URELandscaper {
+public class ExampleCaveScaper extends ULandscaper {
 
-    public ExampleCaveScaper(URETerrainCzar theTerrainCzar, UREThingCzar theThingCzar) {
+    public ExampleCaveScaper(UTerrainCzar theTerrainCzar, UThingCzar theThingCzar) {
         super(theTerrainCzar, theThingCzar);
     }
 
     @Override
-    public void buildArea(UREArea area) {
+    public void buildArea(UArea area) {
         buildCaves(area, "floor", 0,0,area.xsize-4, area.ysize-4);
     }
 
-    public void buildCaves(UREArea area, String floorTerrain,
+    public void buildCaves(UArea area, String floorTerrain,
                            int x1, int x2, int y1, int y2) {
 
         float lavaFactor = randf(0.2f);
@@ -78,5 +83,19 @@ public class ExampleCaveScaper extends URELandscaper {
         scatterThings(area, new String[]{"trucker hat", "butcher knife", "apple", "rock", "rock"},
                 new String[]{floorTerrain}, 10 + rand(40));
 
+        UCell upstairs = area.randomOpenCell(null);
+        area.setTerrain(upstairs.x, upstairs.y, "cave exit");
+
+        UCell downstairs = area.randomOpenCell(null);
+        area.setTerrain(downstairs.x, downstairs.y, "cave entrance");
+    }
+
+    @Override
+    public void SetStairsLabel(UArea area, int x, int y, Stairs t) {
+        if (t.name().equals("cave exit")) {
+            t.setLabel("forest");
+        } else {
+            t.setLabel("cavern");
+        }
     }
 }

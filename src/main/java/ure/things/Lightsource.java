@@ -1,13 +1,13 @@
 package ure.things;
 
-import ure.UColor;
+import ure.math.UColor;
 import ure.UContainer;
-import ure.UREArea;
-import ure.URELight;
+import ure.areas.UArea;
+import ure.ui.ULight;
 
 import java.util.Random;
 
-public class Lightsource extends UREThing {
+public class Lightsource extends ThingI implements UThing {
 
     public static final String TYPE = "lightsource";
 
@@ -22,7 +22,7 @@ public class Lightsource extends UREThing {
 
     public boolean on;
 
-    URELight light;
+    ULight light;
 
     @Override
     public void initialize() {
@@ -33,9 +33,9 @@ public class Lightsource extends UREThing {
     void makeLight() {
         if (lightcolorUseGlyph) {
             SetupColors();
-            light = new URELight(glyphColor, lightrange, lightfalloff);
+            light = new ULight(glyphColor, lightrange, lightfalloff);
         } else {
-            light = new URELight(new UColor(lightcolor[0], lightcolor[1], lightcolor[2]), lightrange, lightfalloff);
+            light = new ULight(new UColor(lightcolor[0], lightcolor[1], lightcolor[2]), lightrange, lightfalloff);
         }
         Random random = new Random();
         if (lightflicker > 0)
@@ -53,7 +53,7 @@ public class Lightsource extends UREThing {
     }
 
     @Override
-    public void moveToCell(UREArea area, int x, int y) {
+    public void moveToCell(UArea area, int x, int y) {
         super.moveToCell(area, x, y);
         if (on()) {
             light.moveTo(area, x, y);

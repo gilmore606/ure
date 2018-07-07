@@ -21,25 +21,28 @@ import org.reflections.scanners.SubTypesScanner;
  * Load and manage all the terrain types and dole them out as needed.
  */
 
-public class URETerrainCzar {
+public class UTerrainCzar {
 
-    private  HashMap<Character,URETerrain> terrains;
-    private  HashMap<String,URETerrain> terrainsByName;
+    private  HashMap<Character,TerrainI> terrains;
+    private  HashMap<String,TerrainI> terrainsByName;
 
-    private Set<Class<? extends URETerrain>> terrainClasses;
+    private Set<Class<? extends TerrainI>> terrainClasses;
     private ObjectMapper objectMapper = new ObjectMapper();
     private Reflections reflections = new Reflections("ure", new SubTypesScanner());
 
-    public URETerrainCzar() {
+    private Class<TerrainDeco> decorator;
+
+    public UTerrainCzar(Class<TerrainDeco> myDecorator) {
         SimpleModule module = new SimpleModule();
-        module.addDeserializer(URETerrain.class, new TerrainDeserializer());
+        module.addDeserializer(TerrainI.class, new TerrainDeserializer());
         objectMapper.registerModule(module);
+        decorator = myDecorator;
     }
 
     public void loadTerrains(String resourceName) {
-        terrainClasses = reflections.getSubTypesOf(URETerrain.class);
-        System.out.println("+++++++++ " + terrainClasses.size() + " UREterrains");
-        for (Class<? extends URETerrain> terrainClass : terrainClasses) {
+        terrainClasses = reflections.getSubTypesOf(TerrainI.class);
+        System.out.println("+++++++++ " + terrainClasses.size() + " TerrainI subclasses");
+        for (Class<? extends TerrainI> terrainClass : terrainClasses) {
             System.out.println("**** " + terrainClass.toString());
         }
         System.out.println("+++++++++");
@@ -47,8 +50,8 @@ public class URETerrainCzar {
         terrainsByName = new HashMap<>();
         try {
             InputStream inputStream = getClass().getResourceAsStream("/terrain.json");
-            URETerrain[] terrainObjs = objectMapper.readValue(inputStream, URETerrain[].class);
-            for (URETerrain terrain : terrainObjs) {
+            TerrainI[] terrainObjs = objectMapper.readValue(inputStream, TerrainI[].class);
+            for (TerrainI terrain : terrainObjs) {
                 terrain.initialize();
                 terrains.put(terrain.filechar, terrain);
                 terrainsByName.put(terrain.name, terrain);
@@ -58,43 +61,51 @@ public class URETerrainCzar {
         }
     }
 
-    public URETerrain getTerrainForFilechar(char thechar) {
-        URETerrain template = terrains.get(thechar);
-        URETerrain clone = null;
-        return terrains.get(thechar).getClone();
+    public UTerrain getTerrainForFilechar(char thechar) {
+        UTerrain terrain = (UTerrain)(terrains.get(thechar).getClone());
+        if (decorator != null) {
+            TerrainDeco decoInstance = null;
+            try {
+                decoInstance = decorator.getDeclaredConstructor(new Class[]{UTerrain.class}).newInstance(terrain);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return (UTerrain)decoInstance;
+        }
+        return terrain;
     }
 
-    public URETerrain getTerrainByName(String name) {
-        return getTerrainForFilechar(terrainsByName.get(name).filechar);
+    public UTerrain getTerrainByName(String name) {
+        return (UTerrain)(getTerrainForFilechar(terrainsByName.get(name).filechar));
     }
 
-    public class TerrainDeserializer extends JsonDeserializer<URETerrain> {
+    public class TerrainDeserializer extends JsonDeserializer<TerrainI> {
 
         @Override
-        public URETerrain deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
+        public TerrainI deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
             ObjectCodec codec = parser.getCodec();
             JsonNode node = codec.readTree(parser);
             JsonNode typeNode = node.get("type");
             String type = typeNode != null ? node.get("type").asText() : null;
-            Class<? extends URETerrain> terrainClass = classForType(type);
-            return objectMapper.treeToValue(node, terrainClass);
+            Class<? extends TerrainI> terrainClass = classForType(type);
+            return (objectMapper.treeToValue(node, terrainClass));
         }
 
-        private Class<? extends URETerrain> classForType(String type) {
+        private Class<? extends TerrainI> classForType(String type) {
             if (type == null || type.equals("")) {
                 return Blank.class;
             }
             try {
-                for (Class<? extends URETerrain> terrainClass : terrainClasses) {
+                for (Class<? extends TerrainI> terrainClass : terrainClasses) {
                     Field typeField = terrainClass.getField("TYPE");
                     String typeValue = (String) typeField.get(null);
                     if (type.equals(typeValue)) {
                         return terrainClass;
                     }
                 }
-                throw new RuntimeException("No URETerrain class of type '" + type + "' was found in the classpath");
+                throw new RuntimeException("No TerrainI class of type '" + type + "' was found in the classpath");
             } catch (NoSuchFieldException e) {
-                throw new RuntimeException("All subclasses of URETerrain must define a static TYPE field", e);
+                throw new RuntimeException("All subclasses of TerrainI must define a static TYPE field", e);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }

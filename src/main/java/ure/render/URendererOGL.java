@@ -4,11 +4,8 @@ import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
-import ure.UColor;
-import ure.URECamera;
-import ure.actors.UREActor;
-import ure.terrain.URETerrain;
-import ure.things.UREThing;
+import ure.math.UColor;
+import ure.ui.View;
 
 import java.nio.FloatBuffer;
 
@@ -16,9 +13,10 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
-import java.util.Iterator;
+public class URendererOGL implements URenderer {
 
-public class URERendererOGL implements URERenderer {
+    private View rootView;
+    private View context;
 
     //To store matrix data for uploading into OpenGLVille
     private FloatBuffer fb = BufferUtils.createFloatBuffer(16);
@@ -30,6 +28,8 @@ public class URERendererOGL implements URERenderer {
     // TODO: These should be customizable at a higher level
     private int screenWidth = 1400;
     private int screenHeight = 1000;
+    private int glyphWidth = 16;
+    private int glyphHeight = 17;
 
     private GLFWErrorCallback errorCallback;
 
@@ -42,16 +42,18 @@ public class URERendererOGL implements URERenderer {
 
     private int textureAtlas = -1;
 
-    private final static int cellPadX = 0;
-    private final static int cellPadY = 1;
-    private int fontSize = 16;
-    private UColor uiFrameColor = new UColor(1f, 1f, 0f);
-
     private KeyListener keyListener;
     private UColor cameraBgColor = UColor.COLOR_BLACK;
-    private UColor UIframeColor;
+
+    private int frameCount = 0;
+    private long lastUpdateTime = System.currentTimeMillis();
 
     // URERenderer methods
+
+    @Override
+    public void setRootView(View root) {
+        rootView = root;
+    }
 
     @Override
     public boolean windowShouldClose() {
@@ -69,16 +71,6 @@ public class URERendererOGL implements URERenderer {
     }
 
     @Override
-    public int cellWidth() {
-        return fontSize + cellPadX;
-    }
-
-    @Override
-    public int cellHeight() {
-        return fontSize + cellPadY;
-    }
-
-    @Override
     public void initialize() {
 
         if (!glfwInit())
@@ -92,7 +84,7 @@ public class URERendererOGL implements URERenderer {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 0);
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
         window = glfwCreateWindow(screenWidth, screenHeight, "UREasonable example!", NULL, NULL);
         if ( window == NULL )
@@ -159,37 +151,38 @@ public class URERendererOGL implements URERenderer {
     }
 
     @Override
+    public void render() {
+        if (rootView != null) {
+            render(rootView);
+        }
+        paintScreen();
+    }
+
+    public void render(View view) {
+        context = view;
+        view.draw(this);
+        for (View child : view.children()) {
+            render(child);
+        }
+    }
+
+    @Override
     public void drawString(int x, int y, UColor col, String str){
         //TODO: HANDLE FONT CHANGES
+        x += context.absoluteX();
+        y += context.absoluteY();
         for(int i = 0; i < str.length(); i++){
-            addQuad(x, y, cellWidth(), cellHeight(), col, str.charAt(i));
+            // TODO: pass in the size
+            addQuad(x, y, glyphWidth, glyphHeight, col, str.charAt(i));
             x += 8;
         }
     }
 
     @Override
-    public void drawCamera(URECamera camera) {
-
-        camera.rendering = true;
-        int cellw = cellWidth();
-        int cellh = cellHeight();
-        int camw = camera.getWidthInCells();
-        int camh = camera.getHeightInCells();
-
-        // Render Cells.
-        for (int x=0;x<camw;x++) {
-            for (int y=0;y<camh;y++) {
-                renderCell(camera, x, y, cellw, cellh);
-            }
-        }
-
-        camera.rendering = false;
-    }
-
-    @Override
     public void drawGlyph(char glyph, int destx, int desty, UColor tint, int offX, int offY) {
         //tint.r = 1.0f;
-        addQuad(destx + offX, desty + offY, cellWidth(), cellHeight(), tint, glyph);
+        // TODO: Pass in the size
+        addQuad(destx + offX, desty + offY, glyphWidth, glyphHeight, tint, glyph);
     }
 
     @Override
@@ -198,10 +191,37 @@ public class URERendererOGL implements URERenderer {
         for(int y = -1; y < 2; y += 1)
             for(int x = -1; x < 2; x += 1)
                 if(x != 0 && y != 0)
-                    addQuad(destx + offX + x, desty + offY + y, cellWidth(), cellHeight(), tint, glyph);
+                    addQuad(destx + offX + x, desty + offY + y, glyphWidth, glyphHeight, tint, glyph);
     }
 
-    public void render() {
+    @Override
+    public void drawRect(int x, int y, int w, int h, UColor col){
+        x += context.absoluteX();
+        y += context.absoluteY();
+        addQuad(x, y, w, h, col);
+    }
+
+    @Override
+    public void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor){
+        x += context.absoluteX();
+        y += context.absoluteY();
+        addQuad(x, y, w, h, borderColor);
+        addQuad(x + borderThickness, y + borderThickness, w - borderThickness * 2, h - borderThickness * 2, bgColor);
+    }
+
+    @Override
+    public int glyphWidth() {
+        return glyphWidth;
+    }
+
+    @Override
+    public int glyphHeight() {
+        return glyphHeight;
+    }
+
+    // internals
+
+    public void paintScreen() {
 
         glViewport(0, 0, screenWidth, screenHeight);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -245,20 +265,15 @@ public class URERendererOGL implements URERenderer {
         glfwSwapBuffers(window);
 
         tris = 0;
-    }
 
-    @Override
-    public void drawRect(int x, int y, int w, int h, UColor col){
-        addQuad(x, y, w, h, col);
+        frameCount++;
+        long now = System.currentTimeMillis();
+        if (now - lastUpdateTime > 1000) {
+            System.out.println("[ " + frameCount + " fps ]");
+            frameCount = 0;
+            lastUpdateTime = now;
+        }
     }
-
-    @Override
-    public void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor){
-        addQuad(x, y, w, h, borderColor);
-        addQuad(x + borderThickness, y + borderThickness, w - borderThickness * 2, h - borderThickness * 2, bgColor);
-    }
-
-    // internals
 
     private void resize(int width, int height){
         screenWidth = width;
@@ -280,7 +295,7 @@ public class URERendererOGL implements URERenderer {
     private void addQuad(int x, int y, int w, int h, UColor col, char glyph){
         float u = (float)(glyph % 16) / 32.0f + 0.00390625f;
         float v = (float)(glyph / 16) / 32.0f + 0.0078125f;
-        addQuad(x, y, w, h, col, u, v, (float)cellWidth() / 1024.f, (float)cellHeight() / 1024.f);
+        addQuad(x, y, w, h, col, u, v, glyphWidth / 1024.f, glyphHeight / 1024.f);
     }
 
     // I don't think we'll have any triangle data for awhile/ever, so I'm just gonna do quads.
@@ -356,42 +371,4 @@ public class URERendererOGL implements URERenderer {
 
         tris += 2;
     }
-
-
-    private void renderCell(URECamera camera, int x, int y, int cellw, int cellh) {
-        float vis = camera.visibilityAt(x,y);
-        float visSeen = camera.getSeenOpacity();
-        UColor light = camera.lightAt(x,y);
-        URETerrain t = camera.terrainAt(x,y);
-        if (t != null) {
-            float tOpacity = vis;
-            if ((vis < visSeen) && camera.area.seenCell(x + camera.x1, y + camera.y1))
-                tOpacity = visSeen;
-            UColor terrainLight = light;
-            if (t.glow)
-                terrainLight.set(1f,1f,1f);
-            t.bgColorBuffer.set(t.bgColor.r, t.bgColor.g, t.bgColor.b);
-            t.bgColorBuffer.illuminateWith(terrainLight, tOpacity);
-
-            addQuad(x * cellw, y * cellh, cellw, cellh, t.bgColorBuffer);
-            t.fgColorBuffer.set(t.fgColor.r, t.fgColor.g, t.fgColor.b);
-            t.fgColorBuffer.illuminateWith(terrainLight, tOpacity);
-            drawGlyph(t.glyph(x+camera.x1,y+camera.y1), x * cellw, y * cellh, t.fgColorBuffer, t.glyphOffsetX(), t.glyphOffsetY() + 2);
-        }
-
-        //TODO: Define this magic value somewhere?
-        if (vis < 0.3f)
-            return;
-        Iterator<UREThing> things = camera.thingsAt(x,y);
-        if (things != null) {
-            while (things.hasNext()) {
-                things.next().render(this, x * cellw, y * cellh, light, vis);
-            }
-        }
-        UREActor actor = camera.actorAt(x,y);
-        if (actor != null) {
-            actor.render(this, x * cellw, y * cellh, light, vis);
-        }
-    }
-
 }

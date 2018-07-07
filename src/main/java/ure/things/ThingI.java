@@ -1,8 +1,10 @@
 package ure.things;
 
 import ure.*;
-import ure.actors.UREActor;
-import ure.render.URERenderer;
+import ure.actors.UActor;
+import ure.areas.UArea;
+import ure.math.UColor;
+import ure.render.URenderer;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -13,7 +15,8 @@ import java.util.Random;
  * A real instance of a thing.
  *
  */
-public class UREThing implements UContainer, Cloneable {
+public abstract class ThingI implements UThing, UContainer, Cloneable {
+
     public String name;
     public String iname;
     public String dname;
@@ -103,9 +106,9 @@ public class UREThing implements UContainer, Cloneable {
     public void moveToCell(int x, int y) {
         moveToCell(area(), x, y);
     }
-    public void moveToCell(UREArea area, int x, int y) {
+    public void moveToCell(UArea area, int x, int y) {
         leaveCurrentLocation();
-        this.location = area.addThing(this, x, y);
+        this.location = area.addThing((UThing)this, x, y);
     }
 
     public void moveToContainer(UContainer container) {
@@ -114,40 +117,40 @@ public class UREThing implements UContainer, Cloneable {
         this.location = container;
     }
 
-    void leaveCurrentLocation() {
+    public void leaveCurrentLocation() {
         if (location != null) {
             location.removeThing(this);
         }
         this.location = null;
     }
 
-    public void addThing(UREThing thing) {
+    public void addThing(UThing thing) {
         contents.add(thing);
     }
-    public void removeThing(UREThing thing) {
+    public void removeThing(UThing thing) {
         contents.remove(thing);
     }
-    public Iterator<UREThing> iterator() {
+    public Iterator<UThing> iterator() {
         return contents.iterator();
     }
     public int containerType() { return UContainer.TYPE_THING; }
-    public boolean willAcceptThing(UREThing thing) {
+    public boolean willAcceptThing(UThing thing) {
         return false;
     }
     public int areaX() { return location.areaX(); }
     public int areaY() { return location.areaY(); }
-    public UREArea area() { return location.area(); }
+    public UArea area() { return location.area(); }
 
-    public UREThing getClone() {
+    public UThing getClone() {
         try {
-            return (UREThing) super.clone();
+            return (UThing) super.clone();
         } catch (CloneNotSupportedException e) {
             System.out.println(" Cloning not allowed. ");
             return this;
         }
     }
 
-    public boolean tryGetBy(UREActor actor) {
+    public boolean tryGetBy(UActor actor) {
         if (!movable) {
             if (actor.isPlayer())
                 actor.commander().printScroll(getFailMsg);
@@ -156,20 +159,20 @@ public class UREThing implements UContainer, Cloneable {
         return true;
     }
 
-    public void gotBy(UREActor actor) {
+    public void gotBy(UActor actor) {
         if (getMsg(actor) != null)
             area().commander().printScroll(this.getMsg(actor));
     }
 
-    public String getMsg(UREActor actor) {
+    public String getMsg(UActor actor) {
         return description;
     }
 
-    public String walkMsg(UREActor actor) { return "You see " + iname() + "."; }
+    public String walkMsg(UActor actor) { return "You see " + iname() + "."; }
 
     //The camera class will call this, and tell where in screen coords to draw it.
     // TODO: Things should probably not be tied directly to the rendering system.  Ideally they would just be part of the data layer, not the presentation layer
-    public void render(URERenderer renderer, int x, int y, UColor light, float vis){
+    public void render(URenderer renderer, int x, int y, UColor light, float vis){
         char icon = this.glyph();
         UColor color = new UColor(this.getGlyphColor());
         if (this.drawGlyphOutline()) {
@@ -183,4 +186,6 @@ public class UREThing implements UContainer, Cloneable {
     public void emote(String text) {
         area().commander().printScrollIfSeen(this, text);
     }
+
+    public String name() { return name; }
 }
