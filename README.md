@@ -72,6 +72,9 @@ of Java), rather than writing natively in a newer less-known functional language
 
 To get started with URE, clone the repo and take a look at the included ExampleGame package.  We do not yet provide a jar; coming soon.
 
+If you're excited about URE and would like to start trying it out in its early state, we would welcome your feedback
+and be happy to work with you to get features implemented to help you achieve your roguelike dream.
+
 
 ## API Documentation
 
