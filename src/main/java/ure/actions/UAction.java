@@ -34,23 +34,31 @@ public abstract class UAction {
      * Do whatever it is that actor does, when actor does this.  Return the time it took,
      * modified by the actor.
      *
-     * Do not override this unless your action needs to figure its own cost on the fly;
-     * otherwise, override doFor().
+     * Do not override this.  Override doMe() to define your custom action's behavior.
      *
-     * @param actor
+     * @return Time this action took to execute, in action time units.
+     */
+    public float doNow() {
+        doMe();
+        return timeCost();
+    }
+
+    /**
+     * The time this action takes to execute, in action time units.
+     *
+     * Override this to define your action's duration.
+     *
      * @return
      */
-    public float doneBy(UActor actor) {
-        doFor(actor);
+    public float timeCost() {
         return cost * (1f / actor.actionSpeed());
     }
 
     /**
      * Do what this action actually does.  Override this to create your action's custom behavior.
      *
-     * @param actor
      */
-    void doFor(UActor actor) {
+    void doMe() {
 
     }
 }

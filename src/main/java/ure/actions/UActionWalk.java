@@ -19,9 +19,13 @@ public class UActionWalk extends UAction {
     }
 
     @Override
-    public float doneBy(UActor actor) {
+    public void doMe() {
         actor.walkDir(xdir, ydir);
-        float time = super.doneBy(actor);
+    }
+
+    @Override
+    public float timeCost() {
+        float time = super.timeCost();
         time = time * (1f / actor.myCell().terrain().moveSpeed(actor));
         return time;
     }

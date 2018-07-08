@@ -18,7 +18,7 @@ public class UActionEmote extends UAction {
     }
 
     @Override
-    void doFor(UActor actor) {
+    void doMe() {
         actor.emote(text);
     }
 }

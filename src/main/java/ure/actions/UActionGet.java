@@ -26,7 +26,7 @@ public class UActionGet extends UAction {
     }
 
     @Override
-    void doFor(UActor actor) {
+    void doMe() {
         if (thing == null) {
             thing = actor.myCell().topThingAt();
             if (thing == null) {

@@ -145,7 +145,7 @@ public class UActor extends ThingI {
     }
 
     public void doAction(UAction action) {
-        float timecost = action.doneBy(this);
+        float timecost = action.doNow();
         this.actionTime = this.actionTime - timecost;
     }
 

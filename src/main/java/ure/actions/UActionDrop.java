@@ -27,7 +27,7 @@ public class UActionDrop extends UAction {
     }
 
     @Override
-    void doFor(UActor actor) {
+    void doMe() {
         if (thing != null) {
             if (destination == null) {
                 destination = actor.location();
