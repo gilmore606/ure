@@ -124,6 +124,18 @@
       "bgcolor": [0,40,0],
       "walkmsg": "Tall pine trees."
     },
+  {
+    "name": "sapling",
+    "filechar": "t",
+    "passable": true,
+    "opaque": false,
+    "sunvis": 1.0,
+    "glyph": "$",
+    "fgcolor": [0,220,0],
+    "fgvariants": [ [50,220,0],[40,180,0],[0,240,0]],
+    "bgcolor": [0,40,0],
+    "bgvariants": [ [0,45,0],[0,60,0],[0,50,5],[5,60,5],[5,45,9] ]
+  },
     {
       "name": "water",
       "type": "water",
