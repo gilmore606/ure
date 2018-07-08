@@ -27,4 +27,5 @@ public interface UTerrain {
     UColor fgColor();
     UColor fgColorBuffer();
     String name();
+    String bonkmsg();
 }
