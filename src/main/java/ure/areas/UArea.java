@@ -197,6 +197,13 @@ public class UArea implements UTimeListener {
                 return cells[x][y].terrain();
         return null;
     }
+    public boolean hasTerrainAt(int x, int y, String terrain) {
+        if (isValidXY(x,y))
+            if (cells[x][y] != null)
+                if (cells[x][y].terrain.name().equals(terrain))
+                    return true;
+        return false;
+    }
 
     public void setTerrain(int x, int y, String t) {
         if (isValidXY(x, y)) {

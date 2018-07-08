@@ -487,23 +487,18 @@ public class ULandscaper {
         drawRect(area, wallt, x, y, (x+w)-1, (y+h)-1);
     }
 
-    public void buildComplex(UArea area, int x1, int y1, int x2, int y2, String floort, String wallt, String[] drawoverts) {
+    public void buildComplex(UArea area, int x1, int y1, int x2, int y2, String floort, String wallt, String[] drawoverts, int roomsizeMin, int roomsizeMax, float hallChance, int hallwidth, int roomsmax, int minroomarea) {
         ArrayList<int[]> rooms = new ArrayList<int[]>();
-        int roomMin = 5; int roomMax = 13;
         boolean addExteriorDoors = true;
         boolean addExteriorWindows = true;
-        float hallChance = 0.3f;
-        int hallwidth = 3;
-        int firstw = roomMin + rand(roomMax-roomMin);
-        int firsth = roomMin + rand(roomMax-roomMin);
+        int firstw = roomsizeMin + rand(roomsizeMax-roomsizeMin);
+        int firsth = roomsizeMin + rand(roomsizeMax-roomsizeMin);
         int firstx = x1 + (x2-x1)/2;
         int firsty = y1 + (y2-y1)/2;
         buildRoom(area, firstx,firsty,firstw,firsth, floort, wallt);
         rooms.add(new int[]{firstx,firsty,firstw,firsth});
         boolean done = false;
         int fails = 0;
-        int roomsmax = 60;
-        int minroomarea = 8;
         while (!done && (fails < rooms.size()*6) && (rooms.size() < roomsmax)) {
             int[] sourceroom = rooms.get(rand(rooms.size()));
             int wallid = rand(4);
@@ -524,11 +519,11 @@ public class ULandscaper {
             int[] newbox = new int[]{0,0};
             if (randf() < hallChance) {
                 newbox[0] = hallwidth;
-                newbox[1] = roomMin + rand(roomMax-roomMin);
+                newbox[1] = roomsizeMin + rand(roomsizeMax-roomsizeMin);
             } else {
                 while (newbox[0] * newbox[1] < minroomarea) {
-                    newbox[0] = roomMin + rand(roomMax - roomMin);
-                    newbox[1] = roomMax + rand(roomMax - roomMin);
+                    newbox[0] = roomsizeMin + rand(roomsizeMax - roomsizeMin);
+                    newbox[1] = roomsizeMax + rand(roomsizeMax - roomsizeMin);
                 }
             }
             if ((sourceroom[2] > sourceroom[3] && newbox[0] > newbox[1]) || (sourceroom[2] < sourceroom[3] && newbox[0] < newbox[1])) {
@@ -613,6 +608,9 @@ public class ULandscaper {
                 System.out.println("CARTO : couldn't add room");
             }
         }
+        for (int[] room : rooms) {
+            DecorateRoom(area, room);
+        }
         if (addExteriorDoors && rooms.size() > 1) {
             for (int i = 0;i < rand(rooms.size()/2) + 2;i++) {
                 UCell doorcell = findAnextToB(area, wallt, "grass", x1 + 1, y1 + 1, x2 - 1, y2 - 1);
@@ -628,6 +626,16 @@ public class ULandscaper {
                     area.setTerrain(windowcell.x, windowcell.y, "window");
                 }
             }
+        }
+    }
+
+    void DecorateRoom(UArea area, int[] room) {
+        int x1 = room[0];
+        int y1 = room[1];
+        int w = room[2];
+        int h = room[3];
+        if (randf() < 0.2f) {
+            fillRect(area, "carvings", x1+1,y1+1,x1+w-3,y1+h-3);
         }
     }
 

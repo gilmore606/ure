@@ -55,7 +55,9 @@ public class ExampleForestScaper extends ULandscaper {
             int ruinw = 20+rand(20); int ruinh = 20+rand(20);
             UCell ruinloc = findAreaWithout(area, 1, 1, area.xsize - ruinw, area.ysize - ruinh, ruinw-1, ruinh-1, new String[]{"wall"});
             if (ruinloc != null) {
-                buildComplex(area, ruinloc.x, ruinloc.y, ruinloc.x + ruinw, ruinloc.y + ruinh, "floor", "wall", new String[]{"tree", "sapling", "grass", "water"});
+                buildComplex(area, ruinloc.x, ruinloc.y, ruinloc.x + ruinw, ruinloc.y + ruinh, "floor", "wall",
+                        new String[]{"tree", "sapling", "grass", "water"}, 5, 9+rand(5),
+                        0.3f, 3, 4+rand(30), 8+rand(6));
                 thinTrees(area, ruinloc.x - 1, ruinloc.y - 1, ruinloc.x + ruinw + 2, ruinloc.y + ruinh + 2);
             }
         }
@@ -66,7 +68,7 @@ public class ExampleForestScaper extends ULandscaper {
     public void thinTrees(UArea area, int x1, int y1, int x2, int y2) {
         for (int x=x1;x<=x2;x++) {
             for (int y=y1;y<=y2;y++) {
-                if (area.terrainAt(x,y).name().equals("tree")) {
+                if (area.hasTerrainAt(x,y,"tree")) {
                     area.setTerrain(x,y,"sapling");
                 }
             }
