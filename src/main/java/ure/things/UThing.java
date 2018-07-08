@@ -1,7 +1,6 @@
 package ure.things;
 
 import ure.math.UColor;
-import ure.UContainer;
 import ure.areas.UArea;
 import ure.actors.UActor;
 import ure.render.URenderer;
@@ -24,7 +23,8 @@ public interface UThing {
     boolean drawGlyphOutline();
     void moveToCell(int x, int y);
     void moveToCell(UArea area, int x, int y);
-    void moveToContainer(UContainer container);
+    void moveTo(UContainer container);
+    UContainer location();
     void leaveCurrentLocation();
     void addThing(UThing thing);
     void removeThing(UThing thing);

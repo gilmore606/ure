@@ -3,6 +3,10 @@ package ure.actions;
 import ure.actors.UActor;
 import ure.things.UThing;
 
+/**
+ * Actor tries to pick up the thing, from the ground or a container.
+ *
+ */
 public class UActionGet extends UAction {
 
     public static String id = "GET";
@@ -19,7 +23,8 @@ public class UActionGet extends UAction {
         thing = thething;
     }
 
-    public void doFor(UActor actor) {
+    @Override
+    void doFor(UActor actor) {
         if (thing == null) {
             thing = actor.myCell().topThingAt();
             if (thing == null) {

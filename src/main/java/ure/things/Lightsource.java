@@ -1,7 +1,6 @@
 package ure.things;
 
 import ure.math.UColor;
-import ure.UContainer;
 import ure.areas.UArea;
 import ure.ui.ULight;
 

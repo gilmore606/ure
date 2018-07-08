@@ -1,8 +1,8 @@
 package ure.things;
 
-import ure.*;
 import ure.actors.UActor;
 import ure.areas.UArea;
+import ure.areas.UCell;
 import ure.math.UColor;
 import ure.render.URenderer;
 
@@ -103,15 +103,20 @@ public abstract class ThingI implements UThing, UContainer, Cloneable {
         return glyphOutline;
     }
 
+    public UContainer location() { return location; }
+
     public void moveToCell(int x, int y) {
         moveToCell(area(), x, y);
     }
     public void moveToCell(UArea area, int x, int y) {
-        leaveCurrentLocation();
-        this.location = area.addThing((UThing)this, x, y);
+        UCell destination = area.cellAt(x,y);
+        if (destination != null) {
+            moveTo(destination);
+            area.addedThing((UThing) this, x, y);
+        }
     }
 
-    public void moveToContainer(UContainer container) {
+    public void moveTo(UContainer container) {
         leaveCurrentLocation();
         container.addThing(this);
         this.location = container;

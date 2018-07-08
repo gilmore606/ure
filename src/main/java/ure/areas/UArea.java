@@ -254,8 +254,15 @@ public class UArea implements UTimeListener {
         return false;
     }
 
-    public UCell addThing(UThing thing, int x, int y) {
-        cells[x][y].addThing(thing);
+    /**
+     * A thing moved into one of our cells; do any bookkeeping or notification we require.
+     *
+     * @param thing
+     * @param x
+     * @param y
+     * @return
+     */
+    public void addedThing(UThing thing, int x, int y) {
         if (thing.isActor()) {
             actors.add((UActor) thing);
             if (((UActor) thing).isPlayer()) {
@@ -264,7 +271,6 @@ public class UArea implements UTimeListener {
                 ((UActor)thing).wakeCheck(x,y);
             }
         }
-        return cells[x][y];
     }
 
     private void wakeCheckAll(int playerx, int playery) {

@@ -1,7 +1,7 @@
 package ure.areas;
 
-import ure.UCollection;
-import ure.UContainer;
+import ure.things.UCollection;
+import ure.things.UContainer;
 import ure.actors.UActor;
 import ure.terrain.UTerrain;
 import ure.things.UThing;

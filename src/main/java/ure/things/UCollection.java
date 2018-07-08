@@ -1,13 +1,12 @@
-package ure;
+package ure.things;
 
 import ure.actors.UActor;
-import ure.things.UThing;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * A bunch of Things in a place.
+ * An inventory of things in a location (either a cell, or another thing or actor).
  *
  */
 

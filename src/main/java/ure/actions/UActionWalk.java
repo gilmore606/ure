@@ -2,6 +2,10 @@ package ure.actions;
 
 import ure.actors.UActor;
 
+/**
+ * Actor tries to walk to a new cell from their current cell.
+ *
+ */
 public class UActionWalk extends UAction {
 
     public static String id = "WALK";

@@ -2,6 +2,10 @@ package ure.actions;
 
 import ure.actors.UActor;
 
+/**
+ * Actor makes an emotive text noise.
+ *
+ */
 public class UActionEmote extends UAction {
 
     public static String id = "EMOTE";
@@ -13,7 +17,7 @@ public class UActionEmote extends UAction {
     }
 
     @Override
-    public void doFor(UActor actor) {
+    void doFor(UActor actor) {
         actor.emote(text);
     }
 }

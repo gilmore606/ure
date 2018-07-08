@@ -1,4 +1,4 @@
-package ure;
+package ure.things;
 
 import ure.areas.UArea;
 import ure.things.UThing;

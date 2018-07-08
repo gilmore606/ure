@@ -1,7 +1,6 @@
 package ure.things;
 
 import ure.math.UColor;
-import ure.UContainer;
 import ure.areas.UArea;
 import ure.actors.UActor;
 import ure.render.URenderer;
@@ -34,8 +33,9 @@ public class ThingDeco implements UThing {
     public boolean drawGlyphOutline() { return thing.drawGlyphOutline(); }
     public void moveToCell(int x, int y) { thing.moveToCell(x, y); }
     public void moveToCell(UArea area, int x, int y) { thing.moveToCell(area, x ,y); }
-    public void moveToContainer(UContainer container) { thing.moveToContainer(container); }
+    public void moveTo(UContainer container) { thing.moveTo(container); }
     public void leaveCurrentLocation() { thing.leaveCurrentLocation(); }
+    public UContainer location() { return thing.location(); }
     public void addThing(UThing thething) { thing.addThing(thething); }
     public void removeThing(UThing thething) { thing.removeThing(thething); }
     public Iterator<UThing> iterator() { return thing.iterator(); }

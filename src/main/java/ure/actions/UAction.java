@@ -7,6 +7,10 @@ import ure.actors.UActor;
  * game world which take up game time, may be prevented by other Actors or the world, cause events,
  * and so on.
  *
+ * Action instances are generally created by Actors in their act() methods to be returned to the
+ * Commander to cause actions to occur.  These Action instances are also passed around to event
+ * listeners to notify them of the action and its details.
+ *
  */
 public abstract class UAction {
 
@@ -30,7 +34,7 @@ public abstract class UAction {
     }
 
     /**
-     * Do what this action actually does.
+     * Do what this action actually does.  Override this to create your action's custom behavior.
      *
      * @param actor
      */

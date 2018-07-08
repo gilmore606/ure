@@ -8,6 +8,7 @@ import ure.math.UPath;
 import ure.terrain.UTerrain;
 import ure.things.Lightsource;
 import ure.things.ThingI;
+import ure.things.UContainer;
 import ure.things.UThing;
 import ure.ui.UCamera;
 
@@ -130,7 +131,7 @@ public class UActor extends ThingI {
             return;
         }
         if (thing.tryGetBy(this)) {
-            thing.moveToContainer(this);
+            thing.moveTo(this);
             if (isPlayer())
                 area().commander().printScroll("You pick up " + thing.iname() + ".");
             else
