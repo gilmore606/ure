@@ -1,5 +1,6 @@
 package ure.actors;
 
+import ure.areas.UCell;
 import ure.math.UColor;
 import ure.areas.UArea;
 import ure.ui.ULight;
@@ -41,5 +42,11 @@ public class UPlayer extends UActor {
         if (camera.visibilityAt(x - camera.leftEdge, y - camera.topEdge) > 0.1f)
             return true;
         return false;
+    }
+
+    @Override
+    public void walkFail(UCell cell) {
+        super.walkFail(cell);
+        commander.latchBreak();
     }
 }

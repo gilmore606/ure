@@ -78,7 +78,7 @@ public class UCartographer {
     }
 
     public UArea MakeForest() {
-        UArea area = new UArea(300, 300, terrainCzar, "grass");
+        UArea area = new UArea(250, 250, terrainCzar, "grass");
         area.setCommander(commander);
         ULandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);

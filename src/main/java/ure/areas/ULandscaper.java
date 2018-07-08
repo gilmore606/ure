@@ -561,7 +561,10 @@ public class ULandscaper {
                     newroom[1] = 1 + slidepos[1] - newbox[1];
                 }
                 if (canFitBoxAt(area, newroomtest[0],newroomtest[1],newroomtest[2],newroomtest[3], drawoverts)) {
-                    connectpoints[connecti] = new int[]{slidepos[0],slidepos[1]}; connecti++;
+                    if (newroomtest[0] >= x1 && newroomtest[1] >= y1 && newroomtest[0]+newroomtest[2] <= x2 && newroomtest[1]+newroomtest[3] <= y2) {
+                        connectpoints[connecti] = new int[]{slidepos[0], slidepos[1]};
+                        connecti++;
+                    }
                 }
             }
             if (connecti > 0) {
@@ -611,7 +614,7 @@ public class ULandscaper {
             }
         }
         if (addExteriorDoors) {
-            for (int i = 0;i < rand(4) + 2;i++) {
+            for (int i = 0;i < rand(rooms.size()/2) + 2;i++) {
                 UCell doorcell = findAnextToB(area, wallt, "grass", x1 + 1, y1 + 1, x2 - 1, y2 - 1);
                 if (doorcell != null) {
                     area.setTerrain(doorcell.x, doorcell.y, "door");

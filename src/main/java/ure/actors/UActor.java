@@ -159,6 +159,10 @@ public class UActor extends ThingI {
 
     }
 
+    public void walkFail(UCell cell) {
+        commander.printScroll(cell.terrain().bonkmsg());
+    }
+
     public boolean canSee(UThing thing) {
         return true;
     }

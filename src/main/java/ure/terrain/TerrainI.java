@@ -102,12 +102,13 @@ public abstract class TerrainI implements UTerrain, Cloneable, UAnimator {
         return 0;
     }
 
+    public String bonkmsg() { return bonkmsg; }
+
     public void moveTriggerFrom(UActor actor, UCell cell) {
         if (isPassable(actor)) {
             actor.moveToCell(cell.areaX(), cell.areaY());
         } else {
-            if (actor.isPlayer())
-                cell.area().commander().printScroll(bonkmsg);
+            actor.walkFail(cell);
         }
     }
 

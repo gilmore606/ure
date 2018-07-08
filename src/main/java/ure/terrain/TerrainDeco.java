@@ -34,4 +34,5 @@ public class TerrainDeco implements UTerrain {
     public UColor fgColor() { return terrain.fgColor(); }
     public UColor fgColorBuffer() { return terrain.fgColorBuffer(); }
     public String name() { return terrain.name(); }
+    public String bonkmsg() { return terrain.bonkmsg(); }
 }

@@ -52,6 +52,9 @@ public class UCommander implements URenderer.KeyListener {
     private int keyBufferSize = 2;
 
     private boolean waitingForInput = false;
+    private boolean moveLatch = false;
+    private int moveLatchX = 0;
+    private int moveLatchY = 0;
 
     private UModal modal;
 
@@ -104,6 +107,10 @@ public class UCommander implements URenderer.KeyListener {
         keyBinds.put('S', "MOVE_S");
         keyBinds.put('A', "MOVE_W");
         keyBinds.put('D', "MOVE_E");
+        keyBinds.put('H', "LATCH_N");
+        keyBinds.put('B', "LATCH_W");
+        keyBinds.put('N', "LATCH_S");
+        keyBinds.put('M', "LATCH_E");
         keyBinds.put('G', "GET");
         keyBinds.put('.', "STAIRS");
         keyBinds.put('I', "INVENTORY");
@@ -143,6 +150,14 @@ public class UCommander implements URenderer.KeyListener {
                 case "MOVE_E":
                     walkPlayer(1, 0);
                     break;
+                case "LATCH_N":
+                    latchPlayer(0,-1); break;
+                case "LATCH_S":
+                    latchPlayer(0,1); break;
+                case "LATCH_W":
+                    latchPlayer(-1,0); break;
+                case "LATCH_E":
+                    latchPlayer(1,0); break;
                 case "GET":
                     commandGet();
                     break;
@@ -171,6 +186,19 @@ public class UCommander implements URenderer.KeyListener {
 
     void walkPlayer(int xdir, int ydir) {
         player.doAction(new UActionWalk(xdir, ydir));
+    }
+
+    void latchPlayer(int xdir, int ydir) {
+        moveLatch = true;
+        moveLatchX = xdir;
+        moveLatchY = ydir;
+        walkPlayer(xdir, ydir);
+    }
+
+   public void latchBreak() {
+        moveLatch = false;
+        moveLatchX = 0;
+        moveLatchY = 0;
     }
 
     void commandGet() {
@@ -275,12 +303,18 @@ public class UCommander implements URenderer.KeyListener {
                 waitingForInput = true;
             }
             // if it's the player's turn, do a command if we have one
-            if (waitingForInput && !keyBuffer.isEmpty()) {
-                consumeKeyFromBuffer();
-                renderer.render();
-                while (player.actionTime() <= 0f) {
-                    tickTime();
-                    waitingForInput = false;
+            if (waitingForInput) {
+                if (!keyBuffer.isEmpty() || moveLatch) {
+                    if (moveLatch) {
+                        walkPlayer(moveLatchX, moveLatchY);
+                    } else {
+                        consumeKeyFromBuffer();
+                    }
+                    renderer.render();
+                    while (player.actionTime() <= 0f) {
+                        tickTime();
+                        waitingForInput = false;
+                    }
                 }
             }
         }
