@@ -4,6 +4,7 @@ import ure.UCommander;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.examplegame.ExampleCaveScaper;
+import ure.examplegame.ExampleComplexScaper;
 import ure.examplegame.ExampleForestScaper;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
@@ -72,7 +73,7 @@ public class UCartographer {
     }
 
     public UArea MakeForest() {
-        UArea area = new UArea(150, 150, terrainCzar, "grass");
+        UArea area = new UArea(300, 300, terrainCzar, "grass");
         area.setCommander(commander);
         ULandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
@@ -85,8 +86,17 @@ public class UCartographer {
         return area;
     }
 
+    public UArea MakeComplex() {
+        UArea area = new UArea(70, 70, terrainCzar, "grass");
+        area.setCommander(commander);
+        ULandscaper scaper = new ExampleComplexScaper(terrainCzar, thingCzar);
+        scaper.buildArea(area);
+        scaper.SetStairsLabels(area);
+        return area;
+    }
+
     public UArea MakeCavern(int depth) {
-        UArea area = new UArea(180, 180, terrainCzar, "wall");
+        UArea area = new UArea(300, 300, terrainCzar, "wall");
         area.setCommander(commander);
         ULandscaper scaper = new ExampleCaveScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);

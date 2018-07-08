@@ -481,4 +481,143 @@ public class ULandscaper {
     public void SetStairsLabel(UArea area, int x, int y, Stairs t) {
         t.setLabel("");
     }
+
+    public void buildRoom(UArea area, int x, int y, int w, int h, String floort, String wallt) {
+        fillRect(area, floort, x, y, (x+w)-1, (y+h)-1);
+        drawRect(area, wallt, x, y, (x+w)-1, (y+h)-1);
+    }
+
+    public void buildComplex(UArea area, int x1, int y1, int x2, int y2, String floort, String wallt, String[] drawoverts) {
+        ArrayList<int[]> rooms = new ArrayList<int[]>();
+        int roomMin = 5; int roomMax = 13;
+        float hallChance = 0.3f;
+        int hallwidth = 3;
+        int firstw = roomMin + rand(roomMax-roomMin);
+        int firsth = roomMin + rand(roomMax-roomMin);
+        int firstx = x1 + (x2-x1)/2;
+        int firsty = y1 + (y2-y1)/2;
+        buildRoom(area, firstx,firsty,firstw,firsth, floort, wallt);
+        rooms.add(new int[]{firstx,firsty,firstw,firsth});
+        boolean done = false;
+        int fails = 0;
+        int roomsmax = 12;
+        int minroomarea = 8;
+        while (!done && (fails < rooms.size()*6) && (rooms.size() < roomsmax)) {
+            int[] sourceroom = rooms.get(rand(rooms.size()));
+            int wallid = rand(4);
+            int dx, dy, sx, sy;
+            if (wallid == 0) {
+                dx = 0; dy = -1;
+                sx = sourceroom[0]; sy = sourceroom[1];
+            } else if (wallid == 1) {
+                dx = 1; dy = 0;
+                sx = sourceroom[0] + sourceroom[2] - 1; sy = sourceroom[1];
+            } else if (wallid == 2) {
+                dx = 0; dy = 1;
+                sx = sourceroom[0]; sy = sourceroom[1] + sourceroom[3] - 1;
+            } else {
+                dx = -1; dy = 0;
+                sx = sourceroom[0]; sy = sourceroom[1];
+            }
+            int[] newbox = new int[]{0,0};
+            if (randf() < hallChance) {
+                newbox[0] = hallwidth;
+                newbox[1] = roomMin + rand(roomMax-roomMin);
+            } else {
+                while (newbox[0] * newbox[1] < minroomarea) {
+                    newbox[0] = roomMin + rand(roomMax - roomMin);
+                    newbox[1] = roomMax + rand(roomMax - roomMin);
+                }
+            }
+            if ((sourceroom[2] > sourceroom[3] && newbox[0] > newbox[1]) || (sourceroom[2] < sourceroom[3] && newbox[0] < newbox[1])) {
+                int tmp = newbox[0];
+                newbox[0] = newbox[1];
+                newbox[1] = tmp;
+            }
+            int slidemin, slidemax;
+            if (dx == 0) {
+                slidemin = (0 - newbox[0]) + 3;
+                slidemax = (sourceroom[2]) - 3;
+            } else {
+                slidemin = (0 - newbox[1]) + 3;
+                slidemax = (sourceroom[3]) - 3;
+            }
+            int[][] connectpoints = new int[(slidemax-slidemin)+2][2];  int connecti = 0;
+            int[] slidepos = new int[2];
+            int[] newroom = new int[4];
+            for (int slide=slidemin;slide<slidemax;slide++) {
+                slidepos[0] = (sx + slide * Math.abs(dy));
+                slidepos[1] = (sy + slide * Math.abs(dx));
+                int newroomtest[] = new int[]{slidepos[0]+dx,slidepos[1]+dy,newbox[0]-Math.abs(dx),newbox[1]-Math.abs(dy)};
+                newroom = new int[]{slidepos[0],slidepos[1],newbox[0],newbox[1]};
+                if (dx<0) {
+                    newroomtest[0] = 1 + slidepos[0] - newbox[0];
+                    newroom[0] = 1 + slidepos[0] - newbox[0];
+                }
+                if (dy<0) {
+                    newroomtest[1] = 1 + slidepos[1] - newbox[1];
+                    newroom[1] = 1 + slidepos[1] - newbox[1];
+                }
+                if (canFitBoxAt(area, newroomtest[0],newroomtest[1],newroomtest[2],newroomtest[3], drawoverts)) {
+                    connectpoints[connecti] = new int[]{slidepos[0],slidepos[1]}; connecti++;
+                }
+            }
+            if (connecti > 0) {
+                int[] newloc = connectpoints[rand(connecti)];
+                newroom[0] = newloc[0];
+                newroom[1] = newloc[1];
+                newroom[2] = newbox[0];
+                newroom[3] = newbox[1];
+                if (dy < 0) {
+                    newroom[1] = newroom[1] - (newbox[1] - 1);
+                }
+                if (dx < 0) {
+                    newroom[0] = newroom[0] - (newbox[0] - 1);
+                }
+                buildRoom(area, newroom[0],newroom[1],newroom[2],newroom[3],floort,wallt);
+                //cutOpeningInWall(area, newloc[0],newloc[1],dy,dx,wallt,floort);
+                rooms.add(newroom);
+                System.out.println("CARTO : made new room " + Integer.toString(newroom[2]) + " by " + Integer.toString(newroom[3]));
+                fails = 0;
+            } else {
+                fails++;
+                System.out.println("CARTO : couldn't add room");
+            }
+        }
+    }
+
+    public void cutOpeningInWall(UArea area, int x, int y, int dx, int dy, String wallt, String floort) {
+        boolean wallended = false;
+        boolean wallstarted = false;
+        int[][] doorpoints = new int[100][2];
+        int doori = 0;
+        while (!wallended) {
+            x += dx; y+= dy;
+            if (!wallstarted) {
+                if (area.isValidXY(x+dy,y+dx) && area.isValidXY(x-dy,y-dx)) {
+                    if (area.terrainAt(x + dy, y + dx).name().equals(floort) && area.terrainAt(x - dy, y - dx).name().equals(floort)) {
+                        wallstarted = true;
+                    }
+                }
+            } else if (!area.terrainAt(x, y).name().equals(wallt)) {
+                wallended = true;
+            }
+            if (!wallended && wallstarted) {
+                if (area.isValidXY(x+dy,y+dx) && area.isValidXY(x-dy,y-dx)) {
+                    if (area.terrainAt(x + dy, y + dx).name().equals(floort) && area.terrainAt(x - dy, y - dx).name().equals(floort)) {
+                        doorpoints[doori] = new int[]{x, y};
+                        doori++;
+                    } else {
+                        wallended = true;
+                    }
+                } else {
+                    wallended = true;
+                }
+            }
+        }
+        if (doori > 0) {
+            int[] doorpoint = doorpoints[rand(doorpoints.length)];
+            area.setTerrain(doorpoint[0],doorpoint[1],"door");
+        }
+    }
 }
