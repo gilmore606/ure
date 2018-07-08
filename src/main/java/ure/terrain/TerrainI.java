@@ -130,6 +130,14 @@ public abstract class TerrainI implements UTerrain, Cloneable, UAnimator {
         }
     }
 
+    public boolean isInteractable(UActor actor) {
+        return false;
+    }
+
+    public float interactionFrom(UActor actor) {
+        return 0f;
+    }
+
     public void printScroll(String msg, UCell cell) {
         if (walkmsg != null)
             if (walkmsg.length() > 0)

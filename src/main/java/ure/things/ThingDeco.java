@@ -1,5 +1,6 @@
 package ure.things;
 
+import ure.actions.Interactable;
 import ure.math.UColor;
 import ure.areas.UArea;
 import ure.actors.UActor;
@@ -7,7 +8,7 @@ import ure.render.URenderer;
 
 import java.util.Iterator;
 
-public class ThingDeco implements UThing {
+public class ThingDeco implements UThing, Interactable {
 
     private UThing thing;
 
@@ -45,6 +46,9 @@ public class ThingDeco implements UThing {
     public UArea area() { return thing.area(); }
     public boolean tryGetBy(UActor actor) { return thing.tryGetBy(actor); }
     public void gotBy(UActor actor) { thing.gotBy(actor); }
+    public void droppedBy(UActor actor) { thing.droppedBy(actor); }
+    public boolean isInteractable(UActor actor) { return thing.isInteractable(actor); }
+    public float interactionFrom(UActor actor) { return thing.interactionFrom(actor); }
 
     public void render(URenderer renderer, int x, int y, UColor light, float vis) { thing.render(renderer, x, y, light, vis); }
     public void emote(String text) { thing.emote(text); }

@@ -140,6 +140,21 @@ public class UActor extends ThingI {
         }
     }
 
+    public void tryDropThing(UThing thing, UContainer dest) {
+        if (thing == null) {
+            area().commander().printScroll("Nothing to drop.");
+            return;
+        }
+        if (dest.willAcceptThing(thing)) {
+            thing.moveTo(dest);
+            if (isPlayer())
+                area().commander().printScroll("You drop " + thing.iname() + ".");
+            else
+                area().commander().printScrollIfSeen(this, this.dnamec() + " drops " + thing.iname() + ".");
+            thing.droppedBy(this);
+        }
+    }
+
     public float actionSpeed() {
         return 1f;
     }

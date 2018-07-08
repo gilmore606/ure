@@ -23,6 +23,8 @@ public interface UTerrain {
     boolean preventMoveFrom(UActor actor);
     float moveSpeed(UActor actor);
     void walkedOnBy(UActor actor, UCell cell);
+    boolean isInteractable(UActor actor);
+    float interactionFrom(UActor actor);
     void printScroll(String msg, UCell cell);
     float sunvis();
     void animationTick();

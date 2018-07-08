@@ -1,5 +1,6 @@
 package ure.things;
 
+import ure.actions.Interactable;
 import ure.math.UColor;
 import ure.areas.UArea;
 import ure.actors.UActor;
@@ -35,6 +36,9 @@ public interface UThing {
     UArea area();
     boolean tryGetBy(UActor actor);
     void gotBy(UActor actor);
+    void droppedBy(UActor actor);
+    boolean isInteractable(UActor actor);
+    float interactionFrom(UActor actor);
     String getMsg(UActor actor);
     String walkMsg(UActor actor);
     void render(URenderer renderer, int x, int y, UColor light, float vis);

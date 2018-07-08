@@ -18,7 +18,7 @@ public class UActionDrop extends UAction {
     public UActionDrop(UActor theactor, UThing thething) {
         actor = theactor;
         thing = thething;
-        destination = null;
+        destination = actor.location();
     }
     public UActionDrop(UActor theactor, UThing thething, UContainer thedest) {
         actor = theactor;
@@ -32,9 +32,7 @@ public class UActionDrop extends UAction {
             if (destination == null) {
                 destination = actor.location();
             }
-            if (destination.willAcceptThing(thing)) {
-                thing.moveTo(destination);
-            }
+            actor.tryDropThing(thing, destination);
         }
     }
 }

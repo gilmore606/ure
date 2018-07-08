@@ -1,5 +1,6 @@
 package ure.things;
 
+import ure.actions.Interactable;
 import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.areas.UCell;
@@ -15,7 +16,7 @@ import java.util.Random;
  * A real instance of a thing.
  *
  */
-public abstract class ThingI implements UThing, UContainer, Cloneable {
+public abstract class ThingI implements UThing, UContainer, Interactable, Cloneable {
 
     public String name;
     public String iname;
@@ -167,6 +168,16 @@ public abstract class ThingI implements UThing, UContainer, Cloneable {
     public void gotBy(UActor actor) {
         if (getMsg(actor) != null)
             area().commander().printScroll(this.getMsg(actor));
+    }
+    public void droppedBy(UActor actor) {
+
+    }
+
+    public boolean isInteractable(UActor actor) {
+        return false;
+    }
+    public float interactionFrom(UActor actor) {
+        return 0f;
     }
 
     public String getMsg(UActor actor) {

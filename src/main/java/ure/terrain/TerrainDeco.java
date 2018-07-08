@@ -1,5 +1,6 @@
 package ure.terrain;
 
+import ure.actions.Interactable;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.actors.UActor;
@@ -13,7 +14,7 @@ import ure.actors.UActor;
  * To create differentiated subtypes of terrains, rather than affecting all base terrain behavior, you should
  * directly subclass TerrainI or its subclasses such as Door.
  */
-public class TerrainDeco implements UTerrain {
+public class TerrainDeco implements UTerrain, Interactable {
 
     private UTerrain terrain;
     /**
@@ -136,6 +137,24 @@ public class TerrainDeco implements UTerrain {
     public void walkedOnBy(UActor actor, UCell cell) {
 
         terrain.walkedOnBy(actor, cell);
+    }
+
+    /**
+     * Can I be interacted with using the Interact command/action?
+     *
+     * @return
+     */
+    public boolean isInteractable(UActor actor) {
+        return terrain.isInteractable(actor);
+    }
+
+    /**
+     * Respond to an Interact command/action from an actor to this terrain.
+     *
+     * @return The action-time cost of doing this interaction.
+     */
+    public float interactionFrom(UActor actor) {
+        return terrain.interactionFrom(actor);
     }
 
     public void printScroll(String msg, UCell cell) { terrain.printScroll(msg, cell); }
