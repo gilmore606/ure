@@ -282,7 +282,7 @@ public class ULandscaper {
 
     public UCell findAnextToB(UArea area, String ta, String tb, int x1, int y1, int x2, int y2) {
         int tries = 0;
-        while (tries < ((x2-x1)*(y2-y1))) {
+        while (tries < ((x2-x1)*(y2-y1))*4) {
             tries++;
             UCell cell = area.cellAt(x1+rand(x2-x1),y1+rand(y2-y1));
             if (cell != null) {
@@ -490,6 +490,8 @@ public class ULandscaper {
     public void buildComplex(UArea area, int x1, int y1, int x2, int y2, String floort, String wallt, String[] drawoverts) {
         ArrayList<int[]> rooms = new ArrayList<int[]>();
         int roomMin = 5; int roomMax = 13;
+        boolean addExteriorDoors = true;
+        boolean addExteriorWindows = true;
         float hallChance = 0.3f;
         int hallwidth = 3;
         int firstw = roomMin + rand(roomMax-roomMin);
@@ -606,6 +608,22 @@ public class ULandscaper {
             } else {
                 fails++;
                 System.out.println("CARTO : couldn't add room");
+            }
+        }
+        if (addExteriorDoors) {
+            for (int i = 0;i < rand(4) + 2;i++) {
+                UCell doorcell = findAnextToB(area, wallt, "grass", x1 + 1, y1 + 1, x2 - 1, y2 - 1);
+                if (doorcell != null) {
+                    area.setTerrain(doorcell.x, doorcell.y, "door");
+                }
+            }
+        }
+        if (addExteriorWindows) {
+            for (int i=0;i<rand(20)+10;i++) {
+                UCell windowcell = findAnextToB(area, wallt, "grass", x1+1,y1+1,x2-1,y2-1);
+                if (windowcell != null) {
+                    area.setTerrain(windowcell.x, windowcell.y, "window");
+                }
             }
         }
     }

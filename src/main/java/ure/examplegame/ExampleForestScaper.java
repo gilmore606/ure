@@ -51,6 +51,10 @@ public class ExampleForestScaper extends ULandscaper {
                 }
             }
         }
+        UCell ruinloc = findAreaWithout(area, 1, 1, area.xsize -30, area.ysize - 30, 28,28, new String[]{"wall"});
+        if (ruinloc != null) {
+            buildComplex(area, ruinloc.x, ruinloc.y, ruinloc.x + 28, ruinloc.y + 28, "floor", "wall", new String[]{"tree","grass","water"});
+        }
         //UCell townloc = findAreaWithout(area, 1,1,area.xsize, area.ysize, 20, 20, new String[]{"water", "wall"});
 
     }
