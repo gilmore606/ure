@@ -103,18 +103,18 @@ public class UCommander implements URenderer.KeyListener {
         // TODO: Actually read keybinds.txt
         //
         keyBinds = new HashMap<Character, String>();
-        keyBinds.put('W', "MOVE_N");
-        keyBinds.put('S', "MOVE_S");
-        keyBinds.put('A', "MOVE_W");
-        keyBinds.put('D', "MOVE_E");
-        keyBinds.put('H', "LATCH_N");
-        keyBinds.put('B', "LATCH_W");
-        keyBinds.put('N', "LATCH_S");
-        keyBinds.put('M', "LATCH_E");
-        keyBinds.put('G', "GET");
+        keyBinds.put('w', "MOVE_N");
+        keyBinds.put('s', "MOVE_S");
+        keyBinds.put('a', "MOVE_W");
+        keyBinds.put('d', "MOVE_E");
+        keyBinds.put('W', "LATCH_N");
+        keyBinds.put('A', "LATCH_W");
+        keyBinds.put('S', "LATCH_S");
+        keyBinds.put('D', "LATCH_E");
+        keyBinds.put('g', "GET");
         keyBinds.put('.', "STAIRS");
-        keyBinds.put('I', "INVENTORY");
-        keyBinds.put('E', "DEBUG");
+        keyBinds.put('i', "INVENTORY");
+        keyBinds.put('e', "DEBUG");
         keyBinds.put('1', "DEBUG_1");
         keyBinds.put('2', "DEBUG_2");
         keyBinds.put('3', "DEBUG_3");
