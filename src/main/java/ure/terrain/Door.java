@@ -34,7 +34,7 @@ public class Door extends TerrainI implements UTerrain {
          * Do I open if actor walks into me?
          * Override this to make doors un-openable in some conditions.
          */
-        return openOnMove;
+        return openOnMove && canBeOpenedBy(actor);
     }
     @Override
     public char glyph() {
@@ -50,6 +50,18 @@ public class Door extends TerrainI implements UTerrain {
         } else {
             super.moveTriggerFrom(actor, cell);
         }
+    }
+
+    /**
+     * Can actor open me?
+     *
+     * @param actor
+     * @return
+     */
+    public boolean canBeOpenedBy(UActor actor) {
+        if (!isOpen())
+            return false;
+        return true;
     }
 
     public void openedBy(UActor actor, UCell cell) {
@@ -68,7 +80,9 @@ public class Door extends TerrainI implements UTerrain {
 
     @Override
     public float interactionFrom(UActor actor) {
-
+        if (!isOpen() && canBeOpenedBy(actor)) {
+            openedBy(actor, cell);
+        }
         return 1f;
     }
 
