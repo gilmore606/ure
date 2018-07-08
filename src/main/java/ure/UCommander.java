@@ -48,6 +48,8 @@ public class UCommander implements URenderer.KeyListener {
 
     private int animationMillis = 33;
 
+    private boolean breakLatchOnInput = true;
+
     private LinkedBlockingQueue<Character> keyBuffer;
     private int keyBufferSize = 2;
 
@@ -306,7 +308,12 @@ public class UCommander implements URenderer.KeyListener {
             if (waitingForInput) {
                 if (!keyBuffer.isEmpty() || moveLatch) {
                     if (moveLatch) {
-                        walkPlayer(moveLatchX, moveLatchY);
+                        if (breakLatchOnInput && !keyBuffer.isEmpty()) {
+                            latchBreak();
+                            consumeKeyFromBuffer();
+                        } else {
+                            walkPlayer(moveLatchX, moveLatchY);
+                        }
                     } else {
                         consumeKeyFromBuffer();
                     }
