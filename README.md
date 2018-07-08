@@ -14,8 +14,13 @@ to create from.
 
 ## Features
 
+URE is built for flexibility -- you should be able to use as few or as many of its features
+as you need.  Its base classes are extendable and configurable to achieve almost any
+roguelike game you can imagine.
+
 - Realtime lighting and visibility with full color blending and illumination for
 hundreds of lightsources in a scene
+- OpenGL rendering layer with no AWT/swing elements, for cross platform high performance
 - 60fps animation of lights, terrain, and entities
 - Included truetype and pixel CP437-capable monospace fonts, or use any truetype font
 - Complete game loop with action-time system and NPC turn management
@@ -29,6 +34,7 @@ own custom level generators
 - A complete gameworld model incorporating things, actor NPCs, terrain, and more
 - Cartographer system for centrally defining a world structure and area links
 - UI elements such as a scroll panel, status panels, input widgets, and more
+- Built for flexibility -- mix and match URE classes, extend and replace with your own
 
 
 ## Using URE
