@@ -8,6 +8,13 @@ import java.util.Comparator;
 import java.util.Random;
 import java.util.TreeSet;
 
+/**
+ * UPath implements A* pathfinding.  To use, create an instance of UPath and call .nextStep() to find
+ * the next step toward a destination from a source.
+ *
+ * TODO: bugs and inefficiencies
+ *
+ */
 public class UPath {
 
     Random random;
@@ -60,10 +67,31 @@ public class UPath {
         return null;
     }
 
+    /**
+     * Calculate the manhattan distance (4-direction travel distance) between two points.
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @return
+     */
     public int mdist(int x1, int y1, int x2, int y2) {
         return Math.abs(x2-x1) + Math.abs(y2-y1);
     }
 
+    /**
+     * Perform A* pathfinding between the two given points and return the next step from the first point
+     * to reach the second.
+     * @param area
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @param actor The actor to use for deciding passability.  Can be null.
+     * @param range No steps further than this from the start will be considered.
+     * @return (x,y) walk delta of next step
+     *
+     */
     public int[] nextStep(UArea area, int x1, int y1, int x2, int y2, UActor actor, int range) {
         if (mdist(x1,y1,x2,y2) > range)
             return null;

@@ -1,19 +1,11 @@
 package ure.math;
 
-/*
- * OpenSimplex Noise in Java.
- * by Kurt Spencer
+/**
+ * USimplexNoise implements a simplex noise generator, similar to Perlin noise.
  *
- * v1.1 (October 5, 2014)
- * - Added 2D and 4D implementations.
- * - Proper gradient sets for all dimensions, from a
- *   dimensionally-generalizable scheme with an actual
- *   rhyme and reason behind it.
- * - Removed default permutation array in favor of
- *   default seed.
- * - Changed seed-based constructor to be independent
- *   of any particular randomization library, so results
- *   will be the same when ported to other languages.
+ * To use USimplexNoise, create an instance and use its multi() method to find the value of the noise at
+ * given x,y coordinates.
+ *
  */
 
 public class USimplexNoise {
@@ -72,6 +64,16 @@ public class USimplexNoise {
     }
 
     // area coords
+
+    /**
+     * Calculate noise value for the given x,y coordinates, at a series of summed scales.
+     * @param x An x coordinate of indeterminate scale.
+     * @param y A y coordinate of indeterminate scale.
+     * @param scales A float array of one or several scales; higher scales are larger cycles of the noise pattern, lower
+     *               scales are smaller.  All scales are averaged together for the final result.  Scales in the
+     *               range of 5f-200f are most useful for coordinates of the scale of a typical game grid.
+     * @return The float noise value 0f-1f.
+     */
     public float multi(int x, int y, float[] scales) {
         float total = 0f;
         for (int i=0;i<scales.length;i++) {
@@ -85,7 +87,7 @@ public class USimplexNoise {
     }
 
     //2D OpenSimplex Noise.
-    public double eval(double x, double y) {
+    double eval(double x, double y) {
 
         //Place input coordinates onto grid.
         double stretchOffset = (x + y) * STRETCH_CONSTANT_2D;
@@ -200,7 +202,7 @@ public class USimplexNoise {
     }
 
     //3D OpenSimplex Noise.
-    public double eval(double x, double y, double z) {
+    double eval(double x, double y, double z) {
 
         //Place input coordinates on simplectic honeycomb.
         double stretchOffset = (x + y + z) * STRETCH_CONSTANT_3D;
@@ -761,7 +763,7 @@ public class USimplexNoise {
     }
 
     //4D OpenSimplex Noise.
-    public double eval(double x, double y, double z, double w) {
+    double eval(double x, double y, double z, double w) {
 
         //Place input coordinates on simplectic honeycomb.
         double stretchOffset = (x + y + z + w) * STRETCH_CONSTANT_4D;

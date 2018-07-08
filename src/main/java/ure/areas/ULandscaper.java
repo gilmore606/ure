@@ -12,6 +12,13 @@ import ure.things.UThingCzar;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * ULandscaper is a grab bag of tools for creating and populating UAreas.
+ *
+ * To use, make a subclass and implement buildArea() to construct an area using the provided
+ * methods.  Then use an instance of your subclass in your UCartographer implementation.
+ *
+ */
 public class ULandscaper {
 
     private UTerrainCzar terrainCzar;
@@ -20,6 +27,10 @@ public class ULandscaper {
     public Random random;
     USimplexNoise simplexNoise;
 
+    /**
+     * Grid implements a 2D boolean grid useful for proxy calculations about terrain.
+     *
+     */
     class Grid {
         boolean cells[][];
         int width;
@@ -119,10 +130,28 @@ public class ULandscaper {
         simplexNoise = new USimplexNoise();
     }
 
+    /**
+     * Construct a complete area, given a blank UArea.
+     *
+     * Override this and add parameters to be passed in by your UCartographer to determine the
+     * character of the area you produce.
+     *
+     * @param area
+     */
     public void buildArea(UArea area) {
         System.out.println("Default landscaper cannot build areas!");
     }
 
+    /**
+     * Fill a rectangle from x1,y1 to x2,y2 with the given terrain.
+     *
+     * @param area
+     * @param t
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     */
     public void fillRect(UArea area, String t, int x1, int y1, int x2, int y2) { drawRect(area, t, x1, y1, x2, y2, true); }
     public void drawRect(UArea area, String t, int x1, int y1, int x2, int y2) { drawRect(area, t, x1, y1, x2, y2, false); }
     public void drawRect(UArea area, String t, int x1, int y1, int x2, int y2, boolean filled) {
@@ -135,6 +164,11 @@ public class ULandscaper {
         }
     }
 
+    /**
+     * Convenience random numbers.
+     * @param max 0-max exclusive.
+     * @return
+     */
     public int rand(int max) {
         return random.nextInt(max);
     }
@@ -145,6 +179,14 @@ public class ULandscaper {
         return random.nextFloat();
     }
 
+    /**
+     * Scatter a number of random things through the area, onto certain terrains.
+     *
+     * @param area
+     * @param things Thing names to scatter.  List names more than once for more frequency.
+     * @param terrains Terrain names to receive things.
+     * @param numberToScatter Total number of things to scatter.
+     */
     public void scatterThings(UArea area, String[] things, String[] terrains, int numberToScatter) {
         while (numberToScatter > 0) {
             numberToScatter--;
@@ -155,15 +197,42 @@ public class ULandscaper {
         }
     }
 
+    /**
+     * Spawn a new thing by name into the area.
+     *
+     * @param area
+     * @param x
+     * @param y
+     * @param thing
+     */
     public void spawnThingAt(UArea area, int x, int y, String thing) {
         UThing thingobj = thingCzar.getThingByName(thing);
         thingobj.moveToCell(area,x,y);
     }
+
+    /**
+     * Spawn an abstract light directly into the area.
+     *
+     * @param area
+     * @param x
+     * @param y
+     * @param color
+     * @param falloff
+     * @param range
+     */
     public void spawnLightAt(UArea area, int x, int y, UColor color, int falloff, int range) {
         ULight light = new ULight(color, range, falloff);
         light.moveTo(area,x,y);
     }
 
+    /**
+     * Does cell have any of these terrain names?
+     *
+     * @param area
+     * @param cell
+     * @param terrains
+     * @return
+     */
     boolean cellHasTerrain(UArea area, UCell cell, String[] terrains) {
         if (cell == null) return false;
         for (int i=0;i<terrains.length;i++) {
@@ -174,6 +243,15 @@ public class ULandscaper {
         return false;
     }
 
+    /**
+     * Which of cell's neighbors (and cell) have these terrain names?
+     *
+     * @param area
+     * @param cell
+     * @param terrains
+     * @return A 2D grid of cell's immediate surroundings, true if that cell has one
+     * of the given terrain names.
+     */
     boolean[][] neighborsHaveTerrain(UArea area, UCell cell, String[] terrains) {
         boolean[][] neighbors = new boolean[3][3];
         for (int xo=-1;xo<2;xo++) {
@@ -183,6 +261,14 @@ public class ULandscaper {
         }
         return neighbors;
     }
+    /**
+     * How many of cell's neighbors (and cell) have these terrain names?
+     *
+     * @param area
+     * @param cell
+     * @param terrains
+     * @return
+     */
     int numNeighborsHaveTerrain(UArea area, UCell cell, String[] terrains) {
         boolean[][] neighbors = neighborsHaveTerrain(area, cell, terrains);
         int total = 0;
@@ -195,6 +281,13 @@ public class ULandscaper {
         return total;
     }
 
+    /**
+     * Pick a random cell having one of these terrains.
+     *
+     * @param area
+     * @param terrains
+     * @return
+     */
     public UCell randomCell(UArea area, String[] terrains) {
         UCell cell = null;
         boolean match = false;
@@ -205,6 +298,13 @@ public class ULandscaper {
         return cell;
     }
 
+    /**
+     * Pick a random cell that can accept this thing.
+     *
+     * @param area
+     * @param thing
+     * @return
+     */
     public UCell randomOpenCell(UArea area, UThing thing) {
         UCell cell = null;
         boolean match = false;
@@ -213,6 +313,52 @@ public class ULandscaper {
             match = cell.willAcceptThing(thing);
         }
         return cell;
+    }
+
+    public UCell findAnextToB(UArea area, String ta, String tb, int x1, int y1, int x2, int y2) {
+        int tries = 0;
+        while (tries < ((x2-x1)*(y2-y1))*4) {
+            tries++;
+            UCell cell = area.cellAt(x1+rand(x2-x1),y1+rand(y2-y1));
+            if (cell != null) {
+                if (terrainNameAt(area, cell.x, cell.y).equals(ta)) {
+                    if (terrainNameAt(area, cell.x + 1, cell.y).equals(tb)) return cell;
+                    if (terrainNameAt(area, cell.x - 1, cell.y).equals(tb)) return cell;
+                    if (terrainNameAt(area, cell.x, cell.y + 1).equals(tb)) return cell;
+                    if (terrainNameAt(area, cell.x, cell.y - 1).equals(tb)) return cell;
+                }
+            }
+        }
+        return null;
+    }
+
+    public UCell findAreaWithout(UArea area, int x1, int y1, int x2, int y2, int w, int h, String[] terrains) {
+        int tries = 0;
+        while (tries < 500) {
+            tries++;
+            int x = rand(x2-x1)+x1;
+            int y = rand(y2-y1)+y1;
+            if (!rectHasTerrain(area, x, y, x+w, y+h, terrains)) {
+                System.out.println("found area without at " + Integer.toString(x) + "," + Integer.toString(y));
+                return area.cellAt(x,y);
+            }
+        }
+        return null;
+    }
+
+    public boolean isNearA(UArea area, int x, int y, String thing, int range) {
+        if (range < 1)
+            return false;
+        for (int ix = x - range; ix < x + range; ix++) {
+            for (int iy = y - range; iy < y + range; iy++) {
+                if (area.isValidXY(ix,iy)) {
+                    if (area.cellAt(ix,iy).hasA(thing)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public void addDoors(UArea area, String doorTerrain, String[] wallTerrains, float doorChance) {
@@ -265,52 +411,6 @@ public class ULandscaper {
         }
     }
 
-    public boolean isNearA(UArea area, int x, int y, String thing, int range) {
-        if (range < 1)
-            return false;
-        for (int ix = x - range; ix < x + range; ix++) {
-            for (int iy = y - range; iy < y + range; iy++) {
-                if (area.isValidXY(ix,iy)) {
-                    if (area.cellAt(ix,iy).hasA(thing)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    public UCell findAnextToB(UArea area, String ta, String tb, int x1, int y1, int x2, int y2) {
-        int tries = 0;
-        while (tries < ((x2-x1)*(y2-y1))*4) {
-            tries++;
-            UCell cell = area.cellAt(x1+rand(x2-x1),y1+rand(y2-y1));
-            if (cell != null) {
-                if (terrainNameAt(area, cell.x, cell.y).equals(ta)) {
-                    if (terrainNameAt(area, cell.x + 1, cell.y).equals(tb)) return cell;
-                    if (terrainNameAt(area, cell.x - 1, cell.y).equals(tb)) return cell;
-                    if (terrainNameAt(area, cell.x, cell.y + 1).equals(tb)) return cell;
-                    if (terrainNameAt(area, cell.x, cell.y - 1).equals(tb)) return cell;
-                }
-            }
-        }
-        return null;
-    }
-
-    public UCell findAreaWithout(UArea area, int x1, int y1, int x2, int y2, int w, int h, String[] terrains) {
-        int tries = 0;
-        while (tries < 500) {
-            tries++;
-            int x = rand(x2-x1)+x1;
-            int y = rand(y2-y1)+y1;
-            if (!rectHasTerrain(area, x, y, x+w, y+h, terrains)) {
-                System.out.println("found area without at " + Integer.toString(x) + "," + Integer.toString(y));
-                return area.cellAt(x,y);
-            }
-        }
-        return null;
-    }
-
     public boolean rectHasTerrain(UArea area, int x1, int y1, int x2, int y2, String[] terrains) {
         for (;x1<=x2;x1++) {
             for (;y1<=y2;y1++) {
@@ -325,6 +425,7 @@ public class ULandscaper {
         }
         return false;
     }
+
     public String terrainNameAt(UArea area, int x, int y) {
         UCell cell = area.cellAt(x,y);
         if (cell != null) {
@@ -478,6 +579,15 @@ public class ULandscaper {
         }
     }
 
+    /**
+     * Set the label for a Stairs (in the given area) to its proper outgoing area.
+     *
+     * This should be called by any ULa
+     * @param area
+     * @param x
+     * @param y
+     * @param t
+     */
     public void SetStairsLabel(UArea area, int x, int y, Stairs t) {
         t.setLabel("");
     }
