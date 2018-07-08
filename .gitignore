@@ -5,7 +5,14 @@
 # IntelliJ
 .idea/
 out/
+*.iml
+*.ipr
+*.iws
 
 # SBT
 target/
+
+# Gradle
+.gradle/
+build/
 
