@@ -13,8 +13,7 @@ public class UActionEmote extends UAction {
     }
 
     @Override
-    public float doneBy(UActor actor) {
+    public void doFor(UActor actor) {
         actor.emote(text);
-        return super.doneBy(actor);
     }
 }

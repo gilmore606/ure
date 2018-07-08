@@ -9,10 +9,12 @@ import ure.things.UThing;
 import java.util.Iterator;
 
 /**
- * Created by gilmore on 6/20/2018.
+ * UCell represents a single XY cell of an area.
  *
- * A single xy grid cell of an Area
+ * These are created on area creation along with a terrain.  They have no type and should
+ * not need to be subclassed, however, a custom UCell class can be given to Area on creation.
  *
+ * TODO: actually implement what I just said in Area
  */
 public class UCell implements UContainer {
     UArea area;
@@ -73,12 +75,23 @@ public class UCell implements UContainer {
         terrain.walkedOnBy(actor, this);
     }
 
+    /**
+     * URE assumes only one actor can be considered to be in a cell at one time, however,
+     * we internally allow for a list of actors.
+     *
+     * @return
+     */
     public UActor actorAt() {
         if (contents.hasActors())
             return contents.actor();
         return null;
     }
 
+    /**
+     * Get the thing 'on top' of the pile of things here.
+     *
+     * @return
+     */
     public UThing topThingAt() {
         return contents.topThing();
     }
@@ -92,6 +105,12 @@ public class UCell implements UContainer {
         return false;
     }
 
+    /**
+     * Is there any thing here named this?
+     *
+     * @param thing
+     * @return
+     */
     public boolean hasA(String thing) {
         for (UThing t : contents.things) {
             if (t.name().equals(thing))
@@ -103,6 +122,11 @@ public class UCell implements UContainer {
     public int areaY() { return y; }
     public UArea area() { return area; }
 
+    /**
+     * Take a terrain object and make it our terrain.
+     *
+     * @param t
+     */
     public void useTerrain(UTerrain t) {
         terrain = t;
         t.becomeReal(this);

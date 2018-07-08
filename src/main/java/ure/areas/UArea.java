@@ -19,9 +19,8 @@ import java.util.*;
 import java.util.stream.Stream;
 
 /**
- * Created by gilmore on 6/18/2018.
  *
- * A self-contained full play map.
+ * UArea implements a self-contained 2D map of roguelike playfield cells.
  *
  */
 

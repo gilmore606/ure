@@ -8,8 +8,8 @@ import java.lang.Math;
 import java.util.Random;
 
 /**
- * An instance of a light source somewhere in an area
- * Not a thing, but a thing can create one
+ * ULight represents a light source placed in an area cell.
+ *
  */
 
 public class ULight {

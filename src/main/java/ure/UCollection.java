@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Created by gilmore on 6/20/2018.
- *
  * A bunch of Things in a place.
  *
  */

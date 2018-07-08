@@ -8,6 +8,10 @@ import ure.behaviors.UBehavior;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * UNPC implements a non-player Actor with behaviors which initiate actions.
+ *
+ */
 public class UNPC extends UActor {
 
     public int visionRange = 12;

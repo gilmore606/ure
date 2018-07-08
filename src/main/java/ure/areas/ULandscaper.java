@@ -136,6 +136,9 @@ public class ULandscaper {
      * Override this and add parameters to be passed in by your UCartographer to determine the
      * character of the area you produce.
      *
+     * You <b>must</b> call SetStairsLabels() at the end of this method before you return the area to ensure that
+     * area links are properly created.
+     *
      * @param area
      */
     public void buildArea(UArea area) {
@@ -582,7 +585,8 @@ public class ULandscaper {
     /**
      * Set the label for a Stairs (in the given area) to its proper outgoing area.
      *
-     * This should be called by any ULa
+     * This should be called by any ULandscaper.makeArea() before returning.
+     *
      * @param area
      * @param x
      * @param y

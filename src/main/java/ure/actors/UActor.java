@@ -11,6 +11,13 @@ import ure.things.ThingI;
 import ure.things.UThing;
 import ure.ui.UCamera;
 
+/**
+ * UActor represents a UThing which can perform actions.  This includes the player and NPCs.
+ *
+ * Do not subclass UActor to change base actor behavior.  To change NPC-only behavior, use UBehaviors
+ * or subclass NPC.  To change base actor behavior, use an ActorDeco decorator class.
+ *
+ */
 public class UActor extends ThingI {
 
     public boolean awake = false;

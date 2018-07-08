@@ -13,6 +13,7 @@ public class UActionWalk extends UAction {
         ydir = yd;
     }
 
+    @Override
     public float doneBy(UActor actor) {
         actor.walkDir(xdir, ydir);
         float time = super.doneBy(actor);

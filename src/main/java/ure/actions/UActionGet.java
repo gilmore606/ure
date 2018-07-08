@@ -19,16 +19,14 @@ public class UActionGet extends UAction {
         thing = thething;
     }
 
-    public float doneBy(UActor actor) {
+    public void doFor(UActor actor) {
         if (thing == null) {
             thing = actor.myCell().topThingAt();
             if (thing == null) {
                 if (actor.isPlayer())
                     actor.camera.area.commander().printScroll(nothingToGetMsg);
-                return 0f;
             }
         }
         actor.tryGetThing(thing);
-        return super.doneBy(actor);
     }
 }

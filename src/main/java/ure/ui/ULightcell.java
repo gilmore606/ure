@@ -6,10 +6,10 @@ import java.util.HashMap;
 
 
 /**
- * Created by gilmore on 6/20/2018.
- *
- * A single xy grid cell of a Camera
+ * ULightcell represents a single xy grid cell of a Camera.
  * Tracks all light hitting that cell of the camera.
+ *
+ * Normal users shouldn't need to mess with this except for unusual camera effects.
  *
  */
 
