@@ -41,11 +41,11 @@ public class ExampleForestScaper extends ULandscaper {
             int y1 = 10 + rand(area.ysize - 20);
             int w = 7+rand(9);
             int h = 7+rand(9);
-            digCaves(area, "wall", x1, y1, x1+w,y1+h,0.38f + randf(0.1f), 4+rand(3), 5, 3+rand(3));
+            digCaves(area, "rock", x1, y1, x1+w,y1+h,0.38f + randf(0.1f), 4+rand(3), 5, 3+rand(3));
             System.out.println("built rock formation!");
             if (randf() < 0.9f) {
                 System.out.println("digging cave entrance");
-                UCell doorcell = findAnextToB(area, "wall", "grass", x1, y1, x1 + w, y1 + h);
+                UCell doorcell = findAnextToB(area, "rock", "grass", x1, y1, x1 + w, y1 + h);
                 if (doorcell != null) {
                     area.setTerrain(doorcell.x, doorcell.y, "cave entrance");
                 }

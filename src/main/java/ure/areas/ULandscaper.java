@@ -613,7 +613,7 @@ public class ULandscaper {
                 System.out.println("CARTO : couldn't add room");
             }
         }
-        if (addExteriorDoors) {
+        if (addExteriorDoors && rooms.size() > 1) {
             for (int i = 0;i < rand(rooms.size()/2) + 2;i++) {
                 UCell doorcell = findAnextToB(area, wallt, "grass", x1 + 1, y1 + 1, x2 - 1, y2 - 1);
                 if (doorcell != null) {
@@ -621,7 +621,7 @@ public class ULandscaper {
                 }
             }
         }
-        if (addExteriorWindows) {
+        if (addExteriorWindows && rooms.size() > 1) {
             for (int i=0;i<rand(20)+10;i++) {
                 UCell windowcell = findAnextToB(area, wallt, "grass", x1+1,y1+1,x2-1,y2-1);
                 if (windowcell != null) {

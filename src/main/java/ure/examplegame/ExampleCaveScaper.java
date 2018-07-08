@@ -25,7 +25,7 @@ public class ExampleCaveScaper extends ULandscaper {
         float lavaFactor = randf(0.2f);
         if (randf() < 0.1f)
             lavaFactor = 1f;
-
+        fillRect(area,"rock",x1,x2,y1,y2);
         digCaves(area, floorTerrain, x1, x2, y1, y2,
                 0.38f + randf(0.14f),
                 4 + rand(3), 3 + rand(3),
@@ -43,7 +43,7 @@ public class ExampleCaveScaper extends ULandscaper {
                     0.6f + randf(2.5f));
         }
 
-        addDoors(area, "door", new String[]{"wall"},
+        addDoors(area, "door", new String[]{"rock"},
                 0.1f + randf(1.5f));
 
         int statues = rand(5);
@@ -73,8 +73,8 @@ public class ExampleCaveScaper extends ULandscaper {
                 new float[]{9f, 23f, randf(100f) + 60f}, 3);
 
         simplexScatterThings(area, "skull", new String[]{floorTerrain},
-                0.6f, 0.15f + randf(0.3f),
-                new float[]{5f, 10f, 40f, 120f}, 0);
+                0.65f, 0.1f + randf(0.2f),
+                new float[]{5+randf(2f), 10f, 40f, 120f+randf(50f)}, 0);
 
         simplexScatterTerrain(area, "floormoss", new String[]{floorTerrain},
                 randf(0.3f), randf(0.6f),
