@@ -1,4 +1,4 @@
-# URE
+# URE - the unRogueEngine
 
 UnRogue Engine is a Java library for making roguelike games.
 
@@ -36,11 +36,46 @@ own custom level generators
 - UI elements such as a scroll panel, status panels, input widgets, and more
 - Built for flexibility -- mix and match URE classes, extend and replace with your own
 
+## Planned features
 
-## Using URE
+- Drop-in replacement renderer modules to allow graphical tile rendering, isometric views, or
+other visualizations without changing the underlying game
+- Complex NPC AI, conversation trees, shops, quest-givers, and other rich NPC features
+- Event system with awareness checks
+- Status effects
+- Object materials and composition
+- Environmental effects such as liquid flow, smoke/vapors, and their interactions
+- Visual particle system
 
-To get started with URE, take a look at the included ExampleGame package.
+## Why Java?
 
+The decision to implement URE into Java was not made lightly.  We recognize that there are more popular
+languages for roguelike and indie game development, such as Python, Lua, Unity/C#, etc.  However
+we feel that Java provides several advantages for roguelike development in particular.
+
+- <B>Robust object model.</B>  The data model of a simulation-style game maps well to a robust inheritance/interface model such as Java's.
+Java capabilities such as reflection allow us to dynamically support user-created classes.
+- <B>Cross platform.</B> Although a Java app requires a JVM, this can be bundled easily into platform-specific distros to support all major targets.
+- <B>Performance.</B> Roguelikes often use CPU-intensive algorithms.  Java implementations can be
+significantly faster than their Python or other interpreted-language equivalent.
+- <B>Type-safety.</B> More accessible languages like Python tend to be weakly typed.  While this allows
+more rapid prototyping and a looser style, it can make maintenance of a large interacting system (such as a
+roguelike world state) problematic and brittle.  Java's strong typing helps to keep things on the rails.
+- <B>Tools support.</B> Working in Java gives us access to professional strength IDEs such as IntelliJ and their
+plugins and build systems.
+- <B>A path to Scala.</B> We wanted the option, for ourselves and for users, to incorporate Scala in addition
+to vanilla Java code in order to leverage modern functional programming techniques.  This allowed us to mainly
+support a well-known language (Java) while still providing a path to a functional language (since Scala is a superset
+of Java), rather than writing natively in a newer less-known functional language.
+
+## Getting Started
+
+To get started with URE, clone the repo and take a look at the included ExampleGame package.  We do not yet provide a jar; coming soon.
+
+
+## API Documentation
+
+see [JavaDoc](https://gilmore606.github.io/ure)
 
 ## Contributing to URE
 
@@ -50,13 +85,16 @@ functionality covering as wide a variety of use cases as possible.  If you've ma
 generally useful Thing, Behavior, Action, Terrain, or other entity type, ping us with your
 branch and we'd be happy to consider merging it back.
 
-URE is built with the SBT build system and depends on LWJGL, Jackson and Reflection.
 
-
-## API Documentation
-
-see [JavaDoc](https://gilmore606.github.io/ure)
 
 ## Projects made with URE
 
 Hopefully someday there will be links here to actual games.
+
+## Built With
+- [IntelliJ](https://www.jetbrains.com/idea/)
+- [Jackson](https://github.com/FasterXML/jackson)
+- [Reflections](http://static.javadoc.io/org.reflections/reflections/0.9.10/org/reflections/Reflections.html)
+- [LWJGL](https://www.lwjgl.org/)
+- [JOML](https://github.com/JOML-CI/JOML)
+

@@ -71,6 +71,7 @@ public class UCommander implements URenderer.KeyListener {
 
         setPlayer(theplayer);
         readKeyBinds();
+        renderer.setKeyListener(this);
         turnCounter = 0;
         keyBuffer = new LinkedBlockingQueue<Character>();
     }

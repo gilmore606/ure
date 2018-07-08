@@ -81,7 +81,6 @@ public class ExampleGame implements UTimeListener {
         commander = new UCommander(player, renderer, thingCzar, actorCzar, cartographer);
         cartographer.setCommander(commander);
         area = cartographer.getArea("forest");
-        renderer.setKeyListener(commander);
 
         makeWindow();//.getContentPane().addKeyListener(commander);
 
