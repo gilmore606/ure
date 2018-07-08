@@ -35,4 +35,5 @@ public class TerrainDeco implements UTerrain {
     public UColor fgColorBuffer() { return terrain.fgColorBuffer(); }
     public String name() { return terrain.name(); }
     public String bonkmsg() { return terrain.bonkmsg(); }
+    public boolean breaksLatch() { return terrain.breaksLatch(); }
 }

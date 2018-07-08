@@ -40,6 +40,7 @@ public abstract class TerrainI implements UTerrain, Cloneable, UAnimator {
 
     public boolean passable;
     public boolean opaque;
+    public boolean breaklatch;
     public boolean glow = false;
     public float sunvis = 0.0f;
     public float movespeed = 1.0f;
@@ -103,6 +104,7 @@ public abstract class TerrainI implements UTerrain, Cloneable, UAnimator {
     }
 
     public String bonkmsg() { return bonkmsg; }
+    public boolean breaksLatch() { return breaklatch; }
 
     public void moveTriggerFrom(UActor actor, UCell cell) {
         if (isPassable(actor)) {
