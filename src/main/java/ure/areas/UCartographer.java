@@ -40,6 +40,8 @@ public class UCartographer {
                 area = MakeCavern(labeldata[0]); break;
             case "dungeon":
                 area = MakeDungeon(); break;
+            case "complex":
+                area = MakeComplex(); break;
             default:
                 area = MakeForest(); break;
         }

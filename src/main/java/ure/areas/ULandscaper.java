@@ -500,7 +500,7 @@ public class ULandscaper {
         rooms.add(new int[]{firstx,firsty,firstw,firsth});
         boolean done = false;
         int fails = 0;
-        int roomsmax = 12;
+        int roomsmax = 60;
         int minroomarea = 8;
         while (!done && (fails < rooms.size()*6) && (rooms.size() < roomsmax)) {
             int[] sourceroom = rooms.get(rand(rooms.size()));
@@ -568,15 +568,39 @@ public class ULandscaper {
                 newroom[1] = newloc[1];
                 newroom[2] = newbox[0];
                 newroom[3] = newbox[1];
-                if (dy < 0) {
+                if (dy == -1) {
                     newroom[1] = newroom[1] - (newbox[1] - 1);
                 }
-                if (dx < 0) {
+                if (dx == -1) {
                     newroom[0] = newroom[0] - (newbox[0] - 1);
                 }
+                int doormin = 0, doormax = 0, doorconst = 0;
+                if (dy != 0) {
+                    doormin = Math.max(sourceroom[0]+1,newroom[0]+1);
+                    doormax = Math.min(sourceroom[0]+sourceroom[2]-2,newroom[0]+newroom[2]-2);
+                    if (dy == -1) doorconst = sourceroom[1]; else doorconst = sourceroom[1] + sourceroom[3] - 1;
+                } else if (dx != 0) {
+                    doormin = Math.max(sourceroom[1]+1,newroom[1]+1);
+                    doormax = Math.min(sourceroom[1]+sourceroom[3]-2,newroom[1]+newroom[3]-2);
+                    if (dx == -1) doorconst = sourceroom[0]; else doorconst = sourceroom[0] + sourceroom[2] - 1;
+                }
                 buildRoom(area, newroom[0],newroom[1],newroom[2],newroom[3],floort,wallt);
-                //cutOpeningInWall(area, newloc[0],newloc[1],dy,dx,wallt,floort);
                 rooms.add(newroom);
+                int doorstyle = rand(2);
+                if (doorstyle == 0) {
+                    int mid = doormin;
+                    if (doormax > doormin) mid = rand(doormax-doormin)+doormin;
+                    if (dy != 0) area.setTerrain(mid, doorconst, "door");
+                    else area.setTerrain(doorconst,mid,"door");
+                } else if (doorstyle == 1) {
+                    for (int i = doormin;i <= doormax;i++) {
+                        if (dy != 0) {
+                            area.setTerrain(i, doorconst, floort);
+                        } else {
+                            area.setTerrain(doorconst, i, floort);
+                        }
+                    }
+                }
                 System.out.println("CARTO : made new room " + Integer.toString(newroom[2]) + " by " + Integer.toString(newroom[3]));
                 fails = 0;
             } else {
@@ -586,38 +610,4 @@ public class ULandscaper {
         }
     }
 
-    public void cutOpeningInWall(UArea area, int x, int y, int dx, int dy, String wallt, String floort) {
-        boolean wallended = false;
-        boolean wallstarted = false;
-        int[][] doorpoints = new int[100][2];
-        int doori = 0;
-        while (!wallended) {
-            x += dx; y+= dy;
-            if (!wallstarted) {
-                if (area.isValidXY(x+dy,y+dx) && area.isValidXY(x-dy,y-dx)) {
-                    if (area.terrainAt(x + dy, y + dx).name().equals(floort) && area.terrainAt(x - dy, y - dx).name().equals(floort)) {
-                        wallstarted = true;
-                    }
-                }
-            } else if (!area.terrainAt(x, y).name().equals(wallt)) {
-                wallended = true;
-            }
-            if (!wallended && wallstarted) {
-                if (area.isValidXY(x+dy,y+dx) && area.isValidXY(x-dy,y-dx)) {
-                    if (area.terrainAt(x + dy, y + dx).name().equals(floort) && area.terrainAt(x - dy, y - dx).name().equals(floort)) {
-                        doorpoints[doori] = new int[]{x, y};
-                        doori++;
-                    } else {
-                        wallended = true;
-                    }
-                } else {
-                    wallended = true;
-                }
-            }
-        }
-        if (doori > 0) {
-            int[] doorpoint = doorpoints[rand(doorpoints.length)];
-            area.setTerrain(doorpoint[0],doorpoint[1],"door");
-        }
-    }
 }
