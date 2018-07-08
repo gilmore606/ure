@@ -50,6 +50,13 @@ public class UTerrainCzar {
         loadTerrains(jsonfilename);
     }
 
+    public UTerrainCzar(Class<TerrainDeco> myDecorator) {
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(TerrainI.class, new TerrainDeserializer());
+        objectMapper.registerModule(module);
+        decorator = myDecorator;
+    }
+
     /**
      * Load terrain definitions from a json file and create sample instances.
      *
