@@ -53,7 +53,7 @@ public abstract class ThingI implements UThing, UContainer, Cloneable {
         }
     }
 
-    void SetupColors() {
+    public void SetupColors() {
         Random random = new Random();
         int[] thecolor = new int[]{color[0], color[1], color[2]};
         for (int i=0;i<3;i++) {
