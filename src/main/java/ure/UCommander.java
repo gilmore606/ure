@@ -187,7 +187,7 @@ public class UCommander implements URenderer.KeyListener {
 
 
     void walkPlayer(int xdir, int ydir) {
-        player.doAction(new UActionWalk(xdir, ydir));
+        player.doAction(new UActionWalk(player, xdir, ydir));
     }
 
     void latchPlayer(int xdir, int ydir) {
@@ -204,7 +204,7 @@ public class UCommander implements URenderer.KeyListener {
     }
 
     void commandGet() {
-        player.doAction(new UActionGet());
+        player.doAction(new UActionGet(player));
     }
 
     void commandStairs() {

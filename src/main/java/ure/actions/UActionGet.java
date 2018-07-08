@@ -15,11 +15,13 @@ public class UActionGet extends UAction {
 
     UThing thing;
 
-    public UActionGet() {
+    public UActionGet(UActor theactor) {
+        actor = theactor;
         thing = null;
     }
 
-    public UActionGet(UThing thething) {
+    public UActionGet(UActor theactor, UThing thething) {
+        actor = theactor;
         thing = thething;
     }
 

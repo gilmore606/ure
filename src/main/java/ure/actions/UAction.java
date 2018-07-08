@@ -16,7 +16,19 @@ public abstract class UAction {
 
     public static String id = "ACTION";
 
+    public UActor actor;
+
     float cost = 1.0f;
+
+    public UAction() {}
+    /**
+     * Override the constructor to set all parameters of your action when created.
+     *
+     * @param theactor
+     */
+    public UAction(UActor theactor) {
+        actor = theactor;
+    }
 
     /**
      * Do whatever it is that actor does, when actor does this.  Return the time it took,

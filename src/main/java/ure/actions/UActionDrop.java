@@ -15,11 +15,13 @@ public class UActionDrop extends UAction {
     UThing thing;
     UContainer destination;
 
-    public UActionDrop(UThing thething) {
+    public UActionDrop(UActor theactor, UThing thething) {
+        actor = theactor;
         thing = thething;
         destination = null;
     }
-    public UActionDrop(UThing thething, UContainer thedest) {
+    public UActionDrop(UActor theactor, UThing thething, UContainer thedest) {
+        actor = theactor;
         thing = thething;
         destination = thedest;
     }

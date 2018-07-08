@@ -12,7 +12,8 @@ public class UActionEmote extends UAction {
 
     String text;
 
-    public UActionEmote(String thetext) {
+    public UActionEmote(UActor theactor, String thetext) {
+        actor = theactor;
         text = thetext;
     }
 

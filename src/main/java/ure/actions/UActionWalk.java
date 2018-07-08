@@ -12,7 +12,8 @@ public class UActionWalk extends UAction {
 
     int xdir, ydir;
 
-    public UActionWalk(int xd, int yd) {
+    public UActionWalk(UActor theactor, int xd, int yd) {
+        actor = theactor;
         xdir = xd;
         ydir = yd;
     }

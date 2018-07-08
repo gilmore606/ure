@@ -72,18 +72,18 @@ public class UNPC extends UActor {
         } else {
             wx = 0; wy = -1;
         }
-        return new UActionWalk(wx,wy);
+        return new UActionWalk(this,wx,wy);
     }
     UAction HuntPlayer() {
         System.out.println(this.name + " hunting from " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
         int[] step = path.nextStep(area(), areaX(), areaY(), area().commander().player().areaX(), area().commander().player().areaY(), this, 25);
         if (step != null) {
-            return new UActionWalk(step[0] - areaX(), step[1] - areaY());
+            return new UActionWalk(this,step[0] - areaX(), step[1] - areaY());
         }
         return null;
     }
 
     UAction Ambient() {
-        return new UActionEmote(ambients[random.nextInt(ambients.length)]);
+        return new UActionEmote(this, ambients[random.nextInt(ambients.length)]);
     }
 }
