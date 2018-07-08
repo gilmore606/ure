@@ -12,6 +12,24 @@ display layer, as a full world abstraction manager, or take full advtanage of it
 object library and use a conventional roguelike as an immediate jumping-off point
 to create from.
 
+## Features
+
+- Realtime lighting and visibility with full color blending and illumination for
+hundreds of lightsources in a scene
+- 60fps animation of lights, terrain, and entities
+- Included truetype and pixel CP437-capable monospace fonts, or use any truetype font
+- Complete game loop with action-time system and NPC turn management
+- Full input handling, key buffering, mappable keybindings
+- Persist game areas to disk and restore them seamlessly for a persistent world
+- JSON support for defining all types of game entities
+- Many level generator algorithms included as generic methods to mix and match for your
+own custom level generators
+- A* pathfinding available to actor entities or for general problem solving
+- Simplex and Perlin noise
+- A complete gameworld model incorporating things, actor NPCs, terrain, and more
+- Cartographer system for centrally defining a world structure and area links
+- UI elements such as a scroll panel, status panels, input widgets, and more
+
 
 ## Using URE
 
@@ -32,3 +50,7 @@ URE is built with the SBT build system and depends on LWJGL, Jackson and Reflect
 ## API Documentation
 
 see [JavaDoc](https://gilmore606.github.io/ure)
+
+## Projects made with URE
+
+Hopefully someday there will be links here to actual games.
