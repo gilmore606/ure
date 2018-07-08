@@ -1,6 +1,7 @@
 package ure;
 
 import ure.actions.UActionGet;
+import ure.actions.UActionPass;
 import ure.actions.UActionWalk;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
@@ -114,6 +115,7 @@ public class UCommander implements URenderer.KeyListener {
         keyBinds.put('A', "LATCH_W");
         keyBinds.put('S', "LATCH_S");
         keyBinds.put('D', "LATCH_E");
+        keyBinds.put(' ', "PASS");
         keyBinds.put('g', "GET");
         keyBinds.put('.', "STAIRS");
         keyBinds.put('i', "INVENTORY");
@@ -161,6 +163,8 @@ public class UCommander implements URenderer.KeyListener {
                     latchPlayer(-1,0); break;
                 case "LATCH_E":
                     latchPlayer(1,0); break;
+                case "PASS":
+                    PassPlayer(); break;
                 case "GET":
                     commandGet();
                     break;
@@ -202,6 +206,10 @@ public class UCommander implements URenderer.KeyListener {
         moveLatch = false;
         moveLatchX = 0;
         moveLatchY = 0;
+    }
+
+    void PassPlayer() {
+        player.doAction(new UActionPass(player));
     }
 
     void commandGet() {

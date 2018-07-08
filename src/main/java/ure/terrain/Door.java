@@ -61,4 +61,15 @@ public class Door extends TerrainI implements UTerrain {
         isOpen = true;
     }
 
+    @Override
+    public boolean isInteractable(UActor actor) {
+        return true;
+    }
+
+    @Override
+    public float interactionFrom(UActor actor) {
+
+        return 1f;
+    }
+
 }
