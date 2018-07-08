@@ -4,6 +4,10 @@ import ure.areas.UCell;
 import ure.math.UColor;
 import ure.actors.UActor;
 
+/**
+ * UTerrain defines all the public methods of terrain.  It should not be implemented directly to create new custom terrain.
+ * Instead, TerrainDeco should be extended.
+ */
 public interface UTerrain {
     boolean isPassable();
     boolean isPassable(UActor actor);

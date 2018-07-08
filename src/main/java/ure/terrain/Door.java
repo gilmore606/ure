@@ -3,6 +3,9 @@ package ure.terrain;
 import ure.areas.UCell;
 import ure.actors.UActor;
 
+/**
+ * It's a door!
+ */
 public class Door extends TerrainI implements UTerrain {
 
     public static final String TYPE = "door";
@@ -10,6 +13,7 @@ public class Door extends TerrainI implements UTerrain {
     public String openmsg = "The door opens.";
     public String closemsg = "The door closes.";
     public char glyphopen;
+    public boolean openOnMove = true;
 
     boolean isOpen;
 
@@ -23,7 +27,13 @@ public class Door extends TerrainI implements UTerrain {
     public boolean isOpaque() {
         return !isOpen();
     }
-
+    public boolean openOnMove(UActor actor) {
+        /**
+         * Do I open if actor walks into me?
+         * Override this to make doors un-openable in some conditions.
+         */
+        return openOnMove;
+    }
     @Override
     public char glyph() {
         if (isOpen()) {
@@ -33,7 +43,7 @@ public class Door extends TerrainI implements UTerrain {
     }
     @Override
     public void moveTriggerFrom(UActor actor, UCell cell) {
-        if (!isOpen()) {
+        if (!isOpen() && openOnMove(actor)) {
             openedBy(actor, cell);
         } else {
             super.moveTriggerFrom(actor, cell);
@@ -41,6 +51,10 @@ public class Door extends TerrainI implements UTerrain {
     }
 
     public void openedBy(UActor actor, UCell cell) {
+        /**
+         * Override this to do things when someone opens the door.
+         * @param actor Can be null if the door opened by mysterious means.
+         */
         printScroll(openmsg, cell);
         isOpen = true;
     }

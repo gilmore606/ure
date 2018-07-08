@@ -19,6 +19,10 @@ import org.reflections.scanners.SubTypesScanner;
 
 /**
  * Load and manage all the terrain types and dole them out as needed.
+ *
+ * Generally, your game will make one of these and use it for all terrain.  It loads terrain definitions
+ * from terrain.json in your resources folder by default.  This json can specify any public property of
+ * your terrain subclasses, including anything you add to a TerrainDeco.
  */
 
 public class UTerrainCzar {

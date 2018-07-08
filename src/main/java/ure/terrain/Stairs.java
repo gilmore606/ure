@@ -5,6 +5,14 @@ import ure.areas.UCartographer;
 import ure.areas.UCell;
 import ure.actors.UActor;
 
+/**
+ * Stairs is any area-transition terrain, be it a cave mouth, building entrance, or actual stairs.
+ * Stairs are tightly integrated with UCartographer to determine cross-area travel and area generation.
+ *
+ * To build your area map structure, you probably want to put logic into UCartographer and avoid
+ * overriding the label methods on Stairs directly.
+ *
+ */
 public class Stairs extends TerrainI implements UTerrain {
 
     public static final String TYPE = "stairs";
@@ -16,6 +24,10 @@ public class Stairs extends TerrainI implements UTerrain {
     boolean confirm = true;
 
     public String label() {
+        /**
+         * In general you shouldn't override this; you probably want to setLabel() persistently to
+         * change your area routing.
+         */
         return label;
     }
 

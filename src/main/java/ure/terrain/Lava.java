@@ -2,6 +2,9 @@ package ure.terrain;
 
 import java.util.Random;
 
+/**
+ * Lava does damage to things that move into it.
+ */
 public class Lava extends TerrainI implements UTerrain {
 
     public static final String TYPE = "lava";

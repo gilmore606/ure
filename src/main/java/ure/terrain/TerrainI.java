@@ -10,7 +10,10 @@ import java.util.Random;
 /**
  * Created by gilmore on 6/20/2018.
  *
- * A type of terrain which can be in a cell.
+ * A real serializable instance of a terrain which exists in a single cell.
+ *
+ * For API reference when extending this class to create custom terrain types, see the method docs of
+ * TerrainDeco.
  *
  */
 
@@ -40,7 +43,7 @@ public abstract class TerrainI implements UTerrain, Cloneable, UAnimator {
 
     public boolean passable;
     public boolean opaque;
-    public boolean breaklatch;
+    public boolean breaklatch = false;
     public boolean glow = false;
     public float sunvis = 0.0f;
     public float movespeed = 1.0f;
