@@ -219,7 +219,7 @@ public class UCommander implements URenderer.KeyListener {
     void commandStairs() {
         UTerrain t = player.area().terrainAt(player.areaX(), player.areaY());
         if (t instanceof Stairs) {
-            ((Stairs)t).transportActor(player, cartographer);
+            ((Stairs)t).transportActor(player);
         } else {
             printScroll("You don't see anything to move through.");
         }

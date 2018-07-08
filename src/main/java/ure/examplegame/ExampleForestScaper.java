@@ -1,6 +1,7 @@
 package ure.examplegame;
 
 import ure.areas.UArea;
+import ure.areas.UCartographer;
 import ure.areas.UCell;
 import ure.areas.ULandscaper;
 import ure.terrain.Stairs;
@@ -75,7 +76,8 @@ public class ExampleForestScaper extends ULandscaper {
         }
     }
     @Override
-    public void SetStairsLabel(UArea area, int x, int y, Stairs t) {
-        t.setLabel("cavern");
+    public void SetStairsLabel(UArea area, UCartographer carto, int x, int y, Stairs t) {
+
+        t.setLabel("cavern", carto);
     }
 }

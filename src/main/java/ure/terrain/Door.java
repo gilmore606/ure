@@ -75,6 +75,8 @@ public class Door extends TerrainI implements UTerrain {
 
     @Override
     public boolean isInteractable(UActor actor) {
+        if (actor.myCell() == cell)
+            return false;
         return true;
     }
 

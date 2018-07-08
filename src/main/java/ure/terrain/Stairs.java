@@ -23,6 +23,8 @@ public class Stairs extends TerrainI implements UTerrain {
     boolean onstep = false;
     boolean confirm = true;
 
+    private UCartographer cartographer;
+
     public String label() {
         /**
          * In general you shouldn't override this; you probably want to setLabel() persistently to
@@ -31,14 +33,15 @@ public class Stairs extends TerrainI implements UTerrain {
         return label;
     }
 
-    public void setLabel(String thelabel) {
+    public void setLabel(String thelabel, UCartographer carto) {
+        cartographer = carto;
         label = thelabel;
         System.out.println("CARTO : setting stairs dest : " + label);
     }
 
-    public void transportActor(UActor actor, UCartographer carto) {
+    public void transportActor(UActor actor) {
         // TODO: cool transition bullshit i dunno
-        UArea destarea = carto.getArea(label);
+        UArea destarea = cartographer.getArea(label);
         System.out.println("CARTO : stairs got new area " + destarea.label);
         UCell dest = destarea.findExitTo(actor.area().label);
         if (dest == null) {
@@ -46,5 +49,16 @@ public class Stairs extends TerrainI implements UTerrain {
             dest = destarea.randomOpenCell(actor);
         }
         actor.moveToCell(destarea, dest.areaX(), dest.areaY());
+    }
+
+    @Override
+    public boolean isInteractable(UActor actor) {
+        return true;
+    }
+
+    @Override
+    public float interactionFrom(UActor actor) {
+        transportActor(actor);
+        return 0f;
     }
 }

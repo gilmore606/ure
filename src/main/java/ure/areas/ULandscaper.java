@@ -571,13 +571,13 @@ public class ULandscaper {
         return null;
     }
 
-    void SetStairsLabels(UArea area) {
+    void SetStairsLabels(UArea area, UCartographer carto) {
         System.out.println("setting stairs labels");
         for (int x=0;x<area.xsize;x++) {
             for (int y=0;y<area.ysize;y++) {
                 UTerrain t = area.terrainAt(x,y);
                 if (t instanceof Stairs && ((Stairs)t).label() == "")
-                    SetStairsLabel(area, x,y,(Stairs)t);
+                    SetStairsLabel(area, carto, x,y,(Stairs)t);
             }
         }
     }
@@ -592,8 +592,8 @@ public class ULandscaper {
      * @param y
      * @param t
      */
-    public void SetStairsLabel(UArea area, int x, int y, Stairs t) {
-        t.setLabel("");
+    public void SetStairsLabel(UArea area, UCartographer carto, int x, int y, Stairs t) {
+        t.setLabel("", carto);
     }
 
     public void buildRoom(UArea area, int x, int y, int w, int h, String floort, String wallt) {

@@ -148,7 +148,7 @@ public class UCartographer {
         area.setCommander(commander);
         ULandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
-        scaper.SetStairsLabels(area);
+        scaper.SetStairsLabels(area, this);
         for (int i=0;i<30;i++) {
             UActor rat = actorCzar.getActorByName("rat");
             UCell ratdest = scaper.randomOpenCell(area, rat);
@@ -162,7 +162,7 @@ public class UCartographer {
         area.setCommander(commander);
         ULandscaper scaper = new ExampleComplexScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
-        scaper.SetStairsLabels(area);
+        scaper.SetStairsLabels(area, this);
         return area;
     }
 
@@ -171,7 +171,7 @@ public class UCartographer {
         area.setCommander(commander);
         ULandscaper scaper = new ExampleCaveScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
-        scaper.SetStairsLabels(area);
+        scaper.SetStairsLabels(area, this);
         UActor monk = actorCzar.getActorByName("monk");
         UCell monkdest = scaper.randomOpenCell(area, monk);
         monk.moveToCell(area, monkdest.x, monkdest.y);
@@ -183,6 +183,7 @@ public class UCartographer {
         area.setCommander(commander);
         ULandscaper scaper = new ExampleDungeonScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
+        scaper.SetStairsLabels(area, this);
         return area;
     }
 }
