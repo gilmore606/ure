@@ -3,7 +3,6 @@ organization := "ure"
 version := "0.1"
 description := "UnRoguelike Engine"
 
-javaOptions += "-XstartOnFirstThread"
 
 Compile / run / fork := true
 
