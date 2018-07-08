@@ -92,6 +92,7 @@
       "filechar": "D",
       "passable": true,
       "opaque": true,
+      "breaklatch": true,
       "sunvis": 0.0,
       "glyph": "D",
       "glyphopen": "|",
