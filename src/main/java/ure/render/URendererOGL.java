@@ -48,6 +48,8 @@ public class URendererOGL implements URenderer {
     private int frameCount = 0;
     private long lastUpdateTime = System.currentTimeMillis();
 
+    private boolean[] keyState = new boolean[65536]; // Apparently in Java these are 16bit.
+
     // URERenderer methods
 
     @Override
@@ -94,12 +96,15 @@ public class URendererOGL implements URenderer {
             @Override
             public void invoke(long window, int key,
                                int scancode, int action, int mods) {
+                keyState[key] = action != GLFW_RELEASE;
+
                 if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
                     glfwSetWindowShouldClose(window, true);
-                    System.out.println("OMG I SHOULD EXIT NOW!");
+                    System.out.println("Exiting.");
                 }
                 if (keyListener != null && key < 256 && key >= 0 && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-                    keyListener.keyPressed((char)key);
+                    if(keyState[GLFW_KEY_LEFT_SHIFT] || keyState[GLFW_KEY_RIGHT_SHIFT]) keyListener.keyPressed((char)key);
+                    else keyListener.keyPressed(Character.toLowerCase((char)key));
                 }
             }
         });
