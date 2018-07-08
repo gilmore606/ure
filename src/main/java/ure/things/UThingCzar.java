@@ -25,10 +25,11 @@ public class UThingCzar {
     private ObjectMapper objectMapper = new ObjectMapper();
     private Reflections reflections = new Reflections("ure", new SubTypesScanner());
 
-    public UThingCzar() {
+    public UThingCzar(String jsonfilename) {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(ThingI.class, new ThingDeserializer());
         objectMapper.registerModule(module);
+        loadThings(jsonfilename);
     }
 
     public void loadThings(String resourceName) {

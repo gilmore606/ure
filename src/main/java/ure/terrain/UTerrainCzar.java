@@ -36,13 +36,26 @@ public class UTerrainCzar {
 
     private Class<TerrainDeco> decorator;
 
-    public UTerrainCzar(Class<TerrainDeco> myDecorator) {
+    /**
+     * When creating your TerrainCzar, pass in your TerrainDeco class if you have one to extend
+     * functionality of all Terrain.
+     *
+     * @param myDecorator
+     */
+    public UTerrainCzar(String jsonfilename, Class<TerrainDeco> myDecorator) {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(TerrainI.class, new TerrainDeserializer());
         objectMapper.registerModule(module);
         decorator = myDecorator;
+        loadTerrains(jsonfilename);
     }
 
+    /**
+     * Load terrain definitions from a json file and create sample instances.
+     *
+     * This is done on creation, but you can rerun it to load a new terrain set.
+     *
+     */
     public void loadTerrains(String resourceName) {
         terrainClasses = reflections.getSubTypesOf(TerrainI.class);
         System.out.println("+++++++++ " + terrainClasses.size() + " TerrainI subclasses");
@@ -65,6 +78,12 @@ public class UTerrainCzar {
         }
     }
 
+    /**
+     * Get a new instance of a terrain type with the given textfile character ID.
+     *
+     * @param thechar
+     * @return
+     */
     public UTerrain getTerrainForFilechar(char thechar) {
         UTerrain terrain = (UTerrain)(terrains.get(thechar).getClone());
         if (decorator != null) {
@@ -79,6 +98,12 @@ public class UTerrainCzar {
         return terrain;
     }
 
+    /**
+     * Get a new instance of a named terrain type.
+     *
+     * @param name
+     * @return
+     */
     public UTerrain getTerrainByName(String name) {
         return (UTerrain)(getTerrainForFilechar(terrainsByName.get(name).filechar));
     }

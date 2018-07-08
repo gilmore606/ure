@@ -6,6 +6,10 @@ import ure.ui.ULight;
 
 import java.util.Random;
 
+/**
+ * A thing which can project a Light into the area at its location.
+ *
+ */
 public class Lightsource extends ThingI implements UThing {
 
     public static final String TYPE = "lightsource";

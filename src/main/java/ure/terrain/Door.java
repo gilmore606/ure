@@ -4,7 +4,9 @@ import ure.areas.UCell;
 import ure.actors.UActor;
 
 /**
- * It's a door!
+ * Doors can be opened by walking into them, closed by interaction, and block movement and light
+ * when closed.
+ *
  */
 public class Door extends TerrainI implements UTerrain {
 

@@ -8,9 +8,8 @@ import ure.actors.UActor;
 import java.util.Random;
 
 /**
- * Created by gilmore on 6/20/2018.
- *
- * A real serializable instance of a terrain which exists in a single cell.
+ * A real serializable instance of a terrain which exists in a single cell.  Subclass this to
+ * create new subtypes of Terrain.  To extend base terrain, use TerrainDeco.
  *
  * For API reference when extending this class to create custom terrain types, see the method docs of
  * TerrainDeco.
