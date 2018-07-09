@@ -15,9 +15,8 @@ public class UThingCzar {
     @Inject
     ObjectMapper objectMapper;
 
-    public UThingCzar(String jsonfilename) {
+    public UThingCzar() {
         Injector.getAppComponent().inject(this);
-        loadThings(jsonfilename);
     }
 
     public void loadThings(String resourceName) {

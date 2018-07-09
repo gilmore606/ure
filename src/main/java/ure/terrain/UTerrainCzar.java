@@ -58,7 +58,7 @@ public class UTerrainCzar {
         terrains = new HashMap<>();
         terrainsByName = new HashMap<>();
         try {
-            InputStream inputStream = getClass().getResourceAsStream("/terrain.json");
+            InputStream inputStream = getClass().getResourceAsStream(resourceName);
             TerrainI[] terrainObjs = objectMapper.readValue(inputStream, TerrainI[].class);
             for (TerrainI terrain : terrainObjs) {
                 terrain.initialize();

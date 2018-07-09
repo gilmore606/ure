@@ -16,15 +16,14 @@ public class UActorCzar {
     @Inject
     ObjectMapper objectMapper;
 
-    public UActorCzar(String jsonfilename) {
+    public UActorCzar() {
         Injector.getAppComponent().inject(this);
-        loadActors(jsonfilename);
     }
 
     public void loadActors(String resourceName) {
         actorsByName = new HashMap<>();
         try {
-            InputStream inputStream = getClass().getResourceAsStream("/actors.json");
+            InputStream inputStream = getClass().getResourceAsStream(resourceName);
             UActor[] actorObjs = objectMapper.readValue(inputStream, UActor[].class);
             for (UActor actor: actorObjs) {
                 actor.initialize();
