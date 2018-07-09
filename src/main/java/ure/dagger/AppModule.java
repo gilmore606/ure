@@ -1,13 +1,15 @@
 package ure.dagger;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import dagger.Module;
 import dagger.Provides;
-import ure.URECommander;
-import ure.actors.UREActorCzar;
-import ure.render.URERenderer;
-import ure.render.URERendererOGL;
-import ure.terrain.URETerrainCzar;
-import ure.things.UREThingCzar;
+import ure.actors.ActorDeserializer;
+import ure.actors.UActor;
+import ure.terrain.TerrainDeserializer;
+import ure.terrain.TerrainI;
+import ure.things.ThingDeserializer;
+import ure.things.ThingI;
 
 import javax.inject.Singleton;
 
@@ -16,31 +18,15 @@ public class AppModule {
 
     @Provides
     @Singleton
-    public URERenderer providesRenderer() {
-        return new URERendererOGL();
+    public ObjectMapper providesObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(TerrainI.class, new TerrainDeserializer(objectMapper));
+        module.addDeserializer(ThingI.class, new ThingDeserializer(objectMapper));
+        module.addDeserializer(UActor.class, new ActorDeserializer(objectMapper));
+
+        objectMapper.registerModule(module);
+        return objectMapper;
     }
 
-    @Provides
-    @Singleton
-    public UREActorCzar providesActorCzar() {
-        return new UREActorCzar();
-    }
-
-    @Provides
-    @Singleton
-    public URETerrainCzar providesTerrainCzar() {
-        return new URETerrainCzar();
-    }
-
-    @Provides
-    @Singleton
-    public UREThingCzar providesThingCzar() {
-        return new UREThingCzar();
-    }
-
-//    @Provides
-//    @Singleton
-//    public URECommander provideCommander(URERenderer renderer, URETerrainCzar terrainCzar, UREThingCzar thingCzar) {
-//        return new URECommander();
-//    }
 }
