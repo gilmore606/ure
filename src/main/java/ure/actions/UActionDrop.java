@@ -32,7 +32,8 @@ public class UActionDrop extends UAction {
             if (destination == null) {
                 destination = actor.location();
             }
-            actor.tryDropThing(thing, destination);
+            if (!actor.tryDropThing(thing, destination))
+                suppressEvent();
         }
     }
 }

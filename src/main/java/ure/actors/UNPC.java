@@ -2,6 +2,7 @@ package ure.actors;
 
 import ure.actions.UAction;
 import ure.actions.UActionEmote;
+import ure.actions.UActionGet;
 import ure.actions.UActionWalk;
 import ure.behaviors.UBehavior;
 
@@ -40,6 +41,15 @@ public class UNPC extends UActor {
                 return;
             }
             doAction(action);
+        }
+    }
+
+    @Override
+    public void hearEvent(UAction action) {
+        if (action.actor != this) {
+            if (action instanceof UActionGet) {
+                emote(dnamec() + " says, \"Hey that's mine!\"");
+            }
         }
     }
 

@@ -34,6 +34,7 @@ public class UActionGet extends UAction {
                     actor.camera.area.commander().printScroll(nothingToGetMsg);
             }
         }
-        actor.tryGetThing(thing);
+        if (!actor.tryGetThing(thing))
+            suppressEvent();
     }
 }

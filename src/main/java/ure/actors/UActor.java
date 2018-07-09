@@ -4,6 +4,7 @@ import ure.*;
 import ure.actions.UAction;
 import ure.areas.UArea;
 import ure.areas.UCell;
+import ure.areas.ULandscaper;
 import ure.math.UPath;
 import ure.terrain.UTerrain;
 import ure.things.Lightsource;
@@ -24,6 +25,7 @@ public class UActor extends ThingI {
     public boolean awake = false;
     public int wakerange = 20;
     public int sleeprange = 30;
+    public int sightrange = 15;
 
     public UCamera camera;
     int cameraPinStyle;
@@ -125,10 +127,10 @@ public class UActor extends ThingI {
             area().commander().printScroll("Ow!");
     }
 
-    public void tryGetThing(UThing thing) {
+    public boolean tryGetThing(UThing thing) {
         if (thing == null) {
             area().commander().printScroll("Nothing to get.");
-            return;
+            return false;
         }
         if (thing.tryGetBy(this)) {
             thing.moveTo(this);
@@ -137,13 +139,15 @@ public class UActor extends ThingI {
             else
                 area().commander().printScrollIfSeen(this, this.dnamec() + " picks up " + thing.iname() + ".");
             thing.gotBy(this);
+            return true;
         }
+        return false;
     }
 
-    public void tryDropThing(UThing thing, UContainer dest) {
+    public boolean tryDropThing(UThing thing, UContainer dest) {
         if (thing == null) {
             area().commander().printScroll("Nothing to drop.");
-            return;
+            return false;
         }
         if (dest.willAcceptThing(thing)) {
             thing.moveTo(dest);
@@ -152,7 +156,9 @@ public class UActor extends ThingI {
             else
                 area().commander().printScrollIfSeen(this, this.dnamec() + " drops " + thing.iname() + ".");
             thing.droppedBy(this);
+            return true;
         }
+        return false;
     }
 
     public float actionSpeed() {
@@ -163,7 +169,8 @@ public class UActor extends ThingI {
         if (action.allowedForActor() && !myCell().preventAction(action)) {
             float timecost = action.doNow();
             this.actionTime = this.actionTime - timecost;
-            area().broadcastEvent(action);
+            if (action.shouldBroadcastEvent())
+                area().broadcastEvent(action);
         }
     }
 
@@ -200,12 +207,17 @@ public class UActor extends ThingI {
 
     /**
      * Can I see that thing from where I am (and I'm awake, and can see, etc)?
-     * TODO: actually implement this
      *
      * @param thing
      * @return
      */
     public boolean canSee(UThing thing) {
+        int x1 = areaX(); int y1 = areaY();
+        int x2 = thing.areaX(); int y2 = thing.areaY();
+        if (UPath.mdist(x1,y1,x2,y2) > sightrange)
+            return false;
+        if (!UPath.canSee(x1,y1,x2,y2,area(),this))
+            return false;
         return true;
     }
 

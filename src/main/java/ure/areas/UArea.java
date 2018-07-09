@@ -15,6 +15,7 @@ import ure.ui.UParticle;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Stream;
@@ -25,7 +26,7 @@ import java.util.stream.Stream;
  *
  */
 
-public class UArea implements UTimeListener {
+public class UArea implements UTimeListener, Serializable {
 
     public interface Listener {
         void areaChanged();
@@ -334,6 +335,7 @@ public class UArea implements UTimeListener {
      */
     public void broadcastEvent(UAction action) {
         for (UActor actor : actors) {
+            // TODO: some events should probably go further than just seeing?
             if (actor.canSee(action.actor)) {
                 actor.hearEvent(action);
             }

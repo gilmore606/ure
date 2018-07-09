@@ -19,6 +19,7 @@ public abstract class UAction {
     public UActor actor;
 
     float cost = 1.0f;
+    boolean shouldBroadcastEvent = true;
 
     public UAction() {}
     /**
@@ -71,4 +72,13 @@ public abstract class UAction {
     public boolean allowedForActor() {
         return true;
     }
+
+    /**
+     * Prevent this action from broadcasting an event, because it was aborted, failed, etc.
+     *
+     */
+    public void suppressEvent() {
+        shouldBroadcastEvent = false;
+    }
+    public boolean shouldBroadcastEvent() { return shouldBroadcastEvent; }
 }

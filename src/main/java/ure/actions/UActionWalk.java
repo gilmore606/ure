@@ -12,6 +12,12 @@ public class UActionWalk extends UAction {
 
     int xdir, ydir;
 
+    /**
+     *
+     * @param theactor
+     * @param xd X direction to walk (-1, 0, 1)
+     * @param yd Y direction to walk (-1, 0, 1)
+     */
     public UActionWalk(UActor theactor, int xd, int yd) {
         actor = theactor;
         xdir = xd;

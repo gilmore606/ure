@@ -26,8 +26,10 @@ public class UActionInteract extends UAction {
     public void doMe() {
         if (target.isInteractable(actor))
             timeTaken = target.interactionFrom(actor);
-        else
+        else {
             actor.commander().printScroll(noInteractMsg);
+            suppressEvent();
+        }
     }
 
     @Override
