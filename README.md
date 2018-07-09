@@ -12,7 +12,7 @@ display layer, as a full world abstraction manager, or take full advtanage of it
 object library and use a conventional roguelike as an immediate jumping-off point
 to create from.
 
-[ure gif](https://raw.githubusercontent.com/gilmore606/ure/master/thumb2.gif)
+![ure gif](https://raw.githubusercontent.com/gilmore606/ure/master/thumb2.gif)
 ## Features
 
 URE is built for flexibility -- you should be able to use as few or as many of its features
