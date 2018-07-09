@@ -1,7 +1,7 @@
 package ure.things;
 
+import ure.actions.Interactable;
 import ure.math.UColor;
-import ure.UContainer;
 import ure.areas.UArea;
 import ure.actors.UActor;
 import ure.render.URenderer;
@@ -24,7 +24,8 @@ public interface UThing {
     boolean drawGlyphOutline();
     void moveToCell(int x, int y);
     void moveToCell(UArea area, int x, int y);
-    void moveToContainer(UContainer container);
+    void moveTo(UContainer container);
+    UContainer location();
     void leaveCurrentLocation();
     void addThing(UThing thing);
     void removeThing(UThing thing);
@@ -35,6 +36,9 @@ public interface UThing {
     UArea area();
     boolean tryGetBy(UActor actor);
     void gotBy(UActor actor);
+    void droppedBy(UActor actor);
+    boolean isInteractable(UActor actor);
+    float interactionFrom(UActor actor);
     String getMsg(UActor actor);
     String walkMsg(UActor actor);
     void render(URenderer renderer, int x, int y, UColor light, float vis);

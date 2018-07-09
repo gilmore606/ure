@@ -4,18 +4,28 @@ import ure.*;
 import ure.actions.UAction;
 import ure.areas.UArea;
 import ure.areas.UCell;
+import ure.areas.ULandscaper;
 import ure.math.UPath;
 import ure.terrain.UTerrain;
 import ure.things.Lightsource;
 import ure.things.ThingI;
+import ure.things.UContainer;
 import ure.things.UThing;
 import ure.ui.UCamera;
 
+/**
+ * UActor represents a UThing which can perform actions.  This includes the player and NPCs.
+ *
+ * Do not subclass UActor to change base actor behavior.  To change NPC-only behavior, use UBehaviors
+ * or subclass NPC.  To change base actor behavior, use an ActorDeco decorator class.
+ *
+ */
 public class UActor extends ThingI {
 
     public boolean awake = false;
     public int wakerange = 20;
     public int sleeprange = 30;
+    public int sightrange = 15;
 
     public UCamera camera;
     int cameraPinStyle;
@@ -117,19 +127,38 @@ public class UActor extends ThingI {
             area().commander().printScroll("Ow!");
     }
 
-    public void tryGetThing(UThing thing) {
+    public boolean tryGetThing(UThing thing) {
         if (thing == null) {
             area().commander().printScroll("Nothing to get.");
-            return;
+            return false;
         }
         if (thing.tryGetBy(this)) {
-            thing.moveToContainer(this);
+            thing.moveTo(this);
             if (isPlayer())
                 area().commander().printScroll("You pick up " + thing.iname() + ".");
             else
                 area().commander().printScrollIfSeen(this, this.dnamec() + " picks up " + thing.iname() + ".");
             thing.gotBy(this);
+            return true;
         }
+        return false;
+    }
+
+    public boolean tryDropThing(UThing thing, UContainer dest) {
+        if (thing == null) {
+            area().commander().printScroll("Nothing to drop.");
+            return false;
+        }
+        if (dest.willAcceptThing(thing)) {
+            thing.moveTo(dest);
+            if (isPlayer())
+                area().commander().printScroll("You drop " + thing.iname() + ".");
+            else
+                area().commander().printScrollIfSeen(this, this.dnamec() + " drops " + thing.iname() + ".");
+            thing.droppedBy(this);
+            return true;
+        }
+        return false;
     }
 
     public float actionSpeed() {
@@ -137,8 +166,12 @@ public class UActor extends ThingI {
     }
 
     public void doAction(UAction action) {
-        float timecost = action.doneBy(this);
-        this.actionTime = this.actionTime - timecost;
+        if (action.allowedForActor() && !myCell().preventAction(action)) {
+            float timecost = action.doNow();
+            this.actionTime = this.actionTime - timecost;
+            if (action.shouldBroadcastEvent())
+                area().broadcastEvent(action);
+        }
     }
 
     public void startActing(UCommander thecommander) {
@@ -159,11 +192,32 @@ public class UActor extends ThingI {
 
     }
 
+    /**
+     * React to this action occuring in our awareness.
+     *
+     * @param action
+     */
+    public void hearEvent(UAction action) {
+
+    }
+
     public void walkFail(UCell cell) {
         commander.printScroll(cell.terrain().bonkmsg());
     }
 
+    /**
+     * Can I see that thing from where I am (and I'm awake, and can see, etc)?
+     *
+     * @param thing
+     * @return
+     */
     public boolean canSee(UThing thing) {
+        int x1 = areaX(); int y1 = areaY();
+        int x2 = thing.areaX(); int y2 = thing.areaY();
+        if (UPath.mdist(x1,y1,x2,y2) > sightrange)
+            return false;
+        if (!UPath.canSee(x1,y1,x2,y2,area(),this))
+            return false;
         return true;
     }
 

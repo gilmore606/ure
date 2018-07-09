@@ -6,6 +6,10 @@ import ure.areas.UArea;
 import ure.ui.ULight;
 import ure.things.UThing;
 
+/**
+ * UPlayer implements a UActor whose actions are initiated by user input.  More than one can exist.
+ *
+ */
 public class UPlayer extends UActor {
 
     public boolean awake = true;
@@ -32,6 +36,8 @@ public class UPlayer extends UActor {
         if (light != null) {
             light.moveTo(area,destX,destY);
         }
+        if (area.terrainAt(destX,destY).breaksLatch())
+            commander.latchBreak();
 
     }
 

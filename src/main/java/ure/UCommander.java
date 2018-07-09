@@ -1,6 +1,7 @@
 package ure;
 
 import ure.actions.UActionGet;
+import ure.actions.UActionPass;
 import ure.actions.UActionWalk;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
@@ -48,6 +49,8 @@ public class UCommander implements URenderer.KeyListener {
 
     private int animationMillis = 33;
 
+    private boolean breakLatchOnInput = true;
+
     private LinkedBlockingQueue<Character> keyBuffer;
     private int keyBufferSize = 2;
 
@@ -69,6 +72,7 @@ public class UCommander implements URenderer.KeyListener {
 
         setPlayer(theplayer);
         readKeyBinds();
+        renderer.setKeyListener(this);
         turnCounter = 0;
         keyBuffer = new LinkedBlockingQueue<Character>();
     }
@@ -111,6 +115,7 @@ public class UCommander implements URenderer.KeyListener {
         keyBinds.put('A', "LATCH_W");
         keyBinds.put('S', "LATCH_S");
         keyBinds.put('D', "LATCH_E");
+        keyBinds.put(' ', "PASS");
         keyBinds.put('g', "GET");
         keyBinds.put('.', "STAIRS");
         keyBinds.put('i', "INVENTORY");
@@ -158,6 +163,8 @@ public class UCommander implements URenderer.KeyListener {
                     latchPlayer(-1,0); break;
                 case "LATCH_E":
                     latchPlayer(1,0); break;
+                case "PASS":
+                    PassPlayer(); break;
                 case "GET":
                     commandGet();
                     break;
@@ -185,7 +192,7 @@ public class UCommander implements URenderer.KeyListener {
 
 
     void walkPlayer(int xdir, int ydir) {
-        player.doAction(new UActionWalk(xdir, ydir));
+        player.doAction(new UActionWalk(player, xdir, ydir));
     }
 
     void latchPlayer(int xdir, int ydir) {
@@ -201,14 +208,18 @@ public class UCommander implements URenderer.KeyListener {
         moveLatchY = 0;
     }
 
+    void PassPlayer() {
+        player.doAction(new UActionPass(player));
+    }
+
     void commandGet() {
-        player.doAction(new UActionGet());
+        player.doAction(new UActionGet(player));
     }
 
     void commandStairs() {
         UTerrain t = player.area().terrainAt(player.areaX(), player.areaY());
         if (t instanceof Stairs) {
-            ((Stairs)t).transportActor(player, cartographer);
+            ((Stairs)t).transportActor(player);
         } else {
             printScroll("You don't see anything to move through.");
         }
@@ -306,7 +317,12 @@ public class UCommander implements URenderer.KeyListener {
             if (waitingForInput) {
                 if (!keyBuffer.isEmpty() || moveLatch) {
                     if (moveLatch) {
-                        walkPlayer(moveLatchX, moveLatchY);
+                        if (breakLatchOnInput && !keyBuffer.isEmpty()) {
+                            latchBreak();
+                            consumeKeyFromBuffer();
+                        } else {
+                            walkPlayer(moveLatchX, moveLatchY);
+                        }
                     } else {
                         consumeKeyFromBuffer();
                     }

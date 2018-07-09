@@ -4,6 +4,10 @@ import ure.actions.UAction;
 import ure.actions.UActionWalk;
 import ure.actors.UNPC;
 
+/**
+ * Wander aimlessly.
+ *
+ */
 public class UBehaviorWander extends UBehavior {
 
     public static String TYPE = "wander";
@@ -21,6 +25,6 @@ public class UBehaviorWander extends UBehavior {
         } else {
             wx = 0; wy = -1;
         }
-        return new UActionWalk(wx,wy);
+        return new UActionWalk(actor, wx,wy);
     }
 }

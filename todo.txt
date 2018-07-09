@@ -6,15 +6,9 @@ CODE:
 
 RENDERING:
 
-    - refactor URERenderer as URERendererASCII and leave an abstract base URERenderer
+    - better options for rendering 'seen but not visible' territory
 
-    - in stampGlyph, instead of reading/writing line by line read the whole source + dest image RGB data at once (optimization)
-
-    - realtime animation
-        skeleton of this is in place
-
-    - dynamic sunlight color
-        - lerp between daytime points (in turns) (gil: working on this)
+    - regain font support
 
     - options setting methods for camera, renderer
 
@@ -31,32 +25,11 @@ RENDERING:
 
 ENGINE:
 
-    - make URECommander control a complete game loop with setting for realtime (ms per tick) or wait-after-command
-
-    - make UREArea file constructor into a type of AreaGenerator and make the default constructor sensible
-
-    - smooth out keyboard input
-
-    - actor ticks
-
-    - daytime tracker
-        - lerp color points through defined ticks-per-day cycle of sunlight
-        - track number of days passed
-
-    - UREAreaGenerator
-        - UREAreaGenFile
-        - UREAreaGenSimpleTown
-        - UREAreaGenWilds
-        - UREAreaGenCave
-        - UREAreaGenDungeon
 
     - random association-generator
         - takes a bag of objects (healing potion, death potion) and a bag of qualities (sparkly, green)
         - random associates qualities to objects, can query for quality for object or object for quality
         - track known/unknown per association
-
-    - area links
-        - attach to terrain type? to cell?
 
 UI:
 
@@ -79,5 +52,4 @@ UI:
         - optional line from origin
         - optional show LOS true/false
 
-    - print terrain.walkString when walked on
 

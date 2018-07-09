@@ -2,12 +2,17 @@ package ure.actors;
 
 import ure.actions.UAction;
 import ure.actions.UActionEmote;
+import ure.actions.UActionGet;
 import ure.actions.UActionWalk;
 import ure.behaviors.UBehavior;
 
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * UNPC implements a non-player Actor with behaviors which initiate actions.
+ *
+ */
 public class UNPC extends UActor {
 
     public int visionRange = 12;
@@ -36,6 +41,15 @@ public class UNPC extends UActor {
                 return;
             }
             doAction(action);
+        }
+    }
+
+    @Override
+    public void hearEvent(UAction action) {
+        if (action.actor != this) {
+            if (action instanceof UActionGet) {
+                emote(dnamec() + " says, \"Hey that's mine!\"");
+            }
         }
     }
 
@@ -68,18 +82,18 @@ public class UNPC extends UActor {
         } else {
             wx = 0; wy = -1;
         }
-        return new UActionWalk(wx,wy);
+        return new UActionWalk(this,wx,wy);
     }
     UAction HuntPlayer() {
         System.out.println(this.name + " hunting from " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
         int[] step = path.nextStep(area(), areaX(), areaY(), area().commander().player().areaX(), area().commander().player().areaY(), this, 25);
         if (step != null) {
-            return new UActionWalk(step[0] - areaX(), step[1] - areaY());
+            return new UActionWalk(this,step[0] - areaX(), step[1] - areaY());
         }
         return null;
     }
 
     UAction Ambient() {
-        return new UActionEmote(ambients[random.nextInt(ambients.length)]);
+        return new UActionEmote(this, ambients[random.nextInt(ambients.length)]);
     }
 }

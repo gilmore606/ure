@@ -92,6 +92,7 @@
       "filechar": "D",
       "passable": true,
       "opaque": true,
+      "breaklatch": true,
       "sunvis": 0.0,
       "glyph": "D",
       "glyphopen": "|",
@@ -214,7 +215,8 @@
     "glyph": ">",
     "fgcolor": [255,255,255],
     "bgcolor": [60,60,60],
-    "walkmsg": "The trail slopes down into a dark cave."
+    "walkmsg": "The trail slopes down into a dark cave.",
+    "breaklatch": true
   },
   {
     "name": "cave exit",
@@ -234,6 +236,7 @@
       60,
       60
     ],
+    "breaklatch": true,
     "walkmsg": "Rough stairs cut into the rock lead out of the cavern."
   }
 

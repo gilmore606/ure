@@ -69,12 +69,9 @@ public class ExampleGame implements UTimeListener {
         renderer = new URendererOGL();
         renderer.initialize();
 
-        terrainCzar = new UTerrainCzar(null);
-        terrainCzar.loadTerrains("/terrains.json");
-        thingCzar = new UThingCzar();
-        thingCzar.loadThings("/things.json");
-        actorCzar = new UActorCzar();
-        actorCzar.loadActors("/actors.json");
+        terrainCzar = new UTerrainCzar("/terrains.json", null);
+        thingCzar = new UThingCzar("/things.json");
+        actorCzar = new UActorCzar("/actors.json");
 
         cartographer = new UCartographer(terrainCzar, thingCzar, actorCzar);
 
@@ -84,7 +81,6 @@ public class ExampleGame implements UTimeListener {
         commander = new UCommander(player, renderer, thingCzar, actorCzar, cartographer);
         cartographer.setCommander(commander);
         area = cartographer.getArea("forest");
-        renderer.setKeyListener(commander);
 
         makeWindow();//.getContentPane().addKeyListener(commander);
 

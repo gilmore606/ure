@@ -1,8 +1,9 @@
 package ure.things;
 
-import ure.*;
+import ure.actions.Interactable;
 import ure.actors.UActor;
 import ure.areas.UArea;
+import ure.areas.UCell;
 import ure.math.UColor;
 import ure.render.URenderer;
 
@@ -15,7 +16,7 @@ import java.util.Random;
  * A real instance of a thing.
  *
  */
-public abstract class ThingI implements UThing, UContainer, Cloneable {
+public abstract class ThingI implements UThing, UContainer, Interactable, Cloneable {
 
     public String name;
     public String iname;
@@ -53,7 +54,7 @@ public abstract class ThingI implements UThing, UContainer, Cloneable {
         }
     }
 
-    void SetupColors() {
+    public void SetupColors() {
         Random random = new Random();
         int[] thecolor = new int[]{color[0], color[1], color[2]};
         for (int i=0;i<3;i++) {
@@ -103,15 +104,20 @@ public abstract class ThingI implements UThing, UContainer, Cloneable {
         return glyphOutline;
     }
 
+    public UContainer location() { return location; }
+
     public void moveToCell(int x, int y) {
         moveToCell(area(), x, y);
     }
     public void moveToCell(UArea area, int x, int y) {
-        leaveCurrentLocation();
-        this.location = area.addThing((UThing)this, x, y);
+        UCell destination = area.cellAt(x,y);
+        if (destination != null) {
+            moveTo(destination);
+            area.addedThing((UThing) this, x, y);
+        }
     }
 
-    public void moveToContainer(UContainer container) {
+    public void moveTo(UContainer container) {
         leaveCurrentLocation();
         container.addThing(this);
         this.location = container;
@@ -162,6 +168,16 @@ public abstract class ThingI implements UThing, UContainer, Cloneable {
     public void gotBy(UActor actor) {
         if (getMsg(actor) != null)
             area().commander().printScroll(this.getMsg(actor));
+    }
+    public void droppedBy(UActor actor) {
+
+    }
+
+    public boolean isInteractable(UActor actor) {
+        return false;
+    }
+    public float interactionFrom(UActor actor) {
+        return 0f;
     }
 
     public String getMsg(UActor actor) {

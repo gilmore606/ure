@@ -1,12 +1,15 @@
 package ure.things;
 
 import ure.math.UColor;
-import ure.UContainer;
 import ure.areas.UArea;
 import ure.ui.ULight;
 
 import java.util.Random;
 
+/**
+ * A thing which can project a Light into the area at its location.
+ *
+ */
 public class Lightsource extends ThingI implements UThing {
 
     public static final String TYPE = "lightsource";

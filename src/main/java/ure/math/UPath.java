@@ -2,12 +2,20 @@ package ure.math;
 
 import ure.areas.UArea;
 import ure.actors.UActor;
+import ure.areas.UCell;
 import ure.things.UThing;
 
 import java.util.Comparator;
 import java.util.Random;
 import java.util.TreeSet;
 
+/**
+ * UPath implements A* pathfinding.  To use, create an instance of UPath and call .nextStep() to find
+ * the next step toward a destination from a source.
+ *
+ * TODO: bugs and inefficiencies
+ *
+ */
 public class UPath {
 
     Random random;
@@ -60,10 +68,55 @@ public class UPath {
         return null;
     }
 
-    public int mdist(int x1, int y1, int x2, int y2) {
+    /**
+     * Utility method: Calculate the manhattan distance (4-direction travel distance) between two points.
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @return
+     */
+    public static int mdist(int x1, int y1, int x2, int y2) {
         return Math.abs(x2-x1) + Math.abs(y2-y1);
     }
 
+    /**
+     * Utility method: Can actor see from point 1 to point 2 in area?
+     *
+     * TODO: export this to a bresenham util func
+     */
+    public static boolean canSee(int x0, int y0, int x1, int y1, UArea area, UActor actor) {
+        int dx = Math.abs(x1-x0); int dy = Math.abs(y1-y0);
+        int sx = x0<x1 ? 1 : -1;
+        int sy = y0<y1 ? 1 : -1;
+        int err = dx-dy;
+        int e2;
+        int x = x0;
+        int y = y0;
+        while (true) {
+            if (x==x1 && y==y1) break;
+            if (area.blocksLight(x,y)) return false;
+            e2 = 2*err;
+            if (e2 > -1 * dy) {
+                err -= dy;
+                x += sx;
+            }
+            if (e2 < dx) {
+                err += dx;
+                y += sy;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Perform A* pathfinding between the two given points and return the next step from the first point
+     * to reach the second.
+     * @param actor The actor to use for deciding passability.  Can be null.
+     * @param range No steps further than this from the start will be considered.
+     * @return (x,y) walk delta of next step
+     *
+     */
     public int[] nextStep(UArea area, int x1, int y1, int x2, int y2, UActor actor, int range) {
         if (mdist(x1,y1,x2,y2) > range)
             return null;

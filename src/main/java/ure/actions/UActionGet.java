@@ -3,6 +3,10 @@ package ure.actions;
 import ure.actors.UActor;
 import ure.things.UThing;
 
+/**
+ * Actor tries to pick up the thing, from the ground or a container.
+ *
+ */
 public class UActionGet extends UAction {
 
     public static String id = "GET";
@@ -11,24 +15,26 @@ public class UActionGet extends UAction {
 
     UThing thing;
 
-    public UActionGet() {
+    public UActionGet(UActor theactor) {
+        actor = theactor;
         thing = null;
     }
 
-    public UActionGet(UThing thething) {
+    public UActionGet(UActor theactor, UThing thething) {
+        actor = theactor;
         thing = thething;
     }
 
-    public float doneBy(UActor actor) {
+    @Override
+    void doMe() {
         if (thing == null) {
             thing = actor.myCell().topThingAt();
             if (thing == null) {
                 if (actor.isPlayer())
                     actor.camera.area.commander().printScroll(nothingToGetMsg);
-                return 0f;
             }
         }
-        actor.tryGetThing(thing);
-        return super.doneBy(actor);
+        if (!actor.tryGetThing(thing))
+            suppressEvent();
     }
 }

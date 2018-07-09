@@ -5,6 +5,14 @@ import ure.render.URenderer;
 
 import java.util.HashMap;
 
+/**
+ * UModal implements a pane of tiles to be rendered above a camera, and a command receiver
+ * to intercept input.
+ *
+ * TODO: separate the concept to include modal UI elements like direction pickers which
+ * don't necessarily render an opaque square of tiles.
+ *
+ */
 public class UModal extends View {
 
     URenderer renderer;

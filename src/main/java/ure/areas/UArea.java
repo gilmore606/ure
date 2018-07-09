@@ -1,6 +1,7 @@
 package ure.areas;
 
 import ure.UCommander;
+import ure.actions.UAction;
 import ure.ui.ULight;
 import ure.UTimeListener;
 import ure.actors.UActor;
@@ -14,18 +15,18 @@ import ure.ui.UParticle;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Stream;
 
 /**
- * Created by gilmore on 6/18/2018.
  *
- * A self-contained full play map.
+ * UArea implements a self-contained 2D map of roguelike playfield cells.
  *
  */
 
-public class UArea implements UTimeListener {
+public class UArea implements UTimeListener, Serializable {
 
     public interface Listener {
         void areaChanged();
@@ -197,6 +198,13 @@ public class UArea implements UTimeListener {
                 return cells[x][y].terrain();
         return null;
     }
+    public boolean hasTerrainAt(int x, int y, String terrain) {
+        if (isValidXY(x,y))
+            if (cells[x][y] != null)
+                if (cells[x][y].terrain.name().equals(terrain))
+                    return true;
+        return false;
+    }
 
     public void setTerrain(int x, int y, String t) {
         if (isValidXY(x, y)) {
@@ -248,8 +256,15 @@ public class UArea implements UTimeListener {
         return false;
     }
 
-    public UCell addThing(UThing thing, int x, int y) {
-        cells[x][y].addThing(thing);
+    /**
+     * A thing moved into one of our cells; do any bookkeeping or notification we require.
+     *
+     * @param thing
+     * @param x
+     * @param y
+     * @return
+     */
+    public void addedThing(UThing thing, int x, int y) {
         if (thing.isActor()) {
             actors.add((UActor) thing);
             if (((UActor) thing).isPlayer()) {
@@ -258,7 +273,6 @@ public class UArea implements UTimeListener {
                 ((UActor)thing).wakeCheck(x,y);
             }
         }
-        return cells[x][y];
     }
 
     private void wakeCheckAll(int playerx, int playery) {
@@ -311,6 +325,21 @@ public class UArea implements UTimeListener {
         System.out.println(label + " tick");
         setSunColor(commander.daytimeMinutes());
         updateListeners();
+    }
+
+    /**
+     * Broadcast an action's occurence to everyone who can be aware of it, based on the position
+     * of the actor.
+     *
+     * @param action
+     */
+    public void broadcastEvent(UAction action) {
+        for (UActor actor : actors) {
+            // TODO: some events should probably go further than just seeing?
+            if (actor.canSee(action.actor)) {
+                actor.hearEvent(action);
+            }
+        }
     }
 
     void updateListeners() {

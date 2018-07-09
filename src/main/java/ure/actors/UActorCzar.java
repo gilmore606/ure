@@ -25,10 +25,11 @@ public class UActorCzar {
     private ObjectMapper objectMapper = new ObjectMapper();
     private Reflections reflections = new Reflections("ure", new SubTypesScanner());
 
-    public UActorCzar() {
+    public UActorCzar(String jsonfilename) {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(UActor.class, new ActorDeserializer());
         objectMapper.registerModule(module);
+        loadActors(jsonfilename);
     }
 
     public void loadActors(String resourceName) {

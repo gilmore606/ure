@@ -19,6 +19,10 @@ import org.reflections.scanners.SubTypesScanner;
 
 /**
  * Load and manage all the terrain types and dole them out as needed.
+ *
+ * Generally, your game will make one of these and use it for all terrain.  It loads terrain definitions
+ * from terrain.json in your resources folder by default.  This json can specify any public property of
+ * your terrain subclasses, including anything you add to a TerrainDeco.
  */
 
 public class UTerrainCzar {
@@ -32,6 +36,20 @@ public class UTerrainCzar {
 
     private Class<TerrainDeco> decorator;
 
+    /**
+     * When creating your TerrainCzar, pass in your TerrainDeco class if you have one to extend
+     * functionality of all Terrain.
+     *
+     * @param myDecorator
+     */
+    public UTerrainCzar(String jsonfilename, Class<TerrainDeco> myDecorator) {
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(TerrainI.class, new TerrainDeserializer());
+        objectMapper.registerModule(module);
+        decorator = myDecorator;
+        loadTerrains(jsonfilename);
+    }
+
     public UTerrainCzar(Class<TerrainDeco> myDecorator) {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(TerrainI.class, new TerrainDeserializer());
@@ -39,6 +57,12 @@ public class UTerrainCzar {
         decorator = myDecorator;
     }
 
+    /**
+     * Load terrain definitions from a json file and create sample instances.
+     *
+     * This is done on creation, but you can rerun it to load a new terrain set.
+     *
+     */
     public void loadTerrains(String resourceName) {
         terrainClasses = reflections.getSubTypesOf(TerrainI.class);
         System.out.println("+++++++++ " + terrainClasses.size() + " TerrainI subclasses");
@@ -61,6 +85,12 @@ public class UTerrainCzar {
         }
     }
 
+    /**
+     * Get a new instance of a terrain type with the given textfile character ID.
+     *
+     * @param thechar
+     * @return
+     */
     public UTerrain getTerrainForFilechar(char thechar) {
         UTerrain terrain = (UTerrain)(terrains.get(thechar).getClone());
         if (decorator != null) {
@@ -75,6 +105,12 @@ public class UTerrainCzar {
         return terrain;
     }
 
+    /**
+     * Get a new instance of a named terrain type.
+     *
+     * @param name
+     * @return
+     */
     public UTerrain getTerrainByName(String name) {
         return (UTerrain)(getTerrainForFilechar(terrainsByName.get(name).filechar));
     }
