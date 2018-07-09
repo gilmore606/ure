@@ -12,6 +12,7 @@ display layer, as a full world abstraction manager, or take full advtanage of it
 object library and use a conventional roguelike as an immediate jumping-off point
 to create from.
 
+[ure gif](https://raw.githubusercontent.com/gilmore606/ure/master/thumb2.gif)
 ## Features
 
 URE is built for flexibility -- you should be able to use as few or as many of its features
@@ -67,6 +68,8 @@ plugins and build systems.
 to vanilla Java code in order to leverage modern functional programming techniques.  This allowed us to mainly
 support a well-known language (Java) while still providing a path to a functional language (since Scala is a superset
 of Java), rather than writing natively in a newer less-known functional language.
+- <B>Future non-Java support.</B> Not only Scala, but Kotlin (or any other JVM-based language) should also be able to import and use URE unmodified.  We have hopes of
+building an API frontend for Python and possibly Lua as well.
 
 ## Getting Started
 
