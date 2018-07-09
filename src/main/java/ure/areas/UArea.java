@@ -1,6 +1,7 @@
 package ure.areas;
 
 import ure.UCommander;
+import ure.actions.UAction;
 import ure.ui.ULight;
 import ure.UTimeListener;
 import ure.actors.UActor;
@@ -323,6 +324,20 @@ public class UArea implements UTimeListener {
         System.out.println(label + " tick");
         setSunColor(commander.daytimeMinutes());
         updateListeners();
+    }
+
+    /**
+     * Broadcast an action's occurence to everyone who can be aware of it, based on the position
+     * of the actor.
+     *
+     * @param action
+     */
+    public void broadcastEvent(UAction action) {
+        for (UActor actor : actors) {
+            if (actor.canSee(action.actor)) {
+                actor.hearEvent(action);
+            }
+        }
     }
 
     void updateListeners() {

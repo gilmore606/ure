@@ -1,5 +1,6 @@
 package ure.areas;
 
+import ure.actions.UAction;
 import ure.things.UCollection;
 import ure.things.UContainer;
 import ure.actors.UActor;
@@ -105,6 +106,15 @@ public class UCell implements UContainer {
         return false;
     }
 
+    /**
+     * Does anything in the cell prevent this action from being done?
+     *
+     * @param action
+     * @return
+     */
+    public boolean preventAction(UAction action) {
+        return false;
+    }
     /**
      * Is there any thing here named this?
      *

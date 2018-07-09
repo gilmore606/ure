@@ -160,8 +160,11 @@ public class UActor extends ThingI {
     }
 
     public void doAction(UAction action) {
-        float timecost = action.doNow();
-        this.actionTime = this.actionTime - timecost;
+        if (action.allowedForActor() && !myCell().preventAction(action)) {
+            float timecost = action.doNow();
+            this.actionTime = this.actionTime - timecost;
+            area().broadcastEvent(action);
+        }
     }
 
     public void startActing(UCommander thecommander) {
@@ -182,10 +185,26 @@ public class UActor extends ThingI {
 
     }
 
+    /**
+     * React to this action occuring in our awareness.
+     *
+     * @param action
+     */
+    public void hearEvent(UAction action) {
+
+    }
+
     public void walkFail(UCell cell) {
         commander.printScroll(cell.terrain().bonkmsg());
     }
 
+    /**
+     * Can I see that thing from where I am (and I'm awake, and can see, etc)?
+     * TODO: actually implement this
+     *
+     * @param thing
+     * @return
+     */
     public boolean canSee(UThing thing) {
         return true;
     }

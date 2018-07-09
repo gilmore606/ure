@@ -65,6 +65,7 @@ public class UCartographer {
 
     /**
      * Fetch the given area from persisted storage, if we have it.
+     * If we still have an Area for this label loaded and active, return that.
      *
      * @param label
      * @return null if no persisted area found.

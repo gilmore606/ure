@@ -61,4 +61,14 @@ public abstract class UAction {
     void doMe() {
 
     }
+
+    /**
+     * Is actor actually allowed to do this event right now?
+     * If false, give feedback why not.
+     *
+     * @return
+     */
+    public boolean allowedForActor() {
+        return true;
+    }
 }
