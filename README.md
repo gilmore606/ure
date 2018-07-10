@@ -113,4 +113,4 @@ Hopefully someday there will be links here to actual games.
 - [Reflections](http://static.javadoc.io/org.reflections/reflections/0.9.10/org/reflections/Reflections.html) Dynamic class detection.
 - [LWJGL](https://www.lwjgl.org/) Low level OpenGL access.
 - [JOML](https://github.com/JOML-CI/JOML) Low level OpenGL math.
-
+- [Dagger](http://square.github.io/dagger/) Dependency injection.  Pretty handy for game projects and lazy devs!

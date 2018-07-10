@@ -148,6 +148,12 @@ public class UCartographer {
             commander.unregisterTimeListener(area);
             // TODO: actually serialize the area now
             // TODO: somehow deref everything in the area so it gets GC'd?  that'd be nice eh.
+            boolean serializationWorksNow = false;
+            if (serializationWorksNow) {
+                persistArea(area, "uarea-" + area.label);
+            } else {
+                System.out.println("I would have serialized " + area.label + " at this point.");
+            }
         }
     }
 
