@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import dagger.Module;
 import dagger.Provides;
+import ure.UCommander;
 import ure.actors.ActorDeserializer;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
@@ -31,6 +32,13 @@ public class AppModule {
         module.addDeserializer(UActor.class, new ActorDeserializer(objectMapper));
         objectMapper.registerModule(module);
         return objectMapper;
+    }
+
+    @Provides
+    @Singleton
+    public UCommander providesCommander() {
+        UCommander cmdr = new UCommander();
+        return cmdr;
     }
 
     @Provides

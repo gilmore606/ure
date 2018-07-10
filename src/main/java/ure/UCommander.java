@@ -61,7 +61,10 @@ public class UCommander implements URenderer.KeyListener {
 
     private UModal modal;
 
-    public UCommander(UActor theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
+    public UCommander() {
+        turnCounter = 0;
+    }
+    public void registerComponents(UActor theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
         renderer = theRenderer;
         timeListeners = new HashSet<UTimeListener>();
         animators = new HashSet<UAnimator>();
@@ -73,7 +76,6 @@ public class UCommander implements URenderer.KeyListener {
         setPlayer(theplayer);
         readKeyBinds();
         renderer.setKeyListener(this);
-        turnCounter = 0;
         keyBuffer = new LinkedBlockingQueue<Character>();
     }
 

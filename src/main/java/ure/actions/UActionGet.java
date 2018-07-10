@@ -1,13 +1,19 @@
 package ure.actions;
 
+import ure.UCommander;
 import ure.actors.UActor;
 import ure.things.UThing;
+
+import javax.inject.Inject;
 
 /**
  * Actor tries to pick up the thing, from the ground or a container.
  *
  */
 public class UActionGet extends UAction {
+
+    @Inject
+    UCommander commander;
 
     public static String id = "GET";
 
@@ -30,8 +36,9 @@ public class UActionGet extends UAction {
         if (thing == null) {
             thing = actor.myCell().topThingAt();
             if (thing == null) {
-                if (actor.isPlayer())
-                    actor.camera.area.commander().printScroll(nothingToGetMsg);
+                if (actor.isPlayer()) {
+                    //commander.printScroll(nothingToGetMsg);
+                }
             }
         }
         if (!actor.tryGetThing(thing))

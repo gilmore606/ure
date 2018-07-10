@@ -23,12 +23,13 @@ public class ExampleGame implements UTimeListener {
 
     static UArea area;
     static UCamera camera;
-    static UCommander commander;
     static UActor player;
     static UREStatusPanel statusPanel;
     static UScrollPanel scrollPanel;
     static URenderer renderer;
 
+    @Inject
+    UCommander commander;
     @Inject
     UTerrainCzar terrainCzar;
     @Inject
@@ -83,11 +84,11 @@ public class ExampleGame implements UTimeListener {
 
         player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
 
-        commander = new UCommander(player, renderer, thingCzar, actorCzar, cartographer);
+        commander.registerComponents(player, renderer, thingCzar, actorCzar, cartographer);
         cartographer.setCommander(commander);
         area = cartographer.getArea("forest");
 
-        makeWindow();//.getContentPane().addKeyListener(commander);
+        makeWindow();
 
         commander.registerScrollPrinter(scrollPanel);
         commander.registerTimeListener(this);
