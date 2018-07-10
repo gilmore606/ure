@@ -17,6 +17,6 @@ public interface AppComponent {
     void inject(UThingCzar czar);
     void inject(UActorCzar czar);
     void inject(UCartographer cartographer);
-    void inject(UCommander commander);
+    void inject(UCommander cmdr);
     void inject(ExampleGame game);
 }

@@ -37,7 +37,7 @@ public class UActionGet extends UAction {
             thing = actor.myCell().topThingAt();
             if (thing == null) {
                 if (actor.isPlayer()) {
-                    //commander.printScroll(nothingToGetMsg);
+                    commander.printScroll(nothingToGetMsg);
                 }
             }
         }

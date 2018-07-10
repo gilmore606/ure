@@ -43,7 +43,7 @@ public class UCommander implements URenderer.KeyListener {
     public UActorCzar actorCzar;
     public UCartographer cartographer;
 
-    public int turnCounter;
+    public int turnCounter = 0;
     private int turnsPerDay = 512;
     public int frameCounter;
 
@@ -62,7 +62,7 @@ public class UCommander implements URenderer.KeyListener {
     private UModal modal;
 
     public UCommander() {
-        turnCounter = 0;
+        Injector.getAppComponent().inject(this);
     }
     public void registerComponents(UActor theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
         renderer = theRenderer;
