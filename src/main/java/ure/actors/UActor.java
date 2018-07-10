@@ -183,7 +183,7 @@ public class UActor extends ThingI {
         }
     }
     public void stopActing() {
-        commander.unRegisterActor(this);
+        commander.unregisterActor(this);
         awake = false;
         System.out.println(this.name + ": going to sleep.");
     }

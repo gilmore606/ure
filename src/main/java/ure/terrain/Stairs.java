@@ -1,5 +1,6 @@
 package ure.terrain;
 
+import ure.actors.UPlayer;
 import ure.areas.UArea;
 import ure.areas.UCartographer;
 import ure.areas.UCell;
@@ -41,14 +42,18 @@ public class Stairs extends TerrainI implements UTerrain {
 
     public void transportActor(UActor actor) {
         // TODO: cool transition bullshit i dunno
+        UArea sourcearea = actor.area();
         UArea destarea = cartographer.getArea(label);
         System.out.println("CARTO : stairs got new area " + destarea.label);
-        UCell dest = destarea.findExitTo(actor.area().label);
+        UCell dest = destarea.findExitTo(sourcearea.label);
         if (dest == null) {
             System.out.println("CARTO : couldn't find back-matching stairs!  going to random space");
             dest = destarea.randomOpenCell(actor);
         }
         actor.moveToCell(destarea, dest.areaX(), dest.areaY());
+        if (actor instanceof UPlayer) {
+            cartographer.playerLeftArea((UPlayer)actor, sourcearea);
+        }
     }
 
     @Override

@@ -357,4 +357,17 @@ public class UArea implements UTimeListener, Serializable {
     public void fizzleParticle(UParticle particle) {
         particles.remove(particle);
     }
+
+    /**
+     * Do what it takes to make this area ready for serialization.
+     * Only handle things internal to me; the Cartographer will take care of the rest.
+     *
+     */
+    public void freezeForPersist() {
+        for (UActor actor : actors) {
+            commander.unregisterActor(actor);
+        }
+        terrainCzar = null;
+        commander = null;
+    }
 }
