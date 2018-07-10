@@ -6,9 +6,9 @@ UnRogue Engine is a Java library for making roguelike games.
 
 URE is a class library of smart classes which work together to create a typical
 roguelike game environment based on 2D cell grids, turn-based action, and procedural
-content.  It can emulate all the conventions of a normal singleplayer roguelike such
+content.  It can emulate all the conventions of a normal single player roguelike such
 as Nethack, but is not limited to these conventions.  Users can use URE simply as a
-display layer, as a full world abstraction manager, or take full advtanage of its
+display layer, as a full world abstraction manager, or take full advantage of its
 object library and use a conventional roguelike as an immediate jumping-off point
 to create from.
 
@@ -37,6 +37,7 @@ own custom level generators
 - UI elements such as a scroll panel, status panels, input widgets, and more
 - Built for flexibility -- mix and match URE classes, extend and replace with your own
 
+![ure gif](https://raw.githubusercontent.com/gilmore606/ure/master/thumb3.gif)
 ## Planned features
 
 - Drop-in replacement renderer modules to allow graphical tile rendering, isometric views, or
