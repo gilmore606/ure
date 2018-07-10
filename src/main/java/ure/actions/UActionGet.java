@@ -1,5 +1,6 @@
 package ure.actions;
 
+import ure.Injector;
 import ure.UCommander;
 import ure.actors.UActor;
 import ure.things.UThing;
@@ -12,9 +13,6 @@ import javax.inject.Inject;
  */
 public class UActionGet extends UAction {
 
-    @Inject
-    UCommander commander;
-
     public static String id = "GET";
 
     public static String nothingToGetMsg = "There's nothing here to get.";
@@ -22,7 +20,7 @@ public class UActionGet extends UAction {
     UThing thing;
 
     public UActionGet(UActor theactor) {
-        actor = theactor;
+        super(theactor);
         thing = null;
     }
 

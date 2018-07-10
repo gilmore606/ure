@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import dagger.Module;
 import dagger.Provides;
 import ure.UCommander;
+import ure.actions.UAction;
 import ure.actors.ActorDeserializer;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
@@ -64,5 +65,4 @@ public class AppModule {
         czar.loadThings("/things.json");
         return czar;
     }
-
 }

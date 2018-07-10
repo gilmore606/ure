@@ -106,7 +106,7 @@ public class ExampleGame implements UTimeListener {
         commander.gameLoop();
     }
 
-    public void hearTimeTick(UCommander commander) {
+    public void hearTimeTick(UCommander cmdr) {
         statusPanel.setText("turn", "T " + Integer.toString(commander.getTurn()));
         statusPanel.setText("time", commander.timeString(true, " "));
     }

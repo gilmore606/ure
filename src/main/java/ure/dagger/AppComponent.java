@@ -2,6 +2,7 @@ package ure.dagger;
 
 import dagger.Component;
 import ure.UCommander;
+import ure.actions.UAction;
 import ure.actors.UActorCzar;
 import ure.areas.UCartographer;
 import ure.examplegame.ExampleGame;
@@ -19,4 +20,5 @@ public interface AppComponent {
     void inject(UCartographer cartographer);
     void inject(UCommander cmdr);
     void inject(ExampleGame game);
+    void inject(UAction act);
 }

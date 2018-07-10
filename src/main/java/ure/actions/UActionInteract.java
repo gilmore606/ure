@@ -1,6 +1,8 @@
 package ure.actions;
 
+import ure.UCommander;
 import ure.actors.UActor;
+
 
 /**
  * Actor interacts with an interactable terrain, thing, or actor.
@@ -18,7 +20,7 @@ public class UActionInteract extends UAction {
     float timeTaken = 0f;
 
     public UActionInteract(UActor theactor, Interactable thetarget) {
-        actor = theactor;
+        super(theactor);
         target = thetarget;
     }
 
@@ -27,7 +29,7 @@ public class UActionInteract extends UAction {
         if (target.isInteractable(actor))
             timeTaken = target.interactionFrom(actor);
         else {
-            actor.commander().printScroll(noInteractMsg);
+            commander.printScroll(noInteractMsg);
             suppressEvent();
         }
     }

@@ -1,6 +1,10 @@
 package ure.actions;
 
+import ure.Injector;
+import ure.UCommander;
 import ure.actors.UActor;
+
+import javax.inject.Inject;
 
 /**
  * UAction subclasses implement actions which Actors can perform to do arbitrary things in the
@@ -13,6 +17,9 @@ import ure.actors.UActor;
  *
  */
 public abstract class UAction {
+
+    @Inject
+    UCommander commander;
 
     public static String id = "ACTION";
 
@@ -28,6 +35,7 @@ public abstract class UAction {
      * @param theactor
      */
     public UAction(UActor theactor) {
+        Injector.getAppComponent().inject(this);
         actor = theactor;
     }
 
