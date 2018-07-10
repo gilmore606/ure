@@ -5,6 +5,7 @@ import ure.Injector;
 import ure.UCommander;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
+import ure.actors.UPlayer;
 import ure.examplegame.ExampleCaveScaper;
 import ure.examplegame.ExampleComplexScaper;
 import ure.examplegame.ExampleDungeonScaper;
@@ -15,6 +16,7 @@ import ure.things.UThingCzar;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * UCartographer implements a central authority for determining where inter-area exits go.  It defines
@@ -42,9 +44,11 @@ public class UCartographer {
     ObjectMapper objectMapper;
 
     UCommander commander;
+    ArrayList<UArea> activeAreas;
 
     public UCartographer() {
         Injector.getAppComponent().inject(this);
+        activeAreas = new ArrayList<UArea>();
     }
 
     public void setCommander(UCommander cmdr) {
@@ -69,6 +73,7 @@ public class UCartographer {
         area = makeArea(label, labelname, labeldata);
         area.setLabel(label);
         area.setCommander(commander);
+        activeAreas.add(area);
         commander.registerTimeListener(area);
         return area;
     }
@@ -128,6 +133,25 @@ public class UCartographer {
     }
 
     /**
+     * Shut down an active Area and serialize it to disk.
+     *
+     * @param area
+     */
+    void freezeArea(UArea area) {
+        if (commander.player().area() == area) {
+            System.out.println("ERROR: attempted to freeze player's current area!");
+        } else if (!activeAreas.contains(area)) {
+            System.out.println("ERROR: attempted to freeze an area not in activeAreas!  Where'd that come from?");
+        } else {
+            area.freezeForPersist();
+            activeAreas.remove(area);
+            commander.unregisterTimeListener(area);
+            // TODO: actually serialize the area now
+            // TODO: somehow deref everything in the area so it gets GC'd?  that'd be nice eh.
+        }
+    }
+
+    /**
      * Extract the 'maptype' part of the label string, assuming the conventional format (anything before a space).
      *
      * For 'dungeon 47', this would return 'dungeon'.
@@ -168,6 +192,21 @@ public class UCartographer {
         }
         return data;
     }
+
+    /**
+     * Player has left an area -- check and see if we need to serialize anything or preemptively make
+     * new areas.
+     *
+     * @param player
+     * @param area
+     */
+    public void playerLeftArea(UPlayer player, UArea area) {
+        // for now we're just gonna immediately freeze that old area
+        // TODO: keep old areas around until they're 2 exits away
+        freezeArea(area);
+    }
+
+
 
     public UArea MakeForest() {
         UArea area = new UArea(140, 140, terrainCzar, "grass");

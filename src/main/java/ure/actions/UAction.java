@@ -64,7 +64,7 @@ public abstract class UAction {
     }
 
     /**
-     * Is actor actually allowed to do this event right now?
+     * Is actor actually allowed to do this action right now?
      * If false, give feedback why not.
      *
      * @return

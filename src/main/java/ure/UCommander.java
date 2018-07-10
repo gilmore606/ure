@@ -86,12 +86,12 @@ public class UCommander implements URenderer.KeyListener {
     public void registerTimeListener(UTimeListener listener) {
         timeListeners.add(listener);
     }
-    public void unRegisterTimeListener(UTimeListener listener) {
+    public void unregisterTimeListener(UTimeListener listener) {
         timeListeners.remove(listener);
     }
 
     public void registerActor(UActor actor) { actors.add(actor); }
-    public void unRegisterActor(UActor actor) { actors.remove(actor); }
+    public void unregisterActor(UActor actor) { actors.remove(actor); }
 
     public void registerScrollPrinter(UScrollPanel printer) {
         scrollPrinter = printer;
