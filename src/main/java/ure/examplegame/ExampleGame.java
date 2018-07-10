@@ -17,6 +17,8 @@ import ure.ui.UScrollPanel;
 import ure.ui.UREStatusPanel;
 import ure.ui.View;
 
+import javax.inject.Inject;
+
 public class ExampleGame implements UTimeListener {
 
     static UArea area;
@@ -27,10 +29,18 @@ public class ExampleGame implements UTimeListener {
     static UScrollPanel scrollPanel;
     static URenderer renderer;
 
-    static UTerrainCzar terrainCzar;
-    static UThingCzar thingCzar;
-    static UActorCzar actorCzar;
+    @Inject
+    UTerrainCzar terrainCzar;
+    @Inject
+    UThingCzar thingCzar;
+    @Inject
+    UActorCzar actorCzar;
+
     static UCartographer cartographer;
+
+    public ExampleGame() {
+        Injector.getAppComponent().inject(this);
+    }
 
     private void makeWindow() {
 
@@ -69,12 +79,7 @@ public class ExampleGame implements UTimeListener {
         renderer = new URendererOGL();
         renderer.initialize();
 
-        terrainCzar = new UTerrainCzar("/terrains.json", null);
-        thingCzar = new UThingCzar("/things.json");
-        actorCzar = new UActorCzar("/actors.json");
-
-        cartographer = new UCartographer(terrainCzar, thingCzar, actorCzar);
-
+        cartographer = new UCartographer();
 
         player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
 

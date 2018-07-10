@@ -1,5 +1,7 @@
 package ure.areas;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import ure.Injector;
 import ure.UCommander;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
@@ -11,6 +13,9 @@ import ure.examplegame.ExampleForestScaper;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
 
+import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -29,17 +34,21 @@ import java.util.ArrayList;
  */
 public class UCartographer {
 
+    @Inject
     UTerrainCzar terrainCzar;
+    @Inject
     UThingCzar thingCzar;
+    @Inject
     UActorCzar actorCzar;
+    @Inject
+    ObjectMapper objectMapper;
+
     UCommander commander;
     ArrayList<UArea> activeAreas;
 
-    public UCartographer(UTerrainCzar theTerrainCzar, UThingCzar theThingCzar, UActorCzar theActorCzar) {
+    public UCartographer() {
+        Injector.getAppComponent().inject(this);
         activeAreas = new ArrayList<UArea>();
-        terrainCzar = theTerrainCzar;
-        thingCzar = theThingCzar;
-        actorCzar = theActorCzar;
     }
 
     public void setCommander(UCommander cmdr) {
@@ -78,6 +87,21 @@ public class UCartographer {
      */
     UArea FetchArea(String label, String labelname, int[] labeldata) {
         return null;
+    }
+
+    /**
+     * Persist an area to disk.
+     *
+     * This doesn't work yet because there are a lot of things to sort out with regard to
+     * what actually gets serialized.
+     */
+    private void persistArea(UArea area, String filename) {
+        File areaFile = new File(filename);
+        try {
+            objectMapper.writeValue(areaFile, area);
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't persist area", e);
+        }
     }
 
     /**
