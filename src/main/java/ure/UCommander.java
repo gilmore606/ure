@@ -15,6 +15,7 @@ import ure.things.UThingCzar;
 import ure.ui.UModal;
 import ure.ui.UScrollPanel;
 import ure.ui.UREStatusPanel;
+import ure.ui.USpeaker;
 
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -42,6 +43,7 @@ public class UCommander implements URenderer.KeyListener {
     public UThingCzar thingCzar;
     public UActorCzar actorCzar;
     public UCartographer cartographer;
+    public USpeaker speaker;
 
     public int turnCounter = 0;
     private int turnsPerDay = 512;
@@ -77,6 +79,7 @@ public class UCommander implements URenderer.KeyListener {
         readKeyBinds();
         renderer.setKeyListener(this);
         keyBuffer = new LinkedBlockingQueue<Character>();
+        speaker = new USpeaker();
     }
 
     public int getTurn() { return turnCounter; };

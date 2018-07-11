@@ -54,6 +54,10 @@ dependencies {
     compile "org.lwjgl:lwjgl-stb:${lwjglVersion}:natives-linux"
     compile "org.lwjgl:lwjgl-stb:${lwjglVersion}:natives-macos"
     compile "org.lwjgl:lwjgl-stb:${lwjglVersion}:natives-windows"
+    compile "org.lwjgl:lwjgl-openal:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl-openal:($lwjglVersion}:natives-linux"
+    compile "org.lwjgl:lwjgl-openal:($lwjglVersion}:natives-macos"
+    compile "org.lwjgl:lwjgl-openal:($lwjglVersion}:natives-windows"
 
     // Dagger
     compile 'com.google.dagger:dagger:2.16'
