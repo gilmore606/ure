@@ -1,16 +1,21 @@
 package ure.ui;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.openal.AL;
-import org.lwjgl.openal.ALC;
-import org.lwjgl.openal.ALC10;
-import org.lwjgl.openal.ALCCapabilities;
+import org.lwjgl.openal.*;
+import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 
-import static org.lwjgl.openal.ALC10.ALC_REFRESH;
+import static org.lwjgl.openal.AL10.*;
+import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.openal.EXTEfx.ALC_MAX_AUXILIARY_SENDS;
+import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_filename;
+import static org.lwjgl.system.MemoryStack.stackMallocInt;
+import static org.lwjgl.system.MemoryStack.stackPop;
+import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.libc.LibCStdlib.free;
 
 /**
  * A singleton to play background music and sound effects
@@ -28,22 +33,7 @@ public class USpeaker {
      * @throws Exception
      */
     public void initialize() throws Exception {
-        long device = ALC10.alcOpenDevice((ByteBuffer)null);
-        ALCCapabilities deviceCaps = ALC.createCapabilities(device);
-        IntBuffer contextAttribList = BufferUtils.createIntBuffer(16);
-        contextAttribList.put(ALC_REFRESH);
-        contextAttribList.put(60);
-        contextAttribList.put(ALC_MAX_AUXILIARY_SENDS);
-        contextAttribList.put(2);
 
-        contextAttribList.put(0);
-        contextAttribList.flip();
-
-        long newContext = ALC10.alcCreateContext(device, contextAttribList);
-        if (!ALC10.alcMakeContextCurrent(newContext)) {
-            throw new Exception("ALC10 failed to make audio context!");
-        }
-        AL.createCapabilities(deviceCaps);
     }
 
     /**
@@ -72,6 +62,42 @@ public class USpeaker {
      * @param xfade Seconds to fade out the current music and fade in the new.
      */
     public void switchBGM(String filename, int xfade) {
+        String defaultDeviceName = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
+        long device = alcOpenDevice(defaultDeviceName);
+        int[] attributes = {0};
+        long context = alcCreateContext(device, attributes);
+        alcMakeContextCurrent(context);
 
+        ALCCapabilities alcCapabilities = ALC.createCapabilities(device);
+        ALCapabilities alCapabilities = AL.createCapabilities(alcCapabilities);
+        if (!alCapabilities.OpenAL10) {
+            System.out.println("WARNING: OpenAL10 audio not supported.  Going silent.");
+            return;
+        }
+
+        int channels, sampleRate;
+        ShortBuffer rawAudioBuffer;
+
+        try (MemoryStack stack  = stackPush()) {
+            IntBuffer channelsBuffer = stackMallocInt(1);
+            IntBuffer sampleRateBuffer = stackMallocInt(1);
+            rawAudioBuffer = stb_vorbis_decode_filename(filename, channelsBuffer, sampleRateBuffer);
+            channels = channelsBuffer.get();
+            sampleRate = sampleRateBuffer.get();
+        }
+
+        int format = -1;
+        if (channels == 1)
+            format = AL_FORMAT_MONO16;
+        else if (channels == 2)
+            format = AL_FORMAT_STEREO16;
+        int bufferPointer = alGenBuffers();
+        alBufferData(bufferPointer, format, rawAudioBuffer, sampleRate);
+        free(rawAudioBuffer);
+
+        int sourcePointer = alGenSources();
+        alSourcei(sourcePointer, AL_BUFFER, bufferPointer);
+
+        alSourcePlay(sourcePointer);
     }
 }

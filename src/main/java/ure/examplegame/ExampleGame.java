@@ -99,9 +99,7 @@ public class ExampleGame implements UTimeListener {
         player.attachCamera(camera, UCamera.PINSTYLE_HARD);
         player.startActing();
 
-
-
-
+        // commander.speaker.switchBGM("/ultima_wanderer.ogg", 0);
 
         commander.gameLoop();
     }
