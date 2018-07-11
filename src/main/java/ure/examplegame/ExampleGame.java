@@ -97,7 +97,7 @@ public class ExampleGame implements UTimeListener {
         UCell startcell = area.randomOpenCell(player);
         player.moveToCell(area, startcell.x, startcell.y);
         player.attachCamera(camera, UCamera.PINSTYLE_HARD);
-        player.startActing(commander);
+        player.startActing();
 
 
 

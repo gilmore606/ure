@@ -1,5 +1,7 @@
 package ure.things;
 
+import ure.Injector;
+import ure.UCommander;
 import ure.actions.Interactable;
 import ure.actors.UActor;
 import ure.areas.UArea;
@@ -7,6 +9,7 @@ import ure.areas.UCell;
 import ure.math.UColor;
 import ure.render.URenderer;
 
+import javax.inject.Inject;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -17,6 +20,9 @@ import java.util.Random;
  *
  */
 public abstract class ThingI implements UThing, UContainer, Interactable, Cloneable {
+
+    @Inject
+    public UCommander commander;
 
     public String name;
     public String iname;
@@ -41,6 +47,10 @@ public abstract class ThingI implements UThing, UContainer, Interactable, Clonea
     protected UCollection contents; // What's inside me?
 
     public static boolean isActor = false;
+
+    public ThingI() {
+        Injector.getAppComponent().inject(this);
+    }
 
     public boolean isActor() {
         return false;
@@ -159,7 +169,7 @@ public abstract class ThingI implements UThing, UContainer, Interactable, Clonea
     public boolean tryGetBy(UActor actor) {
         if (!movable) {
             if (actor.isPlayer())
-                actor.commander().printScroll(getFailMsg);
+                commander.printScroll(getFailMsg);
             return false;
         }
         return true;
@@ -200,7 +210,7 @@ public abstract class ThingI implements UThing, UContainer, Interactable, Clonea
     }
 
     public void emote(String text) {
-        area().commander().printScrollIfSeen(this, text);
+        commander.printScrollIfSeen(this, text);
     }
 
     public String name() { return name; }

@@ -30,7 +30,6 @@ public class UActor extends ThingI {
     public UCamera camera;
     int cameraPinStyle;
     UPath path;
-    UCommander commander;
 
     float actionTime = 0f;
 
@@ -47,8 +46,6 @@ public class UActor extends ThingI {
     public boolean isActor() {
         return true;
     }
-
-    public UCommander commander() { return commander; }
 
     public float actionTime() {
         return actionTime;
@@ -116,7 +113,7 @@ public class UActor extends ThingI {
         return null;
     }
     public void debug() {
-        Lightsource torch = (Lightsource)commander.thingCzar.getThingByName("torch");
+        Lightsource torch = (Lightsource)(commander.thingCzar.getThingByName("torch"));
         torch.moveToCell(area(), areaX(), areaY());
         torch.turnOn();
         area().commander().printScroll("You drop a torch.");
@@ -174,13 +171,10 @@ public class UActor extends ThingI {
         }
     }
 
-    public void startActing(UCommander thecommander) {
-        commander = thecommander;
-        if (commander != null) {
+    public void startActing() {
             commander.registerActor(this);
             awake = true;
             System.out.println(this.name + ": waking up!");
-        }
     }
     public void stopActing() {
         commander.unregisterActor(this);
@@ -227,7 +221,7 @@ public class UActor extends ThingI {
         if (awake && (sleeprange > 0) && (dist > sleeprange)) {
             stopActing();
         } else if (!awake && (wakerange > 0) && (dist < wakerange)) {
-            startActing(area().commander());
+            startActing();
         }
     }
 

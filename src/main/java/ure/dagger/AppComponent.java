@@ -7,6 +7,7 @@ import ure.actors.UActorCzar;
 import ure.areas.UCartographer;
 import ure.examplegame.ExampleGame;
 import ure.terrain.UTerrainCzar;
+import ure.things.ThingI;
 import ure.things.UThingCzar;
 
 import javax.inject.Singleton;
@@ -21,4 +22,5 @@ public interface AppComponent {
     void inject(UCommander cmdr);
     void inject(ExampleGame game);
     void inject(UAction act);
+    void inject(ThingI thingi);
 }
