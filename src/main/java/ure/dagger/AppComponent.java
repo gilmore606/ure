@@ -17,6 +17,19 @@ import ure.ui.UCamera;
 
 import javax.inject.Singleton;
 
+/**
+ * The register for classes that need dependency injection.
+ * If you add a class to this register, you'll also need to include
+ * Injector.getAppComponent().inject(this);
+ * in your constructors to receive the dependencies.  You can then add
+ *
+ * @Inject
+ * UCommander commander
+ *
+ * (or other injected singletons) to your class and receive the global
+ * instance.
+ *
+ */
 @Singleton
 @Component(modules =  { AppModule.class })
 public interface AppComponent {

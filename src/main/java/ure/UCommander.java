@@ -121,10 +121,11 @@ public class UCommander implements URenderer.KeyListener {
         keyBinds.put('S', "LATCH_S");
         keyBinds.put('D', "LATCH_E");
         keyBinds.put(' ', "PASS");
+        keyBinds.put('e', "INTERACT");
         keyBinds.put('g', "GET");
         keyBinds.put('.', "STAIRS");
         keyBinds.put('i', "INVENTORY");
-        keyBinds.put('e', "DEBUG");
+        keyBinds.put('q', "DEBUG");
         keyBinds.put('1', "DEBUG_1");
         keyBinds.put('2', "DEBUG_2");
         keyBinds.put('3', "DEBUG_3");
@@ -161,15 +162,23 @@ public class UCommander implements URenderer.KeyListener {
                     walkPlayer(1, 0);
                     break;
                 case "LATCH_N":
-                    latchPlayer(0,-1); break;
+                    latchPlayer(0,-1);
+                    break;
                 case "LATCH_S":
-                    latchPlayer(0,1); break;
+                    latchPlayer(0,1);
+                    break;
                 case "LATCH_W":
-                    latchPlayer(-1,0); break;
+                    latchPlayer(-1,0);
+                    break;
                 case "LATCH_E":
-                    latchPlayer(1,0); break;
+                    latchPlayer(1,0);
+                    break;
                 case "PASS":
-                    PassPlayer(); break;
+                    PassPlayer();
+                    break;
+                case "INTERACT":
+                    InteractPlayer();
+                    break;
                 case "GET":
                     commandGet();
                     break;
@@ -215,6 +224,11 @@ public class UCommander implements URenderer.KeyListener {
 
     void PassPlayer() {
         player.doAction(new UActionPass(player));
+    }
+
+    void InteractPlayer() {
+        //UModal modal = new UModal();
+        //showModal(modal);
     }
 
     void commandGet() {

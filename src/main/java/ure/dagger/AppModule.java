@@ -20,6 +20,11 @@ import ure.things.UThingCzar;
 
 import javax.inject.Singleton;
 
+/**
+ *
+ * The register of providers for dependency injection.
+ *
+ */
 @Module
 public class AppModule {
 
