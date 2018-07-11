@@ -11,9 +11,17 @@ public interface URenderer {
     }
 
     /**
+     * Get the top level view for attaching overlays.
+     *
+     * @return
+     */
+    View getRootView();
+
+    /**
      * Set the top level view for the game window.
      * @param root
      */
+
     void setRootView(View root);
 
     /**

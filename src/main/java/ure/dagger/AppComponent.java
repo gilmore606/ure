@@ -14,6 +14,7 @@ import ure.terrain.UTerrainCzar;
 import ure.things.ThingI;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
+import ure.ui.UModal;
 
 import javax.inject.Singleton;
 
@@ -46,4 +47,5 @@ public interface AppComponent {
     void inject(UCell cel);
     void inject(TerrainI terr);
     void inject(UBehavior behav);
+    void inject(UModal mod);
 }

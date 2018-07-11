@@ -1,8 +1,11 @@
 package ure.ui;
 
+import ure.Injector;
+import ure.UCommander;
 import ure.math.UColor;
 import ure.render.URenderer;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 
 /**
@@ -12,10 +15,12 @@ import java.util.HashMap;
  */
 public class UModal extends View {
 
+    @Inject
+    UCommander commander;
+
     URenderer renderer;
     UCamera camera;
     public int width, height;
-    public int pixelWidth, pixelHeight;
     public int cellx,celly;
     public UColor bgColor;
     HashMap<String,TextFrag> texts;
@@ -36,30 +41,9 @@ public class UModal extends View {
         }
     }
 
-    public UModal(int theCharWidth, int theCharHeight, URenderer theRenderer, UCamera theCamera, UColor thebgColor) {
-        renderer = theRenderer;
-        camera = theCamera;
-        width = theCharWidth;
-        height = theCharHeight;
-        bgColor = thebgColor;
-        texts = new HashMap<>();
-        //pixelWidth = theRenderer.cellWidth() * width;
-        //pixelHeight = theRenderer.cellHeight() * height;
-        cellx = camera.getWidthInCells()/2 - width/2;
-        celly = camera.getHeightInCells()/2 - height/2;
-        //image = new BufferedImage(pixelWidth, pixelHeight, BufferedImage.TYPE_INT_RGB);
-        //Graphics g = getGraphics();
-        //g.setColor(Color.BLACK);
-        //g.fillRect(0,0,pixelWidth,pixelHeight);
+    public UModal() {
+        Injector.getAppComponent().inject(this);
     }
-
-    public static UModal popMessage(String message, URenderer theRenderer, UCamera theCamera, UColor thebgcolor) {
-        UModal m = new UModal(message.length() + 4, 5, theRenderer, theCamera, thebgcolor);
-        // TODO: Fix for new renderer
-        //m.addText("message", message, 1, 1, theRenderer.UItextColor.makeAWTColor());
-        return m;
-    }
-    //public Graphics getGraphics() { return image.getGraphics(); }
 
     @Override
     public void draw(URenderer renderer) {
@@ -73,30 +57,26 @@ public class UModal extends View {
     }
 
     void DrawContent() {
-        //Graphics g = getGraphics();
-        for (String textName : texts.keySet()) {
-            TextFrag frag = texts.get(textName);
+        commander.printScroll("Hit any key to continue...");
+        //for (String textName : texts.keySet()) {
+            //TextFrag frag = texts.get(textName);
             // TODO: Fix for new renderer
             //g.setFont(renderer.font);
             //g.setColor(frag.color);
             //g.drawString(frag.text, frag.row * renderer.cellWidth(), ((frag.col + 1) * renderer.cellHeight()) + 0);
-        }
+        //}
     }
-    //public BufferedImage getImage() {
-    //    return image;
-    //}
 
     public void hearCommand(String command) {
-        //Dismiss();
+        Dismiss();
     }
 
-    //void Dismiss() {
-    //    camera.detachModal();
-    //}
+    void Dismiss() {
+        commander.detachModal();
+    }
 
     public void addText(String name, String text, int row, int col) {
-        // TODO: Fix for new renderer
-        //addTextFrag(new TextFrag(name, text, row, col, renderer.UItextColor.makeAWTColor()));
+        addTextFrag(new TextFrag(name, text, row, col, UColor.COLOR_WHITE));
     }
     public void addText(String name, String text, int row, int col, UColor color) {
         addTextFrag(new TextFrag(name, text, row, col, color));

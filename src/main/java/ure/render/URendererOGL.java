@@ -53,6 +53,8 @@ public class URendererOGL implements URenderer {
     // URERenderer methods
 
     @Override
+    public View getRootView() { return rootView; }
+    @Override
     public void setRootView(View root) {
         rootView = root;
     }

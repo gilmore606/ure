@@ -174,10 +174,10 @@ public class UCommander implements URenderer.KeyListener {
                     latchPlayer(1,0);
                     break;
                 case "PASS":
-                    PassPlayer();
+                    commandPass();
                     break;
                 case "INTERACT":
-                    InteractPlayer();
+                    commandInteract();
                     break;
                 case "GET":
                     commandGet();
@@ -222,13 +222,13 @@ public class UCommander implements URenderer.KeyListener {
         moveLatchY = 0;
     }
 
-    void PassPlayer() {
+    void commandPass() {
         player.doAction(new UActionPass(player));
     }
 
-    void InteractPlayer() {
-        //UModal modal = new UModal();
-        //showModal(modal);
+    void commandInteract() {
+        UModal modal = new UModal();
+        showModal(modal);
     }
 
     void commandGet() {
@@ -250,12 +250,13 @@ public class UCommander implements URenderer.KeyListener {
     }
 
     UModal makeInventoryModal() {
-        UModal modal = new UModal(30,30, renderer, player.camera, UColor.COLOR_BLACK);
+        //UModal modal = new UModal(30,30, renderer, player.camera, UColor.COLOR_BLACK);
+        UModal modal = new UModal();
         Iterator<UThing> things = player.iterator();
         int i = 1;
         while (things.hasNext()) {
             UThing thing = things.next();
-            modal.addText("item" + Integer.toString(i), thing.name(), 2, i + 1);
+            //modal.addText("item" + Integer.toString(i), thing.name(), 2, i + 1);
             // TODO: figure out what to do with the color here
             //modal.addText("item" + Integer.toString(i), thing.name, 2, i + 1, renderer.UItextColor.makeAWTColor());
             i++;
@@ -405,14 +406,16 @@ public class UCommander implements URenderer.KeyListener {
         return t;
     }
 
-    public void attachModal(UModal modal) {
-        if (this.modal != null) {
-            this.detachModal();
+    public void attachModal(UModal newmodal) {
+        if (modal != null) {
+            detachModal();
         }
-        this.modal = modal;
+        modal = newmodal;
+        renderer.getRootView().addChild(modal);
     }
 
     public void detachModal() {
+        renderer.getRootView().removeChild(modal);
         this.modal = null;
     }
 
