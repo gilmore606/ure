@@ -6,16 +6,18 @@ import ure.actions.UActionWalk;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.areas.UCartographer;
-import ure.math.UColor;
 import ure.render.URenderer;
 import ure.terrain.Stairs;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
 import ure.things.UThingCzar;
-import ure.ui.UModal;
+import ure.ui.modals.HearModal;
+import ure.ui.modals.HearModalDirection;
+import ure.ui.modals.UModal;
 import ure.ui.UScrollPanel;
 import ure.ui.UREStatusPanel;
 import ure.ui.USpeaker;
+import ure.ui.modals.UModalDirection;
 
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -26,7 +28,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 
 
-public class UCommander implements URenderer.KeyListener {
+public class UCommander implements URenderer.KeyListener,HearModalDirection {
 
     private HashMap<Character, String> keyBinds;
     private HashSet<UTimeListener> timeListeners;
@@ -227,8 +229,11 @@ public class UCommander implements URenderer.KeyListener {
     }
 
     void commandInteract() {
-        UModal modal = new UModal();
+        UModal modal = new UModalDirection("In which direction? (Space for none)", true, this, "interact");
         showModal(modal);
+    }
+    void commandInteractFinish(int dir, int ydir) {
+        printScroll("You try to interact but nothing happens....yet.");
     }
 
     void commandGet() {
@@ -245,23 +250,7 @@ public class UCommander implements URenderer.KeyListener {
     }
 
     void commandInventory() {
-        UModal modal = makeInventoryModal();
-        showModal(modal);
-    }
 
-    UModal makeInventoryModal() {
-        //UModal modal = new UModal(30,30, renderer, player.camera, UColor.COLOR_BLACK);
-        UModal modal = new UModal();
-        Iterator<UThing> things = player.iterator();
-        int i = 1;
-        while (things.hasNext()) {
-            UThing thing = things.next();
-            //modal.addText("item" + Integer.toString(i), thing.name(), 2, i + 1);
-            // TODO: figure out what to do with the color here
-            //modal.addText("item" + Integer.toString(i), thing.name, 2, i + 1, renderer.UItextColor.makeAWTColor());
-            i++;
-        }
-        return modal;
     }
 
     void showModal(UModal modal) {
@@ -417,6 +406,12 @@ public class UCommander implements URenderer.KeyListener {
     public void detachModal() {
         renderer.getRootView().removeChild(modal);
         this.modal = null;
+    }
+
+    public void hearModalDirection(String context, int xdir, int ydir) {
+        if (context.equals("interact")) {
+            commandInteractFinish(xdir, ydir);
+        }
     }
 
 }

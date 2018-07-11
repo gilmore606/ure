@@ -7,6 +7,7 @@ import ure.math.UColor;
 import ure.render.URenderer;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
+import ure.ui.modals.UModal;
 
 import javax.inject.Inject;
 import java.util.*;

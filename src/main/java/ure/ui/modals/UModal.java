@@ -1,9 +1,11 @@
-package ure.ui;
+package ure.ui.modals;
 
 import ure.Injector;
 import ure.UCommander;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.ui.UCamera;
+import ure.ui.View;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -18,6 +20,8 @@ public class UModal extends View {
     @Inject
     UCommander commander;
 
+    HearModal callback;
+    String callbackContext;
     URenderer renderer;
     UCamera camera;
     public int width, height;
@@ -41,19 +45,15 @@ public class UModal extends View {
         }
     }
 
-    public UModal() {
+    public UModal(HearModal _callback, String _callbackContext) {
         Injector.getAppComponent().inject(this);
+        callback = _callback;
+        callbackContext = _callbackContext;
     }
 
     @Override
     public void draw(URenderer renderer) {
-        DrawFrame();
-        DrawContent();
-    }
-
-    void DrawFrame() {
-        // TODO: Fix for new renderer
-        //renderer.renderUIFrame(this);
+        //
     }
 
     void DrawContent() {
@@ -68,10 +68,10 @@ public class UModal extends View {
     }
 
     public void hearCommand(String command) {
-        Dismiss();
+        dismiss();
     }
 
-    void Dismiss() {
+    void dismiss() {
         commander.detachModal();
     }
 

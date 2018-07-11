@@ -14,7 +14,7 @@ import ure.terrain.UTerrainCzar;
 import ure.things.ThingI;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
-import ure.ui.UModal;
+import ure.ui.modals.UModal;
 
 import javax.inject.Singleton;
 
