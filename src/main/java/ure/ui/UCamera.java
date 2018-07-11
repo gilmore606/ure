@@ -8,6 +8,7 @@ import ure.render.URenderer;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
 
+import javax.inject.Inject;
 import java.util.*;
 
 /**
@@ -16,6 +17,9 @@ import java.util.*;
  */
 
 public class UCamera extends View implements UAnimator, UArea.Listener {
+
+    @Inject
+    UCommander commander;
 
     public UArea area;
     URenderer renderer;
@@ -110,6 +114,7 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
     }
 
     public UCamera(URenderer theRenderer, int x, int y, int width, int height) {
+        Injector.getAppComponent().inject(this);
         renderer = theRenderer;
         visibilitySources = new HashSet<>();
         setBounds(x, y, width, height);
@@ -165,7 +170,7 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
         area.addListener(this);
         moveTo(thex,they);
         if (areachange)
-            area.commander().tickTime();
+            commander.tickTime();  // TODO: is this necessary?  it redraws the screen but also gives NPCS a turn
     }
 
     public void moveTo(int thex, int they) {
@@ -429,7 +434,7 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
             System.out.println("WARNING!  nonexistent lightcell");
             total = UColor.COLOR_BLACK;
         } else {
-            total = lightcells[col][row].light(area.commander().frameCounter);
+            total = lightcells[col][row].light(commander.frameCounter);
             for (int i = -1;i < 2;i++) {
                 for (int j = -1;j < 2;j++) {
                     UTerrain t = area.terrainAt(col + leftEdge + i, row + topEdge + j);

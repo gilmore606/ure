@@ -1,5 +1,7 @@
 package ure.areas;
 
+import ure.Injector;
+import ure.UCommander;
 import ure.actions.UAction;
 import ure.things.UCollection;
 import ure.things.UContainer;
@@ -7,6 +9,7 @@ import ure.actors.UActor;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
 
+import javax.inject.Inject;
 import java.util.Iterator;
 
 /**
@@ -18,6 +21,10 @@ import java.util.Iterator;
  * TODO: actually implement what I just said in Area
  */
 public class UCell implements UContainer {
+
+    @Inject
+    UCommander commander;
+
     UArea area;
     public int x,y;
     UTerrain terrain;
@@ -26,6 +33,7 @@ public class UCell implements UContainer {
     boolean isSeen = false;
 
     public UCell(UArea theArea, int thex, int they, UTerrain theTerrain) {
+        Injector.getAppComponent().inject(this);
         contents = new UCollection(this);
         area = theArea;
         x = thex;
@@ -70,8 +78,7 @@ public class UCell implements UContainer {
     public void walkedOnBy(UActor actor) {
         if (actor.isPlayer() && contents.hasThings()) {
             UThing thing = contents.topThing();
-            if (area.commander() != null)
-                area.commander().printScroll(thing.walkMsg(actor));
+            commander.printScroll(thing.walkMsg(actor));
         }
         terrain.walkedOnBy(actor, this);
     }

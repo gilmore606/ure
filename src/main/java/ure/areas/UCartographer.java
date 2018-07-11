@@ -72,7 +72,6 @@ public class UCartographer {
 
         area = makeArea(label, labelname, labeldata);
         area.setLabel(label);
-        area.setCommander(commander);
         activeAreas.add(area);
         commander.registerTimeListener(area);
         return area;
@@ -216,7 +215,6 @@ public class UCartographer {
 
     public UArea MakeForest() {
         UArea area = new UArea(140, 140, terrainCzar, "grass");
-        area.setCommander(commander);
         ULandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
         scaper.SetStairsLabels(area, this);
@@ -230,7 +228,6 @@ public class UCartographer {
 
     public UArea MakeComplex() {
         UArea area = new UArea(70, 70, terrainCzar, "grass");
-        area.setCommander(commander);
         ULandscaper scaper = new ExampleComplexScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
         scaper.SetStairsLabels(area, this);
@@ -239,7 +236,6 @@ public class UCartographer {
 
     public UArea MakeCavern(int depth) {
         UArea area = new UArea(70, 70, terrainCzar, "wall");
-        area.setCommander(commander);
         ULandscaper scaper = new ExampleCaveScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
         scaper.SetStairsLabels(area, this);
@@ -251,7 +247,6 @@ public class UCartographer {
 
     public UArea MakeDungeon() {
         UArea area = new UArea(101, 101, terrainCzar, "wall");
-        area.setCommander(commander);
         ULandscaper scaper = new ExampleDungeonScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
         scaper.SetStairsLabels(area, this);

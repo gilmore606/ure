@@ -1,10 +1,13 @@
 package ure.terrain;
 
+import ure.Injector;
 import ure.UAnimator;
+import ure.UCommander;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.actors.UActor;
 
+import javax.inject.Inject;
 import java.util.Random;
 
 /**
@@ -17,6 +20,9 @@ import java.util.Random;
  */
 
 public abstract class TerrainI implements UTerrain, Cloneable, UAnimator {
+
+    @Inject
+    UCommander commander;
 
     public static final String TYPE = "";
 
@@ -58,6 +64,10 @@ public abstract class TerrainI implements UTerrain, Cloneable, UAnimator {
     }
 
     UCell cell;
+
+    public TerrainI() {
+        Injector.getAppComponent().inject(this);
+    }
 
     public void initialize() {
         fgColor = new UColor(fgcolor[0],fgcolor[1],fgcolor[2]);
@@ -138,13 +148,13 @@ public abstract class TerrainI implements UTerrain, Cloneable, UAnimator {
         return 0f;
     }
 
+    // TODO: Why does this method exist?
     public void printScroll(String msg, UCell cell) {
         if (walkmsg != null)
             if (walkmsg.length() > 0)
-                if (cell.area() != null)
-                    if (cell.area().commander() != null)
-                        cell.area().commander().printScroll(msg);
+                commander.printScroll(msg);
     }
+
     public TerrainI getClone() {
         try {
             return (TerrainI) super.clone();

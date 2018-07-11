@@ -177,7 +177,7 @@ public abstract class ThingI implements UThing, UContainer, Interactable, Clonea
 
     public void gotBy(UActor actor) {
         if (getMsg(actor) != null)
-            area().commander().printScroll(this.getMsg(actor));
+            commander.printScroll(this.getMsg(actor));
     }
     public void droppedBy(UActor actor) {
 

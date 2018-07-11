@@ -86,7 +86,7 @@ public class UNPC extends UActor {
     }
     UAction HuntPlayer() {
         System.out.println(this.name + " hunting from " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
-        int[] step = path.nextStep(area(), areaX(), areaY(), area().commander().player().areaX(), area().commander().player().areaY(), this, 25);
+        int[] step = path.nextStep(area(), areaX(), areaY(), commander.player().areaX(), commander.player().areaY(), this, 25);
         if (step != null) {
             return new UActionWalk(this,step[0] - areaX(), step[1] - areaY());
         }

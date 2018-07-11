@@ -1,5 +1,6 @@
 package ure.areas;
 
+import ure.Injector;
 import ure.UCommander;
 import ure.actions.UAction;
 import ure.ui.ULight;
@@ -12,6 +13,7 @@ import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.ui.UParticle;
 
+import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,6 +30,9 @@ import java.util.stream.Stream;
 
 public class UArea implements UTimeListener, Serializable {
 
+    @Inject
+    UCommander commander;
+
     public interface Listener {
         void areaChanged();
     }
@@ -39,7 +44,6 @@ public class UArea implements UTimeListener, Serializable {
     private HashSet<ULight> lights;
     private HashSet<UActor> actors;
     private HashSet<UParticle> particles;
-    private UCommander commander;
     private UTerrainCzar terrainCzar;
     private Random random;
 
@@ -53,6 +57,7 @@ public class UArea implements UTimeListener, Serializable {
     private Set<Listener> listeners;
 
     public UArea(int thexsize, int theysize, UTerrainCzar tczar, String defaultTerrain) {
+        Injector.getAppComponent().inject(this);
         xsize = thexsize;
         ysize = theysize;
         terrainCzar = tczar;
@@ -65,6 +70,7 @@ public class UArea implements UTimeListener, Serializable {
     }
 
     public UArea(String filename, UTerrainCzar tczar) {
+        Injector.getAppComponent().inject(this);
         initLists();
         terrainCzar = tczar;
         cells = new UCell[200][200];
@@ -118,13 +124,6 @@ public class UArea implements UTimeListener, Serializable {
 
     public void removeListener(Listener listener) {
         listeners.remove(listener);
-    }
-
-    public void setCommander(UCommander cmdr) {
-        commander = cmdr;
-    }
-    public UCommander commander() {
-        return commander;
     }
 
     public HashSet<ULight> lights() {
@@ -321,7 +320,7 @@ public class UArea implements UTimeListener, Serializable {
         return null;
     }
 
-    public void hearTimeTick(UCommander commander) {
+    public void hearTimeTick(UCommander cmdr) {
         System.out.println(label + " tick");
         setSunColor(commander.daytimeMinutes());
         updateListeners();

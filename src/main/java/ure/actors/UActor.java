@@ -116,25 +116,26 @@ public class UActor extends ThingI {
         Lightsource torch = (Lightsource)(commander.thingCzar.getThingByName("torch"));
         torch.moveToCell(area(), areaX(), areaY());
         torch.turnOn();
-        area().commander().printScroll("You drop a torch.");
+        commander.printScroll("You drop a torch.");
   }
 
     public void moveTriggerFrom(UActor actor) {
         if (actor.isPlayer())
-            area().commander().printScroll("Ow!");
+            commander.printScroll("Ow!");
     }
 
+    // TODO: Parameterize all of these hardcoded strings somewhere
     public boolean tryGetThing(UThing thing) {
         if (thing == null) {
-            area().commander().printScroll("Nothing to get.");
+            commander.printScroll("Nothing to get.");
             return false;
         }
         if (thing.tryGetBy(this)) {
             thing.moveTo(this);
             if (isPlayer())
-                area().commander().printScroll("You pick up " + thing.iname() + ".");
+                commander.printScroll("You pick up " + thing.iname() + ".");
             else
-                area().commander().printScrollIfSeen(this, this.dnamec() + " picks up " + thing.iname() + ".");
+                commander.printScrollIfSeen(this, this.dnamec() + " picks up " + thing.iname() + ".");
             thing.gotBy(this);
             return true;
         }
@@ -143,15 +144,15 @@ public class UActor extends ThingI {
 
     public boolean tryDropThing(UThing thing, UContainer dest) {
         if (thing == null) {
-            area().commander().printScroll("Nothing to drop.");
+            commander.printScroll("Nothing to drop.");
             return false;
         }
         if (dest.willAcceptThing(thing)) {
             thing.moveTo(dest);
             if (isPlayer())
-                area().commander().printScroll("You drop " + thing.iname() + ".");
+                commander.printScroll("You drop " + thing.iname() + ".");
             else
-                area().commander().printScrollIfSeen(this, this.dnamec() + " drops " + thing.iname() + ".");
+                commander.printScrollIfSeen(this, this.dnamec() + " drops " + thing.iname() + ".");
             thing.droppedBy(this);
             return true;
         }

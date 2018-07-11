@@ -1,7 +1,11 @@
 package ure.behaviors;
 
+import ure.Injector;
+import ure.UCommander;
 import ure.actions.UAction;
 import ure.actors.UNPC;
+
+import javax.inject.Inject;
 
 /**
  * UBehavior implements a source of actions for an NPC actor to perform, to emulate a behavior or achieve
@@ -11,9 +15,16 @@ import ure.actors.UNPC;
  * make decisions.
  *
  */
-public class UBehavior {
+public abstract class UBehavior {
+
+    @Inject
+    UCommander commander;
 
     public static String TYPE = "";
+
+    public UBehavior() {
+        Injector.getAppComponent().inject(this);
+    }
 
     /**
      * Override action() to return UActions on demand for the actor to perform.
