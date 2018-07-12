@@ -3,6 +3,10 @@ package ure.ui.modals;
 import ure.commands.UCommand;
 import ure.render.URenderer;
 
+/**
+ * ModalDirection queries the user for a cardinal direction (or space for no direction, if allowed).
+ *
+ */
 public class UModalDirection extends UModal {
 
     String prompt;

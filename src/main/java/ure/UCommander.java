@@ -20,7 +20,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 
 /**
- * Receive input and dispatch game commands or UI controls.
+ * UCommander is a singleton class (you only make one of these!) which receives player input, converts it to
+ * commands, runs the game loop, tracks NPC/player action time, and tracks world turn/time.  Think of it as the
+ * central control hub of a URE game.
+ *
  */
 
 
@@ -86,6 +89,12 @@ public class UCommander implements URenderer.KeyListener {
         player = theplayer;
     }
 
+    /**
+     * Any object which implements UTimeListener can register with this method to have its hearTimeTick() called
+     * on every game tick.
+     *
+     * @param listener
+     */
     public void registerTimeListener(UTimeListener listener) {
         timeListeners.add(listener);
     }
@@ -93,9 +102,19 @@ public class UCommander implements URenderer.KeyListener {
         timeListeners.remove(listener);
     }
 
+    /**
+     * Newly spawned actors must register with the commander to get action time and thereby...act.
+     *
+     * @param actor
+     */
     public void registerActor(UActor actor) { actors.add(actor); }
     public void unregisterActor(UActor actor) { actors.remove(actor); }
 
+    /**
+     * Register a UI component to print scroll messages.  Right now this can only be a UScrollPrinter.
+     *
+     * @param printer
+     */
     public void registerScrollPrinter(UScrollPanel printer) {
         scrollPrinter = printer;
     }
@@ -106,6 +125,12 @@ public class UCommander implements URenderer.KeyListener {
 
     public UActor player() { return player; }
 
+    /**
+     * Read keybinds.txt and map keys to commands.
+     *
+     * Commands are subclasses of UCommand; use the 'id' string of the particular subclass in the keybinds.txt file.
+     *
+     */
     public void readKeyBinds() {
         // TODO: Actually read keybinds.txt
         //
@@ -159,12 +184,22 @@ public class UCommander implements URenderer.KeyListener {
         moveLatchY = ydir;
     }
 
+    /**
+     * Cancel player latched auto-movement, if engaged.
+     * Anything in the world that might be interesting during auto-movement should call this if the player approaches.
+     *
+     */
     public void latchBreak() {
         moveLatch = false;
         moveLatchX = 0;
         moveLatchY = 0;
     }
 
+    /**
+     * Show a UModal dialog and send all player input to it.
+     *
+     * @param modal
+     */
     public void showModal(UModal modal) {
         attachModal(modal);
     }
@@ -181,10 +216,21 @@ public class UCommander implements URenderer.KeyListener {
         player.camera.setAllLit(!player.camera.getAllLit());
     }
 
+    /**
+     * Print a message to the scroll printer.
+     *
+     * @param text
+     */
     public void printScroll(String text) {
         scrollPrinter.print(text);
     }
 
+    /**
+     * Print a message to the scroll printer if the player can see the source.
+     *
+     * @param source
+     * @param text
+     */
     public void printScrollIfSeen(UThing source, String text) {
         if (player.canSee(source))
             printScroll(text);
@@ -204,6 +250,11 @@ public class UCommander implements URenderer.KeyListener {
         scrollPanel = panel;
     }
 
+    /**
+     * The gameLoop() runs forever (until the player exits the game).  It should be the last thing you call from
+     * your game's main() after everything is initialized.
+     *
+     */
     public void gameLoop() {
         long tickRate = 1000000000 / 60;
         long gameTime = System.nanoTime();
@@ -305,7 +356,7 @@ public class UCommander implements URenderer.KeyListener {
         return t;
     }
 
-    public void attachModal(UModal newmodal) {
+    void attachModal(UModal newmodal) {
         if (modal != null) {
             detachModal();
         }
