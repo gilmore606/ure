@@ -1,6 +1,5 @@
 package ure.commands;
 
-import ure.actions.UActionDrop;
 import ure.actors.UPlayer;
 
 public class CommandDrop extends UCommand {

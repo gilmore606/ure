@@ -1,8 +1,6 @@
 package ure;
 
-import ure.actions.UActionGet;
-import ure.actions.UActionPass;
-import ure.actions.UActionWalk;
+import ure.actions.ActionWalk;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
@@ -10,17 +8,12 @@ import ure.areas.UCartographer;
 import ure.commands.*;
 import ure.commands.UCommand;
 import ure.render.URenderer;
-import ure.terrain.Stairs;
-import ure.terrain.UTerrain;
 import ure.things.UThing;
 import ure.things.UThingCzar;
-import ure.ui.modals.HearModal;
-import ure.ui.modals.HearModalDirection;
 import ure.ui.modals.UModal;
 import ure.ui.UScrollPanel;
 import ure.ui.UREStatusPanel;
 import ure.ui.USpeaker;
-import ure.ui.modals.UModalDirection;
 
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -247,7 +240,7 @@ public class UCommander implements URenderer.KeyListener {
                             latchBreak();
                             consumeKeyFromBuffer();
                         } else {
-                            player.doAction(new UActionWalk(player, moveLatchX, moveLatchY));
+                            player.doAction(new ActionWalk(player, moveLatchX, moveLatchY));
                         }
                     } else {
                         consumeKeyFromBuffer();

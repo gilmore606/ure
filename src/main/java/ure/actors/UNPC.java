@@ -1,9 +1,9 @@
 package ure.actors;
 
+import ure.actions.ActionEmote;
 import ure.actions.UAction;
-import ure.actions.UActionEmote;
-import ure.actions.UActionGet;
-import ure.actions.UActionWalk;
+import ure.actions.ActionGet;
+import ure.actions.ActionWalk;
 import ure.behaviors.UBehavior;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class UNPC extends UActor {
     @Override
     public void hearEvent(UAction action) {
         if (action.actor != this) {
-            if (action instanceof UActionGet) {
+            if (action instanceof ActionGet) {
                 emote(dnamec() + " says, \"Hey that's mine!\"");
             }
         }
@@ -82,18 +82,18 @@ public class UNPC extends UActor {
         } else {
             wx = 0; wy = -1;
         }
-        return new UActionWalk(this,wx,wy);
+        return new ActionWalk(this,wx,wy);
     }
     UAction HuntPlayer() {
         System.out.println(this.name + " hunting from " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
         int[] step = path.nextStep(area(), areaX(), areaY(), commander.player().areaX(), commander.player().areaY(), this, 25);
         if (step != null) {
-            return new UActionWalk(this,step[0] - areaX(), step[1] - areaY());
+            return new ActionWalk(this,step[0] - areaX(), step[1] - areaY());
         }
         return null;
     }
 
     UAction Ambient() {
-        return new UActionEmote(this, ambients[random.nextInt(ambients.length)]);
+        return new ActionEmote(this, ambients[random.nextInt(ambients.length)]);
     }
 }

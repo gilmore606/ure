@@ -1,6 +1,6 @@
 package ure.commands;
 
-import ure.actions.UActionPass;
+import ure.actions.ActionPass;
 import ure.actors.UPlayer;
 
 public class CommandPass extends UCommand {
@@ -9,6 +9,6 @@ public class CommandPass extends UCommand {
 
     @Override
     public void execute(UPlayer player) {
-        player.doAction(new UActionPass(player));
+        player.doAction(new ActionPass(player));
     }
 }

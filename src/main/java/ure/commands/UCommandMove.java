@@ -1,6 +1,6 @@
 package ure.commands;
 
-import ure.actions.UActionWalk;
+import ure.actions.ActionWalk;
 import ure.actors.UPlayer;
 
 public abstract class UCommandMove extends UCommand {
@@ -19,6 +19,6 @@ public abstract class UCommandMove extends UCommand {
     public void execute(UPlayer player) {
         if (latch)
             commander.setMoveLatch(xdir, ydir);
-        player.doAction(new UActionWalk(player, xdir, ydir));
+        player.doAction(new ActionWalk(player, xdir, ydir));
     }
 }
