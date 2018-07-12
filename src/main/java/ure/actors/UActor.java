@@ -1,11 +1,9 @@
 package ure.actors;
 
-import ure.*;
 import ure.actions.Interactable;
 import ure.actions.UAction;
 import ure.areas.UArea;
 import ure.areas.UCell;
-import ure.areas.ULandscaper;
 import ure.math.UPath;
 import ure.terrain.UTerrain;
 import ure.things.Lightsource;
@@ -30,7 +28,6 @@ public class UActor extends ThingI implements Interactable {
 
     public UCamera camera;
     int cameraPinStyle;
-    UPath path;
 
     int moveAnimX = 0;
     int moveAnimY = 0;
@@ -45,7 +42,6 @@ public class UActor extends ThingI implements Interactable {
     public void initialize() {
         super.initialize();
         glyphOutline = true;
-        path = new UPath();
     }
 
     @Override
