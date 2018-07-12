@@ -162,7 +162,7 @@ public class UCommander implements URenderer.KeyListener {
             if (modal instanceof LambdaModal) {
                 // We want the this kind of modal to be able to process any character if it's active.
                 // This will allow processing any kind of raw text (entering a name for something, etc).
-                ((LambdaModal) modal).hearCommand(c);
+                ((LambdaModal) modal).hearKeyPress(c);
                 return;
             }
 
@@ -230,10 +230,10 @@ public class UCommander implements URenderer.KeyListener {
 
     void debug_3() {
         LambdaModal modal = new LambdaModal("This is only a test.  Do you like turtles? (y/n)");
-        modal.addCommand('y', () -> {
+        modal.addKeyMapping('y', () -> {
             this.printScroll("That's awesome, I like turtles too!");
         });
-        modal.addCommand('n', () -> {
+        modal.addKeyMapping('n', () -> {
             this.printScroll("That's too bad.  Turtles rule.");
         });
         attachModal(modal);

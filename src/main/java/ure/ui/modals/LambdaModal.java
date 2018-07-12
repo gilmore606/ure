@@ -1,6 +1,5 @@
 package ure.ui.modals;
 
-import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
 
@@ -25,18 +24,24 @@ public class LambdaModal extends UModal {
         this.height = 200;
     }
 
-    public void addCommand(char command, Lambda lambda) {
-        commands.put(String.valueOf(command), lambda);
+    public void addKeyMapping(char key, Lambda lambda) {
+        // Store the lambda for this key referenced by the keypress we're mapping it to.
+        // We can't use primitive types in the hash so we convert the key to a string.
+        commands.put(String.valueOf(key), lambda);
     }
 
-    public void hearCommand(char command) {
-        // Bypassing the normal headCommand in this case because we want the modal to be able to accept any characters.
-        // You'd also want to do this if you were building a dialog where you wanted the user to enter a name or somesuch.
-        Lambda lambda = commands.get(String.valueOf(command));
+    public void hearKeyPress(char key) {
+        // Bypassing the normal headCommand in this case because we want the modal to be able to accept any characters
+        // and not try to figure out what key press a passed command represents.
+        // You'd probably also want to do this if you were building a dialog where you wanted the user to enter a name
+        // or some other data.
+        Lambda lambda = commands.get(String.valueOf(key));
         if (lambda != null) {
+            // We have a mapping for this key.  Run the lambda function associated with it.
             lambda.run();
             commander.detachModal();
         }
+        // Note that we don't dismiss unless we get one of our expected key presses.
     }
 
     @Override
