@@ -5,7 +5,7 @@ import ure.actors.UPlayer;
 
 public abstract class UCommandMove extends UCommand {
 
-    int xdir, ydir;
+    public int xdir, ydir;
     boolean latch;
 
     public UCommandMove(int _xdir, int _ydir, boolean _latch) {

@@ -1,6 +1,7 @@
 package ure.ui.modals;
 
 import ure.commands.UCommand;
+import ure.commands.UCommandMove;
 import ure.render.URenderer;
 
 /**
@@ -20,8 +21,13 @@ public class UModalDirection extends UModal {
 
     @Override
     public void hearCommand(UCommand command) {
-        ((HearModalDirection)callback).hearModalDirection(callbackContext, 0, -1);
-        dismiss();
+        if (command.id.startsWith("MOVE")) {
+            ((HearModalDirection) callback).hearModalDirection(callbackContext, ((UCommandMove) command).xdir, ((UCommandMove) command).ydir);
+            dismiss();
+        } else if (command.id.equals("PASS")) {
+            ((HearModalDirection) callback).hearModalDirection(callbackContext, 0, 0);
+            dismiss();
+        }
     }
 
     @Override
