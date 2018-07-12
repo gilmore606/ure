@@ -7,6 +7,11 @@ import java.util.HashMap;
 
 public class LambdaModal extends UModal {
 
+    // This interface is what allows us to store the lambda function.  The annotation is just a safety thing.  It
+    // doesn't do anything except make our intentions clear to the compiler.  Interfaces for functions can only
+    // have one method, so if we're using this annotation it would error out if tried to add something else to the
+    // interface.  The name of the method is arbitrary, but if the lambda took any arguments we'd need to specify
+    // them as parameters here.
     @FunctionalInterface
     public interface Lambda {
         void run();
@@ -25,7 +30,7 @@ public class LambdaModal extends UModal {
     }
 
     public void addKeyMapping(char key, Lambda lambda) {
-        // Store the lambda for this key referenced by the keypress we're mapping it to.
+        // Store the lambda for this key referenced by the key press we're mapping it to.
         // We can't use primitive types in the hash so we convert the key to a string.
         commands.put(String.valueOf(key), lambda);
     }
@@ -41,7 +46,7 @@ public class LambdaModal extends UModal {
             lambda.run();
             commander.detachModal();
         }
-        // Note that we don't dismiss unless we get one of our expected key presses.
+        // Note that we don't detach unless we get one of our expected key presses.
     }
 
     @Override
