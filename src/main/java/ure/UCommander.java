@@ -218,7 +218,13 @@ public class UCommander implements URenderer.KeyListener,HearModalDirection {
         walkPlayer(xdir, ydir);
     }
 
-   public void latchBreak() {
+    public void setMoveLatch(int xdir, int ydir) {
+        moveLatch = true;
+        moveLatchX = xdir;
+        moveLatchY = ydir;
+    }
+
+    public void latchBreak() {
         moveLatch = false;
         moveLatchX = 0;
         moveLatchY = 0;
@@ -253,7 +259,7 @@ public class UCommander implements URenderer.KeyListener,HearModalDirection {
 
     }
 
-    void showModal(UModal modal) {
+    public void showModal(UModal modal) {
         attachModal(modal);
     }
 

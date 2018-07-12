@@ -8,6 +8,7 @@ import ure.areas.UArea;
 import ure.areas.UCartographer;
 import ure.areas.UCell;
 import ure.behaviors.UBehavior;
+import ure.commands.UCommand;
 import ure.examplegame.ExampleGame;
 import ure.terrain.TerrainI;
 import ure.terrain.UTerrainCzar;
@@ -48,4 +49,5 @@ public interface AppComponent {
     void inject(TerrainI terr);
     void inject(UBehavior behav);
     void inject(UModal mod);
+    void inject(UCommand comm);
 }
