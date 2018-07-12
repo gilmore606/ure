@@ -3,9 +3,12 @@ ure.actions
 ure.actors
 ure.areas
 ure.behaviors
+ure.commands
+ure.dagger
 ure.examplegame
 ure.math
 ure.render
 ure.terrain
 ure.things
 ure.ui
+ure.ui.modals
