@@ -52,9 +52,9 @@ public class ExampleGame implements UTimeListener {
         rootView.addChild(camera);
 
         statusPanel = new UREStatusPanel(15, 10, 16, 16, 10, 10, new UColor(1f,1f,1f), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
-        statusPanel.addText("name", "Player 2",0,0);
-        statusPanel.addText("race", "Dorf",0,1);
-        statusPanel.addText("class", "Hetero",0,2);
+        statusPanel.addText("name", "Kaffo",0,0);
+        statusPanel.addText("race", "Owl",0,1);
+        statusPanel.addText("class", "Ornithologist",0,2);
         statusPanel.addText("turn", "T 1", 0, 5);
         statusPanel.addText("time", "", 0, 6);
         statusPanel.setBounds(1200,0,200,800);
