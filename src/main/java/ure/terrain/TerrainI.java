@@ -3,6 +3,7 @@ package ure.terrain;
 import ure.Injector;
 import ure.UAnimator;
 import ure.UCommander;
+import ure.actions.Interactable;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.actors.UActor;
@@ -19,7 +20,7 @@ import java.util.Random;
  *
  */
 
-public abstract class TerrainI implements UTerrain, Cloneable, UAnimator {
+public abstract class TerrainI implements UTerrain, Cloneable, UAnimator, Interactable {
 
     @Inject
     UCommander commander;
