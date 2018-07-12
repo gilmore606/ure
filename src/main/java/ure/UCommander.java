@@ -11,6 +11,7 @@ import ure.commands.UCommand;
 import ure.render.URenderer;
 import ure.things.UThing;
 import ure.things.UThingCzar;
+import ure.ui.modals.LambdaModal;
 import ure.ui.modals.UModal;
 import ure.ui.UScrollPanel;
 import ure.ui.UREStatusPanel;
@@ -157,6 +158,14 @@ public class UCommander implements URenderer.KeyListener {
     public void consumeKeyFromBuffer() {
         if (!keyBuffer.isEmpty()) {
             Character c = keyBuffer.remove();
+
+            if (modal instanceof LambdaModal) {
+                // We want the this kind of modal to be able to process any character if it's active.
+                // This will allow processing any kind of raw text (entering a name for something, etc).
+                ((LambdaModal) modal).hearCommand(c);
+                return;
+            }
+
             UCommand command = keyBindings.get(c);
             if (command != null) {
                 hearCommand(keyBindings.get(c));
@@ -166,6 +175,8 @@ public class UCommander implements URenderer.KeyListener {
                 debug_2();
             } else if (c == 'q') {
                 debug();
+            } else if (c == '3') {
+                debug_3();
             }
         }
     }
@@ -215,6 +226,17 @@ public class UCommander implements URenderer.KeyListener {
 
     void debug_2() {
         player.camera.setAllLit(!player.camera.getAllLit());
+    }
+
+    void debug_3() {
+        LambdaModal modal = new LambdaModal("This is only a test.  Do you like turtles? (y/n)");
+        modal.addCommand('y', () -> {
+            this.printScroll("That's awesome, I like turtles too!");
+        });
+        modal.addCommand('n', () -> {
+            this.printScroll("That's too bad.  Turtles rule.");
+        });
+        attachModal(modal);
     }
 
     /**

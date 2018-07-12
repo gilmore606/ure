@@ -46,8 +46,12 @@ public class UModal extends View {
         }
     }
 
-    public UModal(HearModal _callback, String _callbackContext) {
+    public UModal() {
         Injector.getAppComponent().inject(this);
+    }
+
+    public UModal(HearModal _callback, String _callbackContext) {
+        this();
         callback = _callback;
         callbackContext = _callbackContext;
     }
