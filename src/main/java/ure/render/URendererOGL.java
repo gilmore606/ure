@@ -187,14 +187,16 @@ public class URendererOGL implements URenderer {
 
     @Override
     public void drawGlyph(char glyph, int destx, int desty, UColor tint, int offX, int offY) {
-        //tint.r = 1.0f;
-        // TODO: Pass in the size
+        // Seems odd that we are taking a position and an offset here... maybe this could be simplified?
+        destx += context.absoluteX();
+        desty += context.absoluteY();
         addQuad(destx + offX, desty + offY, glyphWidth, glyphHeight, tint, glyph);
     }
 
     @Override
     public void drawGlyphOutline(char glyph, int destx, int desty, UColor tint, int offX, int offY) {
-        //tint.r = 1.0f;
+        destx += context.absoluteX();
+        desty += context.absoluteY();
         for(int y = -1; y < 2; y += 1)
             for(int x = -1; x < 2; x += 1)
                 if(x != 0 && y != 0)
