@@ -31,7 +31,7 @@ public class LambdaModal extends UModal {
     }
 
     public void hearKeyPress(char key) {
-        // Bypassing the normal headCommand in this case because we want the modal to be able to accept any characters
+        // Bypassing the normal hearCommand in this case because we want the modal to be able to accept any characters
         // and not try to figure out what key press a passed command represents.
         // You'd probably also want to do this if you were building a dialog where you wanted the user to enter a name
         // or some other data.
