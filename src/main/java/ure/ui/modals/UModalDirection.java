@@ -1,5 +1,6 @@
 package ure.ui.modals;
 
+import ure.commands.UCommand;
 import ure.render.URenderer;
 
 public class UModalDirection extends UModal {
@@ -14,7 +15,7 @@ public class UModalDirection extends UModal {
     }
 
     @Override
-    public void hearCommand(String command) {
+    public void hearCommand(UCommand command) {
         ((HearModalDirection)callback).hearModalDirection(callbackContext, 0, -1);
         dismiss();
     }

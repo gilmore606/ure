@@ -5,7 +5,10 @@ import ure.actions.UActionPass;
 import ure.actions.UActionWalk;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
+import ure.actors.UPlayer;
 import ure.areas.UCartographer;
+import ure.commands.*;
+import ure.commands.UCommand;
 import ure.render.URenderer;
 import ure.terrain.Stairs;
 import ure.terrain.UTerrain;
@@ -28,9 +31,9 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 
 
-public class UCommander implements URenderer.KeyListener,HearModalDirection {
+public class UCommander implements URenderer.KeyListener {
 
-    private HashMap<Character, String> keyBinds;
+    private HashMap<Character, UCommand> keyBindings;
     private HashSet<UTimeListener> timeListeners;
     private HashSet<UAnimator> animators;
     private ArrayList<UActor> actors;
@@ -113,24 +116,19 @@ public class UCommander implements URenderer.KeyListener,HearModalDirection {
     public void readKeyBinds() {
         // TODO: Actually read keybinds.txt
         //
-        keyBinds = new HashMap<Character, String>();
-        keyBinds.put('w', "MOVE_N");
-        keyBinds.put('s', "MOVE_S");
-        keyBinds.put('a', "MOVE_W");
-        keyBinds.put('d', "MOVE_E");
-        keyBinds.put('W', "LATCH_N");
-        keyBinds.put('A', "LATCH_W");
-        keyBinds.put('S', "LATCH_S");
-        keyBinds.put('D', "LATCH_E");
-        keyBinds.put(' ', "PASS");
-        keyBinds.put('e', "INTERACT");
-        keyBinds.put('g', "GET");
-        keyBinds.put('.', "STAIRS");
-        keyBinds.put('i', "INVENTORY");
-        keyBinds.put('q', "DEBUG");
-        keyBinds.put('1', "DEBUG_1");
-        keyBinds.put('2', "DEBUG_2");
-        keyBinds.put('3', "DEBUG_3");
+        keyBindings = new HashMap<Character, UCommand>();
+        keyBindings.put('w', new CommandMoveN());
+        keyBindings.put('s', new CommandMoveS());
+        keyBindings.put('a', new CommandMoveW());
+        keyBindings.put('d', new CommandMoveE());
+        keyBindings.put('W', new CommandLatchN());
+        keyBindings.put('S', new CommandLatchS());
+        keyBindings.put('A', new CommandLatchW());
+        keyBindings.put('D', new CommandLatchE());
+        keyBindings.put(' ', new CommandPass());
+        keyBindings.put('e', new CommandInteract());
+        keyBindings.put('g', new CommandGet());
+        keyBindings.put('.', new CommandTravel());
     }
 
     public void keyPressed(char c) {
@@ -140,82 +138,26 @@ public class UCommander implements URenderer.KeyListener,HearModalDirection {
     public void consumeKeyFromBuffer() {
         if (!keyBuffer.isEmpty()) {
             Character c = keyBuffer.remove();
-            hearCommand(keyBinds.get(c));
-        }
-    }
-
-    void hearCommand(String command) {
-        if(command == null) return;
-        System.out.println("actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command);
-        if (modal != null) {
-            modal.hearCommand(command);
-        } else {
-            switch (command) {
-                case "MOVE_N":
-                    walkPlayer(0, -1);
-                    break;
-                case "MOVE_S":
-                    walkPlayer(0, 1);
-                    break;
-                case "MOVE_W":
-                    walkPlayer(-1, 0);
-                    break;
-                case "MOVE_E":
-                    walkPlayer(1, 0);
-                    break;
-                case "LATCH_N":
-                    latchPlayer(0,-1);
-                    break;
-                case "LATCH_S":
-                    latchPlayer(0,1);
-                    break;
-                case "LATCH_W":
-                    latchPlayer(-1,0);
-                    break;
-                case "LATCH_E":
-                    latchPlayer(1,0);
-                    break;
-                case "PASS":
-                    commandPass();
-                    break;
-                case "INTERACT":
-                    commandInteract();
-                    break;
-                case "GET":
-                    commandGet();
-                    break;
-                case "STAIRS":
-                    commandStairs();
-                    break;
-                case "INVENTORY":
-                    commandInventory();
-                    break;
-                case "DEBUG":
-                    debug();
-                    break;
-                case "DEBUG_1":
-                    debug_1();
-                    break;
-                case "DEBUG_2":
-                    debug_2();
-                    break;
-                case "DEBUG_3":
-                    debug_3();
-                    break;
+            UCommand command = keyBindings.get(c);
+            if (command != null) {
+                hearCommand(keyBindings.get(c));
+            } else if (c == '1') {
+                debug_1();
+            } else if (c == '2') {
+                debug_2();
+            } else if (c == 'q') {
+                debug();
             }
         }
     }
 
-
-    void walkPlayer(int xdir, int ydir) {
-        player.doAction(new UActionWalk(player, xdir, ydir));
-    }
-
-    void latchPlayer(int xdir, int ydir) {
-        moveLatch = true;
-        moveLatchX = xdir;
-        moveLatchY = ydir;
-        walkPlayer(xdir, ydir);
+    void hearCommand(UCommand command) {
+        System.out.println("actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
+        if (modal != null) {
+            modal.hearCommand(command);
+        } else {
+            command.execute((UPlayer)player);
+        }
     }
 
     public void setMoveLatch(int xdir, int ydir) {
@@ -228,35 +170,6 @@ public class UCommander implements URenderer.KeyListener,HearModalDirection {
         moveLatch = false;
         moveLatchX = 0;
         moveLatchY = 0;
-    }
-
-    void commandPass() {
-        player.doAction(new UActionPass(player));
-    }
-
-    void commandInteract() {
-        UModal modal = new UModalDirection("In which direction? (Space for none)", true, this, "interact");
-        showModal(modal);
-    }
-    void commandInteractFinish(int dir, int ydir) {
-        printScroll("You try to interact but nothing happens....yet.");
-    }
-
-    void commandGet() {
-        player.doAction(new UActionGet(player));
-    }
-
-    void commandStairs() {
-        UTerrain t = player.area().terrainAt(player.areaX(), player.areaY());
-        if (t instanceof Stairs) {
-            ((Stairs)t).transportActor(player);
-        } else {
-            printScroll("You don't see anything to move through.");
-        }
-    }
-
-    void commandInventory() {
-
     }
 
     public void showModal(UModal modal) {
@@ -274,8 +187,6 @@ public class UCommander implements URenderer.KeyListener,HearModalDirection {
     void debug_2() {
         player.camera.setAllLit(!player.camera.getAllLit());
     }
-
-    void debug_3() { }
 
     public void printScroll(String text) {
         scrollPrinter.print(text);
@@ -336,7 +247,7 @@ public class UCommander implements URenderer.KeyListener,HearModalDirection {
                             latchBreak();
                             consumeKeyFromBuffer();
                         } else {
-                            walkPlayer(moveLatchX, moveLatchY);
+                            player.doAction(new UActionWalk(player, moveLatchX, moveLatchY));
                         }
                     } else {
                         consumeKeyFromBuffer();
@@ -412,12 +323,6 @@ public class UCommander implements URenderer.KeyListener,HearModalDirection {
     public void detachModal() {
         renderer.getRootView().removeChild(modal);
         this.modal = null;
-    }
-
-    public void hearModalDirection(String context, int xdir, int ydir) {
-        if (context.equals("interact")) {
-            commandInteractFinish(xdir, ydir);
-        }
     }
 
 }

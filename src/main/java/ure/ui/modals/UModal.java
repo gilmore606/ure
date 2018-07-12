@@ -2,6 +2,7 @@ package ure.ui.modals;
 
 import ure.Injector;
 import ure.UCommander;
+import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.ui.UCamera;
@@ -67,7 +68,7 @@ public class UModal extends View {
         //}
     }
 
-    public void hearCommand(String command) {
+    public void hearCommand(UCommand command) {
         dismiss();
     }
 
