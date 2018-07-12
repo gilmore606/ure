@@ -4,6 +4,7 @@ import ure.actions.ActionWalk;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
+import ure.areas.UArea;
 import ure.areas.UCartographer;
 import ure.commands.*;
 import ure.commands.UCommand;
@@ -250,6 +251,9 @@ public class UCommander implements URenderer.KeyListener {
         scrollPanel = panel;
     }
 
+    public void playerChangedArea(UArea sourcearea, UArea destarea) {
+        statusPanel.setText("location", cartographer.describeLabel(destarea.label));
+    }
     /**
      * The gameLoop() runs forever (until the player exits the game).  It should be the last thing you call from
      * your game's main() after everything is initialized.

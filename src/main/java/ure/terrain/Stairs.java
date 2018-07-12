@@ -53,6 +53,7 @@ public class Stairs extends TerrainI implements UTerrain {
         actor.moveToCell(destarea, dest.areaX(), dest.areaY());
         if (actor instanceof UPlayer) {
             cartographer.playerLeftArea((UPlayer)actor, sourcearea);
+            commander.playerChangedArea(sourcearea, destarea);
         }
     }
 

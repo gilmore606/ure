@@ -57,6 +57,7 @@ public class ExampleGame implements UTimeListener {
         statusPanel.addText("class", "Ornithologist",0,2);
         statusPanel.addText("turn", "T 1", 0, 5);
         statusPanel.addText("time", "", 0, 6);
+        statusPanel.addText("location", "Mystic forest", 0, 8);
         statusPanel.setBounds(1200,0,200,800);
         rootView.addChild(statusPanel);
 
@@ -68,7 +69,7 @@ public class ExampleGame implements UTimeListener {
         scrollPanel.setBounds(0,800,1400,200);
         scrollPanel.print("Welcome to UnRogueEngine!");
         scrollPanel.print("The universal java toolkit for roguelike games.");
-        scrollPanel.print("Your journey begins...");
+        scrollPanel.print("Strike the earth!");
         rootView.addChild(scrollPanel);
         renderer.setRootView(rootView);
 

@@ -32,6 +32,8 @@ import java.util.ArrayList;
  * are provided to facilitate this convention.
  *
  */
+// TODO: split custom stuff into ExampleCartographer and make generic
+
 public class UCartographer {
 
     @Inject
@@ -211,6 +213,18 @@ public class UCartographer {
         freezeArea(area);
     }
 
+    public String describeLabel(String label) {
+        String labelname = GetLabelName(label);
+        int[] labeldata = GetLabelData(label);
+        switch (labelname) {
+            case "forest":
+                return "Mystic forest";
+            case "cavern":
+                return "Cavern, " + Integer.toString(labeldata[2] * 25) + "ft";
+            default:
+                return "plane of chaos";
+        }
+    }
 
 
     public UArea MakeForest() {
