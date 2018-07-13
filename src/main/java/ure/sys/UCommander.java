@@ -50,7 +50,6 @@ public class UCommander implements URenderer.KeyListener {
     public USpeaker speaker;
 
     public int turnCounter = 0;
-    private int turnsPerDay = 512;
     public int frameCounter;
 
     private int animationMillis = 33;
@@ -213,11 +212,11 @@ public class UCommander implements URenderer.KeyListener {
     }
 
     void debug_1() {
-        player.camera.setAllVisible(!player.camera.getAllVisible());
+        config.setVisibilityEnable(!config.isVisibilityEnable());
     }
 
     void debug_2() {
-        player.camera.setAllLit(!player.camera.getAllLit());
+        config.setLightEnable(!config.isLightEnable());
     }
 
     /**
@@ -327,7 +326,7 @@ public class UCommander implements URenderer.KeyListener {
     }
 
     public int daytimeMinutes() {
-        return (int)(((float)(turnCounter % turnsPerDay) / (float)turnsPerDay) * 1440f);
+        return (int)(((float)(turnCounter % config.getTurnsPerDay()) / (float)config.getTurnsPerDay()) * 1440f);
     }
     public int daytimeMM() {
         return (daytimeMinutes() % 60);

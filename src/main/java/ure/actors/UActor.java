@@ -86,6 +86,15 @@ public class UActor extends ThingI {
     }
 
     @Override
+    public boolean drawGlyphOutline() {
+        if (glyphOutline)
+            return true;
+        if (commander.config.isOutlineActors())
+            return true;
+        return false;
+    }
+
+    @Override
     public void moveToCell(UArea thearea, int destX, int destY) {
         super.moveToCell(thearea, destX, destY);
         if (camera != null) {

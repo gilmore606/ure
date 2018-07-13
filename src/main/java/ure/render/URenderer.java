@@ -2,6 +2,7 @@ package ure.render;
 
 
 import ure.math.UColor;
+import ure.sys.Injector;
 import ure.ui.View;
 
 public interface URenderer {

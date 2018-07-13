@@ -1,6 +1,7 @@
 package ure.dagger;
 
 import dagger.Component;
+import ure.render.URendererOGL;
 import ure.sys.UCommander;
 import ure.actions.UAction;
 import ure.actors.UActorCzar;
@@ -50,4 +51,5 @@ public interface AppComponent {
     void inject(UBehavior behav);
     void inject(UModal mod);
     void inject(UCommand comm);
+    void inject(URendererOGL rend);
 }

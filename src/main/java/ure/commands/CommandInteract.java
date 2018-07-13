@@ -21,25 +21,29 @@ public class CommandInteract extends UCommand implements HearModalDirection {
 
     @Override
     public void execute(UPlayer player) {
-        ArrayList<Interactable> targetsHere = findInteractablesAt(player.area(), player.areaX(), player.areaY());
-        ArrayList<Interactable> targetsN = findInteractablesAt(player.area(), player.areaX(), player.areaY()-1);
-        ArrayList<Interactable> targetsS = findInteractablesAt(player.area(), player.areaX(), player.areaY()+1);
-        ArrayList<Interactable> targetsW = findInteractablesAt(player.area(), player.areaX()-1, player.areaY());
-        ArrayList<Interactable> targetsE = findInteractablesAt(player.area(), player.areaX()+1, player.areaY());
+        if (commander.config.isSmartInteract()) {
+            ArrayList<Interactable> targetsHere = findInteractablesAt(player.area(), player.areaX(), player.areaY());
+            ArrayList<Interactable> targetsN = findInteractablesAt(player.area(), player.areaX(), player.areaY() - 1);
+            ArrayList<Interactable> targetsS = findInteractablesAt(player.area(), player.areaX(), player.areaY() + 1);
+            ArrayList<Interactable> targetsW = findInteractablesAt(player.area(), player.areaX() - 1, player.areaY());
+            ArrayList<Interactable> targetsE = findInteractablesAt(player.area(), player.areaX() + 1, player.areaY());
 
-        if (targetsHere.size() > 0 && targetsN.size() == 0 && targetsS.size() == 0 && targetsW.size() == 0 && targetsE.size() == 0)
-            PickInteractTarget(player, targetsHere);
-        else if (targetsHere.size() == 0 && targetsN.size() > 0 && targetsS.size() == 0 && targetsW.size() == 0 && targetsE.size() == 0)
-            PickInteractTarget(player, targetsN);
-        else if (targetsHere.size() == 0 && targetsN.size() == 0 && targetsS.size() > 0 && targetsW.size() == 0 && targetsE.size() == 0)
-            PickInteractTarget(player, targetsS);
-        else if (targetsHere.size() == 0 && targetsN.size() == 0 && targetsS.size() == 0 && targetsW.size() > 0 && targetsE.size() == 0)
-            PickInteractTarget(player, targetsW);
-        else if (targetsHere.size() == 0 && targetsN.size() == 0 && targetsS.size() == 0 && targetsW.size() == 0 && targetsE.size() > 0)
-            PickInteractTarget(player, targetsE);
-        else if (targetsHere.size() == 0 && targetsN.size() == 0 && targetsS.size() == 0 && targetsW.size() == 0 && targetsE.size() == 0)
-            commander.printScroll(noTargetMsg);
-        else {
+            if (targetsHere.size() > 0 && targetsN.size() == 0 && targetsS.size() == 0 && targetsW.size() == 0 && targetsE.size() == 0)
+                PickInteractTarget(player, targetsHere);
+            else if (targetsHere.size() == 0 && targetsN.size() > 0 && targetsS.size() == 0 && targetsW.size() == 0 && targetsE.size() == 0)
+                PickInteractTarget(player, targetsN);
+            else if (targetsHere.size() == 0 && targetsN.size() == 0 && targetsS.size() > 0 && targetsW.size() == 0 && targetsE.size() == 0)
+                PickInteractTarget(player, targetsS);
+            else if (targetsHere.size() == 0 && targetsN.size() == 0 && targetsS.size() == 0 && targetsW.size() > 0 && targetsE.size() == 0)
+                PickInteractTarget(player, targetsW);
+            else if (targetsHere.size() == 0 && targetsN.size() == 0 && targetsS.size() == 0 && targetsW.size() == 0 && targetsE.size() > 0)
+                PickInteractTarget(player, targetsE);
+            else if (targetsHere.size() == 0 && targetsN.size() == 0 && targetsS.size() == 0 && targetsW.size() == 0 && targetsE.size() == 0)
+                commander.printScroll(noTargetMsg);
+            else {
+                commander.showModal(new UModalDirection(askDirectionMsg, true, this, ""));
+            }
+        } else {
             commander.showModal(new UModalDirection(askDirectionMsg, true, this, ""));
         }
     }

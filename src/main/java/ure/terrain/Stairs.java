@@ -59,7 +59,9 @@ public class Stairs extends TerrainI implements UTerrain {
 
     @Override
     public boolean isInteractable(UActor actor) {
-        return true;
+        if (commander.config.isInteractStairs())
+            return true;
+        return false;
     }
 
     @Override

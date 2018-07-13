@@ -1,5 +1,6 @@
 package ure.sys;
 
+import ure.areas.UArea;
 import ure.math.UColor;
 
 import java.util.ArrayList;
@@ -27,55 +28,55 @@ public class UConfig {
 
     // Visuals
 
-    int FPStarget = 60;                                 // render at this FPS
-    int animFrameMilliseconds = 33;                     // milliseconds between animation frames
+    private int FPStarget = 60;                                 // render at this FPS
+    private int animFrameMilliseconds = 33;                     // milliseconds between animation frames
 
-    String glyphFont = "Deferral-Square.ttf";               // irrelevant for non-ascii renderer
-    String textFont = "Px437_Phoenix_BIOS-2y.ttf";
+    private String glyphFont = "Deferral-Square.ttf";               // irrelevant for non-ascii renderer
+    private String textFont = "Px437_Phoenix_BIOS-2y.ttf";
 
-    int glyphWidth = 16;
-    int glyphHeight = 17;
+    private int glyphWidth = 16;
+    private int glyphHeight = 17;
 
-    String uiFrameGlyphs = "+=+|+=|";                               // corners and sides for UI box frames
-    int modalShadowStyle = UConfig.SHADOW_GRADIENT;     // drop shadow style for modal popups
-    int modalPosition = UConfig.POS_CAMERA_CENTER;      // position of modal popups
+    private String uiFrameGlyphs = "+=+|+=|";                               // corners and sides for UI box frames
+    private int modalShadowStyle = UConfig.SHADOW_GRADIENT;     // drop shadow style for modal popups
+    private int modalPosition = UConfig.POS_CAMERA_CENTER;      // position of modal popups
 
-    UColor windowBgColor = UColor.COLOR_BLACK;                          // bgColor of game window
-    UColor cameraBgColor = UColor.COLOR_BLACK;                          // bgColor of camera (for unseen territory)
-    UColor modalBgColor = UColor.COLOR_BLACK;                           // bgColor of modal popups
-    UColor modalFrameColor = new UColor(0.7f,0.7f,0.1f);     // glyph color for modal popup frame glyphs
-    UColor textColor = UColor.COLOR_WHITE;                             // color for ui/scroll text
-    UColor hiliteColor = new UColor(1f,1f,0.2f);            // color for ui selection highlighting
+    private UColor windowBgColor = UColor.COLOR_BLACK;                          // bgColor of game window
+    private UColor cameraBgColor = UColor.COLOR_BLACK;                          // bgColor of camera (for unseen territory)
+    private UColor modalBgColor = UColor.COLOR_BLACK;                           // bgColor of modal popups
+    private UColor modalFrameColor = new UColor(0.7f,0.7f,0.1f);     // glyph color for modal popup frame glyphs
+    private UColor textColor = UColor.COLOR_WHITE;                             // color for ui/scroll text
+    private UColor hiliteColor = new UColor(1f,1f,0.2f);            // color for ui selection highlighting
 
-    boolean outlineActors = true;                           // draw a black outline around Actor glyphs?
-    boolean outlineThings = false;                          // draw a black outline around Thing glyphs?
+    private boolean outlineActors = true;                           // draw a black outline around Actor glyphs?
+    private boolean outlineThings = false;                          // draw a black outline around Thing glyphs?
 
-    boolean visibilityEnable = true;            // if false, assume everything is visible (no occlusion)
-    boolean lightEnable = true;                 // if false, assume all areas lit 100%
-    boolean lightBloom = true;                  // lights adding to >fullbright bloom to white
-    boolean smoothLightCones = true;            // dither edges of light cones (line 339 in UCamera)
+    private boolean visibilityEnable = true;            // if false, assume everything is visible (no occlusion)
+    private boolean lightEnable = true;                 // if false, assume all areas lit 100%
+    private boolean lightBloom = true;                  // TODO: lights adding to >fullbright bloom to white
+    private boolean smoothLightCones = true;            // dither edges of light cones (line 339 in UCamera)
 
-    float visibilityThreshold = 0.3f;           // how 'visible' is a cell before we consider it seen? (ucamera 512, 537)
-    float seenOpacity = 0.35f;                  // how bright to draw seen-but-not-visible terrain
-    float seenHue = 0.3f;                       // how much color to leave in seen-but-not-visible terrain
-    float lightHueToFloors = 0.8f;              // how much color lights give to terrain
-    float lightHueToWalls = 0.8f;               // how much color lights give to walls
-    float lightHueToThings = 0.5f;              // how much color lights give to things
-    float lightHueToActors = 0.4f;              // how much color lights give to actors
+    private float visibilityThreshold = 0.3f;           // how 'visible' is a cell before we consider it seen? (ucamera 512, 537)
+    private float seenOpacity = 0.35f;                  // how bright to draw seen-but-not-visible terrain
+    private float seenHue = 0.3f;                       // TODO: how much color to leave in seen-but-not-visible terrain
+    private float lightHueToFloors = 0.8f;              // TODO: how much color lights give to terrain
+    private float lightHueToWalls = 0.8f;               // TODO: how much color lights give to walls
+    private float lightHueToThings = 0.5f;              // TODO: how much color lights give to things
+    private float lightHueToActors = 0.4f;              // TODO: how much color lights give to actors
 
-    ArrayList<UColor> sunColorLerps;            // lerp points for sunlight color cycle
-    ArrayList<Integer> sunColorLerpMarkers;
-    HashMap<Integer,String> sunCycleMessages;
+    private ArrayList<UColor> sunColorLerps;            // lerp points for sunlight color cycle
+    private ArrayList<Integer> sunColorLerpMarkers;
+    private HashMap<Integer,String> sunCycleMessages;
 
     // Game functionality
 
-    boolean persistentAreas = true;         // persist and recover generated areas?
-    boolean runNeighborAreas = true;        // keep areas adjacent to current area awake?
+    private boolean persistentAreas = true;         // persist and recover generated areas?
+    private boolean runNeighborAreas = true;        // TODO: keep areas adjacent to current area awake?
 
-    boolean smartInteract = true;           // autodetect targets for interact command?
-    boolean interactStairs = true;          // interact command can trigger stairs?
+    private boolean smartInteract = true;           // autodetect targets for interact command?
+    private boolean interactStairs = true;          // interact command can trigger stairs?
 
-    int turnsPerDay = 512;                  // game turns per 24 hour day
+    private int turnsPerDay = 512;                  // game turns per 24 hour day
 
 
 
@@ -119,6 +120,17 @@ public class UConfig {
         sunColorLerpMarkers.add(min);
         if (msg != null)
             sunCycleMessages.put((Integer)min, msg);
+    }
+
+    /**
+     * Add the default sunlight color cycle stored on UConfig to the given area.
+     *
+     * @param area
+     */
+    public void addDefaultSunCycle(UArea area) {
+        area.sunColorLerps = sunColorLerps;
+        area.sunColorLerpMarkers = sunColorLerpMarkers;
+        area.sunCycleMessages = sunCycleMessages;
     }
 
     public int getFPStarget() {

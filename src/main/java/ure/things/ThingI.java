@@ -110,8 +110,13 @@ public abstract class ThingI implements UThing, UContainer, Interactable, Clonea
     public UColor getGlyphColor() {
         return glyphColor;
     }
+
     public boolean drawGlyphOutline() {
-        return glyphOutline;
+        if (glyphOutline)
+            return true;
+        if (commander.config.isOutlineThings())
+            return true;
+        return false;
     }
 
     public UContainer location() { return location; }

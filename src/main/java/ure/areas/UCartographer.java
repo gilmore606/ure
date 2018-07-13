@@ -87,6 +87,8 @@ public class UCartographer {
      * @return null if no persisted area found.
      */
     UArea FetchArea(String label, String labelname, int[] labeldata) {
+        if (!commander.config.isPersistentAreas())
+            return null;
         return null;
     }
 
@@ -97,6 +99,8 @@ public class UCartographer {
      * what actually gets serialized.
      */
     private void persistArea(UArea area, String filename) {
+        if (!commander.config.isPersistentAreas())
+            return;
         File areaFile = new File(filename);
         try {
             objectMapper.writeValue(areaFile, area);

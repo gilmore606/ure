@@ -5,8 +5,11 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import ure.math.UColor;
+import ure.sys.Injector;
+import ure.sys.UCommander;
 import ure.ui.View;
 
+import javax.inject.Inject;
 import java.nio.FloatBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -14,6 +17,9 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class URendererOGL implements URenderer {
+
+    @Inject
+    UCommander commander;
 
     private View rootView;
     private View context;
@@ -28,8 +34,6 @@ public class URendererOGL implements URenderer {
     // TODO: These should be customizable at a higher level
     private int screenWidth = 1400;
     private int screenHeight = 1000;
-    private int glyphWidth = 16;
-    private int glyphHeight = 17;
 
     private GLFWErrorCallback errorCallback;
 
@@ -50,7 +54,11 @@ public class URendererOGL implements URenderer {
 
     private boolean[] keyState = new boolean[65536]; // Apparently in Java these are 16bit.
 
-    // URERenderer methods
+    public URendererOGL() {
+        Injector.getAppComponent().inject(this);
+    }
+
+    // URenderer methods
 
     @Override
     public View getRootView() { return rootView; }
@@ -180,7 +188,7 @@ public class URendererOGL implements URenderer {
         y += context.absoluteY();
         for(int i = 0; i < str.length(); i++){
             // TODO: pass in the size
-            addQuad(x, y, glyphWidth, glyphHeight, col, str.charAt(i));
+            addQuad(x, y, glyphWidth(), glyphHeight(), col, str.charAt(i));
             x += 8;
         }
     }
@@ -190,7 +198,7 @@ public class URendererOGL implements URenderer {
         // Seems odd that we are taking a position and an offset here... maybe this could be simplified?
         destx += context.absoluteX();
         desty += context.absoluteY();
-        addQuad(destx + offX, desty + offY, glyphWidth, glyphHeight, tint, glyph);
+        addQuad(destx + offX, desty + offY, glyphWidth(), glyphHeight(), tint, glyph);
     }
 
     @Override
@@ -200,7 +208,7 @@ public class URendererOGL implements URenderer {
         for(int y = -1; y < 2; y += 1)
             for(int x = -1; x < 2; x += 1)
                 if(x != 0 && y != 0)
-                    addQuad(destx + offX + x, desty + offY + y, glyphWidth, glyphHeight, tint, glyph);
+                    addQuad(destx + offX + x, desty + offY + y, glyphWidth(), glyphHeight(), tint, glyph);
     }
 
     @Override
@@ -220,12 +228,12 @@ public class URendererOGL implements URenderer {
 
     @Override
     public int glyphWidth() {
-        return glyphWidth;
+        return commander.config.getGlyphWidth();
     }
 
     @Override
     public int glyphHeight() {
-        return glyphHeight;
+        return commander.config.getGlyphHeight();
     }
 
     // internals
@@ -304,7 +312,7 @@ public class URendererOGL implements URenderer {
     private void addQuad(int x, int y, int w, int h, UColor col, char glyph){
         float u = (float)(glyph % 16) / 32.0f + 0.00390625f;
         float v = (float)(glyph / 16) / 32.0f + 0.0078125f;
-        addQuad(x, y, w, h, col, u, v, glyphWidth / 1024.f, glyphHeight / 1024.f);
+        addQuad(x, y, w, h, col, u, v, glyphWidth() / 1024.f, glyphHeight() / 1024.f);
     }
 
     // I don't think we'll have any triangle data for awhile/ever, so I'm just gonna do quads.

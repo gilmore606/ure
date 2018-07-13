@@ -25,24 +25,16 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
     UCommander commander;
 
     public UArea area;
-    URenderer renderer;
+    private URenderer renderer;
     float zoom = 1.0f;
     public int columns, rows;
     private int centerColumn, centerRow;
 
     public int leftEdge, topEdge, rightEdge, bottomEdge;
-    ULightcell lightcells[][];
-    HashSet<UActor> visibilitySources;
+    private ULightcell lightcells[][];
+    private HashSet<UActor> visibilitySources;
 
-    UModal modal;
-
-    boolean allVisible = false;
-    boolean allLit = false;
-    float seenOpacity = 0.35f;
-    float lightHueToFloors = 0.8f;
-    float lightHueToWalls = 0.6f;
-    float lightHueToThings = 0.5f;
-    float lightHueToActors = 0.3f;
+    private UModal modal;
 
     public static int PINSTYLE_NONE = 0;
     public static int PINSTYLE_SOFT = 1;
@@ -145,24 +137,6 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
         return renderer.glyphHeight();
     }
 
-    public boolean getAllVisible() {
-        return allVisible;
-    }
-
-    public void setAllVisible(boolean val) {
-        allVisible = val;
-        renderer.render();
-    }
-
-    public boolean getAllLit() {
-        return allLit;
-    }
-
-    public void setAllLit(boolean val) {
-        allLit = val;
-        renderer.render();
-    }
-
     public void moveTo(UArea theArea, int thex, int they) {
         boolean areachange = false;
         if (area != null && theArea != area) {
@@ -196,7 +170,6 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
 
     public int getWidthInCells() { return columns; }
     public int getHeightInCells() { return rows; }
-    public float getSeenOpacity() { return seenOpacity; }
 
     void renderLights() {
         for (int i = 0; i< columns; i++) {
@@ -271,7 +244,7 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
 
 
     public float visibilityAt(int col, int row) {
-        if (allVisible)
+        if (!commander.config.isVisibilityEnable())
             return 1.0f;
         if (!isValidCell(col, row))
             return 0f;
@@ -338,19 +311,25 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
                 }
             }
         }
-        for (int col = 0; col < columns; col++) {
-            for (int row = 0; row < rows; row++) {
-                float v = visibilityAt(col,row);
-                if (v == 0f) {
-                    int neigh = 0;
-                    if (visibilityAt(col-1,row) == 1f && !area.blocksLight(col+ leftEdge -1, row+ topEdge)) neigh++;
-                    if (visibilityAt(col+1, row) == 1f && !area.blocksLight(col+ leftEdge +1, row+ topEdge)) neigh++;
-                    if (visibilityAt(col,row-1) == 1f && !area.blocksLight(col+ leftEdge, row+ topEdge -1)) neigh++;
-                    if (visibilityAt(col, row+1) == 1f && !area.blocksLight(col+ leftEdge, row+ topEdge +1)) neigh++;
-                    if (neigh > 2)
-                        projectToCell(col, row, light, projectVisibility, 0.75f);
-                    else if (neigh > 1)
-                        projectToCell(col, row, light, projectVisibility, 0.6f);
+        if (commander.config.isSmoothLightCones()) {
+            for (int col = 0;col < columns;col++) {
+                for (int row = 0;row < rows;row++) {
+                    float v = visibilityAt(col, row);
+                    if (v == 0f) {
+                        int neigh = 0;
+                        if (visibilityAt(col - 1, row) == 1f && !area.blocksLight(col + leftEdge - 1, row + topEdge))
+                            neigh++;
+                        if (visibilityAt(col + 1, row) == 1f && !area.blocksLight(col + leftEdge + 1, row + topEdge))
+                            neigh++;
+                        if (visibilityAt(col, row - 1) == 1f && !area.blocksLight(col + leftEdge, row + topEdge - 1))
+                            neigh++;
+                        if (visibilityAt(col, row + 1) == 1f && !area.blocksLight(col + leftEdge, row + topEdge + 1))
+                            neigh++;
+                        if (neigh > 2)
+                            projectToCell(col, row, light, projectVisibility, 0.75f);
+                        else if (neigh > 1)
+                            projectToCell(col, row, light, projectVisibility, 0.6f);
+                    }
                 }
             }
         }
@@ -431,7 +410,7 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
         UColor total;
         if (!isValidCell(col,row))
             return UColor.COLOR_BLACK;
-        if (allLit) {
+        if (!commander.config.isLightEnable()) {
             total = UColor.COLOR_WHITE;
         } else if (lightcells[col][row] == null) {
             System.out.println("WARNING!  nonexistent lightcell");
@@ -490,7 +469,7 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
 
     private void drawCell(URenderer renderer, int col, int row, int cellw, int cellh) {
         float vis = visibilityAt(col,row);
-        float visSeen = getSeenOpacity();
+        float visSeen = commander.config.getSeenOpacity();
         UColor light = lightAt(col,row);
         UTerrain t = terrainAt(col,row);
         if (t != null) {
@@ -511,7 +490,7 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
         }
 
         //TODO: Define this magic value somewhere?
-        if (vis < 0.3f)
+        if (vis < commander.config.getVisibilityThreshold())
             return;
         Iterator<UThing> things = thingsAt(col,row);
         if (things != null) {
@@ -525,18 +504,10 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
         }
     }
 
-/*    public void redrawAreaCell(int ax, int ay) {
-        redrawCell(ax - leftEdge, ay - topEdge);
-    }
-    public void redrawCell(int x, int y) {
-        //MM TODO THIS -- We cannot redraw cells any more.
-        //renderer.renderCell(this, x, y);
-    }*/
-
     public void animationTick() {
         for (int col = leftEdge; col< rightEdge; col++) {
             for (int row = topEdge; row< bottomEdge; row++) {
-                if (area.isValidXY(col,row) && lightcells[col- leftEdge][row- topEdge].visibility() > 0.1f)
+                if (area.isValidXY(col,row) && lightcells[col- leftEdge][row- topEdge].visibility() > commander.config.getVisibilityThreshold())
                     area.cellAt(col,row).animationTick();
             }
         }
