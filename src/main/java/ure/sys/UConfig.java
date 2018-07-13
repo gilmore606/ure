@@ -57,8 +57,8 @@ public class UConfig {
     private boolean smoothLightCones = true;            // dither edges of light cones (line 339 in UCamera)
 
     private float visibilityThreshold = 0.3f;           // how 'visible' is a cell before we consider it seen? (ucamera 512, 537)
-    private float seenOpacity = 0.35f;                  // how bright to draw seen-but-not-visible terrain
-    private float seenHue = 0.3f;                       // TODO: how much color to leave in seen-but-not-visible terrain
+    private float seenOpacity = 0.55f;                  // how bright to draw seen-but-not-visible terrain
+    private float seenSaturation = 0.07f;                // how much color to leave in seen-but-not-visible terrain
     private float lightHueToFloors = 0.8f;              // TODO: how much color lights give to terrain
     private float lightHueToWalls = 0.8f;               // TODO: how much color lights give to walls
     private float lightHueToThings = 0.5f;              // TODO: how much color lights give to things
@@ -317,12 +317,12 @@ public class UConfig {
         this.seenOpacity = seenOpacity;
     }
 
-    public float getSeenHue() {
-        return seenHue;
+    public float getSeenSaturation() {
+        return seenSaturation;
     }
 
-    public void setSeenHue(float seenHue) {
-        this.seenHue = seenHue;
+    public void setSeenSaturation(float seenSaturation) {
+        this.seenSaturation = seenSaturation;
     }
 
     public float getLightHueToFloors() {

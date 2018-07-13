@@ -469,23 +469,27 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
 
     private void drawCell(URenderer renderer, int col, int row, int cellw, int cellh) {
         float vis = visibilityAt(col,row);
-        float visSeen = commander.config.getSeenOpacity();
         UColor light = lightAt(col,row);
         UTerrain t = terrainAt(col,row);
         if (t != null) {
             float tOpacity = vis;
-            if ((vis < visSeen) && area.seenCell(col + leftEdge, row + topEdge))
-                tOpacity = visSeen;
+            float tSaturation = 1f;
+            if ((vis < commander.config.getVisibilityThreshold()) && area.seenCell(col + leftEdge, row + topEdge)) {
+                tOpacity = commander.config.getSeenOpacity();
+                tSaturation = commander.config.getSeenSaturation();
+            }
             UColor terrainLight = light;
             // TODO: clean up access to terrain obj here, wtf methodcalls
             if (t.glow())
                 terrainLight.set(1f,1f,1f);
             t.bgColorBuffer().set(t.bgColor().r, t.bgColor().g, t.bgColor().b);
             t.bgColorBuffer().illuminateWith(terrainLight, tOpacity);
-
+            t.bgColorBuffer().desaturateBy(1f - tSaturation);
             renderer.drawRect(col * cellw, row * cellh, cellw, cellh, t.bgColorBuffer());
+
             t.fgColorBuffer().set(t.fgColor().r, t.fgColor().g, t.fgColor().b);
             t.fgColorBuffer().illuminateWith(terrainLight, tOpacity);
+            t.fgColorBuffer().desaturateBy(1f - tSaturation);
             renderer.drawGlyph(t.glyph(col+ leftEdge,row+ topEdge), col * cellw, row * cellh, t.fgColorBuffer(), t.glyphOffsetX(), t.glyphOffsetY() + 2);
         } else {
             renderer.drawRect(col * cellw, row * cellh, cellw, cellh, commander.config.getCameraBgColor());

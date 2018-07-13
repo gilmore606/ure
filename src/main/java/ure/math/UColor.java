@@ -10,6 +10,15 @@ public class UColor {
 
     public static UColor COLOR_BLACK = new UColor(0f,0f,0f);
     public static UColor COLOR_WHITE = new UColor(1f,1f,1f);
+    public static UColor COLOR_GRAY = new UColor(0.5f, 0.5f, 0.5f);
+    public static UColor COLOR_DARKGRAY = new UColor(0.25f, 0.25f, 0.25f);
+    public static UColor COLOR_LIGHTGRAY = new UColor(0.75f, 0.75f, 0.75f);
+    public static UColor COLOR_RED = new UColor(1f, 0f, 0f);
+    public static UColor COLOR_GREEN = new UColor(0f, 1f, 0f);
+    public static UColor COLOR_BLUE = new UColor(0f,0f,1f);
+    public static UColor COLOR_YELLOW = new UColor(1f,1f,0f);
+    public static UColor COLOR_MAGENTA = new UColor(1f,0f,1f);
+    public static UColor COLOR_CYAN = new UColor(0f,1f,1f);
 
     public UColor(int ir, int ig, int ib) {
         set(ir,ig,ib);
@@ -18,6 +27,13 @@ public class UColor {
         set(fr,fg,fb);
     }
     public UColor(UColor color) { set(color.fR(),color.fG(),color.fB()); }
+
+    /**
+     * FCC luminance weights
+     */
+    private float lumR = 0.299f;
+    private float lumG = 0.587f;
+    private float lumB = 0.114f;
 
     void BoundsCheck() {
         if (r > 1f) r = 1f;
@@ -129,6 +145,16 @@ public class UColor {
      * Brighten/darken this color by the float intensity.
      * @param intensity Above 1.0 brightens, below 1.0 darkens.
      */
+
+    /**
+     * Get the grayscale value of this color according to FCC luminance.
+     *
+     * @return
+     */
+    public float getGrayscale() {
+        return r * lumR + g * lumG + b * lumB;
+    }
+
     public void brightenBy(float intensity) {
         r = r * intensity;
         g = g * intensity;
@@ -137,8 +163,22 @@ public class UColor {
     }
 
     /**
+     * Desaturate a color toward zero saturation (1f).
+     *
+     * @param amount
+     */
+    public void desaturateBy(float amount) {
+        if (amount == 0f) return;
+        float gray = getGrayscale();
+        r = gray * amount + r * (1f - amount);
+        g = gray * amount + g * (1f - amount);
+        b = gray * amount + b * (1f - amount);
+        BoundsCheck();
+    }
+
+    /**
      * Add a colored light to this light.
-     * TODO: Make this a more realistic mix.
+     * TODO: Make this a more realistic mix.  Implement bloom.
      * @param light The light color to add.
      * @param intensity The amount of light to add to this light.
      */
