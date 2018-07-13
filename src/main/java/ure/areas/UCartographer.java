@@ -112,29 +112,13 @@ public class UCartographer {
     /**
      * Create a UArea specified by the given label in whatever format we define.
      *
-     * The default implementation simply switches between some basic ULandscaper generators
-     * with a depth parameter.  This is probably not what you want.
+     * The default implementation does nothing; you need to override this and generate areas for your game.
      *
      * Override this to select among your own master set of ULandscapers.
      *
      */
-    UArea makeArea(String label, String labelname, int[] labeldata) {
-        System.out.println("CARTO : making area for " + labelname + " (" + labeldata[0] + ")");
-        UArea area;
-        switch (labelname) {
-            case "forest":
-                area = MakeForest(); break;
-            case "cavern":
-                area = MakeCavern(labeldata[0]); break;
-            case "dungeon":
-                area = MakeDungeon(); break;
-            case "complex":
-                area = MakeComplex(); break;
-            default:
-                area = MakeForest(); break;
-
-        }
-        return area;
+     public UArea makeArea(String label, String labelname, int[] labeldata) {
+        return null;
     }
 
     /**
