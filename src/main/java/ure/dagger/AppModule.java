@@ -1,13 +1,10 @@
 package ure.dagger;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import dagger.Module;
 import dagger.Provides;
-import ure.UCommander;
-import ure.actions.UAction;
+import ure.sys.UCommander;
 import ure.actors.ActorDeserializer;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;

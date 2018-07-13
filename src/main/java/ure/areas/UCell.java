@@ -1,7 +1,7 @@
 package ure.areas;
 
-import ure.Injector;
-import ure.UCommander;
+import ure.sys.Injector;
+import ure.sys.UCommander;
 import ure.actions.UAction;
 import ure.things.UCollection;
 import ure.things.UContainer;

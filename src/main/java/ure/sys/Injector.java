@@ -1,4 +1,4 @@
-package ure;
+package ure.sys;
 
 import ure.dagger.AppComponent;
 import ure.dagger.AppModule;

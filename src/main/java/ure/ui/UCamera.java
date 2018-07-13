@@ -1,10 +1,12 @@
 package ure.ui;
 
-import ure.*;
 import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.Injector;
+import ure.sys.UAnimator;
+import ure.sys.UCommander;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
 import ure.ui.modals.UModal;

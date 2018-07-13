@@ -1,7 +1,7 @@
 package ure.ui.modals;
 
-import ure.Injector;
-import ure.UCommander;
+import ure.sys.Injector;
+import ure.sys.UCommander;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;

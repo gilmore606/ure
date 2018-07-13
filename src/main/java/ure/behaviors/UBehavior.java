@@ -1,7 +1,7 @@
 package ure.behaviors;
 
-import ure.Injector;
-import ure.UCommander;
+import ure.sys.Injector;
+import ure.sys.UCommander;
 import ure.actions.UAction;
 import ure.actors.UNPC;
 

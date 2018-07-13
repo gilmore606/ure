@@ -1,7 +1,7 @@
 package ure.things;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ure.Injector;
+import ure.sys.Injector;
 
 import javax.inject.Inject;
 import java.io.IOException;

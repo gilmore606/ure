@@ -1,10 +1,10 @@
 package ure.areas;
 
-import ure.Injector;
-import ure.UCommander;
+import ure.sys.Injector;
+import ure.sys.UCommander;
 import ure.actions.UAction;
 import ure.ui.ULight;
-import ure.UTimeListener;
+import ure.sys.UTimeListener;
 import ure.actors.UActor;
 import ure.math.UColor;
 import ure.terrain.Stairs;

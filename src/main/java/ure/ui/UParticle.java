@@ -1,6 +1,6 @@
 package ure.ui;
 
-import ure.UAnimator;
+import ure.sys.UAnimator;
 import ure.areas.UArea;
 
 public class UParticle implements UAnimator {

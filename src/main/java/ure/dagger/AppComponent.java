@@ -1,7 +1,7 @@
 package ure.dagger;
 
 import dagger.Component;
-import ure.UCommander;
+import ure.sys.UCommander;
 import ure.actions.UAction;
 import ure.actors.UActorCzar;
 import ure.areas.UArea;

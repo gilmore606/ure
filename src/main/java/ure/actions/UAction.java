@@ -1,7 +1,7 @@
 package ure.actions;
 
-import ure.Injector;
-import ure.UCommander;
+import ure.sys.Injector;
+import ure.sys.UCommander;
 import ure.actors.UActor;
 
 import javax.inject.Inject;

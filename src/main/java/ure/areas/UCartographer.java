@@ -1,8 +1,8 @@
 package ure.areas;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ure.Injector;
-import ure.UCommander;
+import ure.sys.Injector;
+import ure.sys.UCommander;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
@@ -220,7 +220,7 @@ public class UCartographer {
             case "forest":
                 return "Mystic forest";
             case "cavern":
-                return "Cavern, " + Integer.toString(labeldata[2] * 25) + "ft";
+                return "Cavern, " + Integer.toString(labeldata[0] * 25) + "ft";
             default:
                 return "plane of chaos";
         }

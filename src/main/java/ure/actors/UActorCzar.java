@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ure.Injector;
+import ure.sys.Injector;
 
 import javax.inject.Inject;
 

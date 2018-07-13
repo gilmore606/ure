@@ -1,8 +1,8 @@
 package ure.terrain;
 
-import ure.Injector;
-import ure.UAnimator;
-import ure.UCommander;
+import ure.sys.Injector;
+import ure.sys.UAnimator;
+import ure.sys.UCommander;
 import ure.actions.Interactable;
 import ure.areas.UCell;
 import ure.math.UColor;

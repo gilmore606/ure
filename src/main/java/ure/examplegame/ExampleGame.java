@@ -1,6 +1,5 @@
 package ure.examplegame;
 
-import ure.*;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
@@ -10,6 +9,9 @@ import ure.areas.UCell;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.render.URendererOGL;
+import ure.sys.Injector;
+import ure.sys.UCommander;
+import ure.sys.UTimeListener;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
