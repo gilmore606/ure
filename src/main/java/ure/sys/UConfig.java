@@ -54,11 +54,11 @@ public class UConfig {
     private boolean visibilityEnable = true;            // if false, assume everything is visible (no occlusion)
     private boolean lightEnable = true;                 // if false, assume all areas lit 100%
     private boolean lightBloom = true;                  // TODO: lights adding to >fullbright bloom to white
-    private boolean smoothLightCones = true;            // dither edges of light cones (line 339 in UCamera)
+    private boolean smoothLightCones = true;            // dither edges of light cones
 
     private float visibilityThreshold = 0.3f;           // how 'visible' is a cell before we consider it seen? (ucamera 512, 537)
     private float seenOpacity = 0.55f;                  // how bright to draw seen-but-not-visible terrain
-    private float seenSaturation = 0.07f;                // how much color to leave in seen-but-not-visible terrain
+    private float seenSaturation = 0.07f;               // how much color to leave in seen-but-not-visible terrain
     private float lightHueToFloors = 0.8f;              // TODO: how much color lights give to terrain
     private float lightHueToWalls = 0.8f;               // TODO: how much color lights give to walls
     private float lightHueToThings = 0.5f;              // TODO: how much color lights give to things

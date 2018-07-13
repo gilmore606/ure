@@ -20,7 +20,7 @@ public class UModalDirection extends UModal {
     }
 
     @Override
-    public void hearCommand(UCommand command) {
+    public void hearCommand(UCommand command, Character c) {
         if (command.id.startsWith("MOVE")) {
             ((HearModalDirection) callback).hearModalDirection(callbackContext, ((UCommandMove) command).xdir, ((UCommandMove) command).ydir);
             dismiss();

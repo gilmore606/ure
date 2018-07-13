@@ -159,7 +159,7 @@ public class UCommander implements URenderer.KeyListener {
             Character c = keyBuffer.remove();
             UCommand command = keyBindings.get(c);
             if (command != null) {
-                hearCommand(keyBindings.get(c));
+                hearCommand(keyBindings.get(c), c);
             } else if (c == '1') {
                 debug_1();
             } else if (c == '2') {
@@ -170,10 +170,10 @@ public class UCommander implements URenderer.KeyListener {
         }
     }
 
-    void hearCommand(UCommand command) {
+    void hearCommand(UCommand command, Character c) {
         System.out.println("actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
         if (modal != null) {
-            modal.hearCommand(command);
+            modal.hearCommand(command, c);
         } else {
             command.execute((UPlayer)player);
         }

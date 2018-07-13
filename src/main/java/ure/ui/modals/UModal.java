@@ -68,7 +68,7 @@ public class UModal extends View {
         //}
     }
 
-    public void hearCommand(UCommand command) {
+    public void hearCommand(UCommand command, Character c) {
         dismiss();
     }
 
