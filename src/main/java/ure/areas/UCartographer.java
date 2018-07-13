@@ -170,7 +170,7 @@ public class UCartographer {
      * @param label
      * @return
      */
-    String GetLabelName(String label) {
+    public String GetLabelName(String label) {
         int i = label.indexOf(" ");
         if (i < 1) return label;
         return label.substring(0,i);
@@ -183,7 +183,7 @@ public class UCartographer {
      * @param label
      * @return An array of integers extracted.
      */
-    int[] GetLabelData(String label) {
+    public int[] GetLabelData(String label) {
         int di = 0;
         int[] data = new int[20];
         int i = label.indexOf(" ");
@@ -217,17 +217,14 @@ public class UCartographer {
         freezeArea(area);
     }
 
+    /**
+     * Get a human-readable text title for the area with this label.
+     *
+     * @param label
+     * @return
+     */
     public String describeLabel(String label) {
-        String labelname = GetLabelName(label);
-        int[] labeldata = GetLabelData(label);
-        switch (labelname) {
-            case "forest":
-                return "Mystic forest";
-            case "cavern":
-                return "Cavern, " + Integer.toString(labeldata[0] * 25) + "ft";
-            default:
-                return "plane of chaos";
-        }
+        return "plane of chaos";
     }
 
 
