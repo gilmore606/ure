@@ -13,7 +13,7 @@ import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.modals.UModal;
 import ure.ui.UScrollPanel;
-import ure.ui.UREStatusPanel;
+import ure.ui.UStatusPanel;
 import ure.ui.USpeaker;
 
 import java.util.*;
@@ -42,7 +42,7 @@ public class UCommander implements URenderer.KeyListener {
     private UScrollPanel scrollPrinter;
 
     private UScrollPanel scrollPanel;
-    private UREStatusPanel statusPanel;
+    private UStatusPanel statusPanel;
 
     public UThingCzar thingCzar;
     public UActorCzar actorCzar;
@@ -51,8 +51,6 @@ public class UCommander implements URenderer.KeyListener {
 
     public int turnCounter = 0;
     public int frameCounter;
-
-    private int animationMillis = 33;
 
     private boolean breakLatchOnInput = true;
 
@@ -245,7 +243,7 @@ public class UCommander implements URenderer.KeyListener {
         }
     }
 
-    public void setStatusPanel(UREStatusPanel panel){
+    public void setStatusPanel(UStatusPanel panel){
         statusPanel = panel;
     }
 
@@ -262,7 +260,7 @@ public class UCommander implements URenderer.KeyListener {
      *
      */
     public void gameLoop() {
-        long tickRate = 1000000000 / 60;
+        long tickRate = 1000000000 / config.getFPStarget();
         long gameTime = System.nanoTime();
         while (!renderer.windowShouldClose()) {
             frameCounter++;
@@ -272,7 +270,7 @@ public class UCommander implements URenderer.KeyListener {
             renderer.render();
 
             long curTime = System.nanoTime();
-            if (curTime - gameTime > animationMillis * 1000)
+            if (curTime - gameTime > config.getAnimFrameMilliseconds() * 1000)
                 animationFrame();
             if (curTime > gameTime + tickRate * 2) gameTime = curTime;
             else gameTime += tickRate;

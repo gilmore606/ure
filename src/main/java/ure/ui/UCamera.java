@@ -130,11 +130,11 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
     }
 
     public int cellWidth() {
-        return renderer.glyphWidth();
+        return commander.config.getGlyphWidth();
     }
 
     public int cellHeight() {
-        return renderer.glyphHeight();
+        return commander.config.getGlyphHeight();
     }
 
     public void moveTo(UArea theArea, int thex, int they) {
@@ -487,9 +487,10 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
             t.fgColorBuffer().set(t.fgColor().r, t.fgColor().g, t.fgColor().b);
             t.fgColorBuffer().illuminateWith(terrainLight, tOpacity);
             renderer.drawGlyph(t.glyph(col+ leftEdge,row+ topEdge), col * cellw, row * cellh, t.fgColorBuffer(), t.glyphOffsetX(), t.glyphOffsetY() + 2);
+        } else {
+            renderer.drawRect(col * cellw, row * cellh, cellw, cellh, commander.config.getCameraBgColor());
         }
 
-        //TODO: Define this magic value somewhere?
         if (vis < commander.config.getVisibilityThreshold())
             return;
         Iterator<UThing> things = thingsAt(col,row);

@@ -16,7 +16,7 @@ import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
 import ure.ui.UScrollPanel;
-import ure.ui.UREStatusPanel;
+import ure.ui.UStatusPanel;
 import ure.ui.View;
 
 import javax.inject.Inject;
@@ -26,7 +26,7 @@ public class ExampleGame implements UTimeListener {
     static UArea area;
     static UCamera camera;
     static UActor player;
-    static UREStatusPanel statusPanel;
+    static UStatusPanel statusPanel;
     static UScrollPanel scrollPanel;
     static URenderer renderer;
 
@@ -53,7 +53,7 @@ public class ExampleGame implements UTimeListener {
         camera.moveTo(area, 40,20);
         rootView.addChild(camera);
 
-        statusPanel = new UREStatusPanel(15, 10, 16, 16, 10, 10, new UColor(1f,1f,1f), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
+        statusPanel = new UStatusPanel(15, 10, 16, 16, 10, 10, commander.config.getTextColor(), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
         statusPanel.addText("name", "Kaffo",0,0);
         statusPanel.addText("race", "Owl",0,1);
         statusPanel.addText("class", "Ornithologist",0,2);
@@ -63,7 +63,7 @@ public class ExampleGame implements UTimeListener {
         statusPanel.setBounds(1200,0,200,800);
         rootView.addChild(statusPanel);
 
-        scrollPanel = new UScrollPanel(5, 80, 16, 16, 5, 5, new UColor(1f,1f,1f), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
+        scrollPanel = new UScrollPanel(5, 80, 16, 16, 5, 5, commander.config.getTextColor(), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
         scrollPanel.addLineFade(new UColor(1.0f, 1.0f, 1.0f));
         scrollPanel.addLineFade(new UColor(0.6f, 0.6f, 0.6f));
         scrollPanel.addLineFade(new UColor(0.4f, 0.4f, 0.4f));
@@ -71,7 +71,7 @@ public class ExampleGame implements UTimeListener {
         scrollPanel.setBounds(0,800,1400,200);
         scrollPanel.print("Welcome to UnRogueEngine!");
         scrollPanel.print("The universal java toolkit for roguelike games.");
-        scrollPanel.print("Strike the earth!");
+        scrollPanel.print("Your journey begins...");
         rootView.addChild(scrollPanel);
         renderer.setRootView(rootView);
 

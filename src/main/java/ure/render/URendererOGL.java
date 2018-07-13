@@ -47,7 +47,6 @@ public class URendererOGL implements URenderer {
     private int textureAtlas = -1;
 
     private KeyListener keyListener;
-    private UColor cameraBgColor = UColor.COLOR_BLACK;
 
     private int frameCount = 0;
     private long lastUpdateTime = System.currentTimeMillis();
@@ -148,7 +147,8 @@ public class URendererOGL implements URenderer {
 
         //Lets quickly blank the screen.
         glViewport(0, 0, screenWidth, screenHeight);
-        glClearColor(cameraBgColor.fR(), cameraBgColor.fG(), cameraBgColor.fB(), 1.0f);
+        UColor windowBgColor = commander.config.getWindowBgColor();
+        glClearColor(windowBgColor.fR(), windowBgColor.fG(), windowBgColor.fB(), 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);
