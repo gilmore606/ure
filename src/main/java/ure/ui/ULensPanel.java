@@ -73,6 +73,8 @@ public class ULensPanel extends View {
         int mousey = commander.mouseY();
         int x = toCellX(mousex);
         int y = toCellY(mousey);
+        if (camera.visibilityAt(x,y) < commander.config.getVisibilityThreshold())
+            return;
         UTerrain t = camera.terrainAt(x,y);
         if (t != null)
             renderer.drawString(xpos + padX,ypos + padY,commander.config.getTextColor(), t.name());
