@@ -2,6 +2,7 @@ package ure.ui.modals;
 
 import ure.commands.UCommand;
 import ure.commands.UCommandMove;
+import ure.math.UColor;
 import ure.render.URenderer;
 
 /**
@@ -13,10 +14,27 @@ public class UModalDirection extends UModal {
     String prompt;
     boolean acceptNull;
 
-    public UModalDirection(String _prompt, boolean _acceptNull, HearModalDirection _callback, String _callbackContext) {
+    int cellx, celly;
+
+    String glyphs = "^>v<";
+    UColor glyphColor;
+
+    public UModalDirection(String _prompt, boolean _acceptNull, int cellx, int celly, HearModalDirection _callback, String _callbackContext) {
         super(_callback, _callbackContext);
         prompt = _prompt;
         acceptNull = _acceptNull;
+        this.cellx = cellx;
+        this.celly = celly;
+        setDimensions(3,3);
+        glyphColor = new UColor(1f,1f,0.3f,0.4f);
+    }
+
+    @Override
+    public void setDimensions(int x, int y) {
+        cellw = x;
+        cellh = y;
+        xpos = (cellx - 1) * commander.config.getGlyphWidth();
+        ypos = (celly - 1) * commander.config.getGlyphHeight();
     }
 
     @Override
@@ -31,7 +49,21 @@ public class UModalDirection extends UModal {
     }
 
     @Override
+    public void drawFrame(URenderer renderer) {
+
+    }
+    @Override
     public void drawContent(URenderer renderer) {
         commander.printScroll(prompt);
+        int gw = commander.config.getGlyphWidth();
+        int gh = commander.config.getGlyphHeight();
+        renderer.drawGlyph(glyphs.charAt(0), xpos + gw, ypos, glyphColor, 0, 0);
+        renderer.drawGlyph(glyphs.charAt(2), xpos + gw, ypos + gh*2, glyphColor, 0, 0);
+        renderer.drawGlyph(glyphs.charAt(1), xpos + gw * 2, ypos + gh, glyphColor, 0, 0);
+        renderer.drawGlyph(glyphs.charAt(3), xpos, ypos + gh, glyphColor, 0, 0);
+    }
+
+    public void animationTick() {
+        glyphColor.setAlpha((float)Math.sin(commander.frameCounter * 0.1f) * 0.5f + 0.3f);
     }
 }

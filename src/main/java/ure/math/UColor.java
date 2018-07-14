@@ -142,11 +142,11 @@ public class UColor {
         set(arr[0],arr[1],arr[2]);
     }
 
-    /**
-     * Brighten/darken this color by the float intensity.
-     * @param intensity Above 1.0 brightens, below 1.0 darkens.
-     */
 
+
+    public void setAlpha(float alpha) {
+        a = alpha;
+    }
     /**
      * Get the grayscale value of this color according to FCC luminance.
      *
@@ -155,7 +155,10 @@ public class UColor {
     public float getGrayscale() {
         return r * lumR + g * lumG + b * lumB;
     }
-
+    /**
+     * Brighten/darken this color by the float intensity.
+     * @param intensity Above 1.0 brightens, below 1.0 darkens.
+     */
     public void brightenBy(float intensity) {
         r = r * intensity;
         g = g * intensity;

@@ -251,6 +251,8 @@ public class UCommander implements URenderer.KeyListener {
         for (UAnimator anim : animators) {
             anim.animationTick();
         }
+        if (modal != null)
+            modal.animationTick();
     }
 
     public void setStatusPanel(UStatusPanel panel){

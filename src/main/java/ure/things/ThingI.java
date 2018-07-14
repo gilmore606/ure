@@ -8,6 +8,7 @@ import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.ui.UCamera;
 
 import javax.inject.Inject;
 import java.util.Iterator;
@@ -162,6 +163,12 @@ public abstract class ThingI implements UThing, UContainer, Interactable, Clonea
     public int areaX() { return location.areaX(); }
     public int areaY() { return location.areaY(); }
 
+    public int cameraX(UCamera camera) {
+        return location.areaX() - camera.leftEdge;
+    }
+    public int cameraY(UCamera camera) {
+        return location.areaY() - camera.topEdge;
+    }
     public UArea area() {
         if (location != null)
             return location.area();

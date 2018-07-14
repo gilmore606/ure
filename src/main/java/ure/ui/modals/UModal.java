@@ -1,6 +1,7 @@
 package ure.ui.modals;
 
 import ure.sys.Injector;
+import ure.sys.UAnimator;
 import ure.sys.UCommander;
 import ure.commands.UCommand;
 import ure.math.UColor;
@@ -17,7 +18,7 @@ import java.util.HashMap;
  * a callback when it wants to (i.e. when the user is finished).
  *
  */
-public class UModal extends View {
+public class UModal extends View implements UAnimator {
 
     @Inject
     UCommander commander;
@@ -146,4 +147,7 @@ public class UModal extends View {
         texts.put(frag.name, frag);
     }
 
+    public void animationTick() {
+
+    }
 }
