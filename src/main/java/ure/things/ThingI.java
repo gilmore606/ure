@@ -1,5 +1,6 @@
 package ure.things;
 
+import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actions.Interactable;
@@ -8,6 +9,7 @@ import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.ui.Icon;
 import ure.ui.UCamera;
 
 import javax.inject.Inject;
@@ -20,7 +22,7 @@ import java.util.Random;
  * A real instance of a thing.
  *
  */
-public abstract class ThingI implements UThing, UContainer, Interactable, Cloneable {
+public abstract class ThingI implements UThing, UContainer, Entity, Interactable, Cloneable {
 
     @Inject
     public UCommander commander;
@@ -43,6 +45,7 @@ public abstract class ThingI implements UThing, UContainer, Interactable, Clonea
 
     UColor glyphColor;
     public boolean glyphOutline = false;
+    Icon icon;
 
     protected UContainer location;  // What container am I in?
     protected UCollection contents; // What's inside me?
@@ -63,6 +66,7 @@ public abstract class ThingI implements UThing, UContainer, Interactable, Clonea
         if (glyphColor == null && color != null) {
             SetupColors();
         }
+        icon = new Icon(glyph, glyphColor, null);
     }
 
     public void SetupColors() {
@@ -111,6 +115,8 @@ public abstract class ThingI implements UThing, UContainer, Interactable, Clonea
     public UColor getGlyphColor() {
         return glyphColor;
     }
+
+    public Icon icon() { return icon; }
 
     public boolean drawGlyphOutline() {
         if (glyphOutline)

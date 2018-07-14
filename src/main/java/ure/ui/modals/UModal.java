@@ -7,6 +7,7 @@ import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.sys.UConfig;
+import ure.ui.Icon;
 import ure.ui.UCamera;
 import ure.ui.View;
 
@@ -54,6 +55,9 @@ public class UModal extends View implements UAnimator {
         callbackContext = _callbackContext;
     }
 
+    public int gw() { return commander.config.getGlyphWidth(); }
+    public int gh() { return commander.config.getGlyphHeight(); }
+
     public void setBgColor(UColor color) {
         bgColor = color;
     }
@@ -66,12 +70,12 @@ public class UModal extends View implements UAnimator {
             screenw = commander.config.getScreenWidth();
             screenh = commander.config.getScreenHeight();
         } else {
-            screenw = commander.modalCamera().getWidthInCells() * commander.config.getGlyphWidth();
-            screenh = commander.modalCamera().getHeightInCells() * commander.config.getGlyphHeight();
+            screenw = commander.modalCamera().getWidthInCells() * gw();
+            screenh = commander.modalCamera().getHeightInCells() * gh();
         }
 
-        xpos = (screenw - (cellw * commander.config.getGlyphWidth())) / 2;
-        ypos = (screenh - (cellh * commander.config.getGlyphHeight())) / 2;
+        xpos = (screenw - (cellw * gw())) / 2;
+        ypos = (screenh - (cellh * gh())) / 2;
     }
 
     @Override
@@ -93,6 +97,16 @@ public class UModal extends View implements UAnimator {
         //}
     }
 
+    public void drawIcon(URenderer renderer, Icon icon, int x, int y) {
+        if (icon.bgColor != null)
+            renderer.drawRect(x*gw(), y*gh(), gw(), gh(), icon.bgColor);
+        renderer.drawGlyph(icon.glyph, x*gw()+xpos, y*gh()+ypos, icon.fgColor, 0, 0);
+    }
+
+    public void drawString(URenderer renderer, String string, int x, int y) {
+        renderer.drawString(x*gw()+xpos,y*gh()+ypos, commander.config.getTextColor(), string);
+    }
+
     public void drawFrame(URenderer renderer) {
         if (commander.config.getModalShadowStyle() == UConfig.SHADOW_BLOCK) {
             UColor shadowColor = commander.config.getModalShadowColor();
@@ -101,9 +115,9 @@ public class UModal extends View implements UAnimator {
         UColor color = commander.config.getModalFrameColor();
         int border = commander.config.getModalFrameLine();
         if (border > 0)
-            renderer.drawRectBorder(xpos - commander.config.getGlyphWidth(),ypos - commander.config.getGlyphHeight(),relx(cellw+2)-xpos,rely(cellh+2)-ypos,border, bgColor, color);
+            renderer.drawRectBorder(xpos - gw(),ypos - gh(),relx(cellw+2)-xpos,rely(cellh+2)-ypos,border, bgColor, color);
         else
-            renderer.drawRect(xpos - commander.config.getGlyphWidth(), ypos - commander.config.getGlyphHeight(),  relx(cellw+2) - xpos,rely(cellh+2) - ypos, bgColor);
+            renderer.drawRect(xpos - gw(), ypos - gh(),  relx(cellw+2) - xpos,rely(cellh+2) - ypos, bgColor);
         String frames = commander.config.getUiFrameGlyphs();
 
         if (frames != null) {
