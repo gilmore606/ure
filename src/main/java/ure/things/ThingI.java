@@ -118,7 +118,7 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
 
     public Icon icon() { return icon; }
 
-    public String[] UIdetails() {
+    public String[] UIdetails(String context) {
         return new String[]{
                 "Weight " + Integer.toString(weight),
                 "Value " + Integer.toString(value)

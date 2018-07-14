@@ -20,7 +20,7 @@ public interface UTerrain {
     char glyph();
     char glyph(int x, int y);
     Icon icon();
-    String[] UIdetails();
+    String[] UIdetails(String context);
     int glyphOffsetX();
     int glyphOffsetY();
     void moveTriggerFrom(UActor actor, UCell cell);

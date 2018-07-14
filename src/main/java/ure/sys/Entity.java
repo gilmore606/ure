@@ -10,5 +10,5 @@ public interface Entity {
 
     String name();
     Icon icon();
-    String[] UIdetails();
+    String[] UIdetails(String context);
 }

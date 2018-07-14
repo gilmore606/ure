@@ -82,7 +82,7 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     }
 
     public Icon icon() { return icon; }
-    public String[] UIdetails() { return null; }
+    public String[] UIdetails(String context) { return null; }
 
     public void becomeReal(UCell c) {
         cell = c;

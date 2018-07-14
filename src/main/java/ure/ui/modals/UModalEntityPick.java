@@ -54,7 +54,7 @@ public class UModalEntityPick extends UModal {
         }
         if (showDetail) {
             drawString(renderer, entities.get(selection).name(), 4+textWidth, 2);
-            String[] details = entities.get(selection).UIdetails();
+            String[] details = entities.get(selection).UIdetails(callbackContext);
             int linepos = 4;
             for (String line : details) {
                 drawString(renderer, line, 4+textWidth, linepos);

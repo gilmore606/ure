@@ -20,7 +20,7 @@ public interface UThing  {
     String plural();
     char glyph();
     Icon icon();
-    String[] UIdetails();
+    String[] UIdetails(String context);
     int glyphOffsetX();
     int glyphOffsetY();
     UColor getGlyphColor();
