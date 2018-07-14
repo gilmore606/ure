@@ -43,6 +43,7 @@ public class ThingDeco implements UThing, Interactable {
     public void addThing(UThing thething) { thing.addThing(thething); }
     public void removeThing(UThing thething) { thing.removeThing(thething); }
     public Iterator<UThing> iterator() { return thing.iterator(); }
+    public UCollection contents() { return thing.contents(); }
     public boolean willAcceptThing(UThing thething) { return thing.willAcceptThing(thething); }
     public int areaX() { return thing.areaX(); }
     public int areaY() { return thing.areaY(); }

@@ -168,6 +168,8 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
     public Iterator<UThing> iterator() {
         return contents.iterator();
     }
+    public UCollection contents() { return contents; }
+
     public int containerType() { return UContainer.TYPE_THING; }
     public boolean willAcceptThing(UThing thing) {
         return false;

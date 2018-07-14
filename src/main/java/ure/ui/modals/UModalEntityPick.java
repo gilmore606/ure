@@ -34,7 +34,7 @@ public class UModalEntityPick extends UModal {
         }
         textWidth = width;
         if (showDetail)
-            width += 6;
+            width += 9;
         setDimensions(width + 2 + xpad, entities.size() + 2 + ypad);
         if (bgColor == null)
             bgColor = commander.config.getModalBgColor();
@@ -43,6 +43,8 @@ public class UModalEntityPick extends UModal {
 
     @Override
     public void drawContent(URenderer renderer) {
+        if (header != null)
+            drawString(renderer, header, 0, 0);
         int y = 0;
         for (Entity entity : entities) {
             if (y == selection) {

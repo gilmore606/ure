@@ -64,6 +64,16 @@ public class Lightsource extends ThingI implements UThing {
     }
 
     @Override
+    public void moveTo(UContainer container) {
+        super.moveTo(container);
+        if (on()) {
+            if (container.containerType() == UContainer.TYPE_CELL) {
+                light.moveTo(area(), areaX(), areaY());
+            }
+        }
+    }
+
+    @Override
     public void leaveCurrentLocation() {
         if (location != null) {
             if (location.containerType() == UContainer.TYPE_CELL) {

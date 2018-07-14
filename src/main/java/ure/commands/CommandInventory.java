@@ -29,7 +29,7 @@ public class CommandInventory extends UCommand implements HearModalEntityPick {
         if (inventory.isEmpty())
             modal = new UModalNotify("You aren't carrying anything.", null, 1, 3);
         else
-             modal = new UModalEntityPick("You are carrying:", null, 2, 2, inventory, true, (HearModalEntityPick)this, "inventory");
+             modal = new UModalEntityPick("You are carrying:", null, 2, 1, inventory, true, (HearModalEntityPick)this, "inventory");
         commander.showModal(modal);
     }
 

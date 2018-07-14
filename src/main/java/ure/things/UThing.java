@@ -32,6 +32,7 @@ public interface UThing  {
     void leaveCurrentLocation();
     void addThing(UThing thing);
     void removeThing(UThing thing);
+    UCollection contents();
     Iterator<UThing> iterator();
     boolean willAcceptThing(UThing thing);
     int areaX();

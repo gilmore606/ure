@@ -5,6 +5,12 @@ import ure.render.URenderer;
 
 import java.util.ArrayList;
 
+/**
+ * ScrollPanel implements the classic scrolling text console.
+ *
+ * TODO: flash line/panel on activity
+ * TODO: track message count since last player turn, pause for anykey if > scrollsize
+ */
 public class UScrollPanel extends View {
 
     UColor fgColor, bgColor, borderColor;
