@@ -131,6 +131,15 @@ public class URendererOGL implements URenderer {
                 //    System.out.println("Exiting.");
                 //}
                 if (key == GLFW_KEY_ESCAPE) key = 1;
+                if (key == GLFW_KEY_UP) key = 2;
+                if (key == GLFW_KEY_RIGHT) key = 3;
+                if (key == GLFW_KEY_DOWN) key = 4;
+                if (key == GLFW_KEY_LEFT) key = 5;
+                if (keyState[GLFW_KEY_LEFT_SHIFT] || keyState[GLFW_KEY_RIGHT_SHIFT]) {
+                    if (key > 1 && key < 6) {
+                        key = key + 4;
+                    }
+                }
                 if (keyListener != null && key < 256 && key >= 0 && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
                     if(keyState[GLFW_KEY_LEFT_SHIFT] || keyState[GLFW_KEY_RIGHT_SHIFT]) keyListener.keyPressed((char)key);
                     else keyListener.keyPressed(Character.toLowerCase((char)key));

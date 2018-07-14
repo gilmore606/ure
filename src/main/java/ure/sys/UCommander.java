@@ -145,20 +145,20 @@ public class UCommander implements URenderer.KeyListener {
         //
         keyBindings = new HashMap<Character, UCommand>();
         keyBindings.put((char)1, new CommandEsc());
-        keyBindings.put('w', new CommandMoveN());
-        keyBindings.put('s', new CommandMoveS());
-        keyBindings.put('a', new CommandMoveW());
-        keyBindings.put('d', new CommandMoveE());
-        keyBindings.put('W', new CommandLatchN());
-        keyBindings.put('S', new CommandLatchS());
-        keyBindings.put('A', new CommandLatchW());
-        keyBindings.put('D', new CommandLatchE());
+        keyBindings.put((char)2, new CommandMoveN());
+        keyBindings.put((char)4, new CommandMoveS());
+        keyBindings.put((char)5, new CommandMoveW());
+        keyBindings.put((char)3, new CommandMoveE());
+        keyBindings.put((char)6, new CommandLatchN());
+        keyBindings.put((char)8, new CommandLatchS());
+        keyBindings.put((char)9, new CommandLatchW());
+        keyBindings.put((char)7, new CommandLatchE());
         keyBindings.put('Q', new CommandQuit());
         keyBindings.put(' ', new CommandPass());
         keyBindings.put('e', new CommandInteract());
         keyBindings.put('i', new CommandInventory());
         keyBindings.put('g', new CommandGet());
-        keyBindings.put('f', new CommandDrop());
+        keyBindings.put('d', new CommandDrop());
         keyBindings.put('.', new CommandTravel());
     }
 

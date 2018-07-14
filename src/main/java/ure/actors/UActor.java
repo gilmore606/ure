@@ -158,7 +158,8 @@ public class UActor extends ThingI implements Interactable {
             moveAnimDX = -(moveAnimX / moveFrames);
             moveAnimDY = -(moveAnimY / moveFrames);
         }
-        thearea.cellAt(destX, destY).walkedOnBy(this);
+        if (oldarea == thearea)
+            thearea.cellAt(destX, destY).walkedOnBy(this);
     }
 
     public UCell myCell() {

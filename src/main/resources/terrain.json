@@ -143,6 +143,7 @@
       "filechar": "W",
       "passable": true,
       "opaque": false,
+      "breaklatch": true,
       "sunvis": 1.0,
       "movespeed": 0.5,
       "glyph": "~",
@@ -202,6 +203,7 @@
       "fgcolor": [255, 180, 0],
       "bgcolor": [220, 0, 0],
       "glow": true,
+      "breaklatch": true,
       "walkmsg": "Oh god it burns!  It BURNS!",
       "animationFrames": 2
     },

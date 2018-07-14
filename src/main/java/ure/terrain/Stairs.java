@@ -5,6 +5,10 @@ import ure.areas.UArea;
 import ure.areas.UCartographer;
 import ure.areas.UCell;
 import ure.actors.UActor;
+import ure.ui.modals.HearModalChoices;
+import ure.ui.modals.UModalChoices;
+
+import java.util.ArrayList;
 
 /**
  * Stairs is any area-transition terrain, be it a cave mouth, building entrance, or actual stairs.
@@ -14,14 +18,16 @@ import ure.actors.UActor;
  * overriding the label methods on Stairs directly.
  *
  */
-public class Stairs extends TerrainI implements UTerrain {
+public class Stairs extends TerrainI implements UTerrain, HearModalChoices {
 
     public static final String TYPE = "stairs";
 
     String label = "";
 
+    String confirmMsg = "Travel to new area?";
+
     int destX, destY;
-    boolean onstep = false;
+    boolean onstep = true;
     boolean confirm = true;
 
     private UCartographer cartographer;
@@ -68,5 +74,31 @@ public class Stairs extends TerrainI implements UTerrain {
     public float interactionFrom(UActor actor) {
         transportActor(actor);
         return 0f;
+    }
+
+    @Override
+    public void walkedOnBy(UActor actor, UCell cell) {
+        if (actor instanceof UPlayer && onstep) {
+            if (!confirm) {
+                transportActor(actor);
+            } else {
+                askConfirm();
+            }
+        } else if (onstep)
+            transportActor(actor);
+    }
+
+    public void askConfirm() {
+        ArrayList<String> choices = new ArrayList<>();
+        choices.add("Yes");
+        choices.add("No");
+        UModalChoices modal = new UModalChoices(confirmMsg, choices, 1, 1, true,
+                null, this, "travel");
+        commander.showModal(modal);
+    }
+
+    public void hearModalChoices(String context, String choice) {
+        if (choice.equals("Yes"))
+            transportActor(commander.player());
     }
 }
