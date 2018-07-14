@@ -76,16 +76,23 @@ public class ULensPanel extends View {
         if (camera.visibilityAt(x,y) < commander.config.getVisibilityThreshold())
             return;
         UTerrain t = camera.terrainAt(x,y);
-        if (t != null)
-            renderer.drawString(xpos + padX,ypos + padY,commander.config.getTextColor(), t.name());
+        if (t != null) {
+            renderer.drawString(xpos + padX + renderer.glyphWidth()*2, ypos + padY, commander.config.getTextColor(), t.name());
+            t.icon().draw(renderer, xpos + padX, ypos + padY);
+        }
         UCell cell = camera.area.cellAt(x+camera.leftEdge,y+camera.topEdge);
         if (cell != null) {
             UThing thing = cell.topThingAt();
-            if (thing != null)
-                renderer.drawString(xpos+padX, ypos+padY+commander.config.getGlyphHeight(), commander.config.getTextColor(), thing.iname());
+            if (thing != null) {
+                thing.icon().draw(renderer, xpos+padX, ypos+padY+renderer.glyphHeight());
+                renderer.drawString(xpos + padX + renderer.glyphWidth()*2, ypos + padY + renderer.glyphHeight(), commander.config.getTextColor(), thing.iname());
+
+            }
             UActor actor = cell.actorAt();
-            if (actor != null)
-                renderer.drawString(xpos+padX, ypos+padY+commander.config.getGlyphHeight()*2, commander.config.getTextColor(), actor.iname());
+            if (actor != null) {
+                actor.icon().draw(renderer, xpos+padX, ypos+padY+renderer.glyphHeight()*2);
+                renderer.drawString(xpos + padX + renderer.glyphWidth()*2, ypos + padY + commander.config.getGlyphHeight() * 2, commander.config.getTextColor(), actor.iname());
+            }
         }
     }
 

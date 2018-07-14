@@ -98,9 +98,7 @@ public class UModal extends View implements UAnimator {
     }
 
     public void drawIcon(URenderer renderer, Icon icon, int x, int y) {
-        if (icon.bgColor != null)
-            renderer.drawRect(x*gw(), y*gh(), gw(), gh(), icon.bgColor);
-        renderer.drawGlyph(icon.glyph, x*gw()+xpos, y*gh()+ypos, icon.fgColor, 0, 0);
+        icon.draw(renderer,x*gw()+xpos,y*gh()+ypos);
     }
 
     public void drawString(URenderer renderer, String string, int x, int y) {

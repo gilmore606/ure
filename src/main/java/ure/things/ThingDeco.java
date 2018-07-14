@@ -5,6 +5,7 @@ import ure.math.UColor;
 import ure.areas.UArea;
 import ure.actors.UActor;
 import ure.render.URenderer;
+import ure.ui.Icon;
 
 import java.util.Iterator;
 
@@ -28,6 +29,7 @@ public class ThingDeco implements UThing, Interactable {
     public String getMsg(UActor actor) { return thing.getMsg(actor); }
     public String walkMsg(UActor actor) { return thing.walkMsg(actor); }
     public char glyph() { return thing.glyph(); }
+    public Icon icon() { return thing.icon(); }
     public int glyphOffsetX() { return thing.glyphOffsetX(); }
     public int glyphOffsetY() { return thing.glyphOffsetY(); }
     public UColor getGlyphColor() { return thing.getGlyphColor(); }

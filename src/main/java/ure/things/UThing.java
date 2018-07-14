@@ -5,6 +5,7 @@ import ure.math.UColor;
 import ure.areas.UArea;
 import ure.actors.UActor;
 import ure.render.URenderer;
+import ure.ui.Icon;
 
 import java.util.Iterator;
 
@@ -18,6 +19,7 @@ public interface UThing  {
     String dnamec();
     String plural();
     char glyph();
+    Icon icon();
     int glyphOffsetX();
     int glyphOffsetY();
     UColor getGlyphColor();

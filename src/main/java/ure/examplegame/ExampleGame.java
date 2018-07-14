@@ -62,7 +62,7 @@ public class ExampleGame implements UTimeListener {
         statusPanel.setBounds(1200,0,200,800);
         rootView.addChild(statusPanel);
 
-        lensPanel = new ULensPanel(camera, 0, 0, 5, 15, 16, 16, 5, 5, commander.config.getTextColor(), UColor.COLOR_BLACK, new UColor(0.3f,0.3f,0.3f));
+        lensPanel = new ULensPanel(camera, 0, 0, 5, 15, 16, 16, 20, 20, commander.config.getTextColor(), UColor.COLOR_BLACK, new UColor(0.3f,0.3f,0.3f));
         lensPanel.setBounds(1200,800,200,200);
         rootView.addChild(lensPanel);
 

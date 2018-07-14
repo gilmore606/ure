@@ -4,6 +4,7 @@ import ure.actions.Interactable;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.actors.UActor;
+import ure.ui.Icon;
 
 /**
  * UTerrain defines all the public methods of terrain.  It should not be implemented directly to create new custom terrain.
@@ -18,6 +19,7 @@ public interface UTerrain {
     void becomeReal(UCell c);
     char glyph();
     char glyph(int x, int y);
+    Icon icon();
     int glyphOffsetX();
     int glyphOffsetY();
     void moveTriggerFrom(UActor actor, UCell cell);

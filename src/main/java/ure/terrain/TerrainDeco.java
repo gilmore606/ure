@@ -4,6 +4,8 @@ import ure.actions.Interactable;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.actors.UActor;
+import ure.sys.Entity;
+import ure.ui.Icon;
 
 /**
  * TerrainDeco implements a transparent handoff to its component terrain for all UTerrain methods.
@@ -14,7 +16,7 @@ import ure.actors.UActor;
  * To create differentiated subtypes of terrains, rather than affecting all base terrain behavior, you should
  * directly subclass TerrainI or its subclasses such as Door.
  */
-public class TerrainDeco implements UTerrain, Interactable {
+public class TerrainDeco implements UTerrain, Interactable, Entity {
 
     private UTerrain terrain;
     /**
@@ -75,6 +77,7 @@ public class TerrainDeco implements UTerrain, Interactable {
 
         return terrain.glyph();
     }
+    public Icon icon() { return terrain.icon(); }
     /**
      * Our glyph at these area coordinates.  This can take PRNG variations, etc into account.
      */

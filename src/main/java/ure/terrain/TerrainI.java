@@ -1,5 +1,6 @@
 package ure.terrain;
 
+import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UAnimator;
 import ure.sys.UCommander;
@@ -7,6 +8,7 @@ import ure.actions.Interactable;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.actors.UActor;
+import ure.ui.Icon;
 
 import javax.inject.Inject;
 import java.util.Random;
@@ -20,7 +22,7 @@ import java.util.Random;
  *
  */
 
-public abstract class TerrainI implements UTerrain, Cloneable, UAnimator, Interactable {
+public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator, Interactable {
 
     @Inject
     UCommander commander;
@@ -33,6 +35,7 @@ public abstract class TerrainI implements UTerrain, Cloneable, UAnimator, Intera
     public String bonkmsg = "";
     public char filechar;
     public char glyph;
+    public Icon icon;
     public String variants;
 
     public int[] fgcolor;
@@ -75,7 +78,10 @@ public abstract class TerrainI implements UTerrain, Cloneable, UAnimator, Intera
         bgColor = new UColor(bgcolor[0],bgcolor[1],bgcolor[2]);
         fgColorBuffer = new UColor(0f,0f,0f);
         bgColorBuffer = new UColor(0f, 0f ,0f);
+        icon = new Icon(glyph,fgColor,bgColor);
     }
+
+    public Icon icon() { return icon; }
 
     public void becomeReal(UCell c) {
         cell = c;
