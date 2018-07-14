@@ -144,6 +144,7 @@ public class UCommander implements URenderer.KeyListener {
         // TODO: Actually read keybinds.txt
         //
         keyBindings = new HashMap<Character, UCommand>();
+        keyBindings.put((char)1, new CommandEsc());
         keyBindings.put('w', new CommandMoveN());
         keyBindings.put('s', new CommandMoveS());
         keyBindings.put('a', new CommandMoveW());

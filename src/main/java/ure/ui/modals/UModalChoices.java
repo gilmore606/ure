@@ -1,5 +1,6 @@
 package ure.ui.modals;
 
+import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
 
@@ -45,5 +46,31 @@ public class UModalChoices extends UModal {
             xtab += choice.length() + 1;
             drawSelection++;
         }
+    }
+
+    @Override
+    public void hearCommand(UCommand command, Character c) {
+        if (command.id.equals("MOVE_W") || command.id.equals("MOVE_N"))
+            selection--;
+        if (command.id.equals("MOVE_E") || command.id.equals("MOVE_S"))
+            selection++;
+        if (command.id.equals("PASS"))
+            pickSelection();
+        if (selection < 0) {
+            if (commander.config.isWrapSelect())
+                selection = choices.size()-1;
+            else
+                selection = 0;
+        } else if (selection >= choices.size()) {
+            if (commander.config.isWrapSelect())
+                selection = 0;
+            else
+                selection = choices.size()-1;
+        }
+    }
+
+    public void pickSelection() {
+        dismiss();
+        ((HearModalChoices)callback).hearModalChoices(callbackContext, choices.get(selection));
     }
 }
