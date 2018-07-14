@@ -160,6 +160,9 @@ public class UCommander implements URenderer.KeyListener {
         keyBuffer.add(c);
     }
 
+    public int mouseX() { return renderer.getMousePosX(); }
+    public int mouseY() { return renderer.getMousePosY(); }
+
     public void consumeKeyFromBuffer() {
         if (!keyBuffer.isEmpty()) {
             Character c = keyBuffer.remove();

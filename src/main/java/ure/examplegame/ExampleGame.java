@@ -14,10 +14,7 @@ import ure.sys.UCommander;
 import ure.sys.UTimeListener;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
-import ure.ui.UCamera;
-import ure.ui.UScrollPanel;
-import ure.ui.UStatusPanel;
-import ure.ui.View;
+import ure.ui.*;
 
 import javax.inject.Inject;
 
@@ -28,6 +25,7 @@ public class ExampleGame implements UTimeListener {
     static UActor player;
     static UStatusPanel statusPanel;
     static UScrollPanel scrollPanel;
+    static ULensPanel lensPanel;
     static URenderer renderer;
 
     @Inject
@@ -60,20 +58,27 @@ public class ExampleGame implements UTimeListener {
         statusPanel.addText("turn", "T 1", 0, 5);
         statusPanel.addText("time", "", 0, 6);
         statusPanel.addText("location", "Mystic forest", 0, 8);
+        statusPanel.addText("lens", "", 0, 20);
         statusPanel.setBounds(1200,0,200,800);
         rootView.addChild(statusPanel);
+
+        lensPanel = new ULensPanel(camera, 0, 0, 5, 15, 16, 16, 5, 5, commander.config.getTextColor(), UColor.COLOR_BLACK, new UColor(0.3f,0.3f,0.3f));
+        lensPanel.setBounds(1200,800,200,200);
+        rootView.addChild(lensPanel);
 
         scrollPanel = new UScrollPanel(5, 80, 16, 16, 5, 5, commander.config.getTextColor(), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
         scrollPanel.addLineFade(new UColor(1.0f, 1.0f, 1.0f));
         scrollPanel.addLineFade(new UColor(0.6f, 0.6f, 0.6f));
         scrollPanel.addLineFade(new UColor(0.4f, 0.4f, 0.4f));
         scrollPanel.addLineFade(new UColor(0.3f, 0.3f, 0.3f));
-        scrollPanel.setBounds(0,800,1400,200);
+        scrollPanel.setBounds(0,800,1200,200);
         scrollPanel.print("Welcome to UnRogueEngine!");
         scrollPanel.print("The universal java toolkit for roguelike games.");
         scrollPanel.print("Your journey begins...");
         rootView.addChild(scrollPanel);
         renderer.setRootView(rootView);
+
+
 
         commander.setStatusPanel(statusPanel);
         commander.setScrollPanel(scrollPanel);

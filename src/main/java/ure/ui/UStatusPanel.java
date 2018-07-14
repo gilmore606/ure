@@ -2,10 +2,17 @@ package ure.ui;
 
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.Injector;
+import ure.sys.UAnimator;
+import ure.sys.UCommander;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 
 public class UStatusPanel extends View {
+
+    @Inject
+    UCommander commander;
 
     UColor fgColor, bgColor, borderColor;
     int textRows,textColumns;
@@ -13,6 +20,8 @@ public class UStatusPanel extends View {
     int padX, padY;
     int charWidth, charHeight;
     HashMap<String,TextFrag> texts;
+
+    private int lensUpdateFrame = 0;
 
     class TextFrag {
         String name;
@@ -32,6 +41,7 @@ public class UStatusPanel extends View {
 
     public UStatusPanel(int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg, UColor borderc) {
         super();
+        Injector.getAppComponent().inject(this);
         texts = new HashMap<String,TextFrag>();
         textRows = rows;
         textColumns = columns;
@@ -70,4 +80,6 @@ public class UStatusPanel extends View {
             renderer.drawString(frag.row * charWidth + padX, (frag.col + 1) * charHeight + padY, frag.color, frag.text);
         }
     }
+
+
 }

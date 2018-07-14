@@ -80,7 +80,7 @@ public class UConfig {
     private boolean persistentAreas = true;         // persist and recover generated areas?
     private boolean runNeighborAreas = true;        // TODO: keep areas adjacent to current area awake?
 
-    private boolean smartInteract = true;           // autodetect targets for interact command?
+    private boolean smartInteract = false;           // autodetect targets for interact command?
     private boolean interactStairs = true;          // interact command can trigger stairs?
 
     private int turnsPerDay = 512;                  // game turns per 24 hour day

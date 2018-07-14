@@ -24,7 +24,7 @@ public class UModalDirection extends UModal {
         if (command.id.startsWith("MOVE")) {
             ((HearModalDirection) callback).hearModalDirection(callbackContext, ((UCommandMove) command).xdir, ((UCommandMove) command).ydir);
             dismiss();
-        } else if (command.id.equals("PASS")) {
+        } else if (command.id.equals("PASS") && acceptNull) {
             ((HearModalDirection) callback).hearModalDirection(callbackContext, 0, 0);
             dismiss();
         }

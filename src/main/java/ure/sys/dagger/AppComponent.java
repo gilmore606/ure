@@ -16,6 +16,8 @@ import ure.terrain.UTerrainCzar;
 import ure.things.ThingI;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
+import ure.ui.ULensPanel;
+import ure.ui.UStatusPanel;
 import ure.ui.modals.UModal;
 
 import javax.inject.Singleton;
@@ -52,4 +54,6 @@ public interface AppComponent {
     void inject(UModal mod);
     void inject(UCommand comm);
     void inject(URendererOGL rend);
+    void inject(UStatusPanel statpan);
+    void inject(ULensPanel lenspan);
 }
