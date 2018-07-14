@@ -571,7 +571,7 @@ public class ULandscaper {
         return null;
     }
 
-    void SetStairsLabels(UArea area, UCartographer carto) {
+    public void SetStairsLabels(UArea area, UCartographer carto) {
         System.out.println("setting stairs labels");
         for (int x=0;x<area.xsize;x++) {
             for (int y=0;y<area.ysize;y++) {
