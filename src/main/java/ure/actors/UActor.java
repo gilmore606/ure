@@ -116,11 +116,11 @@ public class UActor extends ThingI {
         return 0;
     }
 
-    int bounceAnimX() {
+    public int bounceAnimX() {
         return 0;
     }
-    int bounceAnimY() {
-        return 0;
+    public int bounceAnimY() {
+        return -(int)(Math.abs(Math.sin((commander.frameCounter + areaX()*3 + areaY()*4) * commander.config.getActorBounceSpeed() * 0.1f)) * commander.config.getActorBounceAmount() * 5f);
     }
 
     public void animationTick() {

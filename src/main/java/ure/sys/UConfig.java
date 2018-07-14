@@ -53,8 +53,8 @@ public class UConfig {
 
     private int moveAnimFrames = 8;                     // how many frames to animate actor movement?
     private int moveAnimPlayerFrames = 0;               // how many frames to animate player movement?
-    private float actorBounceSpeed = 1f;                // how fast to make actors animate-bounce?
-    private float actorBounceAmount = 1f;               // how much to make actors animate-bounce?
+    private float actorBounceSpeed = 0.8f;                // how fast to make actors animate-bounce?
+    private float actorBounceAmount = 0.8f;               // how much to make actors animate-bounce?
 
     private boolean visibilityEnable = true;            // if false, assume everything is visible (no occlusion)
     private boolean lightEnable = true;                 // if false, assume all areas lit 100%

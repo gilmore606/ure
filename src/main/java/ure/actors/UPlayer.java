@@ -55,4 +55,9 @@ public class UPlayer extends UActor {
         super.walkFail(cell);
         commander.latchBreak();
     }
+
+    @Override
+    public int bounceAnimY() {
+        return 0;
+    }
 }
