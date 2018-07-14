@@ -32,6 +32,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class UCommander implements URenderer.KeyListener {
 
     public UConfig config;
+    public Random random;
 
     private HashMap<Character, UCommand> keyBindings;
     private HashSet<UTimeListener> timeListeners;
@@ -69,6 +70,7 @@ public class UCommander implements URenderer.KeyListener {
     public UCommander() {
         Injector.getAppComponent().inject(this);
         config = new UConfig();
+        random = new Random();
     }
     public void registerComponents(UActor theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
         renderer = theRenderer;

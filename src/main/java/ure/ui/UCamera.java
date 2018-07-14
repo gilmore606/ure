@@ -3,6 +3,7 @@ package ure.ui;
 import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.math.UColor;
+import ure.math.USimplexNoise;
 import ure.render.URenderer;
 import ure.sys.Injector;
 import ure.sys.UAnimator;
@@ -115,10 +116,15 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
         setBounds(x, y, width, height);
         setupGrid();
         lightcells = new ULightcell[columns][rows];
-        for (int col = 0; col<columns; col++)
-            for (int row = 0; row<rows; row++) {
-                lightcells[col][row] = new ULightcell(this);
+        USimplexNoise noise = new USimplexNoise();
+        float[] scales = new float[]{15f,22f};
+        for (int col = 0; col<columns; col++) {
+            for (int row = 0;row < rows;row++) {
+                float cloud = noise.multi(col*2,row,scales) - 0.3f;
+                if (cloud < 0.3f) cloud = 0f;
+                lightcells[col][row] = new ULightcell(this, col, row, cloud);
             }
+        }
     }
 
     public int getCenterColumn() {
@@ -215,6 +221,18 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
         if (isValidCell(col, row))
             return lightcells[col][row].getSunBrightness();
         return 0f;
+    }
+
+    float cloudPatternAt(int cx, int cy) {
+        while (cx >= getWidthInCells())
+            cx = cx - getWidthInCells();
+        while (cx < 0)
+            cx = cx + getWidthInCells();
+        while (cy >= getHeightInCells())
+            cy = cy - getHeightInCells();
+        while (cy < 0)
+            cy = cy + getHeightInCells();
+        return lightcells[cx][cy].cloudPattern();
     }
 
     void renderVisible() {

@@ -48,6 +48,7 @@ public class UArea implements UTimeListener, Serializable {
     private Random random;
 
     public UColor sunColor;
+    public float clouds = 0.2f;
 
     public ArrayList<Integer> sunColorLerpMarkers;
     public ArrayList<UColor> sunColorLerps;

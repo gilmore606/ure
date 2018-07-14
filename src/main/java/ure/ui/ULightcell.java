@@ -14,20 +14,25 @@ import java.util.HashMap;
  */
 
 public class ULightcell {
+    public int x,y;
     float visibility;
     float sunBrightness;
     float sunBuffer;
+    float cloudPattern;
 
     private UColor lightBuffer;
 
     HashMap<ULight,Float> sources;
     private UCamera camera;
 
-    public ULightcell(UCamera thecam) {
+    public ULightcell(UCamera thecam, int x, int y, float cloud) {
+        this.x = x;
+        this.y = y;
         camera = thecam;
         visibility = 0f;
         sources = new HashMap<ULight,Float>();
         lightBuffer = new UColor(0f,0f,0f);
+        cloudPattern = cloud;
     }
 
     public void wipe() {
@@ -53,9 +58,18 @@ public class ULightcell {
 
     public void setRenderedSun(float thebri) { sunBuffer = thebri; }
 
-    public float getSunBrightness() { return sunBrightness; }
+    public float getSunBrightness() { return sunBrightness - cloud(); }
 
     public float getRenderedSun() { return sunBuffer; }
+
+    public float cloud() {
+        int cx = x + camera.commander.frameCounter / 40;
+        int cy = y;
+        return camera.cloudPatternAt(cx,cy) * camera.area.clouds;
+    }
+    public float cloudPattern() {
+        return cloudPattern;
+    }
 
     public UColor light() { return light(0); }
     public UColor light(int time) {
