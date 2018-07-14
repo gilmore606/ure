@@ -38,6 +38,7 @@ public class UConfig {
     private int glyphHeight = 17;
 
     private String uiFrameGlyphs = "+-+|+-+|";                               // corners and sides for UI box frames
+    private int modalFrameLine = 2;                             // thickness of pixel line around modals
     private int modalShadowStyle = UConfig.SHADOW_GRADIENT;     // drop shadow style for modal popups
     private int modalPosition = UConfig.POS_CAMERA_CENTER;      // position of modal popups
 
@@ -213,6 +214,9 @@ public class UConfig {
     public void setUiFrameGlyphs(String uiFrameGlyphs) {
         this.uiFrameGlyphs = uiFrameGlyphs;
     }
+
+    public int getModalFrameLine() { return modalFrameLine; }
+    public void setModalFrameLine(int thickness) { modalFrameLine = thickness; }
 
     public int getModalShadowStyle() {
         return modalShadowStyle;

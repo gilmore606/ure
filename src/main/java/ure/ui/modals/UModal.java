@@ -83,21 +83,29 @@ public class UModal extends View {
     }
 
     public void drawFrame(URenderer renderer) {
-        renderer.drawRect(xpos - commander.config.getGlyphWidth(), ypos - commander.config.getGlyphHeight(),  relx(cellw+2) - xpos,rely(cellh+2) - ypos, bgColor);
-        String frames = commander.config.getUiFrameGlyphs();
         UColor color = commander.config.getModalFrameColor();
-        renderer.drawGlyph(frames.charAt(0), relx(-1), rely(-1), color, 0, 0);
-        renderer.drawGlyph(frames.charAt(2), relx(cellw), rely(-1), color, 0, 0);
-        renderer.drawGlyph(frames.charAt(4), relx(cellw), rely(cellh), color, 0, 0);
-        renderer.drawGlyph(frames.charAt(6), relx(-1), rely(cellh), color, 0, 0);
-        for (int x=0;x<cellw;x++) {
-            renderer.drawGlyph(frames.charAt(1), relx(x), rely(-1), color, 0, 0);
-            renderer.drawGlyph(frames.charAt(5), relx(x), rely(cellh), color, 0, 0);
+        int border = commander.config.getModalFrameLine();
+        if (border > 0)
+            renderer.drawRectBorder(xpos - commander.config.getGlyphWidth(),ypos - commander.config.getGlyphHeight(),relx(cellw+2)-xpos,rely(cellh+2)-ypos,border, bgColor, color);
+        else
+            renderer.drawRect(xpos - commander.config.getGlyphWidth(), ypos - commander.config.getGlyphHeight(),  relx(cellw+2) - xpos,rely(cellh+2) - ypos, bgColor);
+        String frames = commander.config.getUiFrameGlyphs();
+
+        if (frames != null) {
+            renderer.drawGlyph(frames.charAt(0), relx(-1), rely(-1), color, 0, 0);
+            renderer.drawGlyph(frames.charAt(2), relx(cellw), rely(-1), color, 0, 0);
+            renderer.drawGlyph(frames.charAt(4), relx(cellw), rely(cellh), color, 0, 0);
+            renderer.drawGlyph(frames.charAt(6), relx(-1), rely(cellh), color, 0, 0);
+            for (int x = 0;x < cellw;x++) {
+                renderer.drawGlyph(frames.charAt(1), relx(x), rely(-1), color, 0, 0);
+                renderer.drawGlyph(frames.charAt(5), relx(x), rely(cellh), color, 0, 0);
+            }
+            for (int y = 0;y < cellh;y++) {
+                renderer.drawGlyph(frames.charAt(3), relx(-1), rely(y), color, 0, 0);
+                renderer.drawGlyph(frames.charAt(7), relx(cellw), rely(y), color, 0, 0);
+            }
         }
-        for (int y=0;y<cellh;y++) {
-            renderer.drawGlyph(frames.charAt(3), relx(-1), rely(y), color, 0, 0);
-            renderer.drawGlyph(frames.charAt(7), relx(cellw), rely(y), color, 0, 0);
-        }
+
     }
 
     /**

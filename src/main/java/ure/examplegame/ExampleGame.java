@@ -77,6 +77,7 @@ public class ExampleGame implements UTimeListener {
 
         commander.setStatusPanel(statusPanel);
         commander.setScrollPanel(scrollPanel);
+        commander.config.setUiFrameGlyphs(null);
     }
 
     public void startUp()  {
