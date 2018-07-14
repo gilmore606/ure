@@ -6,5 +6,5 @@ import java.util.ArrayList;
 
 public interface HearModalEntityPick extends HearModal {
 
-    void hearModalEntityPick(ArrayList<Entity> entities);
+    void hearModalEntityPick(String callbackContext, Entity selection);
 }

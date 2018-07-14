@@ -41,6 +41,7 @@ public class UConfig {
     private int modalFrameLine = 2;                             // thickness of pixel line around modals
     private int modalShadowStyle = UConfig.SHADOW_BLOCK;        // drop shadow style for modal popups
     private int modalPosition = UConfig.POS_CAMERA_CENTER;      // position of modal popups
+    private boolean wrapSelect = true;                          // wrap around when scrolling through selections
 
     private UColor windowBgColor = UColor.COLOR_BLACK;                          // bgColor of game window
     private UColor cameraBgColor = UColor.COLOR_BLACK;                          // bgColor of camera (for unseen territory)
@@ -48,7 +49,7 @@ public class UConfig {
     private UColor modalFrameColor = new UColor(0.7f,0.7f,0.1f);     // glyph color for modal popup frame glyphs
     private UColor modalShadowColor = new UColor(0f,0f,0f,0.5f);  // color (and alpha) of modal shadows
     private UColor textColor = UColor.COLOR_WHITE;                             // color for ui/scroll text
-    private UColor hiliteColor = new UColor(1f,1f,0.2f);            // color for ui selection highlighting
+    private UColor hiliteColor = new UColor(1f,1f,0.2f, 0.3f);            // color for ui selection highlighting
 
     private boolean outlineActors = true;                           // draw a black outline around Actor glyphs?
     private boolean outlineThings = false;                          // draw a black outline around Thing glyphs?
@@ -234,6 +235,9 @@ public class UConfig {
     public void setModalPosition(int modalPosition) {
         this.modalPosition = modalPosition;
     }
+
+    public boolean isWrapSelect() { return wrapSelect; }
+    public void setWrapSelect(boolean wrap) { wrapSelect = wrap; }
 
     public UColor getWindowBgColor() {
         return windowBgColor;
