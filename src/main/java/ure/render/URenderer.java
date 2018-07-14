@@ -64,4 +64,6 @@ public interface URenderer {
     void drawGlyphOutline(char glyph, int destx, int desty, UColor tint, int offX, int offY);
     void drawRect(int x, int y, int w, int h, UColor col);
     void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor);
+    int getMousePosX();
+    int getMousePosY();
 }

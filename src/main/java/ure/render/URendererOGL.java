@@ -10,6 +10,7 @@ import ure.sys.UCommander;
 import ure.ui.View;
 
 import javax.inject.Inject;
+import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -57,6 +58,21 @@ public class URendererOGL implements URenderer {
     }
 
     // URenderer methods
+
+    @Override
+    public int getMousePosX(){
+        DoubleBuffer xf = BufferUtils.createDoubleBuffer(1);
+        DoubleBuffer yf = BufferUtils.createDoubleBuffer(1);
+        glfwGetCursorPos(window, xf, yf);
+        return (int)xf.get(0);
+    }
+    @Override
+    public int getMousePosY(){
+        DoubleBuffer xf = BufferUtils.createDoubleBuffer(1);
+        DoubleBuffer yf = BufferUtils.createDoubleBuffer(1);
+        glfwGetCursorPos(window, xf, yf);
+        return (int)yf.get(0);
+    }
 
     @Override
     public View getRootView() { return rootView; }
@@ -121,6 +137,16 @@ public class URendererOGL implements URenderer {
             }
         });
 
+
+        glfwSetMouseButtonCallback(window, (new GLFWMouseButtonCallback() {
+
+            @Override
+            public void invoke(long window, int button, int action, int mods) {
+                // button 0 - 7
+                // I assume action is the same as GLFW_RELEASE like above.
+            }
+
+        }));
         glfwSetFramebufferSizeCallback(window,
                 new GLFWFramebufferSizeCallback() {
                     @Override
@@ -157,7 +183,7 @@ public class URendererOGL implements URenderer {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        //The 2d stuff we're doing doens't need depth, or culling of faces.
+        //The 2d stuff we're doing doesn't need depth, or culling of faces.
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
 
