@@ -1,8 +1,8 @@
 package ure.sys;
 
-import ure.dagger.AppComponent;
-import ure.dagger.AppModule;
-import ure.dagger.DaggerAppComponent;
+import ure.sys.dagger.AppComponent;
+import ure.sys.dagger.AppModule;
+import ure.sys.dagger.DaggerAppComponent;
 
 /**
  * This is a static class that provides easy access to our AppModule singleton for dependency

@@ -1,4 +1,4 @@
-package ure.dagger;
+package ure.sys.dagger;
 
 import dagger.Component;
 import ure.render.URendererOGL;
