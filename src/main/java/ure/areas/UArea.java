@@ -1,5 +1,6 @@
 package ure.areas;
 
+import ure.actors.UPlayer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actions.UAction;
@@ -192,7 +193,7 @@ public class UArea implements UTimeListener, Serializable {
     public boolean hasTerrainAt(int x, int y, String terrain) {
         if (isValidXY(x,y))
             if (cells[x][y] != null)
-                if (cells[x][y].terrain.name().equals(terrain))
+                if (cells[x][y].terrain.getName().equals(terrain))
                     return true;
         return false;
     }
@@ -256,9 +257,9 @@ public class UArea implements UTimeListener, Serializable {
      * @return
      */
     public void addedThing(UThing thing, int x, int y) {
-        if (thing.isActor()) {
+        if (thing instanceof UActor) {
             actors.add((UActor) thing);
-            if (((UActor) thing).isPlayer()) {
+            if (thing instanceof UPlayer) {
                 wakeCheckAll(x,y);
             } else {
                 ((UActor)thing).wakeCheck(x,y);

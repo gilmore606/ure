@@ -239,7 +239,7 @@ public class ULandscaper {
     boolean cellHasTerrain(UArea area, UCell cell, String[] terrains) {
         if (cell == null) return false;
         for (int i=0;i<terrains.length;i++) {
-            if (terrains[i].equals(cell.terrain.name())) {
+            if (terrains[i].equals(cell.terrain.getName())) {
                 return true;
             }
         }
@@ -418,7 +418,7 @@ public class ULandscaper {
         for (;x1<=x2;x1++) {
             for (;y1<=y2;y1++) {
                 if (area.isValidXY(x1,y1)) {
-                    String ts = area.terrainAt(x1,y1).name();
+                    String ts = area.terrainAt(x1,y1).getName();
                     for (String s : terrains) {
                         if (s.equals(ts))
                             return true;
@@ -432,7 +432,7 @@ public class ULandscaper {
     public String terrainNameAt(UArea area, int x, int y) {
         UCell cell = area.cellAt(x,y);
         if (cell != null) {
-            return cell.terrain().name();
+            return cell.terrain().getName();
         }
         return null;
     }

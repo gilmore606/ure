@@ -14,8 +14,6 @@ public class UPlayer extends UActor {
 
     public boolean awake = true;
 
-    public static boolean isActor = true;
-
     ULight light;
 
     public UPlayer(String thename, char theicon, UColor thecolor, boolean addOutline, UColor selfLightColor, int selfLight, int selfLightFalloff) {
@@ -26,9 +24,6 @@ public class UPlayer extends UActor {
             light = new ULight(selfLightColor, selfLightFalloff + selfLight, selfLight);
         }
     }
-
-    @Override
-    public boolean isPlayer() { return true; }
 
     @Override
     public void moveToCell(UArea area, int destX, int destY) {

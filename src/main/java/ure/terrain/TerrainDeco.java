@@ -73,11 +73,10 @@ public class TerrainDeco implements UTerrain, Interactable, Entity {
     /**
      * Our 'normal' glyph.
      */
-    public char glyph() {
-
-        return terrain.glyph();
+    public char getGlyph() {
+        return terrain.getGlyph();
     }
-    public Icon icon() { return terrain.icon(); }
+    public Icon getIcon() { return terrain.getIcon(); }
     public String[] UIdetails(String context) { return terrain.UIdetails(context); }
 
     /**
@@ -189,9 +188,8 @@ public class TerrainDeco implements UTerrain, Interactable, Entity {
      * WARNING: URE uses the name to look up terrains internally.  Overriding this could make your system
      * more fragile.  Think about what you're doing.
      */
-    public String name() {
-
-        return terrain.name();
+    public String getName() {
+        return terrain.getName();
     }
     public String bonkmsg() { return terrain.bonkmsg(); }
 

@@ -5,6 +5,7 @@ import ure.actions.UAction;
 import ure.actions.ActionGet;
 import ure.actions.ActionWalk;
 import ure.behaviors.UBehavior;
+import ure.math.UPath;
 import ure.ui.modals.UModal;
 import ure.ui.modals.UModalNotify;
 
@@ -50,7 +51,7 @@ public class UNPC extends UActor {
     public void hearEvent(UAction action) {
         if (action.actor != this) {
             if (action instanceof ActionGet) {
-                emote(dnamec() + " says, \"Hey that's mine!\"");
+                emote(getDnamec() + " says, \"Hey that's mine!\"");
             }
         }
     }
@@ -87,8 +88,8 @@ public class UNPC extends UActor {
         return new ActionWalk(this,wx,wy);
     }
     UAction HuntPlayer() {
-        System.out.println(this.name + " hunting from " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
-        int[] step = path.nextStep(area(), areaX(), areaY(), commander.player().areaX(), commander.player().areaY(), this, 25);
+        System.out.println(this.getName() + " hunting from " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
+        int[] step = UPath.nextStep(area(), areaX(), areaY(), commander.player().areaX(), commander.player().areaY(), this, 25);
         if (step != null) {
             return new ActionWalk(this,step[0] - areaX(), step[1] - areaY());
         }

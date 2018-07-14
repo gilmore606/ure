@@ -36,7 +36,7 @@ public class Lightsource extends ThingI implements UThing {
     void makeLight() {
         if (lightcolorUseGlyph) {
             SetupColors();
-            light = new ULight(glyphColor, lightrange, lightfalloff);
+            light = new ULight(getGlyphColor(), lightrange, lightfalloff);
         } else {
             light = new ULight(new UColor(lightcolor[0], lightcolor[1], lightcolor[2]), lightrange, lightfalloff);
         }
@@ -46,7 +46,7 @@ public class Lightsource extends ThingI implements UThing {
     }
 
     public boolean on() {
-        if (location == null)
+        if (getLocation() == null)
             return false;
         if (light == null)
             makeLight();
@@ -75,8 +75,8 @@ public class Lightsource extends ThingI implements UThing {
 
     @Override
     public void leaveCurrentLocation() {
-        if (location != null) {
-            if (location.containerType() == UContainer.TYPE_CELL) {
+        if (getLocation() != null) {
+            if (getLocation().containerType() == UContainer.TYPE_CELL) {
                 if (on()) {
                     light.removeFromArea();
                 }
@@ -88,7 +88,7 @@ public class Lightsource extends ThingI implements UThing {
     public void turnOn() {
         if (!on()) {
             on = true;
-            if (location != null) {
+            if (getLocation() != null) {
                 light.moveTo(area(), areaX(), areaY());
             }
         }

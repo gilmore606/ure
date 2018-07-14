@@ -39,11 +39,11 @@ public class Door extends TerrainI implements UTerrain {
     }
 
     @Override
-    public char glyph() {
+    public char getGlyph() {
         if (isOpen()) {
             return glyphopen;
         }
-        return super.glyph();
+        return super.getGlyph();
     }
     @Override
     public void moveTriggerFrom(UActor actor, UCell cell) {

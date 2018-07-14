@@ -8,7 +8,7 @@ import ure.ui.Icon;
  */
 public interface Entity {
 
-    String name();
-    Icon icon();
+    String getName();
+    Icon getIcon();
     String[] UIdetails(String context);
 }

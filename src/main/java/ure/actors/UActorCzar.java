@@ -27,7 +27,7 @@ public class UActorCzar {
             UActor[] actorObjs = objectMapper.readValue(inputStream, UActor[].class);
             for (UActor actor: actorObjs) {
                 actor.initialize();
-                actorsByName.put(actor.name, actor);
+                actorsByName.put(actor.getName(), actor);
             }
         } catch (IOException io) {
             io.printStackTrace();

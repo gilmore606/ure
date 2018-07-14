@@ -12,7 +12,7 @@ public class Lava extends TerrainI implements UTerrain {
     int bubbleFrames = 0;
 
     @Override
-    public char glyph() {
+    public char getGlyph() {
         if (bubbleFrames > 0) {
             bubbleFrames--;
             return '.';
@@ -20,11 +20,11 @@ public class Lava extends TerrainI implements UTerrain {
         Random r = new Random();
         if (r.nextFloat() > 0.9992)
             bubbleFrames = r.nextInt(60) + 8;
-        return super.glyph();
+        return super.getGlyph();
     }
 
     @Override
     public char glyph(int x, int y) {
-        return glyph();
+        return getGlyph();
     }
 }

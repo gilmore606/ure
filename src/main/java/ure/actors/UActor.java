@@ -36,17 +36,10 @@ public class UActor extends ThingI implements Interactable {
 
     float actionTime = 0f;
 
-    public static boolean isActor = true;
-
     @Override
     public void initialize() {
         super.initialize();
-        glyphOutline = true;
-    }
-
-    @Override
-    public boolean isActor() {
-        return true;
+        setGlyphOutline(true);
     }
 
     public float actionTime() {
@@ -71,7 +64,7 @@ public class UActor extends ThingI implements Interactable {
     public void walkDir(int xdir, int ydir) {
         int destX = xdir + areaX();
         int destY = ydir + areaY();
-        if (location.containerType() == UContainer.TYPE_CELL) {
+        if (getLocation().containerType() == UContainer.TYPE_CELL) {
             if (!myTerrain().preventMoveFrom(this)) {
                 if (area().isValidXY(destX, destY)) {
                     area().cellAt(destX, destY).moveTriggerFrom(this);
@@ -89,7 +82,7 @@ public class UActor extends ThingI implements Interactable {
 
     @Override
     public boolean drawGlyphOutline() {
-        if (glyphOutline)
+        if (isGlyphOutline())
             return true;
         if (commander.config.isOutlineActors())
             return true;
@@ -136,7 +129,7 @@ public class UActor extends ThingI implements Interactable {
         int oldx = -1;
         int oldy = -1;
         UArea oldarea = null;
-        if (location != null) {
+        if (getLocation() != null) {
             oldx = areaX();
             oldy = areaY();
             oldarea = area();
@@ -158,9 +151,8 @@ public class UActor extends ThingI implements Interactable {
             }
         }
         int moveFrames = commander.config.getMoveAnimFrames();
-        if (isPlayer()) moveFrames = commander.config.getMoveAnimPlayerFrames();
+        if (this instanceof UPlayer) moveFrames = commander.config.getMoveAnimPlayerFrames();
         if (oldx >=0 && oldarea == thearea && moveFrames > 0) {
-            int frames =
             moveAnimX = (oldx-destX)*commander.config.getGlyphWidth();
             moveAnimY = (oldy-destY)*commander.config.getGlyphHeight();
             moveAnimDX = -(moveAnimX / moveFrames);
@@ -170,8 +162,8 @@ public class UActor extends ThingI implements Interactable {
     }
 
     public UCell myCell() {
-        if (location.containerType() == UContainer.TYPE_CELL)
-            return (UCell)location;
+        if (getLocation().containerType() == UContainer.TYPE_CELL)
+            return (UCell) getLocation();
         return null;
     }
     public void debug() {
@@ -182,7 +174,7 @@ public class UActor extends ThingI implements Interactable {
   }
 
     public void moveTriggerFrom(UActor actor) {
-        if (actor.isPlayer())
+        if (actor instanceof UPlayer)
             commander.printScroll("Ow!");
     }
 
@@ -194,10 +186,10 @@ public class UActor extends ThingI implements Interactable {
         }
         if (thing.tryGetBy(this)) {
             thing.moveTo(this);
-            if (isPlayer())
-                commander.printScroll("You pick up " + thing.iname() + ".");
+            if (this instanceof UPlayer)
+                commander.printScroll("You pick up " + thing.getIname() + ".");
             else
-                commander.printScrollIfSeen(this, this.dnamec() + " picks up " + thing.iname() + ".");
+                commander.printScrollIfSeen(this, this.getDnamec() + " picks up " + thing.getIname() + ".");
             thing.gotBy(this);
             return true;
         }
@@ -211,10 +203,10 @@ public class UActor extends ThingI implements Interactable {
         }
         if (dest.willAcceptThing(thing)) {
             thing.moveTo(dest);
-            if (isPlayer())
-                commander.printScroll("You drop " + thing.iname() + ".");
+            if (this instanceof UPlayer)
+                commander.printScroll("You drop " + thing.getIname() + ".");
             else
-                commander.printScrollIfSeen(this, this.dnamec() + " drops " + thing.iname() + ".");
+                commander.printScrollIfSeen(this, this.getDnamec() + " drops " + thing.getIname() + ".");
             thing.droppedBy(this);
             return true;
         }
@@ -237,12 +229,12 @@ public class UActor extends ThingI implements Interactable {
     public void startActing() {
             commander.registerActor(this);
             awake = true;
-            System.out.println(this.name + ": waking up!");
+            System.out.println(this.getName() + ": waking up!");
     }
     public void stopActing() {
         commander.unregisterActor(this);
         awake = false;
-        System.out.println(this.name + ": going to sleep.");
+        System.out.println(this.getName() + ": going to sleep.");
     }
 
     public void act() {
@@ -279,7 +271,7 @@ public class UActor extends ThingI implements Interactable {
     }
 
     public void wakeCheck(int playerx, int playery) {
-        if (location == null) return;
+        if (getLocation() == null) return;
         int dist = Math.abs(areaX() - playerx) + Math.abs(areaY() - playery);
         if (awake && (sleeprange > 0) && (dist > sleeprange)) {
             stopActing();

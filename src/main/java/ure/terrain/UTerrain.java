@@ -17,9 +17,9 @@ public interface UTerrain {
     boolean breaksLatch();
     void initialize();
     void becomeReal(UCell c);
-    char glyph();
+    char getGlyph();
     char glyph(int x, int y);
-    Icon icon();
+    Icon getIcon();
     String[] UIdetails(String context);
     int glyphOffsetX();
     int glyphOffsetY();
@@ -37,6 +37,6 @@ public interface UTerrain {
     UColor bgColorBuffer();
     UColor fgColor();
     UColor fgColorBuffer();
-    String name();
+    String getName();
     String bonkmsg();
 }

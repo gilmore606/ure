@@ -26,7 +26,7 @@ public class UThingCzar {
             ThingI[] thingObjs = objectMapper.readValue(inputStream, ThingI[].class);
             for (ThingI thing: thingObjs) {
                 thing.initialize();
-                thingsByName.put(thing.name, thing);
+                thingsByName.put(thing.getName(), thing);
             }
         } catch (IOException io) {
             io.printStackTrace();

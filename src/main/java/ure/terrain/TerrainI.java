@@ -1,5 +1,6 @@
 package ure.terrain;
 
+import ure.actors.UPlayer;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UAnimator;
@@ -29,13 +30,13 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
 
     public static final String TYPE = "";
 
-    public String name;
+    protected String name;
     public String type;
     public String walkmsg = "";
     public String bonkmsg = "";
     public char filechar;
-    public char glyph;
-    public Icon icon;
+    protected char glyph;
+    protected Icon icon;
     public String variants;
 
     public int[] fgcolor;
@@ -81,7 +82,6 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
         icon = new Icon(glyph,fgColor,bgColor);
     }
 
-    public Icon icon() { return icon; }
     public String[] UIdetails(String context) { return null; }
 
     public void becomeReal(UCell c) {
@@ -104,13 +104,10 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     }
 
     public float sunvis() { return sunvis; }
-    public char glyph() {
-        return glyph;
-    }
 
     public char glyph(int x, int y) {
         if (variants == null)
-            return glyph();
+            return getGlyph();
         int seed = (x * y * 19 + 1883) / 74;
         int period = variants.length();
         return variants.charAt(seed % period);
@@ -143,7 +140,7 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     }
 
     public void walkedOnBy(UActor actor, UCell cell) {
-        if (actor.isPlayer()) {
+        if (actor instanceof UPlayer) {
             printScroll(walkmsg, cell);
         }
     }
@@ -189,6 +186,8 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     public UColor fgColor() { return fgColor; }
     public UColor fgColorBuffer() { return fgColorBuffer; }
 
-    public String name() { return name; }
+    public String getName() { return name; }
+    public Icon getIcon() { return icon; }
+    public char getGlyph() { return glyph; }
 
 }

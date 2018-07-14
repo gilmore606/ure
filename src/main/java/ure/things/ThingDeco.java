@@ -17,19 +17,17 @@ public class ThingDeco implements UThing, Interactable {
         thing = realThing;
     }
 
-    public boolean isActor() { return thing.isActor(); }
-    public boolean isPlayer() { return thing.isPlayer(); }
     public void initialize() { thing.initialize(); }
     public void setDisplayFields(String thename, char theglyph, UColor thecolor, boolean addOutline) { thing.setDisplayFields(thename, theglyph, thecolor, addOutline); }
-    public String name() { return thing.name(); }
-    public String iname() { return thing.iname(); }
-    public String dname() { return thing.dname(); }
-    public String dnamec() { return thing.dnamec(); }
-    public String plural() { return thing.plural(); }
+    public String getName() { return thing.getName(); }
+    public String getIname() { return thing.getIname(); }
+    public String getDname() { return thing.getDname(); }
+    public String getDnamec() { return thing.getDnamec(); }
+    public String getPlural() { return thing.getPlural(); }
     public String getMsg(UActor actor) { return thing.getMsg(actor); }
     public String walkMsg(UActor actor) { return thing.walkMsg(actor); }
-    public char glyph() { return thing.glyph(); }
-    public Icon icon() { return thing.icon(); }
+    public char getGlyph() { return thing.getGlyph(); }
+    public Icon getIcon() { return thing.getIcon(); }
     public String[] UIdetails(String context) { return thing.UIdetails(context); }
     public int glyphOffsetX() { return thing.glyphOffsetX(); }
     public int glyphOffsetY() { return thing.glyphOffsetY(); }
@@ -39,11 +37,11 @@ public class ThingDeco implements UThing, Interactable {
     public void moveToCell(UArea area, int x, int y) { thing.moveToCell(area, x ,y); }
     public void moveTo(UContainer container) { thing.moveTo(container); }
     public void leaveCurrentLocation() { thing.leaveCurrentLocation(); }
-    public UContainer location() { return thing.location(); }
+    public UContainer getLocation() { return thing.getLocation(); }
     public void addThing(UThing thething) { thing.addThing(thething); }
     public void removeThing(UThing thething) { thing.removeThing(thething); }
     public Iterator<UThing> iterator() { return thing.iterator(); }
-    public UCollection contents() { return thing.contents(); }
+    public UCollection getContents() { return thing.getContents(); }
     public boolean willAcceptThing(UThing thething) { return thing.willAcceptThing(thething); }
     public int areaX() { return thing.areaX(); }
     public int areaY() { return thing.areaY(); }
