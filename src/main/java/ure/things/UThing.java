@@ -46,4 +46,6 @@ public interface UThing  {
     UContainer getLocation();
     char getGlyph();
     UCollection getContents();
+    int getStat(String stat);
+    void setStat(String stat, int value);
 }

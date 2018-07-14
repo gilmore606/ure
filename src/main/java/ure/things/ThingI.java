@@ -15,6 +15,7 @@ import ure.ui.Icon;
 import ure.ui.UCamera;
 
 import javax.inject.Inject;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -44,6 +45,7 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
     protected int[] colorvariance = new int[]{0,0,0};
     protected String getFailMsg = "You can't pick that up.";
     protected String category = "misc";
+    protected HashMap<String,Integer> stats;
 
     public static final String TYPE = "";
 
@@ -64,6 +66,7 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
             SetupColors();
         }
         setIcon(new Icon(getGlyph(), getGlyphColor(), null));
+        stats = new HashMap<>();
     }
 
     public void SetupColors() {
@@ -370,5 +373,15 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
 
     public void setContents(UCollection contents) {
         this.contents = contents;
+    }
+
+    public int getStat(String stat) {
+        if (stats.containsKey(stat))
+            return (int)(stats.get(stat));
+        return 0;
+    }
+
+    public void setStat(String stat, int value) {
+        stats.put(stat, value);
     }
 }

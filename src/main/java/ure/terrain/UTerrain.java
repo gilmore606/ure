@@ -40,4 +40,6 @@ public interface UTerrain {
     String getName();
     String getPlural();
     String bonkmsg();
+    int getStat(String stat);
+    void setStat(String stat, int value);
 }

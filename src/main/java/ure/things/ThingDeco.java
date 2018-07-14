@@ -55,5 +55,7 @@ public class ThingDeco implements UThing, Interactable {
 
     public void render(URenderer renderer, int x, int y, UColor light, float vis) { thing.render(renderer, x, y, light, vis); }
     public void emote(String text) { thing.emote(text); }
+    public int getStat(String stat) { return thing.getStat(stat); }
+    public void setStat(String stat, int value) { thing.setStat(stat, value); }
 }
 

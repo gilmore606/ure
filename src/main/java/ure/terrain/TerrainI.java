@@ -12,6 +12,7 @@ import ure.actors.UActor;
 import ure.ui.Icon;
 
 import javax.inject.Inject;
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -38,7 +39,7 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     protected char glyph;
     protected Icon icon;
     public String variants;
-
+    public HashMap<String,Integer> stats;
     public int[] fgcolor;
     public int[][] fgvariants;
     public int[] bgcolor;
@@ -80,6 +81,7 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
         fgColorBuffer = new UColor(0f,0f,0f);
         bgColorBuffer = new UColor(0f, 0f ,0f);
         icon = new Icon(glyph,fgColor,bgColor);
+        stats = new HashMap<>();
     }
 
     public String[] UIdetails(String context) { return null; }
@@ -191,4 +193,13 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     public Icon getIcon() { return icon; }
     public char getGlyph() { return glyph; }
 
+    public int getStat(String stat) {
+        if (stats.containsKey(stat))
+            return (int)(stats.get(stat));
+        return 0;
+    }
+
+    public void setStat(String stat, int value) {
+        stats.put(stat, value);
+    }
 }
