@@ -1,6 +1,7 @@
 package ure.actors;
 
 import ure.*;
+import ure.actions.Interactable;
 import ure.actions.UAction;
 import ure.areas.UArea;
 import ure.areas.UCell;
@@ -20,7 +21,7 @@ import ure.ui.UCamera;
  * or subclass NPC.  To change base actor behavior, use an ActorDeco decorator class.
  *
  */
-public class UActor extends ThingI {
+public class UActor extends ThingI implements Interactable {
 
     public boolean awake = false;
     public int wakerange = 20;
@@ -294,4 +295,12 @@ public class UActor extends ThingI {
     public boolean willAcceptThing(UThing thing) {
         return true;
     }
+
+    /**
+     * Do I consider actor a mortal enemy?
+     */
+    public boolean isHostileTo(UActor actor) {
+        return false;
+    }
+
 }

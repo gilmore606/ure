@@ -382,7 +382,7 @@ public class UCommander implements URenderer.KeyListener {
 
     public void detachModal() {
         renderer.getRootView().removeChild(modal);
-        this.modal = null;
+        modal = null;
     }
 
 }

@@ -5,6 +5,8 @@ import ure.actions.UAction;
 import ure.actions.ActionGet;
 import ure.actions.ActionWalk;
 import ure.behaviors.UBehavior;
+import ure.ui.modals.UModal;
+import ure.ui.modals.UModalNotify;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -95,5 +97,18 @@ public class UNPC extends UActor {
 
     UAction Ambient() {
         return new ActionEmote(this, ambients[random.nextInt(ambients.length)]);
+    }
+
+
+    @Override
+    public boolean isInteractable(UActor actor) {
+        return !isHostileTo(actor);
+    }
+
+    @Override
+    public float interactionFrom(UActor actor) {
+        UModal modal = new UModalNotify("\"Squeeek!\"", null, 2, 2);
+        commander.showModal(modal);
+        return 0.5f;
     }
 }

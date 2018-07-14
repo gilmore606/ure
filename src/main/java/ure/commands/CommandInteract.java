@@ -6,6 +6,7 @@ import ure.actors.UActor;
 import ure.actors.UPlayer;
 import ure.areas.UArea;
 import ure.terrain.UTerrain;
+import ure.things.UThing;
 import ure.ui.modals.HearModalDirection;
 import ure.ui.modals.UModalDirection;
 
@@ -52,10 +53,11 @@ public class CommandInteract extends UCommand implements HearModalDirection {
     }
 
     public void PickInteractTarget(UPlayer player, ArrayList<Interactable> targets) {
-        if (targets.size() == 1)
+        if (targets.size() == 1) {
             player.doAction(new ActionInteract(player, targets.get(0)));
-        else {
+        } else {
             // TODO: pop up selector to pick target by glyph+name
+            player.doAction(new ActionInteract(player, targets.get(0)));
         }
     }
 
@@ -63,6 +65,8 @@ public class CommandInteract extends UCommand implements HearModalDirection {
         ArrayList<Interactable> targets = findInteractablesAt(commander.player().area(), commander.player().areaX() + xdir, commander.player().areaY() + ydir);
         if (targets.size() == 0) {
             commander.printScroll(noTargetAtDirectionMsg);
+        } else {
+            PickInteractTarget((UPlayer)commander.player(), targets);
         }
     }
 
@@ -70,11 +74,13 @@ public class CommandInteract extends UCommand implements HearModalDirection {
         ArrayList<Interactable> targets = new ArrayList<Interactable>();
         UActor actor = area.actorAt(x,y);
         if (actor != null && actor != commander.player() && actor.isInteractable(commander.player()))
-            targets.add(actor);
-        // TODO: also check Things for interactable, i was lazy
+            targets.add((Interactable)actor);
+        UThing thing = area.cellAt(x,y).topThingAt();
+        if (thing != null && thing.isInteractable(commander.player()))
+            targets.add((Interactable)thing);
         Interactable terrain = (Interactable)(area.terrainAt(x,y));
         if (terrain != null && terrain.isInteractable(commander.player()))
-            targets.add(terrain);
+            targets.add((Interactable)terrain);
         return targets;
     }
 }

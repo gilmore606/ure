@@ -26,7 +26,7 @@ public class UModalDirection extends UModal {
         this.cellx = cellx;
         this.celly = celly;
         setDimensions(3,3);
-        glyphColor = new UColor(1f,1f,0.3f,0.4f);
+        glyphColor = new UColor(commander.config.getHiliteColor());
     }
 
     @Override
@@ -40,11 +40,11 @@ public class UModalDirection extends UModal {
     @Override
     public void hearCommand(UCommand command, Character c) {
         if (command.id.startsWith("MOVE")) {
+            dismiss();
             ((HearModalDirection) callback).hearModalDirection(callbackContext, ((UCommandMove) command).xdir, ((UCommandMove) command).ydir);
-            dismiss();
         } else if (command.id.equals("PASS") && acceptNull) {
-            ((HearModalDirection) callback).hearModalDirection(callbackContext, 0, 0);
             dismiss();
+            ((HearModalDirection) callback).hearModalDirection(callbackContext, 0, 0);
         }
     }
 

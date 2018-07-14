@@ -8,7 +8,7 @@ import ure.render.URenderer;
 
 import java.util.Iterator;
 
-public interface UThing {
+public interface UThing  {
     boolean isActor();
     boolean isPlayer();
     void initialize();
