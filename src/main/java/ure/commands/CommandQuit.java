@@ -22,7 +22,7 @@ public class CommandQuit extends UCommand implements HearModalChoices {
         ArrayList<String> choices = new ArrayList<>();
         choices.add(quitYes);
         choices.add(quitNo);
-        UModalChoices modal = new UModalChoices(quitConfirmMsg, choices, quitNo, null, this, "quit");
+        UModalChoices modal = new UModalChoices(quitConfirmMsg, choices, 1, 1, true, null, this, "quit");
         commander.showModal(modal);
     }
 

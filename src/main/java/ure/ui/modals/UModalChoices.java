@@ -13,16 +13,19 @@ import java.util.ArrayList;
 public class UModalChoices extends UModal {
 
     ArrayList<String> choices;
-    String escapeChoice;
+    int escapeChoice;
+    boolean escapable;
     String prompt;
     int selection = 0;
 
-    public UModalChoices(String _prompt, ArrayList<String> _choices, String _escapeChoice,
-                         UColor bgColor, HearModalChoices _callback, String _callbackContext) {
+    public UModalChoices(String _prompt, ArrayList<String> _choices, int _escapeChoice, int _defaultChoice,
+                         boolean _escapable, UColor bgColor, HearModalChoices _callback, String _callbackContext) {
         super(_callback, _callbackContext, bgColor);
         prompt = _prompt;
         choices = _choices;
         escapeChoice = _escapeChoice;
+        escapable = _escapable;
+        selection = _defaultChoice;
         int width = prompt.length();
         int cwidth = 0;
         for (String choice : choices) {
@@ -56,6 +59,15 @@ public class UModalChoices extends UModal {
             selection++;
         if (command.id.equals("PASS"))
             pickSelection();
+        if (command.id.equals("ESC")) {
+            if (escapeChoice >= 0) {
+                selection = escapeChoice;
+                pickSelection();
+            } else if (escapable) {
+                dismiss();
+            }
+        }
+
         if (selection < 0) {
             if (commander.config.isWrapSelect())
                 selection = choices.size()-1;

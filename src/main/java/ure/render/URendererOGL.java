@@ -130,6 +130,7 @@ public class URendererOGL implements URenderer {
                 //    glfwSetWindowShouldClose(window, true);
                 //    System.out.println("Exiting.");
                 //}
+                if (key == GLFW_KEY_ESCAPE) key = 1;
                 if (keyListener != null && key < 256 && key >= 0 && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
                     if(keyState[GLFW_KEY_LEFT_SHIFT] || keyState[GLFW_KEY_RIGHT_SHIFT]) keyListener.keyPressed((char)key);
                     else keyListener.keyPressed(Character.toLowerCase((char)key));

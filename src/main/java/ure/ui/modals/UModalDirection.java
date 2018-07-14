@@ -13,16 +13,18 @@ public class UModalDirection extends UModal {
 
     String prompt;
     boolean acceptNull;
+    boolean escapable;
 
     int cellx, celly;
 
     String glyphs = "^>v<";
     UColor glyphColor;
 
-    public UModalDirection(String _prompt, boolean _acceptNull, int cellx, int celly, HearModalDirection _callback, String _callbackContext) {
+    public UModalDirection(String _prompt, boolean _acceptNull, int cellx, int celly, boolean _escapable, HearModalDirection _callback, String _callbackContext) {
         super(_callback, _callbackContext, null);
         prompt = _prompt;
         acceptNull = _acceptNull;
+        escapable = _escapable;
         this.cellx = cellx;
         this.celly = celly;
         setDimensions(3,3);
@@ -45,6 +47,8 @@ public class UModalDirection extends UModal {
         } else if (command.id.equals("PASS") && acceptNull) {
             dismiss();
             ((HearModalDirection) callback).hearModalDirection(callbackContext, 0, 0);
+        } else if (command.id.equals("ESC") && escapable) {
+            dismiss();
         }
     }
 

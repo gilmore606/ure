@@ -14,17 +14,19 @@ public class UModalEntityPick extends UModal {
     int xpad, ypad;
     ArrayList<Entity> entities;
     boolean showDetail;
+    boolean escapable;
     int textWidth = 0;
     int selection = 0;
 
     public UModalEntityPick(String _header, UColor _bgColor, int _xpad, int _ypad, ArrayList<Entity> _entities,
-                            boolean _showDetail, HearModalEntityPick _callback, String _callbackContext) {
+                            boolean _showDetail, boolean _escapable, HearModalEntityPick _callback, String _callbackContext) {
         super(_callback, _callbackContext, _bgColor);
         header = _header;
         xpad = _xpad;
         ypad = _ypad;
         entities = _entities;
         showDetail =  _showDetail;
+        escapable = _escapable;
         int width = 0;
         for (Entity entity : entities) {
             if (entity.getName().length() > width)
@@ -85,6 +87,8 @@ public class UModalEntityPick extends UModal {
             }
         } else if (command.id.equals("PASS")) {
             selectEntity();
+        } else if (command.id.equals("ESC") && escapable) {
+            dismiss();
         }
     }
 
