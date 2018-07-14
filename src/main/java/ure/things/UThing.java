@@ -37,10 +37,11 @@ public interface UThing  {
     void render(URenderer renderer, int x, int y, UColor light, float vis);
     void emote(String text);
     String getName();
+    String getPlural();
     String getIname();
     String getDname();
     String getDnamec();
-    String getPlural();
+    String getCategory();
     Icon getIcon();
     UContainer getLocation();
     char getGlyph();

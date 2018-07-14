@@ -13,6 +13,7 @@ public class UModalEntityPick extends UModal {
     UColor bgColor;
     int xpad, ypad;
     ArrayList<Entity> entities;
+    ArrayList<String> displaynames;
     boolean showDetail;
     boolean escapable;
     int textWidth = 0;
@@ -25,6 +26,7 @@ public class UModalEntityPick extends UModal {
         xpad = _xpad;
         ypad = _ypad;
         entities = _entities;
+        deDupeEntities();
         showDetail =  _showDetail;
         escapable = _escapable;
         int width = 0;
@@ -35,10 +37,46 @@ public class UModalEntityPick extends UModal {
         textWidth = width;
         if (showDetail)
             width += 9;
-        setDimensions(width + 2 + xpad, entities.size() + 2 + ypad);
+        int height = Math.max(6, entities.size() + 2 + ypad);
+        setDimensions(width + 2 + xpad, height);
         if (bgColor == null)
             bgColor = commander.config.getModalBgColor();
         setBgColor(bgColor);
+    }
+
+    public void deDupeEntities() {
+        ArrayList<Entity> newent = new ArrayList<>();
+        displaynames = new ArrayList<>();
+        ArrayList<Integer> totals = new ArrayList<>();
+        int i = 0;
+        for (Entity entity : entities) {
+            boolean gotone = false;
+            int ni = 0;
+            for (Entity nent: newent) {
+                if (nent.getName().equals(entity.getName())) {
+                    gotone = true;
+                } else if (!gotone) {
+                    ni++;
+                }
+            }
+            if (!gotone) {
+                newent.add(entity);
+                totals.add(1);
+                i++;
+            } else {
+                totals.set(ni, totals.get(ni) + 1);
+            }
+        }
+        entities = newent;
+        i = 0;
+        for (Entity entity : entities) {
+            int total = totals.get(i);
+            if (total > 1)
+                displaynames.add(Integer.toString(totals.get(i)) + " " + entity.getPlural());
+            else
+                displaynames.add(entity.getName());
+            i++;
+        }
     }
 
     @Override
@@ -51,7 +89,7 @@ public class UModalEntityPick extends UModal {
                 renderer.drawRect(gw()+xpos,(y+2)*gh()+ypos, textWidth*gw(), gh(), commander.config.getHiliteColor());
             }
             drawIcon(renderer, entity.getIcon(), 1, y + 2);
-            drawString(renderer, entity.getName(), 3, y + 2);
+            drawString(renderer, displaynames.get(y), 3, y + 2);
             y++;
         }
         if (showDetail) {

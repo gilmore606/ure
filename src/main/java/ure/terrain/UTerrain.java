@@ -38,5 +38,6 @@ public interface UTerrain {
     UColor fgColor();
     UColor fgColorBuffer();
     String getName();
+    String getPlural();
     String bonkmsg();
 }

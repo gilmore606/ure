@@ -43,6 +43,7 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
     protected int[] color;
     protected int[] colorvariance = new int[]{0,0,0};
     protected String getFailMsg = "You can't pick that up.";
+    protected String category = "misc";
 
     public static final String TYPE = "";
 
@@ -196,8 +197,9 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
     public String getMsg(UActor actor) {
         return getDescription();
     }
-
     public String walkMsg(UActor actor) { return "You see " + getIname() + "."; }
+    public String getCategory() { return category; }
+    public void setCategory(String _category) { category = _category; }
 
     //The camera class will call this, and tell where in screen coords to draw it.
     // TODO: Things should probably not be tied directly to the rendering system.  Ideally they would just be part of the data layer, not the presentation layer

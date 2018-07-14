@@ -9,7 +9,9 @@
   },
   {
     "name": "torch",
+    "plural": "torches",
     "type": "lightsource",
+    "category": "tools",
     "glyph": "t",
     "description": "A wooden torch dipped in pitch.",
     "color": [200,155,55],
@@ -25,7 +27,9 @@
   },
   {
     "name": "butcher knife",
+    "plural": "butcher knives",
     "type": "weapon",
+    "category": "weapons",
     "glyph": "t",
     "description": "A rusty butcher knife.",
     "color": [100,100,240],
@@ -35,6 +39,7 @@
   {
     "name": "trucker hat",
     "type": "clothing",
+    "category": "clothing",
     "glyph": "^",
     "description": "A baseball cap bearing a strange inscription.",
     "color": [0,240,0],
@@ -61,6 +66,7 @@
     "name": "apple",
     "iname": "an apple",
     "type": "food",
+    "category": "consumables",
     "glyph": "a",
     "description": "A red and yellow streaked apple.",
     "color": [240,240,2],

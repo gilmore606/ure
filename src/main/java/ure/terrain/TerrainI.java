@@ -187,6 +187,7 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     public UColor fgColorBuffer() { return fgColorBuffer; }
 
     public String getName() { return name; }
+    public String getPlural() { return name + "s"; }
     public Icon getIcon() { return icon; }
     public char getGlyph() { return glyph; }
 

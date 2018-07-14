@@ -20,12 +20,13 @@ public class ThingDeco implements UThing, Interactable {
     public void initialize() { thing.initialize(); }
     public void setDisplayFields(String thename, char theglyph, UColor thecolor, boolean addOutline) { thing.setDisplayFields(thename, theglyph, thecolor, addOutline); }
     public String getName() { return thing.getName(); }
+    public String getPlural() { return thing.getPlural(); }
     public String getIname() { return thing.getIname(); }
     public String getDname() { return thing.getDname(); }
     public String getDnamec() { return thing.getDnamec(); }
-    public String getPlural() { return thing.getPlural(); }
     public String getMsg(UActor actor) { return thing.getMsg(actor); }
     public String walkMsg(UActor actor) { return thing.walkMsg(actor); }
+    public String getCategory() { return thing.getCategory(); }
     public char getGlyph() { return thing.getGlyph(); }
     public Icon getIcon() { return thing.getIcon(); }
     public String[] UIdetails(String context) { return thing.UIdetails(context); }

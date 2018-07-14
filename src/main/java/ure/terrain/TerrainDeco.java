@@ -191,6 +191,7 @@ public class TerrainDeco implements UTerrain, Interactable, Entity {
     public String getName() {
         return terrain.getName();
     }
+    public String getPlural() { return terrain.getPlural(); }
     public String bonkmsg() { return terrain.bonkmsg(); }
 
 }
