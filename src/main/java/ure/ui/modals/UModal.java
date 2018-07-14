@@ -60,8 +60,17 @@ public class UModal extends View {
     public void setDimensions(int x, int y) {
         cellw = x;
         cellh = y;
-        xpos = (commander.config.getScreenWidth() - (cellw * commander.config.getGlyphWidth())) / 2;
-        ypos = (commander.config.getScreenHeight() - (cellh * commander.config.getGlyphHeight())) / 2;
+        int screenw = 0, screenh = 0;
+        if (commander.config.getModalPosition() == UConfig.POS_WINDOW_CENTER) {
+            screenw = commander.config.getScreenWidth();
+            screenh = commander.config.getScreenHeight();
+        } else {
+            screenw = commander.modalCamera().getWidthInCells() * commander.config.getGlyphWidth();
+            screenh = commander.modalCamera().getHeightInCells() * commander.config.getGlyphHeight();
+        }
+
+        xpos = (screenw - (cellw * commander.config.getGlyphWidth())) / 2;
+        ypos = (screenh - (cellh * commander.config.getGlyphHeight())) / 2;
     }
 
     @Override
