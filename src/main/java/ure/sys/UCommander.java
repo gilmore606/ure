@@ -11,6 +11,7 @@ import ure.commands.UCommand;
 import ure.render.URenderer;
 import ure.things.UThing;
 import ure.things.UThingCzar;
+import ure.ui.UCamera;
 import ure.ui.modals.UModal;
 import ure.ui.UScrollPanel;
 import ure.ui.UStatusPanel;
@@ -40,6 +41,7 @@ public class UCommander implements URenderer.KeyListener {
     private URenderer renderer;
     private UActor player;
     private UScrollPanel scrollPrinter;
+    private UCamera modalCamera;
 
     private UScrollPanel scrollPanel;
     private UStatusPanel statusPanel;
@@ -94,7 +96,6 @@ public class UCommander implements URenderer.KeyListener {
      * Any object which implements UTimeListener can register with this method to have its hearTimeTick() called
      * on every game tick.
      *
-     * @param listener
      */
     public void registerTimeListener(UTimeListener listener) {
         timeListeners.add(listener);
@@ -106,7 +107,6 @@ public class UCommander implements URenderer.KeyListener {
     /**
      * Newly spawned actors must register with the commander to get action time and thereby...act.
      *
-     * @param actor
      */
     public void registerActor(UActor actor) { actors.add(actor); }
     public void unregisterActor(UActor actor) { actors.remove(actor); }
@@ -114,12 +114,17 @@ public class UCommander implements URenderer.KeyListener {
     /**
      * Register a UI component to print scroll messages.  Right now this can only be a UScrollPrinter.
      *
-     * @param printer
      */
     public void registerScrollPrinter(UScrollPanel printer) {
         scrollPrinter = printer;
     }
 
+    /**
+     * Register the camera to center modals on (if UConfig.modalPosition = POS_CAMERA_CENTER).
+     *
+     */
+    public void registerModalCamera(UCamera camera) { this.modalCamera = camera; }
+    public UCamera modalCamera() { return modalCamera; }
 
     public void addAnimator(UAnimator animator) { animators.add(animator); }
     public void removeAnimator(UAnimator animator) { animators.remove(animator); }

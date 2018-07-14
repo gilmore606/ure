@@ -77,6 +77,7 @@ public class ExampleGame implements UTimeListener {
 
         commander.setStatusPanel(statusPanel);
         commander.setScrollPanel(scrollPanel);
+        commander.registerModalCamera(camera);
         commander.config.setUiFrameGlyphs(null);
     }
 
@@ -100,7 +101,7 @@ public class ExampleGame implements UTimeListener {
 
         UCell startcell = area.randomOpenCell(player);
         player.moveToCell(area, startcell.x, startcell.y);
-        player.attachCamera(camera, UCamera.PINSTYLE_HARD);
+        player.attachCamera(camera, UCamera.PINSTYLE_SOFT);
         player.startActing();
 
         // commander.speaker.switchBGM("/ultima_wanderer.ogg", 0);
