@@ -28,7 +28,7 @@ public class UCollection {
     }
 
     public void add(UThing thing) {
-        if (thing.isActor())
+        if (thing instanceof UActor)
             actors.add((UActor)thing);
         else
             things.add(thing);

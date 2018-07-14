@@ -1,5 +1,7 @@
 package ure.things;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import ure.actors.UPlayer;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
@@ -25,48 +27,42 @@ import java.util.Random;
 public abstract class ThingI implements UThing, UContainer, Entity, Interactable, Cloneable {
 
     @Inject
+    @JsonIgnore
     public UCommander commander;
 
-    public String name;
-    public String iname;
-    public String dname;
-    public String plural;
-    public String type;
-    public char glyph;
-    public String description = "A thing.";
-    public int weight;
-    public boolean movable = true;
-    public int value;
-    public int[] color;
-    public int[] colorvariance = new int[]{0,0,0};
-    public String getFailMsg = "You can't pick that up.";
+    protected String name;
+    protected String iname;
+    protected String dname;
+    protected String plural;
+    protected String type;
+    protected char glyph;
+    protected String description = "A thing.";
+    protected int weight;
+    protected boolean movable = true;
+    protected int value;
+    protected int[] color;
+    protected int[] colorvariance = new int[]{0,0,0};
+    protected String getFailMsg = "You can't pick that up.";
 
     public static final String TYPE = "";
 
-    UColor glyphColor;
-    public boolean glyphOutline = false;
-    Icon icon;
+    protected UColor glyphColor;
+    protected boolean glyphOutline = false;
+    protected Icon icon;
 
     protected UContainer location;  // What container am I in?
     protected UCollection contents; // What's inside me?
-
-    public static boolean isActor = false;
 
     public ThingI() {
         Injector.getAppComponent().inject(this);
     }
 
-    public boolean isActor() {
-        return false;
-    }
-    public boolean isPlayer() { return false; }
-
     public void initialize() {
-        contents = new UCollection(this);
-        if (glyphColor == null && color != null) {
+        setContents(new UCollection(this));
+        if (getGlyphColor() == null && getColor() != null) {
             SetupColors();
         }
-        icon = new Icon(glyph, glyphColor, null);
+        setIcon(new Icon(getGlyph(), getGlyphColor(), null));
     }
 
     public void SetupColors() {
@@ -76,39 +72,16 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
             if (colorvariance[i] > 0)
                 thecolor[i] += (random.nextInt(colorvariance[i]) - colorvariance[i]/2);
         }
-        glyphColor = new UColor(thecolor[0],thecolor[1],thecolor[2]);
+        setGlyphColor(new UColor(thecolor[0],thecolor[1],thecolor[2]));
     }
 
     public void setDisplayFields(String thename, char theglyph, UColor thecolor, boolean addOutline) {
-        name = thename;
-        glyph = theglyph;
-        glyphColor = thecolor;
-        glyphOutline = addOutline;
+        setName(thename);
+        setGlyph(theglyph);
+        setGlyphColor(thecolor);
+        setGlyphOutline(addOutline);
     }
 
-    public String iname() {
-        if (iname != null && iname != "")
-            return iname;
-        return "a " + name;
-    }
-    public String dname() {
-        return "the " + name;
-    }
-    public String dnamec() {
-        return "The " + name;
-    }
-    public String plural() {
-        if (plural != null && plural != "")
-            return plural;
-        char last = name.charAt(name.length()-1);
-        if (last == 's')
-            return name + "es";
-        return name + "s";
-    }
-
-    public char glyph() {
-        return glyph;
-    }
     public int glyphOffsetX() { return 0; }
     public int glyphOffsetY() { return 0; }
 
@@ -116,24 +89,22 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
         return glyphColor;
     }
 
-    public Icon icon() { return icon; }
+    public Icon icon() { return getIcon(); }
 
     public String[] UIdetails(String context) {
         return new String[]{
-                "Weight " + Integer.toString(weight),
-                "Value " + Integer.toString(value)
+                "Weight " + Integer.toString(getWeight()),
+                "Value " + Integer.toString(getValue())
         };
     }
 
     public boolean drawGlyphOutline() {
-        if (glyphOutline)
+        if (isGlyphOutline())
             return true;
         if (commander.config.isOutlineThings())
             return true;
         return false;
     }
-
-    public UContainer location() { return location; }
 
     public void moveToCell(int x, int y) {
         moveToCell(area(), x, y);
@@ -149,44 +120,43 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
     public void moveTo(UContainer container) {
         leaveCurrentLocation();
         container.addThing(this);
-        this.location = container;
+        this.setLocation(container);
     }
 
     public void leaveCurrentLocation() {
-        if (location != null) {
-            location.removeThing(this);
+        if (getLocation() != null) {
+            getLocation().removeThing(this);
         }
-        this.location = null;
+        this.setLocation(null);
     }
 
     public void addThing(UThing thing) {
-        contents.add(thing);
+        getContents().add(thing);
     }
     public void removeThing(UThing thing) {
-        contents.remove(thing);
+        getContents().remove(thing);
     }
     public Iterator<UThing> iterator() {
-        return contents.iterator();
+        return getContents().iterator();
     }
-    public UCollection contents() { return contents; }
 
     public int containerType() { return UContainer.TYPE_THING; }
     public boolean willAcceptThing(UThing thing) {
         return false;
     }
 
-    public int areaX() { return location.areaX(); }
-    public int areaY() { return location.areaY(); }
+    public int areaX() { return getLocation().areaX(); }
+    public int areaY() { return getLocation().areaY(); }
 
     public int cameraX(UCamera camera) {
-        return location.areaX() - camera.leftEdge;
+        return getLocation().areaX() - camera.leftEdge;
     }
     public int cameraY(UCamera camera) {
-        return location.areaY() - camera.topEdge;
+        return getLocation().areaY() - camera.topEdge;
     }
     public UArea area() {
-        if (location != null)
-            return location.area();
+        if (getLocation() != null)
+            return getLocation().area();
         return null;
     }
 
@@ -200,9 +170,9 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
     }
 
     public boolean tryGetBy(UActor actor) {
-        if (!movable) {
-            if (actor.isPlayer())
-                commander.printScroll(getFailMsg);
+        if (!isMovable()) {
+            if (actor instanceof UPlayer)
+                commander.printScroll(getGetFailMsg());
             return false;
         }
         return true;
@@ -224,17 +194,17 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
     }
 
     public String getMsg(UActor actor) {
-        return description;
+        return getDescription();
     }
 
-    public String walkMsg(UActor actor) { return "You see " + iname() + "."; }
+    public String walkMsg(UActor actor) { return "You see " + getIname() + "."; }
 
     //The camera class will call this, and tell where in screen coords to draw it.
     // TODO: Things should probably not be tied directly to the rendering system.  Ideally they would just be part of the data layer, not the presentation layer
     public void render(URenderer renderer, int x, int y, UColor light, float vis){
         int xoff = glyphOffsetX();
         int yoff = glyphOffsetY();
-        char icon = this.glyph();
+        char icon = getGlyph();
         UColor color = new UColor(this.getGlyphColor());
         if (this.drawGlyphOutline()) {
             renderer.drawGlyphOutline(icon, x, y, UColor.COLOR_BLACK, xoff, yoff);
@@ -247,5 +217,156 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
         commander.printScrollIfSeen(this, text);
     }
 
-    public String name() { return name; }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getIname() {
+        if (iname != null && !iname.isEmpty())
+            return iname;
+        return "a " + getName();
+    }
+
+    public void setIname(String iname) {
+        this.iname = iname;
+    }
+
+    public String getDname() {
+        if (dname != null && !dname.isEmpty())
+            return dname;
+        return "the " + getName();
+    }
+
+    public void setDname(String dname) {
+        this.dname = dname;
+    }
+
+    public String getDnamec() {
+        return "The " + getName();
+    }
+
+    public String getPlural() {
+        if (plural != null && !plural.isEmpty())
+            return plural;
+        char last = getName().charAt(getName().length()-1);
+        if (last == 's')
+            return getName() + "es";
+        return getName() + "s";
+    }
+
+    public void setPlural(String plural) {
+        this.plural = plural;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public char getGlyph() {
+        return glyph;
+    }
+
+    public void setGlyph(char glyph) {
+        this.glyph = glyph;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public boolean isMovable() {
+        return movable;
+    }
+
+    public void setMovable(boolean movable) {
+        this.movable = movable;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    public int[] getColor() {
+        return color;
+    }
+
+    public void setColor(int[] color) {
+        this.color = color;
+    }
+
+    public int[] getColorvariance() {
+        return colorvariance;
+    }
+
+    public void setColorvariance(int[] colorvariance) {
+        this.colorvariance = colorvariance;
+    }
+
+    public String getGetFailMsg() {
+        return getFailMsg;
+    }
+
+    public void setGetFailMsg(String getFailMsg) {
+        this.getFailMsg = getFailMsg;
+    }
+
+    public void setGlyphColor(UColor glyphColor) {
+        this.glyphColor = glyphColor;
+    }
+
+    public boolean isGlyphOutline() {
+        return glyphOutline;
+    }
+
+    public void setGlyphOutline(boolean glyphOutline) {
+        this.glyphOutline = glyphOutline;
+    }
+
+    public Icon getIcon() {
+        return icon;
+    }
+
+    public void setIcon(Icon icon) {
+        this.icon = icon;
+    }
+
+    public UContainer getLocation() {
+        return location;
+    }
+
+    public void setLocation(UContainer location) {
+        this.location = location;
+    }
+
+    public UCollection getContents() {
+        return contents;
+    }
+
+    public void setContents(UCollection contents) {
+        this.contents = contents;
+    }
 }

@@ -29,8 +29,8 @@ public class UModalEntityPick extends UModal {
         showDetail =  _showDetail;
         int width = 0;
         for (Entity entity : entities) {
-            if (entity.name().length() > width)
-                width = entity.name().length();
+            if (entity.getName().length() > width)
+                width = entity.getName().length();
         }
         textWidth = width;
         if (showDetail)
@@ -50,12 +50,12 @@ public class UModalEntityPick extends UModal {
             if (y == selection) {
                 renderer.drawRect(gw()+xpos,(y+2)*gh()+ypos, textWidth*gw(), gh(), commander.config.getHiliteColor());
             }
-            drawIcon(renderer, entity.icon(), 1, y + 2);
-            drawString(renderer, entity.name(), 3, y + 2);
+            drawIcon(renderer, entity.getIcon(), 1, y + 2);
+            drawString(renderer, entity.getName(), 3, y + 2);
             y++;
         }
         if (showDetail) {
-            drawString(renderer, entities.get(selection).name(), 4+textWidth, 2);
+            drawString(renderer, entities.get(selection).getName(), 4+textWidth, 2);
             String[] details = entities.get(selection).UIdetails(callbackContext);
             int linepos = 4;
             for (String line : details) {

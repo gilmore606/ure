@@ -18,7 +18,7 @@ public class ActionDrop extends UAction {
     public ActionDrop(UActor theactor, UThing thething) {
         actor = theactor;
         thing = thething;
-        destination = actor.location();
+        destination = actor.getLocation();
     }
     public ActionDrop(UActor theactor, UThing thething, UContainer thedest) {
         actor = theactor;
@@ -30,7 +30,7 @@ public class ActionDrop extends UAction {
     void doMe() {
         if (thing != null) {
             if (destination == null) {
-                destination = actor.location();
+                destination = actor.getLocation();
             }
             if (!actor.tryDropThing(thing, destination))
                 suppressEvent();

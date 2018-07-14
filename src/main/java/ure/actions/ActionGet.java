@@ -1,6 +1,7 @@
 package ure.actions;
 
 import ure.actors.UActor;
+import ure.actors.UPlayer;
 import ure.things.UThing;
 
 /**
@@ -30,7 +31,7 @@ public class ActionGet extends UAction {
         if (thing == null) {
             thing = actor.myCell().topThingAt();
             if (thing == null) {
-                if (actor.isPlayer()) {
+                if (actor instanceof UPlayer) {
                     commander.printScroll(nothingToGetMsg);
                 }
             }

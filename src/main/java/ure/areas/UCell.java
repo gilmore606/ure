@@ -1,5 +1,6 @@
 package ure.areas;
 
+import ure.actors.UPlayer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actions.UAction;
@@ -76,7 +77,7 @@ public class UCell implements UContainer {
     }
 
     public void walkedOnBy(UActor actor) {
-        if (actor.isPlayer() && contents.hasThings()) {
+        if (actor instanceof UPlayer && contents.hasThings()) {
             UThing thing = contents.topThing();
             commander.printScroll(thing.walkMsg(actor));
         }
@@ -130,7 +131,7 @@ public class UCell implements UContainer {
      */
     public boolean hasA(String thing) {
         for (UThing t : contents.things) {
-            if (t.name().equals(thing))
+            if (t.getName().equals(thing))
                 return true;
         }
         return false;

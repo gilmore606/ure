@@ -22,7 +22,7 @@ public class CommandDrop extends UCommand implements HearModalEntityPick {
 
     @Override
     public void execute(UPlayer player) {
-        if (!player.contents().hasThings()) {
+        if (!player.getContents().hasThings()) {
             commander.printScroll(dropNothingMsg);
             return;
         }

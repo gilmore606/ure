@@ -1,6 +1,5 @@
 package ure.things;
 
-import ure.actions.Interactable;
 import ure.math.UColor;
 import ure.areas.UArea;
 import ure.actors.UActor;
@@ -10,16 +9,8 @@ import ure.ui.Icon;
 import java.util.Iterator;
 
 public interface UThing  {
-    boolean isActor();
-    boolean isPlayer();
     void initialize();
     void setDisplayFields(String thename, char theglyph, UColor thecolor, boolean addOutline);
-    String iname();
-    String dname();
-    String dnamec();
-    String plural();
-    char glyph();
-    Icon icon();
     String[] UIdetails(String context);
     int glyphOffsetX();
     int glyphOffsetY();
@@ -28,11 +19,9 @@ public interface UThing  {
     void moveToCell(int x, int y);
     void moveToCell(UArea area, int x, int y);
     void moveTo(UContainer container);
-    UContainer location();
     void leaveCurrentLocation();
     void addThing(UThing thing);
     void removeThing(UThing thing);
-    UCollection contents();
     Iterator<UThing> iterator();
     boolean willAcceptThing(UThing thing);
     int areaX();
@@ -47,5 +36,13 @@ public interface UThing  {
     String walkMsg(UActor actor);
     void render(URenderer renderer, int x, int y, UColor light, float vis);
     void emote(String text);
-    String name();
+    String getName();
+    String getIname();
+    String getDname();
+    String getDnamec();
+    String getPlural();
+    Icon getIcon();
+    UContainer getLocation();
+    char getGlyph();
+    UCollection getContents();
 }

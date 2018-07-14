@@ -2,7 +2,6 @@ package ure.math;
 
 import ure.areas.UArea;
 import ure.actors.UActor;
-import ure.areas.UCell;
 import ure.things.UThing;
 
 import java.util.Comparator;
@@ -18,18 +17,15 @@ import java.util.TreeSet;
  */
 public class UPath {
 
-    Random random;
+    private static Random random = new Random();
 
-    public UPath() {
-        random = new Random();
-    }
-
-    class Nodelist extends TreeSet<Node> {
+    static class Nodelist extends TreeSet<Node> {
         public Nodelist() {
             super(new Node(0,0));
         }
     }
-    class Node implements Comparator<Node> {
+
+    static class Node implements Comparator<Node> {
         int x, y;
         Node parent;
         double g, h, f;
@@ -60,7 +56,7 @@ public class UPath {
         }
     }
 
-    public Node NodeIfOpen(UArea area, int x, int y, Node parent, UActor actor) {
+    public static Node NodeIfOpen(UArea area, int x, int y, Node parent, UActor actor) {
         if (x < 0 || y < 0 || x >= area.xsize || y >= area.ysize)
             return null;
         if (area.willAcceptThing((UThing)actor, x, y))
@@ -117,7 +113,7 @@ public class UPath {
      * @return (x,y) walk delta of next step
      *
      */
-    public int[] nextStep(UArea area, int x1, int y1, int x2, int y2, UActor actor, int range) {
+    public static int[] nextStep(UArea area, int x1, int y1, int x2, int y2, UActor actor, int range) {
         if (mdist(x1,y1,x2,y2) > range)
             return null;
         Nodelist openlist = new Nodelist();
