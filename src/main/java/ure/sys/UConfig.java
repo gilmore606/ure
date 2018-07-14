@@ -30,10 +30,10 @@ public class UConfig {
 
     private int FPStarget = 60;                                 // render at this FPS
     private int animFrameMilliseconds = 33;                     // milliseconds between animation frames
-
+    private int screenWidth = 1400;                             // window width in pixels
+    private int screenHeight = 1000;                            // window height in pixels
     private String glyphFont = "Deferral-Square.ttf";               // irrelevant for non-ascii renderer
     private String textFont = "Px437_Phoenix_BIOS-2y.ttf";
-
     private int glyphWidth = 16;
     private int glyphHeight = 17;
 
@@ -137,6 +137,11 @@ public class UConfig {
         area.sunColorLerpMarkers = sunColorLerpMarkers;
         area.sunCycleMessages = sunCycleMessages;
     }
+
+    public int getScreenWidth() { return screenWidth; }
+    public int getScreenHeight() { return screenHeight; }
+    public void setScreenWidth(int screenWidth) { this.screenWidth = screenWidth; }
+    public void setScreenHeight(int screenHeight) { this.screenHeight = screenHeight; }
 
     public int getMoveAnimPlayerFrames() {
         return moveAnimPlayerFrames;

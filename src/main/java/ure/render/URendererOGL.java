@@ -31,9 +31,8 @@ public class URendererOGL implements URenderer {
 
     private long window;
 
-    // TODO: These should be customizable at a higher level
-    private int screenWidth = 1400;
-    private int screenHeight = 1000;
+    private int screenWidth;
+    private int screenHeight;
 
     private GLFWErrorCallback errorCallback;
 
@@ -96,6 +95,9 @@ public class URendererOGL implements URenderer {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 0);
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+
+        screenWidth = commander.config.getScreenWidth();
+        screenHeight = commander.config.getScreenHeight();
 
         window = glfwCreateWindow(screenWidth, screenHeight, "UREasonable example!", NULL, NULL);
         if ( window == NULL )
