@@ -25,6 +25,8 @@ public class UModal extends View {
     String callbackContext;
     public int cellw = 0;
     public int cellh = 0;
+    public int xpos = 0;
+    public int ypos = 0;
     public UColor bgColor;
     HashMap<String,TextFrag> texts;
 
@@ -50,6 +52,17 @@ public class UModal extends View {
         callbackContext = _callbackContext;
     }
 
+    public void setBgColor(UColor color) {
+        bgColor = color;
+    }
+
+    public void setDimensions(int x, int y) {
+        cellw = x;
+        cellh = y;
+        xpos = 100;
+        ypos = 100;
+    }
+
     @Override
     public void draw(URenderer renderer) {
         if (cellw > 0 && cellh > 0) {
@@ -70,8 +83,28 @@ public class UModal extends View {
     }
 
     public void drawFrame(URenderer renderer) {
-
+        renderer.drawRect(xpos - commander.config.getGlyphWidth(), ypos - commander.config.getGlyphHeight(),  relx(cellw+2) - xpos,rely(cellh+2) - ypos, bgColor);
+        String frames = commander.config.getUiFrameGlyphs();
+        UColor color = commander.config.getModalFrameColor();
+        renderer.drawGlyph(frames.charAt(0), relx(-1), rely(-1), color, 0, 0);
+        renderer.drawGlyph(frames.charAt(2), relx(cellw), rely(-1), color, 0, 0);
+        renderer.drawGlyph(frames.charAt(4), relx(cellw), rely(cellh), color, 0, 0);
+        renderer.drawGlyph(frames.charAt(6), relx(-1), rely(cellh), color, 0, 0);
+        for (int x=0;x<cellw;x++) {
+            renderer.drawGlyph(frames.charAt(1), relx(x), rely(-1), color, 0, 0);
+            renderer.drawGlyph(frames.charAt(5), relx(x), rely(cellh), color, 0, 0);
+        }
+        for (int y=0;y<cellh;y++) {
+            renderer.drawGlyph(frames.charAt(3), relx(-1), rely(y), color, 0, 0);
+            renderer.drawGlyph(frames.charAt(7), relx(cellw), rely(y), color, 0, 0);
+        }
     }
+
+    /**
+     * Convert a modal-relative cell position to an absolute screen position.
+     */
+    public int relx(int x)  { return (x * commander.config.getGlyphWidth()) + xpos; }
+    public int rely(int y)  { return (y * commander.config.getGlyphHeight()) + ypos; }
 
     public void hearCommand(UCommand command, Character c) {
         dismiss();

@@ -37,7 +37,7 @@ public class UConfig {
     private int glyphWidth = 16;
     private int glyphHeight = 17;
 
-    private String uiFrameGlyphs = "+=+|+=|";                               // corners and sides for UI box frames
+    private String uiFrameGlyphs = "+-+|+-+|";                               // corners and sides for UI box frames
     private int modalShadowStyle = UConfig.SHADOW_GRADIENT;     // drop shadow style for modal popups
     private int modalPosition = UConfig.POS_CAMERA_CENTER;      // position of modal popups
 

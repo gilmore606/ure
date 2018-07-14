@@ -9,7 +9,7 @@ public class CommandInventory extends UCommand {
 
     @Override
     public void execute(UPlayer player) {
-        UModalNotify modal = new UModalNotify("No inventory implemented yet.");
+        UModalNotify modal = new UModalNotify("No inventory implemented yet.", null);
         commander.showModal(modal);
     }
 }
