@@ -324,7 +324,7 @@ public class UCommander implements URenderer.KeyListener {
     }
 
     public int daytimeMinutes() {
-        return (int)(((float)(turnCounter % config.getTurnsPerDay()) / (float)config.getTurnsPerDay()) * 1440f);
+        return (int)(((float)((turnCounter + config.getDayTimeStartOffset()) % config.getTurnsPerDay()) / (float)config.getTurnsPerDay()) * 1440f);
     }
     public int daytimeMM() {
         return (daytimeMinutes() % 60);

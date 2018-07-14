@@ -82,7 +82,7 @@ public class UConfig {
     private boolean interactStairs = true;          // interact command can trigger stairs?
 
     private int turnsPerDay = 512;                  // game turns per 24 hour day
-
+    private int dayTimeStartOffset = 100;           // game turns to add at game start to get the 'starting daytime'
 
 
     public UConfig() {
@@ -145,6 +145,14 @@ public class UConfig {
     public void setMoveAnimPlayerFrames(int moveAnimPlayerFrames) {
         this.moveAnimPlayerFrames = moveAnimPlayerFrames;
     }
+    public int getDayTimeStartOffset() {
+        return dayTimeStartOffset;
+    }
+
+    public void setDayTimeStartOffset(int dayTimeStartOffset) {
+        this.dayTimeStartOffset = dayTimeStartOffset;
+    }
+
     public int getFPStarget() {
         return FPStarget;
     }
