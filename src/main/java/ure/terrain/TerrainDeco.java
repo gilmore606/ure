@@ -78,6 +78,8 @@ public class TerrainDeco implements UTerrain, Interactable, Entity {
         return terrain.glyph();
     }
     public Icon icon() { return terrain.icon(); }
+    public String[] UIdetails() { return terrain.UIdetails(); }
+
     /**
      * Our glyph at these area coordinates.  This can take PRNG variations, etc into account.
      */

@@ -3,6 +3,7 @@ package ure.commands;
 import ure.actors.UPlayer;
 import ure.sys.Entity;
 import ure.things.UThing;
+import ure.ui.modals.HearModalEntityPick;
 import ure.ui.modals.UModal;
 import ure.ui.modals.UModalEntityPick;
 import ure.ui.modals.UModalNotify;
@@ -10,7 +11,7 @@ import ure.ui.modals.UModalNotify;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class CommandInventory extends UCommand {
+public class CommandInventory extends UCommand implements HearModalEntityPick {
 
     public CommandInventory() {
         super();
@@ -28,7 +29,11 @@ public class CommandInventory extends UCommand {
         if (inventory.isEmpty())
             modal = new UModalNotify("You aren't carrying anything.", null, 1, 3);
         else
-             modal = new UModalEntityPick("You are carrying:", null, 2, 2, inventory, null, null);
+             modal = new UModalEntityPick("You are carrying:", null, 2, 2, inventory, true, (HearModalEntityPick)this, "inventory");
         commander.showModal(modal);
+    }
+
+    public void hearModalEntityPick(String callbackContext, Entity selection) {
+
     }
 }

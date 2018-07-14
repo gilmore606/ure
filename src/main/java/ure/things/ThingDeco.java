@@ -30,6 +30,7 @@ public class ThingDeco implements UThing, Interactable {
     public String walkMsg(UActor actor) { return thing.walkMsg(actor); }
     public char glyph() { return thing.glyph(); }
     public Icon icon() { return thing.icon(); }
+    public String[] UIdetails() { return thing.UIdetails(); }
     public int glyphOffsetX() { return thing.glyphOffsetX(); }
     public int glyphOffsetY() { return thing.glyphOffsetY(); }
     public UColor getGlyphColor() { return thing.getGlyphColor(); }

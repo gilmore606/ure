@@ -118,6 +118,13 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
 
     public Icon icon() { return icon; }
 
+    public String[] UIdetails() {
+        return new String[]{
+                "Weight " + Integer.toString(weight),
+                "Value " + Integer.toString(value)
+        };
+    }
+
     public boolean drawGlyphOutline() {
         if (glyphOutline)
             return true;

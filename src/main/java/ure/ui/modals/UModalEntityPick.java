@@ -13,10 +13,12 @@ public class UModalEntityPick extends UModal {
     UColor bgColor;
     int xpad, ypad;
     ArrayList<Entity> entities;
+    boolean showDetail;
     int textWidth = 0;
     int selection = 0;
 
-    public UModalEntityPick(String _header, UColor _bgColor, int _xpad, int _ypad, ArrayList<Entity> _entities, HearModalEntityPick _callback, String _callbackContext) {
+    public UModalEntityPick(String _header, UColor _bgColor, int _xpad, int _ypad, ArrayList<Entity> _entities,
+                            boolean _showDetail, HearModalEntityPick _callback, String _callbackContext) {
         super(_callback, _callbackContext);
         header = _header;
         bgColor = _bgColor;
@@ -24,12 +26,15 @@ public class UModalEntityPick extends UModal {
         xpad = _xpad;
         ypad = _ypad;
         entities = _entities;
+        showDetail =  _showDetail;
         int width = 0;
         for (Entity entity : entities) {
             if (entity.name().length() > width)
                 width = entity.name().length();
         }
         textWidth = width;
+        if (showDetail)
+            width += 6;
         setDimensions(width + 2 + xpad, entities.size() + 2 + ypad);
         if (bgColor == null)
             bgColor = commander.config.getModalBgColor();
@@ -46,6 +51,15 @@ public class UModalEntityPick extends UModal {
             drawIcon(renderer, entity.icon(), 1, y + 2);
             drawString(renderer, entity.name(), 3, y + 2);
             y++;
+        }
+        if (showDetail) {
+            drawString(renderer, entities.get(selection).name(), 4+textWidth, 2);
+            String[] details = entities.get(selection).UIdetails();
+            int linepos = 4;
+            for (String line : details) {
+                drawString(renderer, line, 4+textWidth, linepos);
+                linepos++;
+            }
         }
     }
 

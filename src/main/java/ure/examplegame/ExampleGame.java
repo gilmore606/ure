@@ -13,6 +13,7 @@ import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.sys.UTimeListener;
 import ure.terrain.UTerrainCzar;
+import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.*;
 
@@ -108,6 +109,11 @@ public class ExampleGame implements UTimeListener {
         player.moveToCell(area, startcell.x, startcell.y);
         player.attachCamera(camera, UCamera.PINSTYLE_SOFT);
         player.startActing();
+        UThing item = thingCzar.getThingByName("rock"); item.moveTo(player);
+        item = thingCzar.getThingByName("trucker hat"); item.moveTo(player);
+        item = thingCzar.getThingByName("torch"); item.moveTo(player);
+        item = thingCzar.getThingByName("apple"); item.moveTo(player);
+        item = thingCzar.getThingByName("apple"); item.moveTo(player);
 
         // commander.speaker.switchBGM("/ultima_wanderer.ogg", 0);
 
