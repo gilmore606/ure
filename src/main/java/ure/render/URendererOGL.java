@@ -107,6 +107,7 @@ public class URendererOGL implements URenderer {
             @Override
             public void invoke(long window, int key,
                                int scancode, int action, int mods) {
+                if(key < 0 || key >= keyState.length) return; // Bail, oob key press.
                 keyState[key] = action != GLFW_RELEASE;
 
                 if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
