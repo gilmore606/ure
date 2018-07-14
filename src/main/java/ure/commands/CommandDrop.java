@@ -4,7 +4,10 @@ import ure.actors.UPlayer;
 
 public class CommandDrop extends UCommand {
 
-    public static String id = "DROP";
+    public CommandDrop() {
+        super();
+        id = "DROP";
+    }
 
     @Override
     public void execute(UPlayer player) {

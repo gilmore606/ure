@@ -182,6 +182,7 @@ public class UCommander implements URenderer.KeyListener {
     void hearCommand(UCommand command, Character c) {
         System.out.println("actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
         if (modal != null) {
+            System.out.println("sent " + command.id + " to modal");
             modal.hearCommand(command, c);
         } else {
             command.execute((UPlayer)player);

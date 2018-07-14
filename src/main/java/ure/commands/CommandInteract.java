@@ -13,11 +13,14 @@ import java.util.ArrayList;
 
 public class CommandInteract extends UCommand implements HearModalDirection {
 
-    public static String id = "INTERACT";
-
     public static String noTargetMsg = "There's nothing around to interact with.";
     public static String noTargetAtDirectionMsg = "There's nothing there to interact with.";
     public static String askDirectionMsg = "Interact which direction?  (space for here)";
+
+    public CommandInteract() {
+        super();
+        id = "INTERACT";
+    }
 
     @Override
     public void execute(UPlayer player) {

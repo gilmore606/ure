@@ -5,7 +5,10 @@ import ure.ui.modals.UModalNotify;
 
 public class CommandInventory extends UCommand {
 
-    public static String id = "INVENTORY";
+    public CommandInventory() {
+        super();
+        id = "INVENTORY";
+    }
 
     @Override
     public void execute(UPlayer player) {

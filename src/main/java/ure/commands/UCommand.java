@@ -13,12 +13,12 @@ import javax.inject.Inject;
  * executed.
  *
  */
-public abstract class UCommand {
+public class UCommand {
 
     @Inject
     UCommander commander;
 
-    public static String id = "";
+    public String id;
 
     /**
      * Your subclass should super() down to this constructor if you override.

@@ -5,9 +5,10 @@ import ure.terrain.Stairs;
 import ure.terrain.UTerrain;
 
 public class CommandTravel extends UCommand {
-
-    public static String id = "TRAVEL";
-
+    public CommandTravel() {
+        super();
+        id = "TRAVEL";
+    }
     @Override
     public void execute(UPlayer player) {
         UTerrain t = player.area().terrainAt(player.areaX(), player.areaY());

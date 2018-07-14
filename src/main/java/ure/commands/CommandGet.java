@@ -5,8 +5,10 @@ import ure.actors.UPlayer;
 
 public class CommandGet extends UCommand {
 
-    public static String id = "GET";
-
+    public CommandGet() {
+        super();
+        id = "GET";
+    }
     @Override
     public void execute(UPlayer player) {
         player.doAction(new ActionGet(player));
