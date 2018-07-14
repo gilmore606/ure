@@ -49,10 +49,14 @@ public class UModal extends View implements UAnimator {
         }
     }
 
-    public UModal(HearModal _callback, String _callbackContext) {
+    public UModal(HearModal _callback, String _callbackContext, UColor _bgColor) {
         Injector.getAppComponent().inject(this);
         callback = _callback;
         callbackContext = _callbackContext;
+        if (_bgColor == null)
+            bgColor = commander.config.getModalBgColor();
+        else
+            bgColor = _bgColor;
     }
 
     public int gw() { return commander.config.getGlyphWidth(); }

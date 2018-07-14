@@ -66,6 +66,7 @@ public class UCommander implements URenderer.KeyListener {
     private int moveLatchY = 0;
 
     private UModal modal;
+    private boolean quitGame = false;
 
     public UCommander() {
         Injector.getAppComponent().inject(this);
@@ -151,6 +152,7 @@ public class UCommander implements URenderer.KeyListener {
         keyBindings.put('S', new CommandLatchS());
         keyBindings.put('A', new CommandLatchW());
         keyBindings.put('D', new CommandLatchE());
+        keyBindings.put('Q', new CommandQuit());
         keyBindings.put(' ', new CommandPass());
         keyBindings.put('e', new CommandInteract());
         keyBindings.put('i', new CommandInventory());
@@ -277,7 +279,7 @@ public class UCommander implements URenderer.KeyListener {
     public void gameLoop() {
         long tickRate = 1000000000 / config.getFPStarget();
         long gameTime = System.nanoTime();
-        while (!renderer.windowShouldClose()) {
+        while (!renderer.windowShouldClose() && !quitGame) {
             frameCounter++;
             renderer.pollEvents();
 
@@ -323,6 +325,10 @@ public class UCommander implements URenderer.KeyListener {
                 }
             }
         }
+    }
+
+    public void quitGame() {
+        quitGame = true;
     }
 
     public void tickTime() {

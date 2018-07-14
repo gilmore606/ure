@@ -19,10 +19,8 @@ public class UModalEntityPick extends UModal {
 
     public UModalEntityPick(String _header, UColor _bgColor, int _xpad, int _ypad, ArrayList<Entity> _entities,
                             boolean _showDetail, HearModalEntityPick _callback, String _callbackContext) {
-        super(_callback, _callbackContext);
+        super(_callback, _callbackContext, _bgColor);
         header = _header;
-        bgColor = _bgColor;
-        if (bgColor == null) bgColor = commander.config.getModalBgColor();
         xpad = _xpad;
         ypad = _ypad;
         entities = _entities;

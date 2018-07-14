@@ -20,7 +20,7 @@ public class UModalDirection extends UModal {
     UColor glyphColor;
 
     public UModalDirection(String _prompt, boolean _acceptNull, int cellx, int celly, HearModalDirection _callback, String _callbackContext) {
-        super(_callback, _callbackContext);
+        super(_callback, _callbackContext, null);
         prompt = _prompt;
         acceptNull = _acceptNull;
         this.cellx = cellx;
