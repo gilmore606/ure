@@ -426,13 +426,6 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
                 }
             }
         }
-        if (modal != null) {
-            if (col >= modal.cellx+1 && col <= modal.cellx+modal.width-1) {
-                if (row >= modal.celly + 1 && row <= modal.celly + modal.height-1) {
-                    total = new UColor(total.fR() * 0.6f, total.fG() * 0.6f, total.fB() * 0.6f);
-                }
-            }
-        }
         return total;
     }
 

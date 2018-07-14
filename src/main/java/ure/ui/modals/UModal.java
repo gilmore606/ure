@@ -23,10 +23,8 @@ public class UModal extends View {
 
     HearModal callback;
     String callbackContext;
-    URenderer renderer;
-    UCamera camera;
-    public int width, height;
-    public int cellx,celly;
+    public int cellw = 0;
+    public int cellh = 0;
     public UColor bgColor;
     HashMap<String,TextFrag> texts;
 
@@ -54,10 +52,13 @@ public class UModal extends View {
 
     @Override
     public void draw(URenderer renderer) {
-        //
+        if (cellw > 0 && cellh > 0) {
+            drawFrame(renderer);
+        }
+        drawContent(renderer);
     }
 
-    void DrawContent() {
+    public void drawContent(URenderer renderer) {
         commander.printScroll("Hit any key to continue...");
         //for (String textName : texts.keySet()) {
             //TextFrag frag = texts.get(textName);
@@ -66,6 +67,10 @@ public class UModal extends View {
             //g.setColor(frag.color);
             //g.drawString(frag.text, frag.row * renderer.cellWidth(), ((frag.col + 1) * renderer.cellHeight()) + 0);
         //}
+    }
+
+    public void drawFrame(URenderer renderer) {
+
     }
 
     public void hearCommand(UCommand command, Character c) {

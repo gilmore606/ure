@@ -146,6 +146,7 @@ public class UCommander implements URenderer.KeyListener {
         keyBindings.put('D', new CommandLatchE());
         keyBindings.put(' ', new CommandPass());
         keyBindings.put('e', new CommandInteract());
+        keyBindings.put('i', new CommandInventory());
         keyBindings.put('g', new CommandGet());
         keyBindings.put('.', new CommandTravel());
     }

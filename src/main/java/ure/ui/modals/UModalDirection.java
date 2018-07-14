@@ -31,7 +31,7 @@ public class UModalDirection extends UModal {
     }
 
     @Override
-    public void draw(URenderer renderer) {
+    public void drawContent(URenderer renderer) {
         commander.printScroll(prompt);
     }
 }
