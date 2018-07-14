@@ -51,6 +51,10 @@ public class UConfig {
     private boolean outlineActors = true;                           // draw a black outline around Actor glyphs?
     private boolean outlineThings = false;                          // draw a black outline around Thing glyphs?
 
+    private int moveAnimFrames = 8;                     // how many frames to animate actor movement?
+    private float actorBounceSpeed = 1f;                // how fast to make actors animate-bounce?
+    private float actorBounceAmount = 1f;               // how much to make actors animate-bounce?
+
     private boolean visibilityEnable = true;            // if false, assume everything is visible (no occlusion)
     private boolean lightEnable = true;                 // if false, assume all areas lit 100%
     private boolean lightBloom = true;                  // TODO: lights adding to >fullbright bloom to white
@@ -276,6 +280,18 @@ public class UConfig {
     public void setVisibilityEnable(boolean visibilityEnable) {
         this.visibilityEnable = visibilityEnable;
     }
+
+    public int getMoveAnimFrames() { return moveAnimFrames; }
+
+    public void setMoveAnimFrames(int moveAnimFrames) { this.moveAnimFrames = moveAnimFrames; }
+
+    public float getActorBounceSpeed() { return actorBounceSpeed; }
+
+    public void setActorBounceSpeed(float actorBounceSpeed) { this.actorBounceSpeed = actorBounceSpeed; }
+
+    public float getActorBounceAmount() { return actorBounceAmount; }
+
+    public void setActorBounceAmount(float actorBounceAmount) { this.actorBounceAmount = actorBounceAmount; }
 
     public boolean isLightEnable() {
         return lightEnable;

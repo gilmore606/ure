@@ -31,6 +31,11 @@ public class UActor extends ThingI {
     int cameraPinStyle;
     UPath path;
 
+    int moveAnimX = 0;
+    int moveAnimY = 0;
+    int moveAnimDX = 0;
+    int moveAnimDY = 0;
+
     float actionTime = 0f;
 
     public static boolean isActor = true;
