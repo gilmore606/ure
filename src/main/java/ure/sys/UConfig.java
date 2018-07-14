@@ -52,6 +52,7 @@ public class UConfig {
     private boolean outlineThings = false;                          // draw a black outline around Thing glyphs?
 
     private int moveAnimFrames = 8;                     // how many frames to animate actor movement?
+    private int moveAnimPlayerFrames = 0;               // how many frames to animate player movement?
     private float actorBounceSpeed = 1f;                // how fast to make actors animate-bounce?
     private float actorBounceAmount = 1f;               // how much to make actors animate-bounce?
 
@@ -137,6 +138,13 @@ public class UConfig {
         area.sunCycleMessages = sunCycleMessages;
     }
 
+    public int getMoveAnimPlayerFrames() {
+        return moveAnimPlayerFrames;
+    }
+
+    public void setMoveAnimPlayerFrames(int moveAnimPlayerFrames) {
+        this.moveAnimPlayerFrames = moveAnimPlayerFrames;
+    }
     public int getFPStarget() {
         return FPStarget;
     }

@@ -100,7 +100,50 @@ public class UActor extends ThingI {
     }
 
     @Override
+    public int glyphOffsetX() {
+        if (moveAnimX != 0)
+            return moveAnimX;
+        if (commander.config.getActorBounceAmount() > 0f)
+            return bounceAnimX();
+        return 0;
+    }
+    @Override
+    public int glyphOffsetY() {
+        if (moveAnimY != 0)
+            return moveAnimY;
+        if (commander.config.getActorBounceAmount() > 0f)
+            return bounceAnimY();
+        return 0;
+    }
+
+    int bounceAnimX() {
+        return 0;
+    }
+    int bounceAnimY() {
+        return 0;
+    }
+
+    public void animationTick() {
+        if (moveAnimDX != 0 || moveAnimDY != 0) {
+            moveAnimX += moveAnimDX;
+            moveAnimY += moveAnimDY;
+            if (moveAnimDX < 0 && moveAnimX < 0) moveAnimX = 0;
+            if (moveAnimDX > 0 && moveAnimX > 0) moveAnimX = 0;
+            if (moveAnimDY < 0 && moveAnimY < 0) moveAnimY = 0;
+            if (moveAnimDY > 0 && moveAnimY > 0) moveAnimY = 0;
+        }
+    }
+
+    @Override
     public void moveToCell(UArea thearea, int destX, int destY) {
+        int oldx = -1;
+        int oldy = -1;
+        UArea oldarea = null;
+        if (location != null) {
+            oldx = areaX();
+            oldy = areaY();
+            oldarea = area();
+        }
         super.moveToCell(thearea, destX, destY);
         if (camera != null) {
             if (cameraPinStyle == UCamera.PINSTYLE_HARD)
@@ -117,7 +160,15 @@ public class UActor extends ThingI {
                 System.out.println("ERROR: Camera.PINSTYLE_SCREENS not implemented!");
             }
         }
-
+        int moveFrames = commander.config.getMoveAnimFrames();
+        if (isPlayer()) moveFrames = commander.config.getMoveAnimPlayerFrames();
+        if (oldx >=0 && oldarea == thearea && moveFrames > 0) {
+            int frames =
+            moveAnimX = (oldx-destX)*commander.config.getGlyphWidth();
+            moveAnimY = (oldy-destY)*commander.config.getGlyphHeight();
+            moveAnimDX = -(moveAnimX / moveFrames);
+            moveAnimDY = -(moveAnimY / moveFrames);
+        }
         thearea.cellAt(destX, destY).walkedOnBy(this);
     }
 

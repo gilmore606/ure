@@ -150,6 +150,9 @@ public class UCell implements UContainer {
     }
 
     public void animationTick() {
+        UActor actor = actorAt();
+        if (actor != null)
+            actor.animationTick();
         terrain.animationTick();
     }
 }

@@ -450,9 +450,9 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
 
         //if (modal != null)
         //    modal.renderImage();
+        rendering = true;
         renderLights();
 
-        rendering = true;
         int cellw = cellWidth();
         int cellh = cellHeight();
         int camw = getWidthInCells();
@@ -462,6 +462,13 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
         for (int col=0; col<camw; col++) {
             for (int row=0; row<camh; row++) {
                 drawCell(renderer, col, row, cellw, cellh);
+            }
+        }
+        // Render Actors in a second pass.
+        // They may animate and be off their cell; we want them to stay in front of terrain.
+        for (int col=0; col<camw; col++) {
+            for (int row=0; row<camh; row++) {
+                drawCellActor(renderer, col, row, cellw, cellh);
             }
         }
         rendering = false;
@@ -503,10 +510,16 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
                 things.next().render(renderer, col * cellw, row * cellh, light, vis);
             }
         }
-        UActor actor = actorAt(col,row);
-        if (actor != null) {
-            actor.render(renderer, col * cellw, row * cellh, light, vis);
-        }
+    }
+
+    private void drawCellActor(URenderer renderer, int col, int row, int cellw, int cellh) {
+        UActor actor = actorAt(col, row);
+        if (actor == null) return;
+        float vis = visibilityAt(col,row);
+        if (vis < commander.config.getVisibilityThreshold()) return;
+
+        UColor light = lightAt(col,row);
+        actor.render(renderer, col*cellw, row*cellh, light, vis);
     }
 
     public void animationTick() {
@@ -516,6 +529,7 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
                     area.cellAt(col,row).animationTick();
             }
         }
+        draw(renderer);
     }
 
     public void areaChanged() {

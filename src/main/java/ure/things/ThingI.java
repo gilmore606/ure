@@ -158,9 +158,15 @@ public abstract class ThingI implements UThing, UContainer, Interactable, Clonea
     public boolean willAcceptThing(UThing thing) {
         return false;
     }
+
     public int areaX() { return location.areaX(); }
     public int areaY() { return location.areaY(); }
-    public UArea area() { return location.area(); }
+
+    public UArea area() {
+        if (location != null)
+            return location.area();
+        return null;
+    }
 
     public UThing getClone() {
         try {
@@ -204,14 +210,15 @@ public abstract class ThingI implements UThing, UContainer, Interactable, Clonea
     //The camera class will call this, and tell where in screen coords to draw it.
     // TODO: Things should probably not be tied directly to the rendering system.  Ideally they would just be part of the data layer, not the presentation layer
     public void render(URenderer renderer, int x, int y, UColor light, float vis){
+        int xoff = glyphOffsetX();
+        int yoff = glyphOffsetY();
         char icon = this.glyph();
         UColor color = new UColor(this.getGlyphColor());
         if (this.drawGlyphOutline()) {
-            renderer.drawGlyphOutline(icon, x, y, UColor.COLOR_BLACK, 0, 0);
+            renderer.drawGlyphOutline(icon, x, y, UColor.COLOR_BLACK, xoff, yoff);
         }
         color.illuminateWith(light, vis);
-        //drawGlyph(charToGlyph(icon, font), image, x * cellw, y * cellh, color, 0, 0);
-        renderer.drawGlyph(icon, x, y, color, 0, 0);
+        renderer.drawGlyph(icon, x, y, color, xoff, yoff);
     }
 
     public void emote(String text) {
