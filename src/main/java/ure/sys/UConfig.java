@@ -20,7 +20,7 @@ public class UConfig {
     public static int SHADOW_NONE = 0;           // no dropshadow on modals
     public static int SHADOW_BLOCK = 1;          // 1-cell constant dropshadow on modals
     public static int SHADOW_GRADIENT = 2;       // 1-cell gradient dropshadow on modals
-    public static int SHADOW_FULLDIM = 3;        // dim entire camera (or window) behind modals
+    public static int SHADOW_FULLDIM = 3;        // dim entire camera (or window) behind modals (using shadowcolor)
 
     public static int POS_CAMERA_CENTER = 0;     // modals centered in camera pane
     public static int POS_WINDOW_CENTER = 1;     // modals centered in window
@@ -39,13 +39,14 @@ public class UConfig {
 
     private String uiFrameGlyphs = "+-+|+-+|";                               // corners and sides for UI box frames
     private int modalFrameLine = 2;                             // thickness of pixel line around modals
-    private int modalShadowStyle = UConfig.SHADOW_GRADIENT;     // drop shadow style for modal popups
+    private int modalShadowStyle = UConfig.SHADOW_BLOCK;        // drop shadow style for modal popups
     private int modalPosition = UConfig.POS_CAMERA_CENTER;      // position of modal popups
 
     private UColor windowBgColor = UColor.COLOR_BLACK;                          // bgColor of game window
     private UColor cameraBgColor = UColor.COLOR_BLACK;                          // bgColor of camera (for unseen territory)
     private UColor modalBgColor = UColor.COLOR_BLACK;                           // bgColor of modal popups
     private UColor modalFrameColor = new UColor(0.7f,0.7f,0.1f);     // glyph color for modal popup frame glyphs
+    private UColor modalShadowColor = new UColor(0f,0f,0f,0.5f);  // color (and alpha) of modal shadows
     private UColor textColor = UColor.COLOR_WHITE;                             // color for ui/scroll text
     private UColor hiliteColor = new UColor(1f,1f,0.2f);            // color for ui selection highlighting
 
@@ -265,6 +266,9 @@ public class UConfig {
     public void setModalFrameColor(UColor modalFrameColor) {
         this.modalFrameColor = modalFrameColor;
     }
+
+    public UColor getModalShadowColor() { return modalShadowColor; }
+    public void setModalShadowColor(UColor modalShadowColor) { this.modalShadowColor = modalShadowColor; }
 
     public UColor getTextColor() {
         return textColor;

@@ -364,7 +364,7 @@ public class URendererOGL implements URenderer {
             verts_col[ic++] = col.r;
             verts_col[ic++] = col.g;
             verts_col[ic++] = col.b;
-            verts_col[ic++] = 1.0f;
+            verts_col[ic++] = col.a;
         }
 
         //UVs, tri 0

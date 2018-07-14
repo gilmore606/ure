@@ -26,6 +26,7 @@ public class UColor {
     public UColor(float fr, float fg, float fb) {
         set(fr,fg,fb);
     }
+    public UColor(float fr, float fg, float fb, float fa) { set(fr,fg,fb,fa); }
     public UColor(UColor color) { set(color.fR(),color.fG(),color.fB()); }
 
     /**

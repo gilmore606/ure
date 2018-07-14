@@ -5,6 +5,7 @@ import ure.sys.UCommander;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.UConfig;
 import ure.ui.UCamera;
 import ure.ui.View;
 
@@ -83,6 +84,10 @@ public class UModal extends View {
     }
 
     public void drawFrame(URenderer renderer) {
+        if (commander.config.getModalShadowStyle() == UConfig.SHADOW_BLOCK) {
+            UColor shadowColor = commander.config.getModalShadowColor();
+            renderer.drawRect(xpos, ypos, relx(cellw+2)-xpos, rely(cellh+2)-ypos, shadowColor);
+        }
         UColor color = commander.config.getModalFrameColor();
         int border = commander.config.getModalFrameLine();
         if (border > 0)
