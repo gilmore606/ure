@@ -59,8 +59,8 @@ public class UModal extends View {
     public void setDimensions(int x, int y) {
         cellw = x;
         cellh = y;
-        xpos = 100;
-        ypos = 100;
+        xpos = (commander.config.getScreenWidth() - (cellw * commander.config.getGlyphWidth())) / 2;
+        ypos = (commander.config.getScreenHeight() - (cellh * commander.config.getGlyphHeight())) / 2;
     }
 
     @Override
