@@ -27,7 +27,7 @@ import java.util.Random;
 public class ULandscaper {
 
     @Inject
-    UCommander commander;
+    public UCommander commander;
     @Inject
     UActorCzar actorCzar;
     @Inject
@@ -824,5 +824,12 @@ public class ULandscaper {
             UCell dest = getRandomSpawn(area, thing, x1, x2, y1, y2);
             thing.moveToCell(area, dest.x, dest.y);
         }
+    }
+
+    public void linkRegionAt(UArea area, int x, int y, String exittype, URegion region, int destlevel, String backexittype) {
+        region.addLink(destlevel, backexittype, area.label);
+        commander.cartographer.addRegion(region);
+        area.setTerrain(x,y,exittype);
+        ((Stairs)area.terrainAt(x,y)).setLabel(region.id + " " + Integer.toString(destlevel));
     }
 }

@@ -24,7 +24,7 @@ public class URegion {
 
     String id;
     String name;
-    Class<ULandscaper>[] landscapers;
+    ULandscaper[] landscapers;
     String[] tags;
     int xsize, ysize;
     int maxlevel;
@@ -46,7 +46,7 @@ public class URegion {
         }
     }
 
-    public URegion(String _id, String _name, Class<ULandscaper>[] _landscapers, String[] _tags, int _xsize, int _ysize,
+    public URegion(String _id, String _name, ULandscaper[] _landscapers, String[] _tags, int _xsize, int _ysize,
                    int _maxlevel, String _inwardExitType, String _outwardExitType) {
         id = _id;
         name = _name;
@@ -66,10 +66,11 @@ public class URegion {
         links.add(new Link(_onlevel, _exitType, _label));
     }
 
-    public UArea makeArea(int level) {
+    public UArea makeArea(int level, String label) {
         System.out.println("REGION " + id + " : making area " + Integer.toString(level));
         ULandscaper scaper = getLandscaperForLevel(level);
         UArea area = new UArea(xsize, ysize, terrainCzar, scaper.floorterrain);
+        area.label = label;
         scaper.buildArea(area);
 
         HashMap<String,String> stairs = new HashMap<>();
@@ -88,13 +89,7 @@ public class URegion {
     }
 
     public ULandscaper getLandscaperForLevel(int level) {
-        Class<ULandscaper> scaperclass = landscapers[random.nextInt(landscapers.length)];
-        ULandscaper scaper = null;
-        try {
-            scaper = scaperclass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ULandscaper scaper = landscapers[random.nextInt(landscapers.length)];
         return scaper;
     }
 

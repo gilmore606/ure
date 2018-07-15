@@ -97,7 +97,7 @@ public class ExampleGame implements UTimeListener {
         cartographer = new ExampleCartographer();
         commander.registerComponents(player, renderer, thingCzar, actorCzar, cartographer);
 
-        area = cartographer.getArea("cavern-1 1");
+        area = cartographer.getArea("forest 1");
         //area = cartographer.getTitleArea();
         makeWindow();
 

@@ -119,7 +119,7 @@ public class UCartographer {
      public UArea makeArea(String label, String labelname, int labeldata) {
          System.out.println("CARTO: make area for " + labelname + " (" + Integer.toString(labeldata) + ")");
          if (regions.containsKey(labelname))
-             return regions.get(labelname).makeArea(labeldata);
+             return regions.get(labelname).makeArea(labeldata, label);
          return null;
     }
 

@@ -1,9 +1,6 @@
 package ure.examplegame;
 
-import ure.areas.UArea;
-import ure.areas.UCartographer;
-import ure.areas.UCell;
-import ure.areas.ULandscaper;
+import ure.areas.*;
 import ure.terrain.Stairs;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
@@ -45,7 +42,13 @@ public class ExampleForestScaper extends ULandscaper {
                 System.out.println("digging cave entrance");
                 UCell doorcell = findAnextToB(area, "rock", "grass", x1, y1, x1 + w, y1 + h);
                 if (doorcell != null) {
-                    area.setTerrain(doorcell.x, doorcell.y, "cave entrance");
+                    String[] names = new String[]{"Caverns of pain", "Terror cave", "Mystery cave", "Caverns of Night", "Horror cave"};
+                    String name = names[rand(names.length)];
+                    String id = "cavern-" + Integer.toString(doorcell.x*1000+doorcell.y);
+                    URegion region = new URegion(id, name,
+                            new ULandscaper[]{new ExampleCaveScaper()}, new String[]{"cave"}, 50, 50,
+                            rand(5)+3, "cave entrance", "cave exit");
+                    linkRegionAt(area, doorcell.x, doorcell.y, "cave entrance", region, 1, "cave exit");
                 }
             }
             scatterActorsByTags(area, x1-3, y1-3,x1+w+3, y1+h+3, new String[]{"rock"}, 1, 1+rand(4));
@@ -80,9 +83,5 @@ public class ExampleForestScaper extends ULandscaper {
             }
         }
     }
-    @Override
-    public void SetStairsLabel(UArea area, UCartographer carto, int x, int y, Stairs t) {
 
-        t.setLabel("cavern 1," + Integer.toString(x) + "," + Integer.toString(y), carto);
-    }
 }
