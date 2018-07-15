@@ -1,5 +1,6 @@
 package ure.things;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UActor;
 
 import java.util.ArrayList;
@@ -12,9 +13,11 @@ import java.util.Iterator;
 
 public class UCollection {
 
-    private UContainer container;
-    public ArrayList<UThing> things;
-    ArrayList<UActor> actors;
+    @JsonIgnore
+    private UContainer container; // TODO: Reconnect this after deserialization
+
+    protected ArrayList<UThing> things;
+    protected ArrayList<UActor> actors;
 
     public UCollection(UContainer cont) {
         container = cont;
@@ -56,5 +59,13 @@ public class UCollection {
         if (actors.isEmpty())
             return null;
         return actors.get(0);
+    }
+
+    public ArrayList<UThing> getThings() {
+        return things;
+    }
+
+    public ArrayList<UActor> getActors() {
+        return actors;
     }
 }

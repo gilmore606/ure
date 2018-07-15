@@ -65,7 +65,7 @@ public class ULightcell {
     public float cloud() {
         int cx = x + camera.commander.frameCounter / 40;
         int cy = y;
-        return camera.cloudPatternAt(cx,cy) * camera.area.clouds;
+        return camera.cloudPatternAt(cx,cy) * camera.area.getClouds();
     }
     public float cloudPattern() {
         return cloudPattern;
@@ -74,10 +74,10 @@ public class ULightcell {
     public UColor light() { return light(0); }
     public UColor light(int time) {
         lightBuffer.set(0f,0f,0f);
-        lightBuffer.addLights(camera.area.sunColor, getRenderedSun());
+        lightBuffer.addLights(camera.area.getSunColor(), getRenderedSun());
         for (ULight source : sources.keySet()) {
             float intensity = sources.get(source) * source.intensityAtTime(time);
-            lightBuffer.addLights(source.color, intensity);
+            lightBuffer.addLights(source.getColor(), intensity);
         }
         return lightBuffer;
     }

@@ -271,7 +271,7 @@ public class UCommander implements URenderer.KeyListener {
     }
 
     public void playerChangedArea(UArea sourcearea, UArea destarea) {
-        statusPanel.setText("location", cartographer.describeLabel(destarea.label));
+        statusPanel.setText("location", cartographer.describeLabel(destarea.getLabel()));
     }
     /**
      * The gameLoop() runs forever (until the player exits the game).  It should be the last thing you call from

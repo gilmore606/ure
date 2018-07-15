@@ -439,8 +439,8 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
                 for (int j = -1;j < 2;j++) {
                     UTerrain t = area.terrainAt(col + leftEdge + i, row + topEdge + j);
                     if (t != null)
-                        if (t.glow())
-                            total.addLights(t.bgColor(), 0.5f);
+                        if (t.isGlow())
+                            total.addLights(t.getBgColor(), 0.5f);
                 }
             }
         }
@@ -498,17 +498,18 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
             }
             UColor terrainLight = light;
             // TODO: clean up access to terrain obj here, wtf methodcalls
-            if (t.glow())
+            if (t.isGlow())
                 terrainLight.set(1f,1f,1f);
-            t.bgColorBuffer().set(t.bgColor().r, t.bgColor().g, t.bgColor().b);
-            t.bgColorBuffer().illuminateWith(terrainLight, tOpacity);
-            t.bgColorBuffer().desaturateBy(1f - tSaturation);
-            renderer.drawRect(col * cellw, row * cellh, cellw, cellh, t.bgColorBuffer());
+            // TODO: Use alpha here too?
+            t.getBgColorBuffer().set(t.getBgColor().r, t.getBgColor().g, t.getBgColor().b);
+            t.getBgColorBuffer().illuminateWith(terrainLight, tOpacity);
+            t.getBgColorBuffer().desaturateBy(1f - tSaturation);
+            renderer.drawRect(col * cellw, row * cellh, cellw, cellh, t.getBgColorBuffer());
 
-            t.fgColorBuffer().set(t.fgColor().r, t.fgColor().g, t.fgColor().b);
-            t.fgColorBuffer().illuminateWith(terrainLight, tOpacity);
-            t.fgColorBuffer().desaturateBy(1f - tSaturation);
-            renderer.drawGlyph(t.glyph(col+ leftEdge,row+ topEdge), col * cellw, row * cellh, t.fgColorBuffer(), t.glyphOffsetX(), t.glyphOffsetY() + 2);
+            t.getFgColorBuffer().set(t.getFgColor().r, t.getFgColor().g, t.getFgColor().b);
+            t.getFgColorBuffer().illuminateWith(terrainLight, tOpacity);
+            t.getFgColorBuffer().desaturateBy(1f - tSaturation);
+            renderer.drawGlyph(t.glyph(col+ leftEdge,row+ topEdge), col * cellw, row * cellh, t.getFgColorBuffer(), t.glyphOffsetX(), t.glyphOffsetY() + 2);
         } else {
             renderer.drawRect(col * cellw, row * cellh, cellw, cellh, commander.config.getCameraBgColor());
         }

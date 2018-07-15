@@ -251,7 +251,7 @@ public class ULandscaper {
     boolean cellHasTerrain(UArea area, UCell cell, String[] terrains) {
         if (cell == null) return false;
         for (int i=0;i<terrains.length;i++) {
-            if (terrains[i].equals(cell.terrain.getName())) {
+            if (terrains[i].equals(cell.getTerrain().getName())) {
                 return true;
             }
         }
@@ -340,7 +340,7 @@ public class ULandscaper {
             cell = area.cellAt(x1+random.nextInt(x2-x1),y1+random.nextInt(y2-y1));
             if (cell != null) {
                 match = cell.willAcceptThing(thing);
-                if (match && !cell.terrain().isSpawnOK())
+                if (match && !cell.terrain().isSpawnok())
                     match = false;
                 if (match && !thing.canSpawnOnTerrain(cell.terrain().getName()))
                     match = false;
@@ -398,7 +398,7 @@ public class ULandscaper {
     public void addDoors(UArea area, String doorTerrain, String[] wallTerrains, float doorChance) {
         for (int x=0;x<area.xsize;x++) {
             for (int y=0;y<area.ysize;y++) {
-                if (area.cellAt(x,y).terrain.isPassable()) {
+                if (area.cellAt(x, y).getTerrain().isPassable()) {
                     boolean[][] neighbors = neighborsHaveTerrain(area, area.cellAt(x,y), wallTerrains);
                     int neighborCount = numNeighborsHaveTerrain(area, area.cellAt(x,y), wallTerrains);
                     if ((neighbors[0][1] && neighbors[2][1] && !neighbors[1][0] && !neighbors[1][2]) ||

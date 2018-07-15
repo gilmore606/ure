@@ -1,5 +1,6 @@
 package ure.areas;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UPlayer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
@@ -24,18 +25,22 @@ import java.util.Iterator;
 public class UCell implements UContainer {
 
     @Inject
+    @JsonIgnore
     UCommander commander;
 
+    @JsonIgnore
     UArea area;
+
     public int x,y;
-    UTerrain terrain;
-    float sunBrightness;
-    private UCollection contents;
-    boolean isSeen = false;
+
+    protected UTerrain terrain;
+    protected float sunBrightness;
+    protected UCollection contents;
+    protected boolean isSeen = false;
 
     public UCell(UArea theArea, int thex, int they, UTerrain theTerrain) {
         Injector.getAppComponent().inject(this);
-        contents = new UCollection(this);
+        setContents(new UCollection(this));
         area = theArea;
         x = thex;
         y = they;
@@ -43,7 +48,7 @@ public class UCell implements UContainer {
     }
 
     public float sunBrightness() {
-        return terrain.sunvis();
+        return getTerrain().getSunvis();
     }
 
     public void setSeen(boolean theseen) {
@@ -53,18 +58,18 @@ public class UCell implements UContainer {
         return isSeen;
     }
     public UTerrain terrain() {
-        return terrain;
+        return getTerrain();
     }
 
     public void addThing(UThing thing) {
-        contents.add(thing);
+        getContents().add(thing);
     }
     public void removeThing(UThing thing) {
-        contents.remove(thing);
+        getContents().remove(thing);
         area.hearRemoveThing(thing);
     }
     public Iterator<UThing> iterator() {
-        return contents.iterator();
+        return getContents().iterator();
     }
     public int containerType() { return UContainer.TYPE_CELL; }
 
@@ -72,16 +77,16 @@ public class UCell implements UContainer {
         if (actorAt() != null) {
             actorAt().moveTriggerFrom(actor);
         } else {
-            terrain.moveTriggerFrom(actor, this);
+            getTerrain().moveTriggerFrom(actor, this);
         }
     }
 
     public void walkedOnBy(UActor actor) {
-        if (actor instanceof UPlayer && contents.hasThings()) {
-            UThing thing = contents.topThing();
+        if (actor instanceof UPlayer && getContents().hasThings()) {
+            UThing thing = getContents().topThing();
             commander.printScroll(thing.walkMsg(actor));
         }
-        terrain.walkedOnBy(actor, this);
+        getTerrain().walkedOnBy(actor, this);
     }
 
     /**
@@ -91,8 +96,8 @@ public class UCell implements UContainer {
      * @return
      */
     public UActor actorAt() {
-        if (contents.hasActors())
-            return contents.actor();
+        if (getContents().hasActors())
+            return getContents().actor();
         return null;
     }
 
@@ -102,12 +107,12 @@ public class UCell implements UContainer {
      * @return
      */
     public UThing topThingAt() {
-        return contents.topThing();
+        return getContents().topThing();
     }
 
     public boolean willAcceptThing(UThing thing) {
-        if (terrain != null) {
-            if (terrain.isPassable()) {
+        if (getTerrain() != null) {
+            if (getTerrain().isPassable()) {
                 return true;
             }
         }
@@ -130,7 +135,7 @@ public class UCell implements UContainer {
      * @return
      */
     public boolean hasA(String thing) {
-        for (UThing t : contents.things) {
+        for (UThing t : getContents().getThings()) {
             if (t.getName().equals(thing))
                 return true;
         }
@@ -146,7 +151,7 @@ public class UCell implements UContainer {
      * @param t
      */
     public void useTerrain(UTerrain t) {
-        terrain = t;
+        setTerrain(t);
         t.becomeReal(this);
     }
 
@@ -154,6 +159,31 @@ public class UCell implements UContainer {
         UActor actor = actorAt();
         if (actor != null)
             actor.animationTick();
-        terrain.animationTick();
+        getTerrain().animationTick();
+    }
+
+
+    public UTerrain getTerrain() {
+        return terrain;
+    }
+
+    public void setTerrain(UTerrain terrain) {
+        this.terrain = terrain;
+    }
+
+    public float getSunBrightness() {
+        return sunBrightness;
+    }
+
+    public void setSunBrightness(float sunBrightness) {
+        this.sunBrightness = sunBrightness;
+    }
+
+    public UCollection getContents() {
+        return contents;
+    }
+
+    public void setContents(UCollection contents) {
+        this.contents = contents;
     }
 }

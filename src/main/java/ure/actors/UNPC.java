@@ -1,5 +1,6 @@
 package ure.actors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actions.ActionEmote;
 import ure.actions.UAction;
 import ure.actions.ActionGet;
@@ -18,29 +19,23 @@ import java.util.Random;
  */
 public class UNPC extends UActor {
 
-    public int visionRange = 12;
-    public String[] ambients;
-    public String[] behaviors;
+    protected int visionRange = 12;
+    protected String[] ambients;
+    protected String[] behaviors;
 
-    ArrayList<UBehavior> behaviorObjects;
+    protected ArrayList<UBehavior> behaviorObjects = new ArrayList<>();
 
-    public Random random;
-
-    @Override
-    public void initialize() {
-        super.initialize();
-        random = new Random();
-        behaviorObjects = new ArrayList<UBehavior>();
-    }
+    @JsonIgnore
+    public Random random = new Random();
 
     @Override
     public void act() {
         // Keep acting until we don't have any action time left.
         // You shouldn't override this.  You probably want nextAction().
-        while (actionTime > 0f) {
+        while (getActionTime() > 0f) {
             UAction action = nextAction();
             if (action == null) {
-                this.actionTime = 0f;
+                this.setActionTime(0f);
                 return;
             }
             doAction(action);
@@ -58,7 +53,7 @@ public class UNPC extends UActor {
 
     UAction nextAction() {
         // What should we do next?  Override this for custom AI.
-        for (UBehavior behavior : behaviorObjects) {
+        for (UBehavior behavior : getBehaviorObjects()) {
             UAction action = behavior.action(this);
             if (action != null) return action;
         }
@@ -66,7 +61,7 @@ public class UNPC extends UActor {
 
         float wut = random.nextFloat();
         if (wut < 0.1f) {
-            if (ambients != null)
+            if (getAmbients() != null)
                 return Ambient();
         } else if (wut < 0.5f) {
             return Wander();
@@ -97,7 +92,7 @@ public class UNPC extends UActor {
     }
 
     UAction Ambient() {
-        return new ActionEmote(this, ambients[random.nextInt(ambients.length)]);
+        return new ActionEmote(this, getAmbients()[random.nextInt(getAmbients().length)]);
     }
 
 
@@ -111,5 +106,38 @@ public class UNPC extends UActor {
         UModal modal = new UModalNotify("\"Squeeek!\"", null, 2, 2);
         commander.showModal(modal);
         return 0.5f;
+    }
+
+
+    public int getVisionRange() {
+        return visionRange;
+    }
+
+    public void setVisionRange(int visionRange) {
+        this.visionRange = visionRange;
+    }
+
+    public String[] getAmbients() {
+        return ambients;
+    }
+
+    public void setAmbients(String[] ambients) {
+        this.ambients = ambients;
+    }
+
+    public String[] getBehaviors() {
+        return behaviors;
+    }
+
+    public void setBehaviors(String[] behaviors) {
+        this.behaviors = behaviors;
+    }
+
+    public ArrayList<UBehavior> getBehaviorObjects() {
+        return behaviorObjects;
+    }
+
+    public void setBehaviorObjects(ArrayList<UBehavior> behaviorObjects) {
+        this.behaviorObjects = behaviorObjects;
     }
 }

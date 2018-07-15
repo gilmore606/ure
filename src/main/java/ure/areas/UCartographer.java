@@ -3,13 +3,8 @@ package ure.areas;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ure.sys.Injector;
 import ure.sys.UCommander;
-import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
-import ure.examplegame.ExampleCaveScaper;
-import ure.examplegame.ExampleComplexScaper;
-import ure.examplegame.ExampleDungeonScaper;
-import ure.examplegame.ExampleForestScaper;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
 
@@ -113,7 +108,7 @@ public class UCartographer {
      * This doesn't work yet because there are a lot of things to sort out with regard to
      * what actually gets serialized.
      */
-    private void persistArea(UArea area, String filename) {
+    protected void persistArea(UArea area, String filename) {
         if (!commander.config.isPersistentAreas())
             return;
         File areaFile = new File(filename);
@@ -160,9 +155,9 @@ public class UCartographer {
             // TODO: somehow deref everything in the area so it gets GC'd?  that'd be nice eh.
             boolean serializationWorksNow = false;
             if (serializationWorksNow) {
-                persistArea(area, "uarea-" + area.label);
+                persistArea(area, "uarea-" + area.getLabel());
             } else {
-                System.out.println("I would have serialized " + area.label + " at this point.");
+                System.out.println("I would have serialized " + area.getLabel() + " at this point.");
             }
         }
     }

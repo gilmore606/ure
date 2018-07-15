@@ -123,6 +123,6 @@ public class ExampleGame implements UTimeListener {
     public void hearTimeTick(UCommander cmdr) {
         statusPanel.setText("turn", "T " + Integer.toString(commander.getTurn()));
         statusPanel.setText("time", commander.timeString(true, " "));
-        statusPanel.setText("location", commander.cartographer.describeLabel(commander.player().area().label));
+        statusPanel.setText("location", commander.cartographer.describeLabel(commander.player().area().getLabel()));
     }
 }

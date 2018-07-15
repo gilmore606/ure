@@ -62,8 +62,8 @@ public class UTerrainCzar {
             TerrainI[] terrainObjs = objectMapper.readValue(inputStream, TerrainI[].class);
             for (TerrainI terrain : terrainObjs) {
                 terrain.initialize();
-                terrains.put(terrain.filechar, terrain);
-                terrainsByName.put(terrain.name, terrain);
+                terrains.put(terrain.getFilechar(), terrain);
+                terrainsByName.put(terrain.getName(), terrain);
             }
         } catch (IOException io) {
             io.printStackTrace();
@@ -77,7 +77,7 @@ public class UTerrainCzar {
      * @return
      */
     public UTerrain getTerrainForFilechar(char thechar) {
-        UTerrain terrain = (UTerrain)(terrains.get(thechar).getClone());
+        UTerrain terrain = (UTerrain)(terrains.get(thechar).makeClone());
         if (decorator != null) {
             TerrainDeco decoInstance = null;
             try {
@@ -97,6 +97,6 @@ public class UTerrainCzar {
      * @return
      */
     public UTerrain getTerrainByName(String name) {
-        return (UTerrain)(getTerrainForFilechar(terrainsByName.get(name).filechar));
+        return (UTerrain)(getTerrainForFilechar(terrainsByName.get(name).getFilechar()));
     }
 }

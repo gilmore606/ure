@@ -36,7 +36,7 @@ public class UActorCzar {
     }
 
     public UActor getActorByName(String name) {
-        return (UActor)actorsByName.get(name).getClone();
+        return (UActor)actorsByName.get(name).makeClone();
     }
 
     public String[] getActorsByTag(String tag, int level) {

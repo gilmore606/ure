@@ -56,8 +56,8 @@ public class Stairs extends TerrainI implements UTerrain, HearModalChoices {
         UArea sourcearea = actor.area();
         System.out.println("CARTO : stairs heading to " + label);
         UArea destarea = commander.cartographer.getArea(label);
-        System.out.println("CARTO : stairs got new area " + destarea.label);
-        UCell dest = destarea.findExitTo(sourcearea.label);
+        System.out.println("CARTO : stairs got new area " + destarea.getLabel());
+        UCell dest = destarea.findExitTo(sourcearea.getLabel());
         if (dest == null) {
             System.out.println("CARTO : couldn't find back-matching stairs!  going to random space");
             dest = destarea.randomOpenCell(actor);

@@ -1,5 +1,6 @@
 package ure.areas;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UPlayer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
@@ -32,34 +33,43 @@ import java.util.stream.Stream;
 public class UArea implements UTimeListener, Serializable {
 
     @Inject
-    UCommander commander;
+    @JsonIgnore
+    UCommander commander; // TODO: Reconnect after deserialzation
+
+    @Inject
+    @JsonIgnore
+    UTerrainCzar terrainCzar; // TODO: Reconnect after deserialization
 
     public interface Listener {
         void areaChanged();
     }
 
-    public String label;
+    protected String label;
 
-    private UCell cells[][];
+    protected UCell[][] cells;
     public int xsize, ysize;
-    private HashSet<ULight> lights;
-    private HashSet<UActor> actors;
-    private HashSet<UParticle> particles;
-    private UTerrainCzar terrainCzar;
-    private Random random;
+    protected HashSet<ULight> lights = new HashSet<>();
+    protected HashSet<UActor> actors = new HashSet<>();
+    protected HashSet<UParticle> particles = new HashSet<>();
 
-    public UColor sunColor;
-    public float clouds = 0.2f;
 
-    public ArrayList<Integer> sunColorLerpMarkers;
-    public ArrayList<UColor> sunColorLerps;
-    public HashMap<Integer,String> sunCycleMessages;
-    int sunCycleLastAnnounceMarker;
+    @JsonIgnore
+    private Random random = new Random();
 
-    private Set<Listener> listeners;
+    protected UColor sunColor = new UColor(130,50,25);
+    protected float clouds = 0.2f;
+
+    protected ArrayList<Integer> sunColorLerpMarkers = new ArrayList<>();
+    protected ArrayList<UColor> sunColorLerps = new ArrayList<>();
+    protected HashMap<Integer,String> sunCycleMessages = new HashMap<>();
+    protected int sunCycleLastAnnounceMarker;
+
+    @JsonIgnore
+    private Set<Listener> listeners = new HashSet<>(); // TODO: Reconnect after deserialization
 
     public UArea(int thexsize, int theysize, UTerrainCzar tczar, String defaultTerrain) {
         Injector.getAppComponent().inject(this);
+        commander.config.addDefaultSunCycle(this);
         xsize = thexsize;
         ysize = theysize;
         terrainCzar = tczar;
@@ -68,12 +78,11 @@ public class UArea implements UTimeListener, Serializable {
             for (int j=0;j<ysize;j++)
                 cells[i][j] = new UCell(this, i, j, terrainCzar.getTerrainByName(defaultTerrain));
         }
-        initLists();
     }
 
     public UArea(String filename, UTerrainCzar tczar) {
         Injector.getAppComponent().inject(this);
-        initLists();
+        commander.config.addDefaultSunCycle(this);
         terrainCzar = tczar;
         cells = new UCell[200][200];
         InputStream in = getClass().getResourceAsStream(filename);
@@ -91,24 +100,11 @@ public class UArea implements UTimeListener, Serializable {
         lines.close();
     }
 
-    void initLists() {
-        random = new Random();
-        lights = new HashSet<>();
-        listeners = new HashSet<>();
-        actors = new HashSet<>();
-        particles = new HashSet<>();
-        sunColorLerps = new ArrayList<>();
-        sunColorLerpMarkers = new ArrayList<>();
-        sunCycleMessages = new HashMap<>();
-        sunColor = new UColor(130,50,25);
-        commander.config.addDefaultSunCycle(this);
-    }
-
     public void close() {
-        lights = null;
+        setLights(null);
         listeners = null;
-        actors = null;
-        cells = null;
+        setActors(null);
+        setCells(null);
     }
 
     public void addListener(Listener listener) {
@@ -120,27 +116,27 @@ public class UArea implements UTimeListener, Serializable {
     }
 
     public HashSet<ULight> lights() {
-        return lights;
+        return getLights();
     }
 
     public void addLight(ULight light) {
-        lights.add(light);
+        getLights().add(light);
     }
 
     public void removeLight(ULight light) {
-        lights.remove(light);
+        getLights().remove(light);
     }
 
     public void addSunColorLerp(int minutes, UColor color) { addSunColorLerp(minutes, color, null); }
     public void addSunColorLerp(int minutes, UColor color, String msg) {
-        sunColorLerps.add(color);
-        sunColorLerpMarkers.add(minutes);
+        getSunColorLerps().add(color);
+        getSunColorLerpMarkers().add(minutes);
         if (msg != null) {
-            sunCycleMessages.put((Integer)minutes, msg);
+            getSunCycleMessages().put((Integer)minutes, msg);
         }
     }
     public void setSunColor(float r, float g, float b) {
-        this.sunColor.set(r, g, b);
+        this.getSunColor().set(r, g, b);
     }
 
     public void setSunColor(int minutes) {
@@ -151,14 +147,14 @@ public class UArea implements UTimeListener, Serializable {
         lerp1 = null;
         lerp2 = null;
         boolean gotem = false;
-        for (int x=0;x<sunColorLerps.size();x++) {
-            int min = (int)sunColorLerpMarkers.get(x);
+        for (int x = 0; x< getSunColorLerps().size(); x++) {
+            int min = (int) getSunColorLerpMarkers().get(x);
             if (minutes >= min) {
-                lerp1 = sunColorLerps.get(x);
+                lerp1 = getSunColorLerps().get(x);
                 min1 = min;
                 gotem = true;
             } else if (gotem) {
-                lerp2 = sunColorLerps.get(x);
+                lerp2 = getSunColorLerps().get(x);
                 min2 = min;
                 gotem = false;
             }
@@ -167,11 +163,11 @@ public class UArea implements UTimeListener, Serializable {
         setSunColor(lerp1.fR() + (lerp2.fR() - lerp1.fR()) * ratio,
                      lerp1.fG() + (lerp2.fG() - lerp1.fG()) * ratio,
                          lerp1.fB() + (lerp2.fB() - lerp1.fB()) * ratio);
-        String msg = sunCycleMessages.get(min1);
+        String msg = getSunCycleMessages().get(min1);
         if (msg != null && commander.player() != null) {
-            if (sunCycleLastAnnounceMarker != min1) {
-                sunCycleLastAnnounceMarker = min1;
-                if (cells[commander.player().areaX()][commander.player().areaY()].sunBrightness() > 0.1f)
+            if (getSunCycleLastAnnounceMarker() != min1) {
+                setSunCycleLastAnnounceMarker(min1);
+                if (getCells()[commander.player().areaX()][commander.player().areaY()].sunBrightness() > 0.1f)
                     commander.printScroll(msg);
             }
         }
@@ -186,14 +182,14 @@ public class UArea implements UTimeListener, Serializable {
 
     public UTerrain terrainAt(int x, int y) {
         if (isValidXY(x, y))
-            if (cells[x][y] != null)
-                return cells[x][y].terrain();
+            if (getCells()[x][y] != null)
+                return getCells()[x][y].terrain();
         return null;
     }
     public boolean hasTerrainAt(int x, int y, String terrain) {
         if (isValidXY(x,y))
-            if (cells[x][y] != null)
-                if (cells[x][y].terrain.getName().equals(terrain))
+            if (getCells()[x][y] != null)
+                if (getCells()[x][y].getTerrain().getName().equals(terrain))
                     return true;
         return false;
     }
@@ -201,13 +197,13 @@ public class UArea implements UTimeListener, Serializable {
     public void setTerrain(int x, int y, String t) {
         if (isValidXY(x, y)) {
             UTerrain terrain = terrainCzar.getTerrainByName(t);
-            cells[x][y].useTerrain(terrain);
+            getCells()[x][y].useTerrain(terrain);
         }
     }
 
     public UCell cellAt(int x, int y) {
         if (isValidXY(x,y)) {
-            return cells[x][y];
+            return getCells()[x][y];
         }
         return null;
     }
@@ -225,26 +221,26 @@ public class UArea implements UTimeListener, Serializable {
 
     public void setSeen(int x, int y, boolean seen) {
         if (isValidXY(x, y))
-            cells[x][y].setSeen(seen);
+            getCells()[x][y].setSeen(seen);
 
     }
 
     public boolean seenCell(int x, int y) {
         if (isValidXY(x, y))
-            return cells[x][y].isSeen();
+            return getCells()[x][y].isSeen();
         return false;
     }
 
     public float sunBrightnessAt(int x, int y) {
         if (isValidXY(x,y))
-            if (cells[x][y] != null)
-                return cells[x][y].sunBrightness();
+            if (getCells()[x][y] != null)
+                return getCells()[x][y].sunBrightness();
         return 0.0f;
     }
 
     public boolean willAcceptThing(UThing thing, int x, int y) {
         if (isValidXY(x, y))
-            return cells[x][y].willAcceptThing(thing);
+            return getCells()[x][y].willAcceptThing(thing);
         return false;
     }
 
@@ -258,7 +254,7 @@ public class UArea implements UTimeListener, Serializable {
      */
     public void addedThing(UThing thing, int x, int y) {
         if (thing instanceof UActor) {
-            actors.add((UActor) thing);
+            getActors().add((UActor) thing);
             if (thing instanceof UPlayer) {
                 wakeCheckAll(x,y);
             } else {
@@ -268,7 +264,7 @@ public class UArea implements UTimeListener, Serializable {
     }
 
     private void wakeCheckAll(int playerx, int playery) {
-        for (UActor actor : actors) {
+        for (UActor actor : getActors()) {
             actor.wakeCheck(playerx, playery);
         }
     }
@@ -284,18 +280,18 @@ public class UArea implements UTimeListener, Serializable {
     }
 
     public void hearRemoveThing(UThing thing) {
-        actors.remove(thing);
+        getActors().remove(thing);
     }
 
     public Iterator<UThing> thingsAt(int x, int y) {
         if (isValidXY(x,y)) {
-            return cells[x][y].iterator();
+            return getCells()[x][y].iterator();
         }
         return null;
     }
     public UActor actorAt(int x, int y) {
         if (isValidXY(x,y)) {
-            return cells[x][y].actorAt();
+            return getCells()[x][y].actorAt();
         }
         return null;
     }
@@ -314,7 +310,7 @@ public class UArea implements UTimeListener, Serializable {
     }
 
     public void hearTimeTick(UCommander cmdr) {
-        System.out.println(label + " tick");
+        System.out.println(getLabel() + " tick");
         setSunColor(commander.daytimeMinutes());
         updateListeners();
     }
@@ -326,7 +322,7 @@ public class UArea implements UTimeListener, Serializable {
      * @param action
      */
     public void broadcastEvent(UAction action) {
-        for (UActor actor : actors) {
+        for (UActor actor : getActors()) {
             // TODO: some events should probably go further than just seeing?
             if (actor.canSee(action.actor)) {
                 actor.hearEvent(action);
@@ -344,10 +340,10 @@ public class UArea implements UTimeListener, Serializable {
         label = thelabel;
     }
     public void addParticle(UParticle particle) {
-        particles.add(particle);
+        getParticles().add(particle);
     }
     public void fizzleParticle(UParticle particle) {
-        particles.remove(particle);
+        getParticles().remove(particle);
     }
 
     /**
@@ -356,10 +352,95 @@ public class UArea implements UTimeListener, Serializable {
      *
      */
     public void freezeForPersist() {
-        for (UActor actor : actors) {
+        for (UActor actor : getActors()) {
             commander.unregisterActor(actor);
         }
         terrainCzar = null;
         commander = null;
     }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public UCell[][] getCells() {
+        return cells;
+    }
+
+    public void setCells(UCell[][] cells) {
+        this.cells = cells;
+    }
+
+    public HashSet<ULight> getLights() {
+        return lights;
+    }
+
+    public void setLights(HashSet<ULight> lights) {
+        this.lights = lights;
+    }
+
+    public HashSet<UActor> getActors() {
+        return actors;
+    }
+
+    public void setActors(HashSet<UActor> actors) {
+        this.actors = actors;
+    }
+
+    public HashSet<UParticle> getParticles() {
+        return particles;
+    }
+
+    public void setParticles(HashSet<UParticle> particles) {
+        this.particles = particles;
+    }
+
+    public UColor getSunColor() {
+        return sunColor;
+    }
+
+    public void setSunColor(UColor sunColor) {
+        this.sunColor = sunColor;
+    }
+
+    public float getClouds() {
+        return clouds;
+    }
+
+    public void setClouds(float clouds) {
+        this.clouds = clouds;
+    }
+
+    public ArrayList<Integer> getSunColorLerpMarkers() {
+        return sunColorLerpMarkers;
+    }
+
+    public void setSunColorLerpMarkers(ArrayList<Integer> sunColorLerpMarkers) {
+        this.sunColorLerpMarkers = sunColorLerpMarkers;
+    }
+
+    public ArrayList<UColor> getSunColorLerps() {
+        return sunColorLerps;
+    }
+
+    public void setSunColorLerps(ArrayList<UColor> sunColorLerps) {
+        this.sunColorLerps = sunColorLerps;
+    }
+
+    public HashMap<Integer, String> getSunCycleMessages() {
+        return sunCycleMessages;
+    }
+
+    public void setSunCycleMessages(HashMap<Integer, String> sunCycleMessages) {
+        this.sunCycleMessages = sunCycleMessages;
+    }
+
+    public int getSunCycleLastAnnounceMarker() {
+        return sunCycleLastAnnounceMarker;
+    }
+
+    public void setSunCycleLastAnnounceMarker(int sunCycleLastAnnounceMarker) {
+        this.sunCycleLastAnnounceMarker = sunCycleLastAnnounceMarker;
+    }
+
 }
