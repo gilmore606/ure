@@ -47,16 +47,6 @@ public class ExampleCartographer extends UCartographer {
         ULandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
         scaper.SetStairsLabels(area, this);
-        for (int i=0;i<40;i++) {
-            UActor rat = actorCzar.getActorByName("rabbit");
-            UCell ratdest = scaper.randomOpenCell(area, rat);
-            rat.moveToCell(area, ratdest.x, ratdest.y);
-        }
-        for (int i=0;i<15;i++) {
-            UActor deer = actorCzar.getActorByName("deer");
-            UCell deerdest = scaper.randomOpenCell(area, deer);
-            deer.moveToCell(area, deerdest.x, deerdest.y);
-        }
         return area;
     }
 

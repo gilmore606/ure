@@ -5,6 +5,7 @@
     "description": "A somber monk clad in rough robes.",
     "color": [240,160,70],
     "tags": [ "rock" ],
+    "spawnlevels": [1,4],
     "ambients": [ "The monk scratches his balls under his robe.",
                   "The monk says, 'Wh...whose skulls are those?'",
                   "The monk eyes you warily.",
@@ -16,7 +17,7 @@
     "glyph": "r",
     "description": "A big wet rat.",
     "color": [120,120,254],
-    "tags": [ "cavern", "forest" ],
+    "tags": [ "cavern", "complex" ],
     "spawnlevels": [ 1,5 ]
   },
   {
@@ -25,6 +26,7 @@
     "description": "A mangy jackrabbit.",
     "color": [250,240,230],
     "tags": [ "forest" ],
+    "spawnterrain": [ "grass" ],
     "spawnlevels": [ 1,2 ],
     "actionspeed": 1.1,
     "movespeed": 1.3,
@@ -36,6 +38,7 @@
     "description": "A huge mule deer buck.",
     "color": [170,140,30],
     "tags": [ "forest" ],
+    "spawnterrain": [ "grass", "sapling" ],
     "spawnlevels": [ 1,3 ],
     "actionspeed": 0.9,
     "movespeed": 1.2,
@@ -48,6 +51,7 @@
     "description": "A foul smelling giant humanoid.",
     "color": [110, 50, 40],
     "tags": [ "rock", "forest" ],
+    "spawnterrain": [ "grass", "sapling", "dirt" ],
     "spawnlevels": [ 2, 5 ],
     "actionspeed": 0.8,
     "movespeed": 0.8,
@@ -67,6 +71,7 @@
     "description": "Some desk jockey.",
     "color": [ 75, 75, 85 ],
     "tags": [ "complex" ],
+    "spawnterrain": [ "floor", "floormoss" ],
     "spawnlevels": [ 1, 2 ]
   }
 ]

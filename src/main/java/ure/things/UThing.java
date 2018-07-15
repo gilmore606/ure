@@ -49,4 +49,5 @@ public interface UThing  {
     int getStat(String stat);
     void setStat(String stat, int value);
     boolean isTagAndLevel(String tag, int level);
+    boolean canSpawnOnTerrain(String terrain);
 }

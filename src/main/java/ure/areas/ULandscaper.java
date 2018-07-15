@@ -329,6 +329,25 @@ public class ULandscaper {
         return cell;
     }
 
+    /**
+     * Pick a random spawn location for this thing.
+     */
+    public UCell getRandomSpawn(UArea area, UThing thing, int x1, int y1, int x2, int y2) {
+        UCell cell = null;
+        boolean match = false;
+        while (cell == null || !match) {
+            cell = area.cellAt(x1+random.nextInt(x2-x1),y1+random.nextInt(y2-y1));
+            if (cell != null) {
+                match = cell.willAcceptThing(thing);
+                if (match && !cell.terrain().isSpawnOK())
+                    match = false;
+                if (match && !thing.canSpawnOnTerrain(cell.terrain().getName()))
+                    match = false;
+            }
+        }
+        return cell;
+    }
+
     public UCell findAnextToB(UArea area, String ta, String tb, int x1, int y1, int x2, int y2) {
         int tries = 0;
         while (tries < ((x2-x1)*(y2-y1))*4) {
@@ -768,6 +787,7 @@ public class ULandscaper {
     public void scatterActorsByTags(UArea area, int x1, int x2, int y1, int y2, String[] tags, int level, int amount) {
         ArrayList<String> names = new ArrayList<>();
         for (String tag : tags) {
+            System.out.println("get names for " + tag);
             String[] thenames = actorCzar.getActorsByTag(tag,level);
             for (String name: thenames) {
                 names.add(name);
@@ -775,9 +795,13 @@ public class ULandscaper {
         }
         while (amount > 0) {
             amount--;
-            String name = names.get(random.nextInt(names.size()));
+            String name;
+            if (names.size() == 1)
+                name = names.get(0);
+            else
+                name = names.get(random.nextInt(names.size()));
             UActor actor = actorCzar.getActorByName(name);
-            UCell dest = randomOpenCell(area, actor);
+            UCell dest = getRandomSpawn(area, actor, x1, x2, y1, y2);
             actor.moveToCell(area, dest.x, dest.y);
         }
     }
