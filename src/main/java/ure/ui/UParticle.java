@@ -1,5 +1,6 @@
 package ure.ui;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.sys.UAnimator;
 import ure.areas.UArea;
 
@@ -7,7 +8,9 @@ public class UParticle implements UAnimator {
 
     private int ticksLeft;
 
-    private UArea area;
+    @JsonIgnore
+    private UArea area;  // TODO: Reconnect after deserialization
+
     private int x, y;
 
     public UParticle(UArea thearea, int thex, int they, int lifeticks) {

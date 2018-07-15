@@ -37,10 +37,10 @@ public class UNPC extends UActor {
     public void act() {
         // Keep acting until we don't have any action time left.
         // You shouldn't override this.  You probably want nextAction().
-        while (actionTime > 0f) {
+        while (getActionTime() > 0f) {
             UAction action = nextAction();
             if (action == null) {
-                this.actionTime = 0f;
+                this.setActionTime(0f);
                 return;
             }
             doAction(action);
