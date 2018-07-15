@@ -2,10 +2,8 @@ package ure.ui;
 
 import ure.areas.UArea;
 import ure.math.UColor;
-import ure.ui.UCamera;
 
 import java.lang.Math;
-import java.util.Random;
 
 /**
  * ULight represents a light source placed in an area cell.
@@ -20,35 +18,33 @@ public class ULight {
     public static final int FLICKER_BLINK = 4;
     public static final int FLICKER_COMPULSE = 5;
 
-    public UColor color;
-    public int falloff = 1;
-    public int range;
-    int flickerStyle = 0;
-    float flickerSpeed = 0f;
-    float flickerIntensity = 0f;
-    int flickerOffset = 0;
+    protected UColor color;
+    protected int falloff = 1;
+    protected int range;
+    protected int flickerStyle = 0;
+    protected float flickerSpeed = 0f;
+    protected float flickerIntensity = 0f;
+    protected int flickerOffset = 0;
 
-    Random random;
     UArea area;
     public int x,y;
 
     public ULight(int[] thecolor, int therange, int thefalloff) {
-        color = new UColor(thecolor[0],thecolor[1],thecolor[2]);
-        range = therange;
-        falloff = thefalloff;
+        setColor(new UColor(thecolor[0],thecolor[1],thecolor[2]));
+        setRange(therange);
+        setFalloff(thefalloff);
     }
     public ULight(UColor thecolor, int therange, int thefalloff) {
-        color = thecolor;
-        range = therange;
-        falloff = thefalloff;
+        setColor(thecolor);
+        setRange(therange);
+        setFalloff(thefalloff);
     }
 
     public void setFlicker(int style, float speed, float intensity, int offset) {
-        flickerStyle = style;
-        flickerSpeed = speed;
-        flickerIntensity = intensity;
-        flickerOffset = offset;
-        random = new Random();
+        setFlickerStyle(style);
+        setFlickerSpeed(speed);
+        setFlickerIntensity(intensity);
+        setFlickerOffset(offset);
     }
 
     public void close() {
@@ -77,12 +73,12 @@ public class ULight {
     public boolean canTouch(UCamera camera) {
         int circleDistX = Math.abs(x - camera.getCenterColumn());
         int circleDistY = Math.abs(y - camera.getCenterRow());
-        if (circleDistX > (camera.columns /2 + range)) return false;
-        if (circleDistY > (camera.rows /2 + range)) return false;
+        if (circleDistX > (camera.columns /2 + getRange())) return false;
+        if (circleDistY > (camera.rows /2 + getRange())) return false;
         if (circleDistX <= (camera.columns /2)) return true;
         if (circleDistY <= (camera.rows /2)) return true;
         double cornerDistSq = Math.pow(circleDistX - camera.columns /2, 2) + Math.pow(circleDistY - camera.rows /2, 2);
-        if (cornerDistSq <= Math.pow(range,2)) return true;
+        if (cornerDistSq <= Math.pow(getRange(),2)) return true;
         return false;
     }
     public boolean canTouch(int tx, int ty) {
@@ -92,17 +88,17 @@ public class ULight {
     }
 
     public float intensityAtTime(int time) {
-        if (flickerStyle == FLICKER_NONE) return 1f;
+        if (getFlickerStyle() == FLICKER_NONE) return 1f;
         float i = 0f;
-        time = (int)((float)(time + flickerOffset) * (flickerSpeed));
-        switch (flickerStyle) {
+        time = (int)((float)(time + getFlickerOffset()) * (getFlickerSpeed()));
+        switch (getFlickerStyle()) {
             case FLICKER_FIRE: i =  intensityFlickerFire(time); break;
             case FLICKER_PULSE: i = intensityFlickerPulse(time); break;
             case FLICKER_FRITZ: i = intensityFlickerFritz(time); break;
             case FLICKER_BLINK: i = intensityFlickerBlink(time); break;
             case FLICKER_COMPULSE: i = intensityFlickerCompulse(time); break;
         }
-        return 1f - (i * flickerIntensity);
+        return 1f - (i * getFlickerIntensity());
     }
 
     float intensityFlickerFire(int time) {
@@ -128,14 +124,71 @@ public class ULight {
         xoff = (int)Math.pow(Math.abs(xoff),2);
         yoff = (int)Math.pow(Math.abs(yoff),2);
         double dist = Math.sqrt((double)xoff + (double)yoff);
-        if (dist < falloff) {
+        if (dist < getFalloff()) {
             return 1f;
-        } else if (dist > range) {
+        } else if (dist > getRange()) {
             return 0f;
         } else {
-            float scale = ((float)dist - falloff) / ((float)range - falloff);
+            float scale = ((float)dist - getFalloff()) / ((float) getRange() - getFalloff());
             double root = Math.sqrt(scale);
             return 1f - (float)root;
         }
+    }
+
+
+    public UColor getColor() {
+        return color;
+    }
+
+    public void setColor(UColor color) {
+        this.color = color;
+    }
+
+    public int getFalloff() {
+        return falloff;
+    }
+
+    public void setFalloff(int falloff) {
+        this.falloff = falloff;
+    }
+
+    public int getRange() {
+        return range;
+    }
+
+    public void setRange(int range) {
+        this.range = range;
+    }
+
+    public int getFlickerStyle() {
+        return flickerStyle;
+    }
+
+    public void setFlickerStyle(int flickerStyle) {
+        this.flickerStyle = flickerStyle;
+    }
+
+    public float getFlickerSpeed() {
+        return flickerSpeed;
+    }
+
+    public void setFlickerSpeed(float flickerSpeed) {
+        this.flickerSpeed = flickerSpeed;
+    }
+
+    public float getFlickerIntensity() {
+        return flickerIntensity;
+    }
+
+    public void setFlickerIntensity(float flickerIntensity) {
+        this.flickerIntensity = flickerIntensity;
+    }
+
+    public int getFlickerOffset() {
+        return flickerOffset;
+    }
+
+    public void setFlickerOffset(int flickerOffset) {
+        this.flickerOffset = flickerOffset;
     }
 }

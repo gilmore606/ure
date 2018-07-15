@@ -77,7 +77,7 @@ public class ULightcell {
         lightBuffer.addLights(camera.area.sunColor, getRenderedSun());
         for (ULight source : sources.keySet()) {
             float intensity = sources.get(source) * source.intensityAtTime(time);
-            lightBuffer.addLights(source.color, intensity);
+            lightBuffer.addLights(source.getColor(), intensity);
         }
         return lightBuffer;
     }
