@@ -30,12 +30,15 @@ public class ULandscaper {
     UCommander commander;
     @Inject
     UActorCzar actorCzar;
-
-    private UTerrainCzar terrainCzar;
-    private UThingCzar thingCzar;
+    @Inject
+    UTerrainCzar terrainCzar;
+    @Inject
+    UThingCzar thingCzar;
 
     public Random random;
     USimplexNoise simplexNoise;
+
+    public String floorterrain = "rock";
 
     /**
      * Grid implements a 2D boolean grid useful for proxy calculations about terrain.
@@ -133,12 +136,10 @@ public class ULandscaper {
         }
     }
 
-    public ULandscaper(UTerrainCzar theTerrainCzar, UThingCzar theThingCzar) {
-        terrainCzar = theTerrainCzar;
-        thingCzar = theThingCzar;
+    public ULandscaper() {
+        Injector.getAppComponent().inject(this);
         random = new Random();
         simplexNoise = new USimplexNoise();
-        Injector.getAppComponent().inject(this);
     }
 
     /**
@@ -601,15 +602,12 @@ public class ULandscaper {
         return null;
     }
 
-    public void SetStairsLabels(UArea area, UCartographer carto) {
-        System.out.println("setting stairs labels");
-        for (int x=0;x<area.xsize;x++) {
-            for (int y=0;y<area.ysize;y++) {
-                UTerrain t = area.terrainAt(x,y);
-                if (t instanceof Stairs && ((Stairs)t).label() == "")
-                    SetStairsLabel(area, carto, x,y,(Stairs)t);
-            }
-        }
+    public void placeStairs(UArea area, String exitType, String label) {
+        UCell cell = randomOpenCell(area, commander.player());
+        area.setTerrain(cell.x, cell.y, exitType);
+        UTerrain t = area.terrainAt(cell.x,cell.y);
+        if (t instanceof Stairs)
+            ((Stairs)t).setLabel(label);
     }
 
     /**

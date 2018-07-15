@@ -11,13 +11,10 @@ import ure.things.UThingCzar;
 
 public class ExampleCaveScaper extends ULandscaper {
 
-    public ExampleCaveScaper(UTerrainCzar theTerrainCzar, UThingCzar theThingCzar) {
-        super(theTerrainCzar, theThingCzar);
-    }
 
     @Override
     public void buildArea(UArea area) {
-        buildCaves(area, "floor", 0,0,area.xsize-4, area.ysize-4);
+        buildCaves(area, "floor", 0,0,area.xsize-1, area.ysize-1);
     }
 
     public void buildCaves(UArea area, String floorTerrain,
@@ -83,25 +80,5 @@ public class ExampleCaveScaper extends ULandscaper {
 
         scatterThings(area, new String[]{"trucker hat", "butcher knife", "apple", "rock", "rock"},
                 new String[]{floorTerrain}, 10 + rand(40));
-
-        UCell upstairs = area.randomOpenCell(null);
-        area.setTerrain(upstairs.x, upstairs.y, "cave exit");
-
-        UCell downstairs = area.randomOpenCell(null);
-        area.setTerrain(downstairs.x, downstairs.y, "cave entrance");
-    }
-
-    @Override
-    public void SetStairsLabel(UArea area, UCartographer carto, int x, int y, Stairs t) {
-        int[] areadata = carto.GetLabelData(area.label);
-        int level = areadata[0];
-        if (t.getName().equals("cave exit")) {
-            if (level == 1)
-                t.setLabel("forest", carto);
-            else
-                t.setLabel("cavern " + Integer.toString(level-1) + ",0,0", carto);
-        } else {
-            t.setLabel("cavern " + Integer.toString(level+1) + ",0,0", carto);
-        }
     }
 }

@@ -1,6 +1,7 @@
 package ure.terrain;
 
 import ure.actors.UPlayer;
+import ure.areas.UCartographer;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UAnimator;

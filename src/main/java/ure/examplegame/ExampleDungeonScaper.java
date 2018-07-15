@@ -86,10 +86,6 @@ public class ExampleDungeonScaper extends ULandscaper {
         rooms.add(room);
     }
 
-    public ExampleDungeonScaper(UTerrainCzar theTerrainCzar, UThingCzar theThingCzar) {
-        super(theTerrainCzar, theThingCzar);
-    }
-
     void floodRoom(RoomStruct r, UColor c, boolean walls){
         //TODO: Perhaps add a system to add a bunch of random things to the rooms (furniture/decals/etc).
         if(r.entered == 0) return;

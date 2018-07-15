@@ -304,7 +304,7 @@ public class UArea implements UTimeListener, Serializable {
         for (int x=0;x<xsize;x++) {
             for (int y=0;y<ysize;y++) {
                 if (cells[x][y].terrain() instanceof Stairs) {
-                    if (((Stairs)cells[x][y].terrain()).label() == label) {
+                    if (((Stairs)cells[x][y].terrain()).label().equals(label)) {
                         return cells[x][y];
                     }
                 }

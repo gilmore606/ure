@@ -1,0 +1,31 @@
+
+
+carto.getFirstArea()
+    make forest region
+        forest.makearea(1)
+
+
+
+
+forest
+    makearea(1, 3+d4 cavern regions)
+        exitlabel = makeregion(x,y,"cavern-2815", "forest 1") - returns "cavern-2815 1", cavern-2815 saves forest as egress label
+            place stairs in area, make uregion, tag stairs with returned label
+
+cavern
+    makearea(1)
+        for area 1, get 'egress label', attach to egress stairs type
+        place inward stairs type, label "mylabel level+1" (cavern-2815 2)
+    makearea(2)
+        place outward stairs type, label "mylevel level-1" (cavern-2815 1)
+        place inward stairs type, label "mylevel level+1" (cavern-2815 3)
+    makearea(3)
+        place outward stairs type, label "mylevel level-1" (cavern-2815 2)
+        we at maxdepth - no inward stairs
+
+
+carto.makearea(label)
+    "cavern-2815 1"  "forest 1"
+    find region w tag 'cavern-2815' or 'forest'
+    return region.makearea(label)
+    if no region, carto.makeregion(tag)

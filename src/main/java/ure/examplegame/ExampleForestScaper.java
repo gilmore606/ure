@@ -10,10 +10,6 @@ import ure.things.UThingCzar;
 
 public class ExampleForestScaper extends ULandscaper {
 
-    public ExampleForestScaper(UTerrainCzar theTerrainCzar, UThingCzar theThingCzar) {
-        super(theTerrainCzar, theThingCzar);
-    }
-
     @Override
     public void buildArea(UArea area) {
         fillRect(area, "grass", 0,0,area.xsize-1,area.ysize-1);
