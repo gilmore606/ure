@@ -54,6 +54,7 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
 
     public boolean passable;
     public boolean opaque;
+    public boolean spawnok;
     public boolean breaklatch = false;
     public boolean glow = false;
     public float sunvis = 0.0f;
@@ -68,6 +69,7 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     public boolean isOpaque() {
         return opaque;
     }
+    public boolean isSpawnOK() { return spawnok; }
 
     UCell cell;
 

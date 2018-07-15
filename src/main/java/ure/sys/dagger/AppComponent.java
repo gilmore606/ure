@@ -1,6 +1,7 @@
 package ure.sys.dagger;
 
 import dagger.Component;
+import ure.areas.ULandscaper;
 import ure.render.URendererOGL;
 import ure.sys.UCommander;
 import ure.actions.UAction;
@@ -56,4 +57,5 @@ public interface AppComponent {
     void inject(URendererOGL rend);
     void inject(UStatusPanel statpan);
     void inject(ULensPanel lenspan);
+    void inject(ULandscaper landscape);
 }

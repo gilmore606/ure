@@ -14,6 +14,7 @@ public interface UTerrain {
     boolean isPassable();
     boolean isPassable(UActor actor);
     boolean isOpaque();
+    boolean isSpawnOK();
     boolean breaksLatch();
     void initialize();
     void becomeReal(UCell c);

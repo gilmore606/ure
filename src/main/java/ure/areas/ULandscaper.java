@@ -1,5 +1,9 @@
 package ure.areas;
 
+import ure.actors.UActor;
+import ure.actors.UActorCzar;
+import ure.sys.Injector;
+import ure.sys.UCommander;
 import ure.ui.ULight;
 import ure.math.UColor;
 import ure.math.USimplexNoise;
@@ -9,6 +13,7 @@ import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -20,6 +25,11 @@ import java.util.Random;
  *
  */
 public class ULandscaper {
+
+    @Inject
+    UCommander commander;
+    @Inject
+    UActorCzar actorCzar;
 
     private UTerrainCzar terrainCzar;
     private UThingCzar thingCzar;
@@ -128,6 +138,7 @@ public class ULandscaper {
         thingCzar = theThingCzar;
         random = new Random();
         simplexNoise = new USimplexNoise();
+        Injector.getAppComponent().inject(this);
     }
 
     /**
@@ -754,10 +765,20 @@ public class ULandscaper {
     }
 
 
-    public void scatterActorsByTags(UArea area, int x1, int x2, int y1, int y2, String[] tags, int amount) {
+    public void scatterActorsByTags(UArea area, int x1, int x2, int y1, int y2, String[] tags, int level, int amount) {
+        ArrayList<String> names = new ArrayList<>();
+        for (String tag : tags) {
+            String[] thenames = actorCzar.getActorsByTag(tag,level);
+            for (String name: thenames) {
+                names.add(name);
+            }
+        }
         while (amount > 0) {
             amount--;
-
+            String name = names.get(random.nextInt(names.size()));
+            UActor actor = actorCzar.getActorByName(name);
+            UCell dest = randomOpenCell(area, actor);
+            actor.moveToCell(area, dest.x, dest.y);
         }
     }
 }
