@@ -77,7 +77,7 @@ public class UTerrainCzar {
      * @return
      */
     public UTerrain getTerrainForFilechar(char thechar) {
-        UTerrain terrain = (UTerrain)(terrains.get(thechar).getClone());
+        UTerrain terrain = (UTerrain)(terrains.get(thechar).makeClone());
         if (decorator != null) {
             TerrainDeco decoInstance = null;
             try {

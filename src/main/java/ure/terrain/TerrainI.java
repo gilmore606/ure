@@ -148,7 +148,7 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
                 commander.printScroll(msg);
     }
 
-    public TerrainI getClone() {
+    public TerrainI makeClone() {
         try {
             return (TerrainI) super.clone();
         } catch (CloneNotSupportedException e) {

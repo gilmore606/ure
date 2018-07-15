@@ -34,7 +34,7 @@ public class UThingCzar {
     }
 
     public UThing getThingByName(String name) {
-        return (UThing)(thingsByName.get(name).getClone());
+        return (UThing)(thingsByName.get(name).makeClone());
     }
 
 }

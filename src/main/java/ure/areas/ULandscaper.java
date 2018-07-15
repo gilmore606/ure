@@ -239,7 +239,7 @@ public class ULandscaper {
     boolean cellHasTerrain(UArea area, UCell cell, String[] terrains) {
         if (cell == null) return false;
         for (int i=0;i<terrains.length;i++) {
-            if (terrains[i].equals(cell.terrain.getName())) {
+            if (terrains[i].equals(cell.getTerrain().getName())) {
                 return true;
             }
         }
@@ -367,7 +367,7 @@ public class ULandscaper {
     public void addDoors(UArea area, String doorTerrain, String[] wallTerrains, float doorChance) {
         for (int x=0;x<area.xsize;x++) {
             for (int y=0;y<area.ysize;y++) {
-                if (area.cellAt(x,y).terrain.isPassable()) {
+                if (area.cellAt(x, y).getTerrain().isPassable()) {
                     boolean[][] neighbors = neighborsHaveTerrain(area, area.cellAt(x,y), wallTerrains);
                     int neighborCount = numNeighborsHaveTerrain(area, area.cellAt(x,y), wallTerrains);
                     if ((neighbors[0][1] && neighbors[2][1] && !neighbors[1][0] && !neighbors[1][2]) ||

@@ -136,9 +136,9 @@ public class UConfig {
      * @param area
      */
     public void addDefaultSunCycle(UArea area) {
-        area.sunColorLerps = sunColorLerps;
-        area.sunColorLerpMarkers = sunColorLerpMarkers;
-        area.sunCycleMessages = sunCycleMessages;
+        area.setSunColorLerps(sunColorLerps);
+        area.setSunColorLerpMarkers(sunColorLerpMarkers);
+        area.setSunCycleMessages(sunCycleMessages);
     }
 
     public int getScreenWidth() { return screenWidth; }

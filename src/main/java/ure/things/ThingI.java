@@ -53,7 +53,9 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
     protected boolean glyphOutline = false;
     protected Icon icon;
 
-    protected UContainer location;  // What container am I in?
+    @JsonIgnore
+    protected UContainer location;  // What container am I in?  TODO: Reconnect after deserialization
+
     protected UCollection contents; // What's inside me?
 
     public ThingI() {
@@ -164,7 +166,7 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
         return null;
     }
 
-    public UThing getClone() {
+    public UThing makeClone() {
         try {
             return (UThing) super.clone();
         } catch (CloneNotSupportedException e) {
