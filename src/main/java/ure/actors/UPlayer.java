@@ -31,7 +31,7 @@ public class UPlayer extends UActor {
         if (light != null) {
             light.moveTo(area,destX,destY);
         }
-        if (area.terrainAt(destX,destY).breaksLatch())
+        if (area.terrainAt(destX,destY).isBreaklatch())
             commander.latchBreak();
 
     }

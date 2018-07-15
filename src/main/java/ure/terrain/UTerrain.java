@@ -14,7 +14,7 @@ public interface UTerrain {
     boolean isPassable();
     boolean isPassable(UActor actor);
     boolean isOpaque();
-    boolean breaksLatch();
+    boolean isBreaklatch();
     void initialize();
     void becomeReal(UCell c);
     char getGlyph();
@@ -25,21 +25,21 @@ public interface UTerrain {
     int glyphOffsetY();
     void moveTriggerFrom(UActor actor, UCell cell);
     boolean preventMoveFrom(UActor actor);
-    float moveSpeed(UActor actor);
+    float getMoveSpeed(UActor actor);
     void walkedOnBy(UActor actor, UCell cell);
     boolean isInteractable(UActor actor);
     float interactionFrom(UActor actor);
     void printScroll(String msg, UCell cell);
-    float sunvis();
+    float getSunvis();
     void animationTick();
-    boolean glow();
-    UColor bgColor();
-    UColor bgColorBuffer();
-    UColor fgColor();
-    UColor fgColorBuffer();
+    boolean isGlow();
+    UColor getBgColor();
+    UColor getBgColorBuffer();
+    UColor getFgColor();
+    UColor getFgColorBuffer();
     String getName();
     String getPlural();
-    String bonkmsg();
+    String getBonkmsg();
     int getStat(String stat);
     void setStat(String stat, int value);
 }

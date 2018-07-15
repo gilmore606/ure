@@ -43,7 +43,7 @@ public class UCell implements UContainer {
     }
 
     public float sunBrightness() {
-        return terrain.sunvis();
+        return terrain.getSunvis();
     }
 
     public void setSeen(boolean theseen) {
@@ -130,7 +130,7 @@ public class UCell implements UContainer {
      * @return
      */
     public boolean hasA(String thing) {
-        for (UThing t : contents.things) {
+        for (UThing t : contents.getThings()) {
             if (t.getName().equals(thing))
                 return true;
         }

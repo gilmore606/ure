@@ -66,9 +66,9 @@ public class TerrainDeco implements UTerrain, Interactable, Entity {
     /**
      * Does running past us stop latched auto-player-movement?
      */
-    public boolean breaksLatch() {
+    public boolean isBreaklatch() {
 
-        return terrain.breaksLatch();
+        return terrain.isBreaklatch();
     }
     /**
      * Our 'normal' glyph.
@@ -103,16 +103,16 @@ public class TerrainDeco implements UTerrain, Interactable, Entity {
     /**
      * Do we glow our fgcolor into nearby tiles' lightcells?
      */
-    public boolean glow() {
+    public boolean isGlow() {
 
-        return terrain.glow();
+        return terrain.isGlow();
     }
     /**
      * How much natural sunlight can reach me?
      */
-    public float sunvis() {
+    public float getSunvis() {
 
-        return terrain.sunvis();
+        return terrain.getSunvis();
     }
     /**
      * Do I prevent actor from moving out of me?
@@ -124,9 +124,9 @@ public class TerrainDeco implements UTerrain, Interactable, Entity {
     /**
      * How fast can actor move into me?  (higher is faster, 1.0f is standard)
      */
-    public float moveSpeed(UActor actor) {
+    public float getMoveSpeed(UActor actor) {
 
-        return terrain.moveSpeed(actor);
+        return terrain.getMoveSpeed(actor);
     }
     /**
      * Actor attempted to walk into me (in cell).  I should either move her here, or tell her she failed.
@@ -170,20 +170,20 @@ public class TerrainDeco implements UTerrain, Interactable, Entity {
         terrain.animationTick();
     }
 
-    public UColor bgColor() { return terrain.bgColor(); }
+    public UColor getBgColor() { return terrain.getBgColor(); }
     /**
      * DNO
      */
-    public UColor bgColorBuffer() {
-
-        return terrain.bgColorBuffer(); }
-    public UColor fgColor() { return terrain.fgColor(); }
+    public UColor getBgColorBuffer() {
+        return terrain.getBgColorBuffer();
+    }
+    public UColor getFgColor() { return terrain.getFgColor(); }
     /**
      * DNO
      */
-    public UColor fgColorBuffer() {
+    public UColor getFgColorBuffer() {
 
-        return terrain.fgColorBuffer(); }
+        return terrain.getFgColorBuffer(); }
     /**
      * WARNING: URE uses the name to look up terrains internally.  Overriding this could make your system
      * more fragile.  Think about what you're doing.
@@ -192,7 +192,7 @@ public class TerrainDeco implements UTerrain, Interactable, Entity {
         return terrain.getName();
     }
     public String getPlural() { return terrain.getPlural(); }
-    public String bonkmsg() { return terrain.bonkmsg(); }
+    public String getBonkmsg() { return terrain.getBonkmsg(); }
 
     public int getStat(String stat) {
         return terrain.getStat(stat);

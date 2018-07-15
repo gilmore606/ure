@@ -1,5 +1,6 @@
 package ure.terrain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UPlayer;
 import ure.sys.Entity;
 import ure.sys.Injector;
@@ -32,56 +33,50 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     public static final String TYPE = "";
 
     protected String name;
-    public String type;
-    public String walkmsg = "";
-    public String bonkmsg = "";
-    public char filechar;
+    protected String type;
+    protected String walkmsg = "";
+    protected String bonkmsg = "";
+    protected char filechar;
     protected char glyph;
     protected Icon icon;
-    public String variants;
-    public HashMap<String,Integer> stats;
-    public int[] fgcolor;
-    public int[][] fgvariants;
-    public int[] bgcolor;
-    public int[] bgvariance;
-    public int[][] bgvariants;
+    protected String variants;
+    protected HashMap<String,Integer> stats;
+    protected int[] fgcolor;
+    protected int[][] fgvariants;
+    protected int[] bgcolor;
+    protected int[] bgvariance;
+    protected int[][] bgvariants;
 
-    public UColor fgColor;
-    public UColor bgColor;
+    protected UColor fgColor;
+    protected UColor bgColor;
 
-    public UColor fgColorBuffer;
-    public UColor bgColorBuffer;
+    protected UColor fgColorBuffer;
+    protected UColor bgColorBuffer;
 
-    public boolean passable;
-    public boolean opaque;
-    public boolean breaklatch = false;
-    public boolean glow = false;
-    public float sunvis = 0.0f;
-    public float movespeed = 1.0f;
+    protected boolean passable;
+    protected boolean opaque;
+    protected boolean breaklatch = false;
+    protected boolean glow = false;
+    protected float sunvis = 0.0f;
+    protected float movespeed = 1.0f;
 
-    public int animationFrame, animationFrames;
+    protected int animationFrame;
+    protected int animationFrames;
 
-    public boolean isPassable() {
-        return passable;
-    }
-    public boolean isPassable(UActor actor) { return isPassable(); }
-    public boolean isOpaque() {
-        return opaque;
-    }
-
-    UCell cell;
+    @JsonIgnore
+    protected UCell cell;  // TODO: Reconnect this after deserialiation
 
     public TerrainI() {
         Injector.getAppComponent().inject(this);
     }
 
     public void initialize() {
-        fgColor = new UColor(fgcolor[0],fgcolor[1],fgcolor[2]);
-        bgColor = new UColor(bgcolor[0],bgcolor[1],bgcolor[2]);
-        fgColorBuffer = new UColor(0f,0f,0f);
-        bgColorBuffer = new UColor(0f, 0f ,0f);
-        icon = new Icon(glyph,fgColor,bgColor);
-        stats = new HashMap<>();
+        setFgColor(new UColor(getFgcolor()[0], getFgcolor()[1], getFgcolor()[2]));
+        setBgColor(new UColor(getBgcolor()[0], getBgcolor()[1], getBgcolor()[2]));
+        setFgColorBuffer(new UColor(0f,0f,0f));
+        setBgColorBuffer(new UColor(0f, 0f ,0f));
+        setIcon(new Icon(getGlyph(), getFgColor(), getBgColor()));
+        setStats(new HashMap<>());
     }
 
     public String[] UIdetails(String context) { return null; }
@@ -89,30 +84,28 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     public void becomeReal(UCell c) {
         cell = c;
         initialize();
-        if (bgvariants != null) {
+        if (getBgvariants() != null) {
             Random r = new Random();
-            bgColor.set(bgvariants[r.nextInt(bgvariants.length - 1)]);
+            getBgColor().set(getBgvariants()[r.nextInt(getBgvariants().length - 1)]);
         }
-        if (fgvariants != null) {
+        if (getFgvariants() != null) {
             Random r = new Random();
-            fgColor.set(fgvariants[r.nextInt(fgvariants.length-1)]);
+            getFgColor().set(getFgvariants()[r.nextInt(getFgvariants().length-1)]);
         }
-        if (bgvariance != null) {
+        if (getBgvariance() != null) {
             Random r = new Random();
-            bgColor.set(bgColor.iR() + r.nextInt(bgvariance[0]) - bgvariance[0] / 2,
-                    bgColor.iG() + r.nextInt(bgvariance[1]) - bgvariance[1] / 2,
-                    bgColor.iB() + r.nextInt(bgvariance[2]) - bgvariance[2] / 2);
+            getBgColor().set(getBgColor().iR() + r.nextInt(getBgvariance()[0]) - getBgvariance()[0] / 2,
+                    getBgColor().iG() + r.nextInt(getBgvariance()[1]) - getBgvariance()[1] / 2,
+                    getBgColor().iB() + r.nextInt(getBgvariance()[2]) - getBgvariance()[2] / 2);
         }
     }
 
-    public float sunvis() { return sunvis; }
-
     public char glyph(int x, int y) {
-        if (variants == null)
+        if (getVariants() == null)
             return getGlyph();
         int seed = (x * y * 19 + 1883) / 74;
-        int period = variants.length();
-        return variants.charAt(seed % period);
+        int period = getVariants().length();
+        return getVariants().charAt(seed % period);
     }
 
     public int glyphOffsetX() {
@@ -121,9 +114,6 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     public int glyphOffsetY() {
         return 0;
     }
-
-    public String bonkmsg() { return bonkmsg; }
-    public boolean breaksLatch() { return breaklatch; }
 
     public void moveTriggerFrom(UActor actor, UCell cell) {
         if (isPassable(actor)) {
@@ -137,13 +127,9 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
         return false;
     }
 
-    public float moveSpeed(UActor actor) {
-        return this.movespeed;
-    }
-
     public void walkedOnBy(UActor actor, UCell cell) {
         if (actor instanceof UPlayer) {
-            printScroll(walkmsg, cell);
+            printScroll(getWalkmsg(), cell);
         }
     }
 
@@ -157,8 +143,8 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
 
     // TODO: Why does this method exist?
     public void printScroll(String msg, UCell cell) {
-        if (walkmsg != null)
-            if (walkmsg.length() > 0)
+        if (getWalkmsg() != null)
+            if (getWalkmsg().length() > 0)
                 commander.printScroll(msg);
     }
 
@@ -172,34 +158,221 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     }
 
     public void animationTick() {
-        if (animationFrames < 1) return;
-        animationFrame++;
-        if (animationFrame >= animationFrames)
-            animationFrame = 0;
+        if (getAnimationFrames() < 1) return;
+        setAnimationFrame(getAnimationFrame() + 1);
+        if (getAnimationFrame() >= getAnimationFrames())
+            setAnimationFrame(0);
         //cell.area().redrawCell(cell.areaX(), cell.areaY());
     }
 
-    public boolean glow() {
-        return glow;
-    }
-
-    public UColor bgColor() { return bgColor; }
-    public UColor bgColorBuffer() { return bgColorBuffer; }
-    public UColor fgColor() { return fgColor; }
-    public UColor fgColorBuffer() { return fgColorBuffer; }
-
+    public boolean isPassable() { return passable; }
+    public boolean isPassable(UActor actor) { return isPassable(); }
+    public boolean isOpaque() { return opaque; }
     public String getName() { return name; }
-    public String getPlural() { return name + "s"; }
+    public String getPlural() { return getName() + "s"; }
     public Icon getIcon() { return icon; }
     public char getGlyph() { return glyph; }
 
     public int getStat(String stat) {
-        if (stats.containsKey(stat))
-            return (int)(stats.get(stat));
+        if (getStats().containsKey(stat))
+            return (int)(getStats().get(stat));
         return 0;
     }
 
     public void setStat(String stat, int value) {
-        stats.put(stat, value);
+        getStats().put(stat, value);
+    }
+
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getWalkmsg() {
+        return walkmsg;
+    }
+
+    public void setWalkmsg(String walkmsg) {
+        this.walkmsg = walkmsg;
+    }
+
+    public String getBonkmsg() {
+        return bonkmsg;
+    }
+
+    public void setBonkmsg(String bonkmsg) {
+        this.bonkmsg = bonkmsg;
+    }
+
+    public char getFilechar() {
+        return filechar;
+    }
+
+    public void setFilechar(char filechar) {
+        this.filechar = filechar;
+    }
+
+    public void setGlyph(char glyph) {
+        this.glyph = glyph;
+    }
+
+    public void setIcon(Icon icon) {
+        this.icon = icon;
+    }
+
+    public String getVariants() {
+        return variants;
+    }
+
+    public void setVariants(String variants) {
+        this.variants = variants;
+    }
+
+    public HashMap<String, Integer> getStats() {
+        return stats;
+    }
+
+    public void setStats(HashMap<String, Integer> stats) {
+        this.stats = stats;
+    }
+
+    public int[] getFgcolor() {
+        return fgcolor;
+    }
+
+    public void setFgcolor(int[] fgcolor) {
+        this.fgcolor = fgcolor;
+    }
+
+    public int[][] getFgvariants() {
+        return fgvariants;
+    }
+
+    public void setFgvariants(int[][] fgvariants) {
+        this.fgvariants = fgvariants;
+    }
+
+    public int[] getBgcolor() {
+        return bgcolor;
+    }
+
+    public void setBgcolor(int[] bgcolor) {
+        this.bgcolor = bgcolor;
+    }
+
+    public int[] getBgvariance() {
+        return bgvariance;
+    }
+
+    public void setBgvariance(int[] bgvariance) {
+        this.bgvariance = bgvariance;
+    }
+
+    public int[][] getBgvariants() {
+        return bgvariants;
+    }
+
+    public void setBgvariants(int[][] bgvariants) {
+        this.bgvariants = bgvariants;
+    }
+
+    public UColor getFgColor() {
+        return fgColor;
+    }
+
+    public void setFgColor(UColor fgColor) {
+        this.fgColor = fgColor;
+    }
+
+    public UColor getBgColor() {
+        return bgColor;
+    }
+
+    public void setBgColor(UColor bgColor) {
+        this.bgColor = bgColor;
+    }
+
+    public UColor getFgColorBuffer() {
+        return fgColorBuffer;
+    }
+
+    public void setFgColorBuffer(UColor fgColorBuffer) {
+        this.fgColorBuffer = fgColorBuffer;
+    }
+
+    public UColor getBgColorBuffer() {
+        return bgColorBuffer;
+    }
+
+    public void setBgColorBuffer(UColor bgColorBuffer) {
+        this.bgColorBuffer = bgColorBuffer;
+    }
+
+    public void setPassable(boolean passable) {
+        this.passable = passable;
+    }
+
+    public void setOpaque(boolean opaque) {
+        this.opaque = opaque;
+    }
+
+    public boolean isBreaklatch() {
+        return breaklatch;
+    }
+
+    public void setBreaklatch(boolean breaklatch) {
+        this.breaklatch = breaklatch;
+    }
+
+    public boolean isGlow() {
+        return glow;
+    }
+
+    public void setGlow(boolean glow) {
+        this.glow = glow;
+    }
+
+    public float getSunvis() {
+        return sunvis;
+    }
+
+    public void setSunvis(float sunvis) {
+        this.sunvis = sunvis;
+    }
+
+    public float getMovespeed() {
+        return movespeed;
+    }
+
+    public float getMoveSpeed(UActor actor) {
+        return movespeed;
+    }
+
+    public void setMovespeed(float movespeed) {
+        this.movespeed = movespeed;
+    }
+
+    public int getAnimationFrame() {
+        return animationFrame;
+    }
+
+    public void setAnimationFrame(int animationFrame) {
+        this.animationFrame = animationFrame;
+    }
+
+    public int getAnimationFrames() {
+        return animationFrames;
+    }
+
+    public void setAnimationFrames(int animationFrames) {
+        this.animationFrames = animationFrames;
     }
 }

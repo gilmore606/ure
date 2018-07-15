@@ -252,7 +252,7 @@ public class UActor extends ThingI implements Interactable {
     }
 
     public void walkFail(UCell cell) {
-        commander.printScroll(cell.terrain().bonkmsg());
+        commander.printScroll(cell.terrain().getBonkmsg());
     }
 
     /**
