@@ -22,8 +22,8 @@ public class URegion {
     @Inject
     UActorCzar actorCzar;
 
-    String id;
-    String name;
+    public String id;
+    public String name;
     ULandscaper[] landscapers;
     String[] tags;
     int xsize, ysize;

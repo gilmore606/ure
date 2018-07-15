@@ -8,9 +8,9 @@ public class ExampleCartographer extends UCartographer {
 
     public ExampleCartographer() {
         super();
-        addRegion(new URegion("forest", "Mystic Forest", new ULandscaper[]{new ExampleForestScaper()},
+        addRegion(new ExampleRegionForest("forest", "Mystic Forest", new ULandscaper[]{new ExampleForestScaper()},
                     new String[]{"start"}, 100, 100, 1, "", ""));
-        //addRegion(new URegion("cavern-1", "Caverns of fear", new ULandscaper[]{new ExampleCaveScaper()},
-        //                new String[]{"start"}, 60, 60, 5, "cave entrance", "cave exit"));
+        startArea = "forest 1";
     }
+
 }

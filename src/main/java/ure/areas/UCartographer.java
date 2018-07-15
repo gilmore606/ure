@@ -50,6 +50,7 @@ public class UCartographer {
 
     ArrayList<UArea> activeAreas;
     HashMap<String,URegion> regions;
+    public String startArea;
 
     public UCartographer() {
         Injector.getAppComponent().inject(this);
@@ -78,6 +79,19 @@ public class UCartographer {
         activeAreas.add(area);
         commander.registerTimeListener(area);
         return area;
+    }
+
+    /**
+     * Fetch the starting area for a new player.
+     * By default, if we have regions, pick the first region and return its first level.
+     */
+
+    public UArea getStartArea() {
+        return getArea(startArea);
+    }
+
+    public void setStartArea(String label) {
+        startArea = label;
     }
 
     /**
