@@ -76,7 +76,7 @@ public class UArea implements UTimeListener, Serializable {
         cells = new UCell[xsize][ysize];
         for (int i=0;i<xsize;i++) {
             for (int j=0;j<ysize;j++)
-                getCells()[i][j] = new UCell(this, i, j, terrainCzar.getTerrainByName(defaultTerrain));
+                cells[i][j] = new UCell(this, i, j, terrainCzar.getTerrainByName(defaultTerrain));
         }
     }
 
@@ -91,7 +91,7 @@ public class UArea implements UTimeListener, Serializable {
             int cellsX = 0;
             for (char c : line.toCharArray()) {
                 UTerrain terrain = terrainCzar.getTerrainForFilechar(c);
-                getCells()[cellsX][ysize] = new UCell(this, cellsX, ysize, terrain);
+                cells[cellsX][ysize] = new UCell(this, cellsX, ysize, terrain);
                 ++cellsX;
             }
             ysize++;
