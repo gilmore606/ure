@@ -55,6 +55,7 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
 
     protected boolean passable;
     protected boolean opaque;
+    protected boolean spawnok;
     protected boolean breaklatch = false;
     protected boolean glow = false;
     protected float sunvis = 0.0f;
@@ -168,6 +169,7 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     public boolean isPassable() { return passable; }
     public boolean isPassable(UActor actor) { return isPassable(); }
     public boolean isOpaque() { return opaque; }
+    public boolean isSpawnok() { return spawnok; }
     public String getName() { return name; }
     public String getPlural() { return getName() + "s"; }
     public Icon getIcon() { return icon; }

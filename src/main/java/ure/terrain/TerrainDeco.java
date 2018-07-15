@@ -64,6 +64,12 @@ public class TerrainDeco implements UTerrain, Interactable, Entity {
         return terrain.isOpaque();
     }
     /**
+     * Can things spawn here?
+     */
+    public boolean isSpawnok() {
+        return terrain.isSpawnok();
+    }
+    /**
      * Does running past us stop latched auto-player-movement?
      */
     public boolean isBreaklatch() {

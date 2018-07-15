@@ -67,6 +67,7 @@ public class UModalDirection extends UModal {
         renderer.drawGlyph(glyphs.charAt(3), xpos, ypos + gh, glyphColor, 0, 0);
     }
 
+    @Override
     public void animationTick() {
         glyphColor.setAlpha((float)Math.sin(commander.frameCounter * 0.14f) * 0.3f + 0.4f);
     }

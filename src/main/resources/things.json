@@ -3,6 +3,8 @@
     "name": "rock",
     "glyph": "o",
     "description": "A chunk of sandstone.",
+    "tags": [ "rock", "cavern" ],
+    "spawnlevels": [ 1,50 ],
     "color": [70,70,120],
     "weight": 10,
     "value": 0
@@ -15,7 +17,7 @@
     "glyph": "t",
     "description": "A wooden torch dipped in pitch.",
     "color": [200,155,55],
-    "lightcolor": [255,235,215],
+    "lightcolor": [255,235,185],
     "lightrange": 20,
     "lightfalloff": 3,
     "lightflicker": 1,
@@ -32,6 +34,8 @@
     "category": "weapons",
     "glyph": "t",
     "description": "A rusty butcher knife.",
+    "tags": [ "complex" ],
+    "spawnlevels": [1,50],
     "color": [100,100,240],
     "weight": 5,
     "value": 10
@@ -50,6 +54,8 @@
     "name": "skull",
     "glyph": "o",
     "description": "A broken human(ish) skull.",
+    "tags": [ "rock" ],
+    "spawnlevels": [ 1,50 ],
     "color": [250,250,220],
     "weight": 6,
     "value": 2
@@ -69,6 +75,8 @@
     "category": "consumables",
     "glyph": "a",
     "description": "A red and yellow streaked apple.",
+    "tags": [ "forest", "food" ],
+    "spawnlevels": [1,50],
     "color": [240,240,2],
     "weight": 3,
     "value": 10
@@ -97,6 +105,8 @@
     "glyph": "~",
     "description": "Magma glows from the cracked rock.",
     "getFailMsg": "You see no reason to pick up hot magma.",
+    "tags": [ "rock", "cavern" ],
+    "spawnlevels": [ 1,50 ],
     "color": [160,20,0],
     "colorvariance": [50,30,0],
     "lightcolorUseGlyph": true,
@@ -107,6 +117,38 @@
     "lightflickerintensity": 0.25,
     "lightflickeroffset": 15,
     "movable": false,
+    "spawnOn": true
+  },
+  {
+    "name": "morel",
+    "type": "food",
+    "category": "consumables",
+    "glyph": "m",
+    "description": "A delicious mushroom.",
+    "tags": [ "forest", "food" ],
+    "spawnlevels": [1,50],
+    "color": [70,60,30],
+    "weight": 0,
+    "value": 3
+  },
+  {
+    "name": "lantern",
+    "type": "lightsource",
+    "category": "tools",
+    "glyph": "l",
+    "description": "A brass kerosene lantern.",
+    "tags": [ "complex" ],
+    "spawnlevels": [1,50],
+    "color": [190,205,30],
+    "lightcolor": [195,255,215],
+    "lightrange": 25,
+    "lightfalloff": 5,
+    "lightflicker": 1,
+    "lightflickerspeed": 0.25,
+    "lightflickerintensity": 0.4,
+    "lightflickeroffset": 30,
+    "weight": 2,
+    "value": 5,
     "spawnOn": true
   }
 ]

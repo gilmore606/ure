@@ -15,6 +15,7 @@ public interface UTerrain {
     boolean isPassable(UActor actor);
     boolean isOpaque();
     boolean isBreaklatch();
+    boolean isSpawnok();
     void initialize();
     void becomeReal(UCell c);
     char getGlyph();

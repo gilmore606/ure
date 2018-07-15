@@ -1,5 +1,9 @@
 package ure.areas;
 
+import ure.actors.UActor;
+import ure.actors.UActorCzar;
+import ure.sys.Injector;
+import ure.sys.UCommander;
 import ure.ui.ULight;
 import ure.math.UColor;
 import ure.math.USimplexNoise;
@@ -9,6 +13,7 @@ import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -20,6 +25,11 @@ import java.util.Random;
  *
  */
 public class ULandscaper {
+
+    @Inject
+    UCommander commander;
+    @Inject
+    UActorCzar actorCzar;
 
     private UTerrainCzar terrainCzar;
     private UThingCzar thingCzar;
@@ -128,6 +138,7 @@ public class ULandscaper {
         thingCzar = theThingCzar;
         random = new Random();
         simplexNoise = new USimplexNoise();
+        Injector.getAppComponent().inject(this);
     }
 
     /**
@@ -314,6 +325,25 @@ public class ULandscaper {
         while (cell == null || !match) {
             cell = area.cellAt(random.nextInt(area.xsize), random.nextInt(area.ysize));
             match = cell.willAcceptThing(thing);
+        }
+        return cell;
+    }
+
+    /**
+     * Pick a random spawn location for this thing.
+     */
+    public UCell getRandomSpawn(UArea area, UThing thing, int x1, int y1, int x2, int y2) {
+        UCell cell = null;
+        boolean match = false;
+        while (cell == null || !match) {
+            cell = area.cellAt(x1+random.nextInt(x2-x1),y1+random.nextInt(y2-y1));
+            if (cell != null) {
+                match = cell.willAcceptThing(thing);
+                if (match && !cell.terrain().isSpawnok())
+                    match = false;
+                if (match && !thing.canSpawnOnTerrain(cell.terrain().getName()))
+                    match = false;
+            }
         }
         return cell;
     }
@@ -753,4 +783,48 @@ public class ULandscaper {
         }
     }
 
+
+    public void scatterActorsByTags(UArea area, int x1, int x2, int y1, int y2, String[] tags, int level, int amount) {
+        ArrayList<String> names = new ArrayList<>();
+        for (String tag : tags) {
+            System.out.println("get names for " + tag);
+            String[] thenames = actorCzar.getActorsByTag(tag,level);
+            for (String name: thenames) {
+                names.add(name);
+            }
+        }
+        while (amount > 0) {
+            amount--;
+            String name;
+            if (names.size() == 1)
+                name = names.get(0);
+            else
+                name = names.get(random.nextInt(names.size()));
+            UActor actor = actorCzar.getActorByName(name);
+            UCell dest = getRandomSpawn(area, actor, x1, x2, y1, y2);
+            actor.moveToCell(area, dest.x, dest.y);
+        }
+    }
+
+    public void scatterThingsByTags(UArea area, int x1, int x2, int y1, int y2, String[] tags, int level, int amount) {
+        ArrayList<String> names = new ArrayList<>();
+        for (String tag : tags) {
+            System.out.println("get names for " + tag);
+            String[] thenames = thingCzar.getThingsByTag(tag,level);
+            for (String name: thenames) {
+                names.add(name);
+            }
+        }
+        while (amount > 0) {
+            amount--;
+            String name;
+            if (names.size() == 1)
+                name = names.get(0);
+            else
+                name = names.get(random.nextInt(names.size()));
+            UThing thing = thingCzar.getThingByName(name);
+            UCell dest = getRandomSpawn(area, thing, x1, x2, y1, y2);
+            thing.moveToCell(area, dest.x, dest.y);
+        }
+    }
 }

@@ -173,9 +173,9 @@ public class UCartographer {
         for (;i<=label.length();i++) {
             if (i == label.length()) {
                 if (lc < (i-2))
-                    data[di] = Integer.parseInt(label.substring(lc+1,i-1));
+                    data[di] = Integer.parseInt(label.substring(lc+1,i));
             } else if (label.charAt(i) == ',') {
-                data[di] = Integer.parseInt(label.substring(lc+1,i-1));
+                data[di] = Integer.parseInt(label.substring(lc+1,i));
                 lc = i;
                 di++;
             }
@@ -206,6 +206,13 @@ public class UCartographer {
         return "plane of chaos";
     }
 
-
+    /**
+     * Generate a title screen area.  This is a real area, but it's just for show. :)
+     *
+     */
+    public UArea getTitleArea() {
+        UArea area = new UArea(100,100,terrainCzar,"floor");
+        return area;
+    }
 
 }

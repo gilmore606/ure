@@ -2,6 +2,7 @@ package ure.actors;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,4 +39,20 @@ public class UActorCzar {
         return (UActor)actorsByName.get(name).makeClone();
     }
 
+    public String[] getActorsByTag(String tag, int level) {
+        ArrayList<UActor> actors = new ArrayList<>();
+        for (String actorname : actorsByName.keySet()) {
+            UActor actor = actorsByName.get(actorname);
+            if (actor.isTagAndLevel(tag, level)) {
+                actors.add(actor);
+            }
+        }
+        String[] names = new String[actors.size()];
+        int i = 0;
+        for (UActor actor: actors) {
+            names[i] = actor.getName();
+            i++;
+        }
+        return names;
+    }
 }

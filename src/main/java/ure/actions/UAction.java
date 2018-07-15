@@ -60,7 +60,7 @@ public abstract class UAction {
      * @return
      */
     public float timeCost() {
-        return cost * (1f / actor.actionSpeed());
+        return cost * (1f / actor.getActionspeed());
     }
 
     /**

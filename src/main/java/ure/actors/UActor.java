@@ -26,6 +26,8 @@ public class UActor extends ThingI implements Interactable {
     protected int wakerange = 20;
     protected int sleeprange = 30;
     protected int sightrange = 15;
+    protected float actionspeed = 1f;
+    protected float movespeed = 1f;
 
     @JsonIgnore
     protected UCamera camera; // TODO: Reconnect after deserialization
@@ -217,10 +219,6 @@ public class UActor extends ThingI implements Interactable {
         return false;
     }
 
-    public float actionSpeed() {
-        return 1f;
-    }
-
     public void doAction(UAction action) {
         if (action.allowedForActor() && !myCell().preventAction(action)) {
             float timecost = action.doNow();
@@ -375,4 +373,13 @@ public class UActor extends ThingI implements Interactable {
     public void setActionTime(float actionTime) {
         this.actionTime = actionTime;
     }
+
+    public float getActionspeed() {
+        return actionspeed;
+    }
+
+    public float getMovespeed() {
+        return movespeed;
+    }
+
 }

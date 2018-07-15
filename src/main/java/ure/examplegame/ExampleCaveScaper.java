@@ -93,10 +93,15 @@ public class ExampleCaveScaper extends ULandscaper {
 
     @Override
     public void SetStairsLabel(UArea area, UCartographer carto, int x, int y, Stairs t) {
+        int[] areadata = carto.GetLabelData(area.getLabel());
+        int level = areadata[0];
         if (t.getName().equals("cave exit")) {
-            t.setLabel("forest", carto);
+            if (level == 1)
+                t.setLabel("forest", carto);
+            else
+                t.setLabel("cavern " + Integer.toString(level-1) + ",0,0", carto);
         } else {
-            t.setLabel("cavern", carto);
+            t.setLabel("cavern " + Integer.toString(level+1) + ",0,0", carto);
         }
     }
 }
