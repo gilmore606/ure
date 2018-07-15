@@ -28,7 +28,11 @@ import java.util.Random;
 public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator, Interactable {
 
     @Inject
-    UCommander commander;
+    @JsonIgnore
+    UCommander commander;  // TODO: Reconnect after deserialization
+
+    @JsonIgnore
+    protected UCell cell;  // TODO: Reconnect after deserialiation
 
     public static final String TYPE = "";
 
@@ -40,7 +44,7 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     protected char glyph;
     protected Icon icon;
     protected String variants;
-    protected HashMap<String,Integer> stats;
+    protected HashMap<String,Integer> stats = new HashMap<>();
     protected int[] fgcolor;
     protected int[][] fgvariants;
     protected int[] bgcolor;
@@ -64,20 +68,16 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     protected int animationFrame;
     protected int animationFrames;
 
-    @JsonIgnore
-    protected UCell cell;  // TODO: Reconnect this after deserialiation
-
     public TerrainI() {
         Injector.getAppComponent().inject(this);
     }
 
     public void initialize() {
-        setFgColor(new UColor(getFgcolor()[0], getFgcolor()[1], getFgcolor()[2]));
-        setBgColor(new UColor(getBgcolor()[0], getBgcolor()[1], getBgcolor()[2]));
+        setFgColor(new UColor(fgcolor[0], fgcolor[1], fgcolor[2]));
+        setBgColor(new UColor(bgcolor[0], bgcolor[1], bgcolor[2]));
         setFgColorBuffer(new UColor(0f,0f,0f));
         setBgColorBuffer(new UColor(0f, 0f ,0f));
         setIcon(new Icon(getGlyph(), getFgColor(), getBgColor()));
-        setStats(new HashMap<>());
     }
 
     public String[] UIdetails(String context) { return null; }
