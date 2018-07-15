@@ -136,6 +136,9 @@ public class UCartographer {
          return null;
     }
 
+    /**
+     * Add a region to the world.  This lets the carto spawn areas for that region's label id.
+     */
     public void addRegion(URegion _region) {
          System.out.println("CARTO : adding region " + _region.id);
          regions.put(_region.id, _region);

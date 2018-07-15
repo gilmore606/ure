@@ -313,6 +313,17 @@ public class ULandscaper {
         return cell;
     }
 
+    public UCell randomCell(UArea area, String terrain, int x1, int y1, int x2, int y2) {
+        UCell cell = null;
+        boolean match = false;
+        while (cell == null || !match) {
+            cell = area.cellAt(x1+rand(x2-x1), y1+rand(y2-y1));
+            if (cell.terrain().getName().equals(terrain))
+                return cell;
+        }
+        return null;
+    }
+
     /**
      * Pick a random cell that can accept this thing.
      *

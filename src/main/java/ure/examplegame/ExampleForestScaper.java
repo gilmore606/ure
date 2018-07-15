@@ -62,6 +62,14 @@ public class ExampleForestScaper extends ULandscaper {
                         new String[]{"tree", "sapling", "grass", "water"}, 5, 9+rand(5),
                         0.3f, 3, 4+rand(30), 8+rand(6));
                 thinTrees(area, ruinloc.x - 1, ruinloc.y - 1, ruinloc.x + ruinw + 2, ruinloc.y + ruinh + 2);
+                System.out.println("digging trapdoor to dungeon");
+                UCell doorcell = randomCell(area, "floor", ruinloc.x,ruinloc.y,ruinloc.x+ruinw,ruinloc.y+ruinh);
+                if (doorcell != null) {
+                    String id = "dungeon-" + Integer.toString(doorcell.x*1000+doorcell.y);
+                    URegion region = new URegion(id, "Basement", new ULandscaper[]{new ExampleDungeonScaper()},
+                            new String[]{"basement"}, 60, 60, rand(4)+2, "trapdoor", "ladder");
+                    linkRegionAt(area, doorcell.x, doorcell.y, "trapdoor", region, 1, "ladder");
+                }
                 scatterActorsByTags(area, ruinloc.x,ruinloc.y,ruinloc.x+ruinw,ruinloc.y+ruinh,
                         new String[]{"complex"}, 1, 2 + random.nextInt(8));
                 scatterThingsByTags(area, ruinloc.x,ruinloc.y,ruinloc.x+ruinw, ruinloc.y+ruinh,
