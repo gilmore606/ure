@@ -73,7 +73,7 @@ public class UArea implements UTimeListener, Serializable {
         xsize = thexsize;
         ysize = theysize;
         terrainCzar = tczar;
-        setCells(new UCell[xsize][ysize]);
+        cells = new UCell[xsize][ysize];
         for (int i=0;i<xsize;i++) {
             for (int j=0;j<ysize;j++)
                 getCells()[i][j] = new UCell(this, i, j, terrainCzar.getTerrainByName(defaultTerrain));
@@ -84,7 +84,7 @@ public class UArea implements UTimeListener, Serializable {
         Injector.getAppComponent().inject(this);
         commander.config.addDefaultSunCycle(this);
         terrainCzar = tczar;
-        setCells(new UCell[200][200]);
+        cells = new UCell[200][200];
         InputStream in = getClass().getResourceAsStream(filename);
         Stream<String> lines = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)).lines();
         lines.forEach(line -> {

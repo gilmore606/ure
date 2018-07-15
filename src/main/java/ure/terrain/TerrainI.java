@@ -29,7 +29,7 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
 
     @Inject
     @JsonIgnore
-    UCommander commander;  // TODO: Reconnect after deserialization
+    UCommander commander;
 
     @JsonIgnore
     protected UCell cell;  // TODO: Reconnect after deserialiation
@@ -72,6 +72,7 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
         Injector.getAppComponent().inject(this);
     }
 
+    // TODO: Call after deserialization
     public void initialize() {
         setFgColor(new UColor(fgcolor[0], fgcolor[1], fgcolor[2]));
         setBgColor(new UColor(bgcolor[0], bgcolor[1], bgcolor[2]));
