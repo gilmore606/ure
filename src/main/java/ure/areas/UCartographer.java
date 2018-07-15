@@ -178,9 +178,9 @@ public class UCartographer {
         for (;i<=label.length();i++) {
             if (i == label.length()) {
                 if (lc < (i-2))
-                    data[di] = Integer.parseInt(label.substring(lc+1,i-1));
+                    data[di] = Integer.parseInt(label.substring(lc+1,i));
             } else if (label.charAt(i) == ',') {
-                data[di] = Integer.parseInt(label.substring(lc+1,i-1));
+                data[di] = Integer.parseInt(label.substring(lc+1,i));
                 lc = i;
                 di++;
             }

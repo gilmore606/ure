@@ -28,49 +28,50 @@ public class ExampleCartographer extends UCartographer {
         UArea area;
         switch (labelname) {
             case "forest":
-                area = MakeForest(); break;
+                area = MakeForest(label); break;
             case "cavern":
-                area = MakeCavern(labeldata[0]); break;
+                area = MakeCavern(label, labeldata[0]); break;
             case "dungeon":
-                area = MakeDungeon(); break;
+                area = MakeDungeon(label); break;
             case "complex":
-                area = MakeComplex(); break;
+                area = MakeComplex(label); break;
             default:
-                area = MakeForest(); break;
+                area = MakeForest(label); break;
 
         }
         return area;
     }
 
-    public UArea MakeForest() {
+    public UArea MakeForest(String label) {
         UArea area = new UArea(140, 140, terrainCzar, "grass");
+        area.setLabel(label);
         ULandscaper scaper = new ExampleForestScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
         scaper.SetStairsLabels(area, this);
         return area;
     }
 
-    public UArea MakeComplex() {
+    public UArea MakeComplex(String label) {
         UArea area = new UArea(70, 70, terrainCzar, "grass");
+        area.setLabel(label);
         ULandscaper scaper = new ExampleComplexScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
         scaper.SetStairsLabels(area, this);
         return area;
     }
 
-    public UArea MakeCavern(int depth) {
+    public UArea MakeCavern(String label, int depth) {
         UArea area = new UArea(70, 70, terrainCzar, "wall");
+        area.setLabel(label);
         ULandscaper scaper = new ExampleCaveScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
         scaper.SetStairsLabels(area, this);
-        UActor monk = actorCzar.getActorByName("monk");
-        UCell monkdest = scaper.randomOpenCell(area, monk);
-        monk.moveToCell(area, monkdest.x, monkdest.y);
         return area;
     }
 
-    public UArea MakeDungeon() {
+    public UArea MakeDungeon(String label) {
         UArea area = new UArea(101, 101, terrainCzar, "wall");
+        area.setLabel(label);
         ULandscaper scaper = new ExampleDungeonScaper(terrainCzar, thingCzar);
         scaper.buildArea(area);
         scaper.SetStairsLabels(area, this);
