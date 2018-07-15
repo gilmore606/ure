@@ -45,7 +45,7 @@ public class UConfig {
 
     private UColor windowBgColor = UColor.COLOR_BLACK;                          // bgColor of game window
     private UColor cameraBgColor = UColor.COLOR_BLACK;                          // bgColor of camera (for unseen territory)
-    private UColor modalBgColor = UColor.COLOR_BLACK;                           // bgColor of modal popups
+    private UColor modalBgColor = new UColor(0.1f,0.1f,0f);                         // bgColor of modal popups
     private UColor modalFrameColor = new UColor(0.7f,0.7f,0.1f);     // glyph color for modal popup frame glyphs
     private UColor modalShadowColor = new UColor(0f,0f,0f,0.5f);  // color (and alpha) of modal shadows
     private UColor textColor = UColor.COLOR_WHITE;                             // color for ui/scroll text

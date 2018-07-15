@@ -211,6 +211,13 @@ public class UCartographer {
         return "plane of chaos";
     }
 
-
+    /**
+     * Generate a title screen area.  This is a real area, but it's just for show. :)
+     *
+     */
+    public UArea getTitleArea() {
+        UArea area = new UArea(100,100,terrainCzar,"floor");
+        return area;
+    }
 
 }

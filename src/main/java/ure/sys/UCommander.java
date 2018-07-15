@@ -160,6 +160,7 @@ public class UCommander implements URenderer.KeyListener {
         keyBindings.put('g', new CommandGet());
         keyBindings.put('d', new CommandDrop());
         keyBindings.put('.', new CommandTravel());
+        keyBindings.put('t', new CommandThrow());
     }
 
     public void keyPressed(char c) {
