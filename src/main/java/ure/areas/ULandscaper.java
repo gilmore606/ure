@@ -465,7 +465,7 @@ public class ULandscaper {
         if (cell != null) {
             return cell.terrain().getName();
         }
-        return null;
+        return "";
     }
 
     public void digRiver(UArea area, String t, int x1, int y1, int x2, int y2, float riverWidth, float twist, float twistmax) {

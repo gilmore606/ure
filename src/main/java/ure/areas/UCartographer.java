@@ -99,6 +99,10 @@ public class UCartographer {
     UArea FetchArea(String label, String labelname, int labeldata) {
         if (!commander.config.isPersistentAreas())
             return null;
+        for (UArea area : activeAreas) {
+            if (area.label.equals(label))
+                return area;
+        }
         return null;
     }
 
@@ -163,7 +167,7 @@ public class UCartographer {
     }
 
     /**
-     * Extract the 'maptype' part of the label string, assuming the conventional format (anything before a space).
+     * Extract the 'region' part of the label string, assuming the conventional format (anything before a space).
      *
      * For 'dungeon 47', this would return 'dungeon'.
      * For 'start', this would return 'start'.
@@ -177,8 +181,7 @@ public class UCartographer {
     }
 
     /**
-     * Extract the 'data' part of the label string, assuming the conventional format (a comma-separated
-     * list of integers after the space).
+     * Extract the 'data' part of the label string.  Usually this indicates the area level within its region.
      *
      * @param label
      * @return An array of integers extracted.
