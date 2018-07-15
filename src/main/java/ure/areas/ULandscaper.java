@@ -753,4 +753,11 @@ public class ULandscaper {
         }
     }
 
+
+    public void scatterActorsByTags(UArea area, int x1, int x2, int y1, int y2, String[] tags, int amount) {
+        while (amount > 0) {
+            amount--;
+
+        }
+    }
 }

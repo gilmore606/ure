@@ -25,6 +25,8 @@ public class UActor extends ThingI implements Interactable {
     public int wakerange = 20;
     public int sleeprange = 30;
     public int sightrange = 15;
+    public float actionspeed = 1f;
+    public float movespeed = 1f;
 
     public UCamera camera;
     int cameraPinStyle;
@@ -215,8 +217,9 @@ public class UActor extends ThingI implements Interactable {
     }
 
     public float actionSpeed() {
-        return 1f;
+        return actionspeed;
     }
+    public float moveSpeed() { return movespeed; }
 
     public void doAction(UAction action) {
         if (action.allowedForActor() && !myCell().preventAction(action)) {

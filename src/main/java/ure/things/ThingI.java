@@ -46,6 +46,9 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
     protected String getFailMsg = "You can't pick that up.";
     protected String category = "misc";
     protected HashMap<String,Integer> stats;
+    public String[] tags;
+    public int[] spawnlevels;
+
 
     public static final String TYPE = "";
 
@@ -379,6 +382,15 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
         if (stats.containsKey(stat))
             return (int)(stats.get(stat));
         return 0;
+    }
+
+    public boolean isTagAndLevel(String tag, int level) {
+        if (level >= spawnlevels[0] && level <= spawnlevels[1]) {
+            for (String test : tags) {
+                if (test.equals(tag)) return true;
+            }
+        }
+        return false;
     }
 
     public void setStat(String stat, int value) {

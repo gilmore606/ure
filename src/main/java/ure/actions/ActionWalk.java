@@ -32,7 +32,7 @@ public class ActionWalk extends UAction {
     @Override
     public float timeCost() {
         float time = super.timeCost();
-        time = time * (1f / actor.myCell().terrain().moveSpeed(actor));
+        time = time * (1f / (actor.myCell().terrain().moveSpeed(actor) * actor.moveSpeed()));
         return time;
     }
 }
