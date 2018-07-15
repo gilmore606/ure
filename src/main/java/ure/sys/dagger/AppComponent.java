@@ -1,14 +1,11 @@
 package ure.sys.dagger;
 
 import dagger.Component;
-import ure.areas.ULandscaper;
+import ure.areas.*;
 import ure.render.URendererOGL;
 import ure.sys.UCommander;
 import ure.actions.UAction;
 import ure.actors.UActorCzar;
-import ure.areas.UArea;
-import ure.areas.UCartographer;
-import ure.areas.UCell;
 import ure.behaviors.UBehavior;
 import ure.commands.UCommand;
 import ure.examplegame.ExampleGame;
@@ -58,4 +55,5 @@ public interface AppComponent {
     void inject(UStatusPanel statpan);
     void inject(ULensPanel lenspan);
     void inject(ULandscaper landscape);
+    void inject(URegion reg);
 }

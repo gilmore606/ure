@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * UCartographer implements a central authority for determining where inter-area exits go.  It defines
@@ -32,6 +33,8 @@ import java.util.ArrayList;
 public class UCartographer {
 
     @Inject
+    protected UCommander commander;
+    @Inject
     protected UTerrainCzar terrainCzar;
     @Inject
     protected UThingCzar thingCzar;
@@ -40,17 +43,16 @@ public class UCartographer {
     @Inject
     protected ObjectMapper objectMapper;
 
-    UCommander commander;
     ArrayList<UArea> activeAreas;
+    HashMap<String,URegion> regions;
+    public String startArea;
 
     public UCartographer() {
         Injector.getAppComponent().inject(this);
         activeAreas = new ArrayList<UArea>();
+        regions = new HashMap<>();
     }
 
-    public void setCommander(UCommander cmdr) {
-        commander = cmdr;
-    }
     /**
      * Fetch the UArea corresponding to a label.  This looks for a persisted level, or
      * creates a new one if needed.  You probably shouldn't override this.
@@ -61,7 +63,7 @@ public class UCartographer {
     public UArea getArea(String label) {
         UArea area;
         String labelname = GetLabelName(label);
-        int[] labeldata = GetLabelData(label);
+        int labeldata = GetLabelData(label);
 
         area = FetchArea(label, labelname, labeldata);
         if (area != null)
@@ -75,13 +77,26 @@ public class UCartographer {
     }
 
     /**
+     * Fetch the starting area for a new player.
+     * By default, if we have regions, pick the first region and return its first level.
+     */
+
+    public UArea getStartArea() {
+        return getArea(startArea);
+    }
+
+    public void setStartArea(String label) {
+        startArea = label;
+    }
+
+    /**
      * Fetch the given area from persisted storage, if we have it.
      * If we still have an Area for this label loaded and active, return that.
      *
      * @param label
      * @return null if no persisted area found.
      */
-    UArea FetchArea(String label, String labelname, int[] labeldata) {
+    UArea FetchArea(String label, String labelname, int labeldata) {
         if (!commander.config.isPersistentAreas())
             return null;
         return null;
@@ -107,13 +122,19 @@ public class UCartographer {
     /**
      * Create a UArea specified by the given label in whatever format we define.
      *
-     * The default implementation does nothing; you need to override this and generate areas for your game.
-     *
-     * Override this to select among your own master set of ULandscapers.
+     * By default, find a region with this label's id and ask it for the area.
      *
      */
-     public UArea makeArea(String label, String labelname, int[] labeldata) {
-        return null;
+     public UArea makeArea(String label, String labelname, int labeldata) {
+         System.out.println("CARTO: make area for " + labelname + " (" + Integer.toString(labeldata) + ")");
+         if (regions.containsKey(labelname))
+             return regions.get(labelname).makeArea(labeldata, label);
+         return null;
+    }
+
+    public void addRegion(URegion _region) {
+         System.out.println("CARTO : adding region " + _region.id);
+         regions.put(_region.id, _region);
     }
 
     /**
@@ -162,25 +183,14 @@ public class UCartographer {
      * @param label
      * @return An array of integers extracted.
      */
-    public int[] GetLabelData(String label) {
+    public int GetLabelData(String label) {
         int di = 0;
-        int[] data = new int[20];
+        int data = 0;
         int i = label.indexOf(" ");
         if (i >= label.length()-1) return data;
         if (i < 1) return data;
         int lc = i;
-        System.out.println(label);
-        for (;i<=label.length();i++) {
-            if (i == label.length()) {
-                if (lc < (i-2))
-                    data[di] = Integer.parseInt(label.substring(lc+1,i));
-            } else if (label.charAt(i) == ',') {
-                data[di] = Integer.parseInt(label.substring(lc+1,i));
-                lc = i;
-                di++;
-            }
-        }
-        return data;
+        return Integer.parseInt(label.substring(lc+1));
     }
 
     /**
@@ -203,6 +213,10 @@ public class UCartographer {
      * @return
      */
     public String describeLabel(String label) {
+        String labelname = GetLabelName(label);
+        int labeldata = GetLabelData(label);
+        if (regions.containsKey(labelname))
+            return regions.get(labelname).describeLabel(label, labelname, labeldata);
         return "plane of chaos";
     }
 

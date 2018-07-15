@@ -37,8 +37,8 @@ public class ExampleGame implements UTimeListener {
     UThingCzar thingCzar;
     @Inject
     UActorCzar actorCzar;
-
-    static UCartographer cartographer;
+    @Inject
+    UCartographer cartographer;
 
     public ExampleGame() {
         Injector.getAppComponent().inject(this);
@@ -58,7 +58,7 @@ public class ExampleGame implements UTimeListener {
         statusPanel.addText("class", "Ornithologist",0,2);
         statusPanel.addText("turn", "T 1", 0, 5);
         statusPanel.addText("time", "", 0, 6);
-        statusPanel.addText("location", "Mystic forest", 0, 8);
+        statusPanel.addText("location", "?", 0, 8);
         statusPanel.addText("lens", "", 0, 20);
         statusPanel.setBounds(1200,0,200,800);
         rootView.addChild(statusPanel);
@@ -91,14 +91,14 @@ public class ExampleGame implements UTimeListener {
         renderer = new URendererOGL();
         renderer.initialize();
 
-        cartographer = new ExampleCartographer();
+
 
         player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
-
+        cartographer = new ExampleCartographer();
         commander.registerComponents(player, renderer, thingCzar, actorCzar, cartographer);
-        cartographer.setCommander(commander);
-        area = cartographer.getArea("forest");
-        //area = cartographer.getTitleArea();
+
+        area = cartographer.getStartArea();
+
         makeWindow();
 
         commander.registerScrollPrinter(scrollPanel);
@@ -123,5 +123,6 @@ public class ExampleGame implements UTimeListener {
     public void hearTimeTick(UCommander cmdr) {
         statusPanel.setText("turn", "T " + Integer.toString(commander.getTurn()));
         statusPanel.setText("time", commander.timeString(true, " "));
+        statusPanel.setText("location", commander.cartographer.describeLabel(commander.player().area().getLabel()));
     }
 }

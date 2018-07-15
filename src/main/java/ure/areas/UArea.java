@@ -299,9 +299,9 @@ public class UArea implements UTimeListener, Serializable {
     public UCell findExitTo(String label) {
         for (int x=0;x<xsize;x++) {
             for (int y=0;y<ysize;y++) {
-                if (getCells()[x][y].terrain() instanceof Stairs) {
-                    if (((Stairs) getCells()[x][y].terrain()).label() == label) {
-                        return getCells()[x][y];
+                if (cells[x][y].terrain() instanceof Stairs) {
+                    if (((Stairs)cells[x][y].terrain()).label().equals(label)) {
+                        return cells[x][y];
                     }
                 }
             }

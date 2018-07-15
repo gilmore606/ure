@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import dagger.Module;
 import dagger.Provides;
+import ure.areas.UCartographer;
 import ure.sys.UCommander;
 import ure.actors.ActorDeserializer;
 import ure.actors.UActor;
@@ -66,5 +67,12 @@ public class AppModule {
         UThingCzar czar = new UThingCzar();
         czar.loadThings("/things.json");
         return czar;
+    }
+
+    @Provides
+    @Singleton
+    public UCartographer providesCartographer() {
+        UCartographer cartographer = new UCartographer();
+        return cartographer;
     }
 }

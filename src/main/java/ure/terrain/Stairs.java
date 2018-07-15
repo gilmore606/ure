@@ -8,6 +8,7 @@ import ure.actors.UActor;
 import ure.ui.modals.HearModalChoices;
 import ure.ui.modals.UModalChoices;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 
 /**
@@ -20,6 +21,8 @@ import java.util.ArrayList;
  */
 public class Stairs extends TerrainI implements UTerrain, HearModalChoices {
 
+    public UCartographer cartographer;
+
     public static final String TYPE = "stairs";
 
     String label = "";
@@ -29,8 +32,6 @@ public class Stairs extends TerrainI implements UTerrain, HearModalChoices {
     int destX, destY;
     boolean onstep = true;
     boolean confirm = true;
-
-    private UCartographer cartographer;
 
     public String label() {
         /**
@@ -45,11 +46,16 @@ public class Stairs extends TerrainI implements UTerrain, HearModalChoices {
         label = thelabel;
         System.out.println("CARTO : setting stairs dest : " + label);
     }
+    public void setLabel(String thelabel) {
+        label = thelabel;
+        System.out.println("CARTO : setting stairs dest : " + label);
+    }
 
     public void transportActor(UActor actor) {
         // TODO: cool transition bullshit i dunno
         UArea sourcearea = actor.area();
-        UArea destarea = cartographer.getArea(label);
+        System.out.println("CARTO : stairs heading to " + label);
+        UArea destarea = commander.cartographer.getArea(label);
         System.out.println("CARTO : stairs got new area " + destarea.getLabel());
         UCell dest = destarea.findExitTo(sourcearea.getLabel());
         if (dest == null) {
@@ -58,7 +64,7 @@ public class Stairs extends TerrainI implements UTerrain, HearModalChoices {
         }
         actor.moveToCell(destarea, dest.areaX(), dest.areaY());
         if (actor instanceof UPlayer) {
-            cartographer.playerLeftArea((UPlayer)actor, sourcearea);
+            commander.cartographer.playerLeftArea((UPlayer)actor, sourcearea);
             commander.playerChangedArea(sourcearea, destarea);
         }
     }
@@ -92,6 +98,7 @@ public class Stairs extends TerrainI implements UTerrain, HearModalChoices {
         ArrayList<String> choices = new ArrayList<>();
         choices.add("Yes");
         choices.add("No");
+        confirmMsg = "Travel to " + commander.cartographer.describeLabel(label) + "?";
         UModalChoices modal = new UModalChoices(confirmMsg, choices, 1, 1, true,
                 null, this, "travel");
         commander.showModal(modal);
