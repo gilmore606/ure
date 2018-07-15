@@ -52,7 +52,8 @@ public class ExampleForestScaper extends ULandscaper {
                     area.setTerrain(doorcell.x, doorcell.y, "cave entrance");
                 }
             }
-            scatterActorsByTags(area, x1-3, y1-3,x1+w+3, y1+h+3, new String[]{"rock"}, 1, 3);
+            scatterActorsByTags(area, x1-3, y1-3,x1+w+3, y1+h+3, new String[]{"rock"}, 1, 1+rand(4));
+            scatterThingsByTags(area, x1-3, y1-3,x1+w+3, y1+h+3, new String[]{"rock"}, 1, 1+rand(5));
         }
         for (int i=0;i<rand(4);i++) {
             int ruinw = 20+rand(20); int ruinh = 20+rand(20);
@@ -64,10 +65,13 @@ public class ExampleForestScaper extends ULandscaper {
                 thinTrees(area, ruinloc.x - 1, ruinloc.y - 1, ruinloc.x + ruinw + 2, ruinloc.y + ruinh + 2);
                 scatterActorsByTags(area, ruinloc.x,ruinloc.y,ruinloc.x+ruinw,ruinloc.y+ruinh,
                         new String[]{"complex"}, 1, 2 + random.nextInt(8));
+                scatterThingsByTags(area, ruinloc.x,ruinloc.y,ruinloc.x+ruinw, ruinloc.y+ruinh,
+                        new String[]{"complex"}, 1, 3 + rand(12));
             }
         }
         //UCell townloc = findAreaWithout(area, 1,1,area.xsize, area.ysize, 20, 20, new String[]{"water", "wall"});
 
+        scatterThingsByTags(area, 0, 0, area.xsize-1, area.ysize-1, new String[]{"forest"}, 1, 60);
         scatterActorsByTags(area, 0, 0, area.xsize-1, area.ysize-1, new String[]{"forest"}, 1, 40);
     }
 

@@ -805,4 +805,26 @@ public class ULandscaper {
             actor.moveToCell(area, dest.x, dest.y);
         }
     }
+
+    public void scatterThingsByTags(UArea area, int x1, int x2, int y1, int y2, String[] tags, int level, int amount) {
+        ArrayList<String> names = new ArrayList<>();
+        for (String tag : tags) {
+            System.out.println("get names for " + tag);
+            String[] thenames = thingCzar.getThingsByTag(tag,level);
+            for (String name: thenames) {
+                names.add(name);
+            }
+        }
+        while (amount > 0) {
+            amount--;
+            String name;
+            if (names.size() == 1)
+                name = names.get(0);
+            else
+                name = names.get(random.nextInt(names.size()));
+            UThing thing = thingCzar.getThingByName(name);
+            UCell dest = getRandomSpawn(area, thing, x1, x2, y1, y2);
+            thing.moveToCell(area, dest.x, dest.y);
+        }
+    }
 }
