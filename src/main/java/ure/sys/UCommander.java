@@ -301,7 +301,9 @@ public class UCommander implements URenderer.KeyListener {
             }
 
             if (!waitingForInput) {
-                for (UActor actor : actors) {
+                // need to use a clone to iterate, since actors might drop out during this loop
+                ArrayList<UActor> tmpactors = (ArrayList<UActor>)actors.clone();
+                for (UActor actor : tmpactors) {
                     actor.act();
                 }
                 waitingForInput = true;

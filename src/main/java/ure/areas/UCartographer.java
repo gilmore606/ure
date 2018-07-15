@@ -203,7 +203,7 @@ public class UCartographer {
     public void playerLeftArea(UPlayer player, UArea area) {
         // for now we're just gonna immediately freeze that old area
         // TODO: keep old areas around until they're 2 exits away
-        freezeArea(area);
+        //freezeArea(area);
     }
 
     /**

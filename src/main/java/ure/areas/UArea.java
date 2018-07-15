@@ -167,8 +167,10 @@ public class UArea implements UTimeListener, Serializable {
         if (msg != null && commander.player() != null) {
             if (getSunCycleLastAnnounceMarker() != min1) {
                 setSunCycleLastAnnounceMarker(min1);
-                if (getCells()[commander.player().areaX()][commander.player().areaY()].sunBrightness() > 0.1f)
-                    commander.printScroll(msg);
+                UCell pcell = cellAt(commander.player().areaX(), commander.player().areaY());
+                if (pcell != null)
+                    if (pcell.sunBrightness() > 0.1f)
+                        commander.printScroll(msg);
             }
         }
     }
