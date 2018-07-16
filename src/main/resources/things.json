@@ -149,6 +149,21 @@
     "lightflickeroffset": 30,
     "weight": 2,
     "value": 5,
-    "spawnOn": true
+    "spawnOn": true,
+    "switchable": true
+  },
+  {
+    "name": "flashlight",
+    "type": "lightsource",
+    "category": "tools",
+    "glyph": "=",
+    "description": "A heavy metal Maglite flashlight.",
+    "color": [60,60,80],
+    "lightcolor": [254,254,254],
+    "lightrange": 15,
+    "lightfalloff": 4,
+    "weight": 1,
+    "value": 20,
+    "switchable": true
   }
 ]

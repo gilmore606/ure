@@ -228,7 +228,7 @@ public class ExampleDungeonScaper extends ULandscaper {
     }
 
     @Override
-    public void buildArea(UArea area_) {
+    public void buildArea(UArea area_, int level, String[] tags) {
         //NOTE:  Ideally you'd want to create this as a divisor of roomMultiplier + 1 so the east/south walls can be walls.
         area = area_;
         fillRect(area, "wall", 0,0,area.xsize - 1,area.ysize - 1);

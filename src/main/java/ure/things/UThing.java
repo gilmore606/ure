@@ -52,4 +52,7 @@ public interface UThing  {
     boolean canSpawnOnTerrain(String terrain);
     UThing makeClone();
     void reconnect(UArea area, UContainer container);
+    boolean isUsable(UActor actor);
+    float useFrom(UActor actor);
+    void notifyMove();
 }

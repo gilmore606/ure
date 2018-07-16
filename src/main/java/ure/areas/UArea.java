@@ -208,8 +208,10 @@ public class UArea implements UTimeListener, Serializable {
         if (msg != null && commander.player() != null) {
             if (getSunCycleLastAnnounceMarker() != min1) {
                 setSunCycleLastAnnounceMarker(min1);
-                if (getCells()[commander.player().areaX()][commander.player().areaY()].sunBrightness() > 0.1f)
-                    commander.printScroll(msg);
+                UCell pcell = cellAt(commander.player().areaX(), commander.player().areaY());
+                if (pcell != null)
+                    if (pcell.sunBrightness() > 0.1f)
+                        commander.printScroll(msg);
             }
         }
     }
@@ -341,7 +343,7 @@ public class UArea implements UTimeListener, Serializable {
         for (int x=0;x<xsize;x++) {
             for (int y=0;y<ysize;y++) {
                 if (cells[x][y].terrain() instanceof Stairs) {
-                    if (((Stairs)cells[x][y].terrain()).label().equals(label)) {
+                    if (((Stairs)cells[x][y].terrain()).getLabel().equals(label)) {
                         return cells[x][y];
                     }
                 }

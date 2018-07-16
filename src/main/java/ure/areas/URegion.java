@@ -71,7 +71,7 @@ public class URegion {
         ULandscaper scaper = getLandscaperForLevel(level);
         UArea area = new UArea(xsize, ysize, scaper.floorterrain);
         area.label = label;
-        scaper.buildArea(area);
+        scaper.buildArea(area, level, tags);
 
         HashMap<String,String> stairs = new HashMap<>();
         for (Link link : links)

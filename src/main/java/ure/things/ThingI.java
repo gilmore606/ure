@@ -136,6 +136,7 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
         leaveCurrentLocation();
         container.addThing(this);
         this.setLocation(container);
+        this.contents.notifyMove();
     }
 
     public void leaveCurrentLocation() {
@@ -411,5 +412,17 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
                 return true;
         }
         return false;
+    }
+
+    public boolean isUsable(UActor actor) {
+        return false;
+    }
+
+    public float useFrom(UActor actor) {
+        return 0f;
+    }
+
+    public void notifyMove() {
+
     }
 }

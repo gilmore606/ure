@@ -73,6 +73,14 @@ public class UCollection {
         return actors.get(0);
     }
 
+    /**
+     * Whatever we're in just moved.
+     */
+    public void notifyMove() {
+        for (UThing thing : things)
+            thing.notifyMove();
+    }
+
     public ArrayList<UThing> getThings() {
         return things;
     }

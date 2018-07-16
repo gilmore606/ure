@@ -153,7 +153,7 @@ public class ULandscaper {
      *
      * @param area
      */
-    public void buildArea(UArea area) {
+    public void buildArea(UArea area, int level, String[] tags) {
         System.out.println("Default landscaper cannot build areas!");
     }
 
@@ -313,6 +313,17 @@ public class ULandscaper {
         return cell;
     }
 
+    public UCell randomCell(UArea area, String terrain, int x1, int y1, int x2, int y2) {
+        UCell cell = null;
+        boolean match = false;
+        while (cell == null || !match) {
+            cell = area.cellAt(x1+rand(x2-x1), y1+rand(y2-y1));
+            if (cell.terrain().getName().equals(terrain))
+                return cell;
+        }
+        return null;
+    }
+
     /**
      * Pick a random cell that can accept this thing.
      *
@@ -465,7 +476,7 @@ public class ULandscaper {
         if (cell != null) {
             return cell.terrain().getName();
         }
-        return null;
+        return "";
     }
 
     public void digRiver(UArea area, String t, int x1, int y1, int x2, int y2, float riverWidth, float twist, float twistmax) {
@@ -621,7 +632,8 @@ public class ULandscaper {
      * @param t
      */
     public void SetStairsLabel(UArea area, UCartographer carto, int x, int y, Stairs t) {
-        t.setLabel("", carto);
+        // TODO: Should this be setting area.label() ?
+        t.setLabel("");
     }
 
     public void buildRoom(UArea area, int x, int y, int w, int h, String floort, String wallt) {

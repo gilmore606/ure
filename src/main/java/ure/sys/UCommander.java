@@ -161,6 +161,7 @@ public class UCommander implements URenderer.KeyListener {
         keyBindings.put('d', new CommandDrop());
         keyBindings.put('.', new CommandTravel());
         keyBindings.put('t', new CommandThrow());
+        keyBindings.put('u', new CommandUse());
     }
 
     public void keyPressed(char c) {
@@ -301,7 +302,9 @@ public class UCommander implements URenderer.KeyListener {
             }
 
             if (!waitingForInput) {
-                for (UActor actor : actors) {
+                // need to use a clone to iterate, since actors might drop out during this loop
+                ArrayList<UActor> tmpactors = (ArrayList<UActor>)actors.clone();
+                for (UActor actor : tmpactors) {
                     actor.act();
                 }
                 waitingForInput = true;
@@ -394,6 +397,12 @@ public class UCommander implements URenderer.KeyListener {
     public void detachModal() {
         renderer.getRootView().removeChild(modal);
         modal = null;
+    }
+
+    public void detachModal(UModal modal) {
+        if (this.modal == modal) {
+            detachModal();
+        }
     }
 
 }

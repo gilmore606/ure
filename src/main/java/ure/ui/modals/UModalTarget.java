@@ -64,7 +64,7 @@ public class UModalTarget extends UModal {
         if (command.id.equals("MOVE_E"))
             cellx += 1;
         if (command.id.equals("ESC"))
-            dismiss();
+            escape();
         if (command.id.equals("PASS"))
             returnSelection();
     }
@@ -77,5 +77,6 @@ public class UModalTarget extends UModal {
     @Override
     public void animationTick() {
         glyphColor.setAlpha((float)Math.sin(commander.frameCounter * 0.14f) * 0.3f + 0.4f);
+        super.animationTick();
     }
 }

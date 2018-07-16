@@ -101,6 +101,12 @@ public class UCartographer {
      * @return null if no persisted area found.
      */
     protected UArea FetchArea(String label, String labelname, int labeldata) {
+
+        // First check for active areas
+        for (UArea area : activeAreas)
+            if (area.label.equals(label))
+                return area;
+
         if (commander.config.isPersistentAreas()) {
             File file = new File(label + ".area");
             try (
@@ -115,6 +121,7 @@ public class UCartographer {
                 System.out.println("Couldn't load area for " + label);
             }
         }
+
         return null;
     }
 
@@ -157,6 +164,9 @@ public class UCartographer {
          return null;
     }
 
+    /**
+     * Add a region to the world.  This lets the carto spawn areas for that region's label id.
+     */
     public void addRegion(URegion _region) {
          System.out.println("CARTO : adding region " + _region.id);
          regions.put(_region.id, _region);
@@ -181,7 +191,7 @@ public class UCartographer {
     }
 
     /**
-     * Extract the 'maptype' part of the label string, assuming the conventional format (anything before a space).
+     * Extract the 'region' part of the label string, assuming the conventional format (anything before a space).
      *
      * For 'dungeon 47', this would return 'dungeon'.
      * For 'start', this would return 'start'.
@@ -190,13 +200,12 @@ public class UCartographer {
      */
     public String GetLabelName(String label) {
         int i = label.indexOf(" ");
-        if (i < 1) return label;
+        if (i < 0) return label;
         return label.substring(0,i);
     }
 
     /**
-     * Extract the 'data' part of the label string, assuming the conventional format (a comma-separated
-     * list of integers after the space).
+     * Extract the 'data' part of the label string.  Usually this indicates the area level within its region.
      *
      * @param label
      * @return An array of integers extracted.
@@ -221,7 +230,7 @@ public class UCartographer {
     public void playerLeftArea(UPlayer player, UArea area) {
         // for now we're just gonna immediately freeze that old area
         // TODO: keep old areas around until they're 2 exits away
-        freezeArea(area);
+        //freezeArea(area);
     }
 
     /**
