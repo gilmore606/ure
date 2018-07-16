@@ -1,5 +1,6 @@
 package ure.things;
 
+import ure.areas.UCell;
 import ure.math.UColor;
 import ure.areas.UArea;
 import ure.actors.UActor;
@@ -40,7 +41,6 @@ public interface UThing  {
     String getPlural();
     String getIname();
     String getDname();
-    String getDnamec();
     String getCategory();
     Icon getIcon();
     UContainer getLocation();
@@ -50,4 +50,6 @@ public interface UThing  {
     void setStat(String stat, int value);
     boolean isTagAndLevel(String tag, int level);
     boolean canSpawnOnTerrain(String terrain);
+    UThing makeClone();
+    void reconnect(UArea area, UContainer container);
 }

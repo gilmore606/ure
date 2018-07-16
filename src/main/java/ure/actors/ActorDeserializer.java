@@ -30,7 +30,7 @@ public class ActorDeserializer extends JsonDeserializer<UActor> {
         ObjectCodec codec = parser.getCodec();
         JsonNode node = codec.readTree(parser);
         JsonNode typeNode = node.get("type");
-        String type = typeNode != null ? node.get("type").asText() : null;
+        String type = (typeNode != null && !typeNode.isNull()) ? node.get("type").asText() : null;
         Class<? extends UActor> actorClass = classForType(type);
         return objectMapper.treeToValue(node, actorClass);
     }

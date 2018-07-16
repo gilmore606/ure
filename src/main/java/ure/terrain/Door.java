@@ -17,9 +17,9 @@ public class Door extends TerrainI implements UTerrain {
     public char glyphopen;
     public boolean openOnMove = true;
 
-    boolean isOpen;
+    boolean open;
 
-    public boolean isOpen() { return isOpen; }
+    public boolean isOpen() { return open; }
 
     @Override
     public boolean isPassable() {
@@ -84,7 +84,7 @@ public class Door extends TerrainI implements UTerrain {
      */
     public void openedBy(UActor actor, UCell cell) {
         printScroll(openmsg, cell);
-        isOpen = true;
+        open = true;
     }
 
     /**
@@ -94,7 +94,7 @@ public class Door extends TerrainI implements UTerrain {
      */
     public void closedBy(UActor actor, UCell cell) {
         printScroll(closemsg, cell);
-        isOpen = false;
+        open = false;
     }
 
     @Override

@@ -21,6 +21,10 @@ public class UParticle implements UAnimator {
         area.addParticle(this);
     }
 
+    public void reconnect(UArea area) {
+        this.area = area;
+    }
+
     public void animationTick() {
         ticksLeft--;
         if (ticksLeft < 0) {

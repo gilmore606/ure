@@ -2,6 +2,7 @@ package ure.terrain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UPlayer;
+import ure.areas.UArea;
 import ure.areas.UCartographer;
 import ure.sys.Entity;
 import ure.sys.Injector;
@@ -33,11 +34,12 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     UCommander commander;
 
     @JsonIgnore
-    protected UCell cell;  // TODO: Reconnect after deserialiation
+    protected UCell cell;
 
     public static final String TYPE = "";
 
     protected String name;
+    protected String plural;
     protected String type;
     protected String walkmsg = "";
     protected String bonkmsg = "";
@@ -73,13 +75,17 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
         Injector.getAppComponent().inject(this);
     }
 
-    // TODO: Call after deserialization
     public void initialize() {
         setFgColor(new UColor(fgcolor[0], fgcolor[1], fgcolor[2]));
         setBgColor(new UColor(bgcolor[0], bgcolor[1], bgcolor[2]));
         setFgColorBuffer(new UColor(0f,0f,0f));
         setBgColorBuffer(new UColor(0f, 0f ,0f));
         setIcon(new Icon(getGlyph(), getFgColor(), getBgColor()));
+    }
+
+    public void reconnect(UArea area, UCell cell) {
+        // TODO: Back reference
+        this.cell = cell;
     }
 
     public String[] UIdetails(String context) { return null; }
@@ -173,7 +179,7 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     public boolean isOpaque() { return opaque; }
     public boolean isSpawnok() { return spawnok; }
     public String getName() { return name; }
-    public String getPlural() { return getName() + "s"; }
+    public String getPlural() { return plural != null ? plural : getName() + "s"; }
     public Icon getIcon() { return icon; }
     public char getGlyph() { return glyph; }
 

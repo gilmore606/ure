@@ -58,7 +58,7 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
     protected Icon icon;
 
     @JsonIgnore
-    protected UContainer location;  // What container am I in?  TODO: Reconnect after deserialization
+    protected UContainer location;  // What container am I in?
 
     protected UCollection contents; // What's inside me?
 
@@ -73,6 +73,11 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
         }
         setIcon(new Icon(getGlyph(), getGlyphColor(), null));
         stats = new HashMap<>();
+    }
+
+    public void reconnect(UArea area, UContainer container) {
+        this.location = container;
+        contents.reconnect(area, this);
     }
 
     public void SetupColors() {
@@ -254,10 +259,6 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
 
     public void setDname(String dname) {
         this.dname = dname;
-    }
-
-    public String getDnamec() {
-        return "The " + getName();
     }
 
     public String getPlural() {

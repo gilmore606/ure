@@ -19,8 +19,8 @@ import javax.inject.Inject;
 
 public class UTerrainCzar {
 
-    private  HashMap<Character,TerrainI> terrains;
-    private  HashMap<String,TerrainI> terrainsByName;
+    private  HashMap<Character,UTerrain> terrains;
+    private  HashMap<String,UTerrain> terrainsByName;
 
     private Class<TerrainDeco> decorator;
 
@@ -59,8 +59,8 @@ public class UTerrainCzar {
         terrainsByName = new HashMap<>();
         try {
             InputStream inputStream = getClass().getResourceAsStream(resourceName);
-            TerrainI[] terrainObjs = objectMapper.readValue(inputStream, TerrainI[].class);
-            for (TerrainI terrain : terrainObjs) {
+            UTerrain[] terrainObjs = objectMapper.readValue(inputStream, UTerrain[].class);
+            for (UTerrain terrain : terrainObjs) {
                 terrain.initialize();
                 terrains.put(terrain.getFilechar(), terrain);
                 terrainsByName.put(terrain.getName(), terrain);
@@ -77,7 +77,7 @@ public class UTerrainCzar {
      * @return
      */
     public UTerrain getTerrainForFilechar(char thechar) {
-        UTerrain terrain = (UTerrain)(terrains.get(thechar).makeClone());
+        UTerrain terrain = terrains.get(thechar).makeClone();
         if (decorator != null) {
             TerrainDeco decoInstance = null;
             try {

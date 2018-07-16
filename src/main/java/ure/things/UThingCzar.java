@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class UThingCzar {
 
-    private HashMap<String,ThingI> thingsByName;
+    private HashMap<String,UThing> thingsByName;
 
     @Inject
     ObjectMapper objectMapper;
@@ -24,8 +24,8 @@ public class UThingCzar {
         thingsByName = new HashMap<>();
         try {
             InputStream inputStream = getClass().getResourceAsStream("/things.json");
-            ThingI[] thingObjs = objectMapper.readValue(inputStream, ThingI[].class);
-            for (ThingI thing: thingObjs) {
+            UThing[] thingObjs = objectMapper.readValue(inputStream, UThing[].class);
+            for (UThing thing: thingObjs) {
                 thing.initialize();
                 thingsByName.put(thing.getName(), thing);
             }
@@ -35,7 +35,7 @@ public class UThingCzar {
     }
 
     public UThing getThingByName(String name) {
-        return (UThing)(thingsByName.get(name).makeClone());
+        return thingsByName.get(name).makeClone();
     }
 
     public String[] getThingsByTag(String tag, int level) {

@@ -20,6 +20,7 @@ public class UColor {
     public static UColor COLOR_MAGENTA = new UColor(1f,0f,1f);
     public static UColor COLOR_CYAN = new UColor(0f,1f,1f);
 
+    public UColor() {}
     public UColor(int ir, int ig, int ib) {
         set(ir,ig,ib);
     }
@@ -142,8 +143,6 @@ public class UColor {
         set(arr[0],arr[1],arr[2]);
     }
 
-
-
     public void setAlpha(float alpha) {
         a = alpha;
     }
@@ -152,9 +151,10 @@ public class UColor {
      *
      * @return
      */
-    public float getGrayscale() {
+    public float grayscale() {
         return r * lumR + g * lumG + b * lumB;
     }
+
     /**
      * Brighten/darken this color by the float intensity.
      * @param intensity Above 1.0 brightens, below 1.0 darkens.
@@ -173,7 +173,7 @@ public class UColor {
      */
     public void desaturateBy(float amount) {
         if (amount == 0f) return;
-        float gray = getGrayscale();
+        float gray = grayscale();
         r = gray * amount + r * (1f - amount);
         g = gray * amount + g * (1f - amount);
         b = gray * amount + b * (1f - amount);
