@@ -61,6 +61,6 @@ public class ThingDeco implements UThing, Interactable {
     public boolean canSpawnOnTerrain(String terrain) { return thing.canSpawnOnTerrain(terrain); }
     public boolean isUsable(UActor actor) { return thing.isUsable(actor); }
     public float useFrom(UActor actor) { return thing.useFrom(actor); }
-
+    public void notifyMove() { thing.notifyMove(); }
 }
 

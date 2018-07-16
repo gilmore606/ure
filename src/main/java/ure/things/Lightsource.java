@@ -1,5 +1,6 @@
 package ure.things;
 
+import ure.actors.UActor;
 import ure.math.UColor;
 import ure.areas.UArea;
 import ure.ui.ULight;
@@ -22,6 +23,7 @@ public class Lightsource extends ThingI implements UThing {
     public float lightflickerspeed, lightflickerintensity;
     public int lightflickeroffset;
     public boolean spawnOn = false;
+    public boolean switchable = false;
 
     public boolean on;
 
@@ -74,6 +76,13 @@ public class Lightsource extends ThingI implements UThing {
     }
 
     @Override
+    public void notifyMove() {
+        if (on()) {
+            light.moveTo(area(), areaX(), areaY());
+        }
+    }
+
+    @Override
     public void leaveCurrentLocation() {
         if (getLocation() != null) {
             if (getLocation().containerType() == UContainer.TYPE_CELL) {
@@ -99,4 +108,17 @@ public class Lightsource extends ThingI implements UThing {
         light.removeFromArea();
     }
 
+    @Override
+    public boolean isUsable(UActor actor) {
+        return switchable;
+    }
+
+    @Override
+    public float useFrom(UActor actor) {
+        if (!on())
+            turnOn();
+        else
+            turnOff();
+        return 0.5f;
+    }
 }

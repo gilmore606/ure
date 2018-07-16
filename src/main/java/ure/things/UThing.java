@@ -52,4 +52,5 @@ public interface UThing  {
     boolean canSpawnOnTerrain(String terrain);
     boolean isUsable(UActor actor);
     float useFrom(UActor actor);
+    void notifyMove();
 }
