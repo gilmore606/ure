@@ -393,8 +393,9 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
 
 
     public boolean isTagAndLevel(String tag, int level) {
-        if (getSpawnlevels() == null) return false;
-        if (level >= getSpawnlevels()[0] && level <= getSpawnlevels()[1]) {
+        int[] levels = getSpawnlevels();
+        if (levels == null || levels.length < 2) return false;
+        if (level >= levels[0] && level <= levels[1]) {
             for (String test : getTags()) {
                 if (test.equals(tag)) return true;
             }

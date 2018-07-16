@@ -41,7 +41,7 @@ public class Lightsource extends ThingI implements UThing {
             SetupColors();
             setLight(new ULight(getGlyphColor(), getLightrange(), getLightfalloff()));
         } else {
-            setLight(new ULight(new UColor(getLightcolor()[0], getLightcolor()[1], getLightcolor()[2]), getLightrange(), getLightfalloff()));
+            setLight(new ULight(new UColor(lightcolor[0], lightcolor[1], lightcolor[2]), getLightrange(), getLightfalloff()));
         }
         Random random = new Random();
         if (getLightflicker() > 0)
