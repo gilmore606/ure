@@ -15,37 +15,45 @@ public class UModalChoices extends UModal {
     ArrayList<String> choices;
     int escapeChoice;
     boolean escapable;
-    String prompt;
+    String[] prompt;
     int selection = 0;
 
     public UModalChoices(String _prompt, ArrayList<String> _choices, int _escapeChoice, int _defaultChoice,
                          boolean _escapable, UColor bgColor, HearModalChoices _callback, String _callbackContext) {
         super(_callback, _callbackContext, bgColor);
-        prompt = _prompt;
+        prompt = splitLines(_prompt);
         choices = _choices;
         escapeChoice = _escapeChoice;
         escapable = _escapable;
         selection = _defaultChoice;
-        int width = prompt.length();
+        int width = longestLine(prompt);
+        int height = 2;
+        if (prompt != null)
+            height += prompt.length;
         int cwidth = 0;
         for (String choice : choices) {
             cwidth = (choice.length() + 1);
         }
         if (cwidth > width)
             width = cwidth;
-        setDimensions(width, 3);
+        setDimensions(width, height);
     }
 
     @Override
     public void drawContent(URenderer renderer) {
-        if (prompt != null)
-            drawString(renderer, prompt, 0, 0);
+        if (prompt != null) {
+            int i = 0;
+            for (String line : prompt) {
+                drawString(renderer, line, 0, i);
+                i++;
+            }
+        }
         int xtab = 0;
         int drawSelection = 0;
         for (String choice : choices) {
             if (selection == drawSelection)
-                renderer.drawRect(xtab*gw()+xpos,2*gh()+ypos,choice.length()*gw(),gh(),commander.config.getHiliteColor());
-            drawString(renderer, choice, xtab, 2);
+                renderer.drawRect(xtab*gw()+xpos,(cellh-1)*gh()+ypos,choice.length()*gw(),gh(),commander.config.getHiliteColor());
+            drawString(renderer, choice, xtab, cellh-1);
             xtab += choice.length() + 1;
             drawSelection++;
         }

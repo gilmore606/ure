@@ -27,8 +27,6 @@ public class Stairs extends TerrainI implements UTerrain, HearModalChoices {
 
     String label = "";
 
-    String confirmMsg = "Travel to new area?";
-
     int destX, destY;
     boolean onstep = true;
     boolean confirm = true;
@@ -98,7 +96,8 @@ public class Stairs extends TerrainI implements UTerrain, HearModalChoices {
         ArrayList<String> choices = new ArrayList<>();
         choices.add("Yes");
         choices.add("No");
-        confirmMsg = "Travel to " + commander.cartographer.describeLabel(label) + "?";
+        String confirmMsg = "Travel to " + commander.cartographer.describeLabel(label) + "?";
+        confirmMsg = walkmsg + "\n" + confirmMsg;
         UModalChoices modal = new UModalChoices(confirmMsg, choices, 1, 1, true,
                 null, this, "travel");
         commander.showModal(modal);

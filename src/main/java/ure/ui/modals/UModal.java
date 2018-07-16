@@ -12,6 +12,7 @@ import ure.ui.UCamera;
 import ure.ui.View;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -165,5 +166,33 @@ public class UModal extends View implements UAnimator {
 
     public void animationTick() {
 
+    }
+
+    public String[] splitLines(String text) {
+        if (text == null) return null;
+        ArrayList<String> linebuf = new ArrayList<>();
+        while (text.indexOf("\n") > 0) {
+            int split = text.indexOf("\n");
+            String broke = text.substring(0,split);
+            text = text.substring(split+1);
+            linebuf.add(broke);
+        }
+        linebuf.add(text);
+        String[] lines = new String[linebuf.size()];
+        int i=0;
+        for (String line: linebuf) {
+            lines[i] = line;
+            i++;
+        }
+        return lines;
+    }
+
+    public int longestLine(String[] lines) {
+        int longest = 0;
+        for (String line : lines) {
+            if (line.length() > longest)
+                longest = line.length();
+        }
+        return longest;
     }
 }
