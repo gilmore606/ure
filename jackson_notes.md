@@ -11,4 +11,5 @@ Jackson serialization/deserialization notes:
 
 * We can also tell Jackson that a specific method is a getter for something by using an annotation:  @JsonGetter("fieldName").  You would only have to do this if you want to use a name that doesn't follow the convention.
 
+* If you make a method on your class that starts with 'get' Jackson will assume it is a getter for a field, and write whatever that method returns as a part of its standard serialization.  When it goes to deserialize that object it will barf if it can't find the matching field.  This means you can't use 'get' prefix for methods that aren't actual getters for a real field on the object.  Overridden ones that don't use the actual field are fine, as long as the field exists in some parent class.
 
