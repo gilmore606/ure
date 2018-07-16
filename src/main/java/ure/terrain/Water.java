@@ -8,7 +8,7 @@ public class Water extends TerrainI implements UTerrain {
 
     public static final String TYPE = "water";
 
-    public int waves;
+    protected int waves;
 
     @Override
     public int glyphOffsetY() {
@@ -19,5 +19,13 @@ public class Water extends TerrainI implements UTerrain {
             f =  getAnimationFrames() - f;
         float n = (float)f / (float)(getAnimationFrames() / 2);
         return (int)(Math.sin((double)n * 6.28) * waves - waves);
+    }
+
+    public int getWaves() {
+        return waves;
+    }
+
+    public void setWaves(int waves) {
+        this.waves = waves;
     }
 }

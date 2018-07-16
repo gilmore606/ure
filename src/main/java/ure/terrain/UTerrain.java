@@ -1,6 +1,5 @@
 package ure.terrain;
 
-import ure.actions.Interactable;
 import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.math.UColor;

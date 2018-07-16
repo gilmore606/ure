@@ -27,6 +27,8 @@ import java.util.Random;
  */
 public abstract class ThingI implements UThing, UContainer, Entity, Interactable, Cloneable {
 
+    public static final String TYPE = "";
+
     @Inject
     @JsonIgnore
     public UCommander commander;
@@ -46,12 +48,9 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
     protected String getFailMsg = "You can't pick that up.";
     protected String category = "misc";
     protected HashMap<String,Integer> stats;
-    public String[] tags;
-    public int[] spawnlevels;
-    public String[] spawnterrain;
-
-
-    public static final String TYPE = "";
+    protected String[] tags;
+    protected int[] spawnlevels;
+    protected String[] spawnterrain;
 
     protected UColor glyphColor;
     protected boolean glyphOutline = false;
@@ -394,9 +393,9 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
 
 
     public boolean isTagAndLevel(String tag, int level) {
-        if (spawnlevels == null) return false;
-        if (level >= spawnlevels[0] && level <= spawnlevels[1]) {
-            for (String test : tags) {
+        if (getSpawnlevels() == null) return false;
+        if (level >= getSpawnlevels()[0] && level <= getSpawnlevels()[1]) {
+            for (String test : getTags()) {
                 if (test.equals(tag)) return true;
             }
         }
@@ -404,10 +403,10 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
     }
 
     public boolean canSpawnOnTerrain(String terrain) {
-        if (spawnterrain == null) {
+        if (getSpawnterrain() == null) {
             return true;
         }
-        for (String t : spawnterrain) {
+        for (String t : getSpawnterrain()) {
             if (t.equals(terrain))
                 return true;
         }
@@ -424,5 +423,30 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
 
     public void notifyMove() {
 
+    }
+
+
+    public String[] getTags() {
+        return tags;
+    }
+
+    public void setTags(String[] tags) {
+        this.tags = tags;
+    }
+
+    public int[] getSpawnlevels() {
+        return spawnlevels;
+    }
+
+    public void setSpawnlevels(int[] spawnlevels) {
+        this.spawnlevels = spawnlevels;
+    }
+
+    public String[] getSpawnterrain() {
+        return spawnterrain;
+    }
+
+    public void setSpawnterrain(String[] spawnterrain) {
+        this.spawnterrain = spawnterrain;
     }
 }

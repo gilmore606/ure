@@ -12,10 +12,10 @@ public class Door extends TerrainI implements UTerrain {
 
     public static final String TYPE = "door";
 
-    public String openmsg = "The door opens.";
-    public String closemsg = "The door closes.";
-    public char glyphopen;
-    public boolean openOnMove = true;
+    protected String openmsg = "The door opens.";
+    protected String closemsg = "The door closes.";
+    protected char glyphopen;
+    protected boolean openOnMove = true;
 
     boolean open;
 
@@ -45,6 +45,7 @@ public class Door extends TerrainI implements UTerrain {
         }
         return super.getGlyph();
     }
+
     @Override
     public void moveTriggerFrom(UActor actor, UCell cell) {
         if (!isOpen() && openOnMove(actor)) {
@@ -114,4 +115,35 @@ public class Door extends TerrainI implements UTerrain {
         return 1f;
     }
 
+    public String getOpenmsg() {
+        return openmsg;
+    }
+
+    public void setOpenmsg(String openmsg) {
+        this.openmsg = openmsg;
+    }
+
+    public String getClosemsg() {
+        return closemsg;
+    }
+
+    public void setClosemsg(String closemsg) {
+        this.closemsg = closemsg;
+    }
+
+    public char getGlyphopen() {
+        return glyphopen;
+    }
+
+    public void setGlyphopen(char glyphopen) {
+        this.glyphopen = glyphopen;
+    }
+
+    public boolean isOpenOnMove() {
+        return openOnMove;
+    }
+
+    public void setOpenOnMove(boolean openOnMove) {
+        this.openOnMove = openOnMove;
+    }
 }

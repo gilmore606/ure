@@ -1,6 +1,5 @@
 package ure.things;
 
-import ure.areas.UCell;
 import ure.math.UColor;
 import ure.areas.UArea;
 import ure.actors.UActor;
