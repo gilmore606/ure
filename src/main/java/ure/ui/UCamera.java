@@ -20,7 +20,7 @@ import java.util.*;
  *
  */
 
-public class UCamera extends View implements UAnimator, UArea.Listener {
+public class UCamera extends View implements UAnimator {
 
     @Inject
     UCommander commander;
