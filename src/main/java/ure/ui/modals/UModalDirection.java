@@ -29,6 +29,7 @@ public class UModalDirection extends UModal {
         this.celly = celly;
         setDimensions(3,3);
         glyphColor = new UColor(commander.config.getHiliteColor());
+        dismissFrameEnd = 10;
     }
 
     @Override
@@ -48,7 +49,7 @@ public class UModalDirection extends UModal {
             dismiss();
             ((HearModalDirection) callback).hearModalDirection(callbackContext, 0, 0);
         } else if (command.id.equals("ESC") && escapable) {
-            dismiss();
+            escape();
         }
     }
 
@@ -69,6 +70,11 @@ public class UModalDirection extends UModal {
 
     @Override
     public void animationTick() {
-        glyphColor.setAlpha((float)Math.sin(commander.frameCounter * 0.14f) * 0.3f + 0.4f);
+        if (dismissed) {
+            glyphColor.setAlpha((float)Math.sin(commander.frameCounter * 2f) * 0.5f + 0.6f);
+        } else {
+            glyphColor.setAlpha((float) Math.sin(commander.frameCounter * 0.14f) * 0.3f + 0.4f);
+        }
+        super.animationTick();
     }
 }

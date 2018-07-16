@@ -33,6 +33,9 @@ public class UModal extends View implements UAnimator {
     public int ypos = 0;
     public UColor bgColor;
     HashMap<String,TextFrag> texts;
+    public boolean dismissed;
+    int dismissFrames = 0;
+    int dismissFrameEnd = 0;
 
     class TextFrag {
         String name;
@@ -151,7 +154,12 @@ public class UModal extends View implements UAnimator {
     }
 
     void dismiss() {
-        commander.detachModal();
+        dismissed = true;
+    }
+
+    void escape() {
+        dismissed = true;
+        dismissFrameEnd = 0;
     }
 
     public void addText(String name, String text, int row, int col) {
@@ -165,7 +173,12 @@ public class UModal extends View implements UAnimator {
     }
 
     public void animationTick() {
-
+        if (dismissed) {
+            dismissFrames++;
+            if (dismissFrames > dismissFrameEnd) {
+                commander.detachModal(this);
+            }
+        }
     }
 
     public String[] splitLines(String text) {

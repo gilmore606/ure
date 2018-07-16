@@ -17,6 +17,9 @@ public class UModalChoices extends UModal {
     boolean escapable;
     String[] prompt;
     int selection = 0;
+    int hiliteX, hiliteY, hiliteW, hiliteH;
+    UColor tempHiliteColor;
+    UColor flashColor;
 
     public UModalChoices(String _prompt, ArrayList<String> _choices, int _escapeChoice, int _defaultChoice,
                          boolean _escapable, UColor bgColor, HearModalChoices _callback, String _callbackContext) {
@@ -37,6 +40,10 @@ public class UModalChoices extends UModal {
         if (cwidth > width)
             width = cwidth;
         setDimensions(width, height);
+        dismissFrameEnd = 8;
+        tempHiliteColor = commander.config.getHiliteColor();
+        flashColor = new UColor(commander.config.getHiliteColor());
+        flashColor.setAlpha(1f);
     }
 
     @Override
@@ -51,8 +58,13 @@ public class UModalChoices extends UModal {
         int xtab = 0;
         int drawSelection = 0;
         for (String choice : choices) {
-            if (selection == drawSelection)
-                renderer.drawRect(xtab*gw()+xpos,(cellh-1)*gh()+ypos,choice.length()*gw(),gh(),commander.config.getHiliteColor());
+            if (selection == drawSelection) {
+                hiliteX = xtab * gw() + xpos;
+                hiliteY = (cellh - 1) * gh() + ypos;
+                hiliteW = choice.length() * gw();
+                hiliteH = gh();
+                renderer.drawRect(hiliteX, hiliteY, hiliteW, hiliteH, tempHiliteColor);
+            }
             drawString(renderer, choice, xtab, cellh-1);
             xtab += choice.length() + 1;
             drawSelection++;
@@ -68,12 +80,8 @@ public class UModalChoices extends UModal {
         if (command.id.equals("PASS"))
             pickSelection();
         if (command.id.equals("ESC")) {
-            if (escapeChoice >= 0) {
-                selection = escapeChoice;
-                pickSelection();
-            } else if (escapable) {
-                dismiss();
-            }
+            if (escapable)
+                escape();
         }
 
         if (selection < 0) {
@@ -92,5 +100,17 @@ public class UModalChoices extends UModal {
     public void pickSelection() {
         dismiss();
         ((HearModalChoices)callback).hearModalChoices(callbackContext, choices.get(selection));
+    }
+
+    @Override
+    public void animationTick() {
+        if (dismissed) {
+            if ((dismissFrames % 2) == 0) {
+                tempHiliteColor = commander.config.getModalBgColor();
+            } else {
+                tempHiliteColor = flashColor;
+            }
+        }
+        super.animationTick();
     }
 }

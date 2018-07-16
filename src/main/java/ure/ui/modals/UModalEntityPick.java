@@ -18,6 +18,7 @@ public class UModalEntityPick extends UModal {
     boolean escapable;
     int textWidth = 0;
     int selection = 0;
+    UColor tempHiliteColor, flashColor;
 
     public UModalEntityPick(String _header, UColor _bgColor, int _xpad, int _ypad, ArrayList<Entity> _entities,
                             boolean _showDetail, boolean _escapable, HearModalEntityPick _callback, String _callbackContext) {
@@ -42,6 +43,10 @@ public class UModalEntityPick extends UModal {
         if (bgColor == null)
             bgColor = commander.config.getModalBgColor();
         setBgColor(bgColor);
+        tempHiliteColor = commander.config.getHiliteColor();
+        flashColor = new UColor(commander.config.getHiliteColor());
+        flashColor.setAlpha(1f);
+        dismissFrameEnd = 8;
     }
 
     public void deDupeEntities() {
@@ -86,7 +91,7 @@ public class UModalEntityPick extends UModal {
         int y = 0;
         for (Entity entity : entities) {
             if (y == selection) {
-                renderer.drawRect(gw()+xpos,(y+2)*gh()+ypos, textWidth*gw(), gh(), commander.config.getHiliteColor());
+                renderer.drawRect(gw()+xpos,(y+2)*gh()+ypos, textWidth*gw(), gh(), tempHiliteColor);
             }
             drawIcon(renderer, entity.getIcon(), 1, y + 2);
             drawString(renderer, displaynames.get(y), 3, y + 2);
@@ -126,12 +131,24 @@ public class UModalEntityPick extends UModal {
         } else if (command.id.equals("PASS")) {
             selectEntity();
         } else if (command.id.equals("ESC") && escapable) {
-            dismiss();
+            escape();
         }
     }
 
     public void selectEntity() {
         dismiss();
         ((HearModalEntityPick)callback).hearModalEntityPick(callbackContext, entities.get(selection));
+    }
+
+    @Override
+    public void animationTick() {
+        if (dismissed) {
+            if ((dismissFrames % 2) == 0) {
+                tempHiliteColor = commander.config.getModalBgColor();
+            } else {
+                tempHiliteColor = flashColor;
+            }
+        }
+        super.animationTick();
     }
 }

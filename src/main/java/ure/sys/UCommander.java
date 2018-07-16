@@ -399,4 +399,10 @@ public class UCommander implements URenderer.KeyListener {
         modal = null;
     }
 
+    public void detachModal(UModal modal) {
+        if (this.modal == modal) {
+            detachModal();
+        }
+    }
+
 }
