@@ -33,8 +33,8 @@ own custom level generators
 - A* pathfinding available to actor entities or for general problem solving
 - Simplex and Perlin noise
 - A complete gameworld model incorporating things, actor NPCs, terrain, and more
-- Cartographer system for centrally defining a world structure and area links
-- UI elements such as a scroll panel, status panels, input widgets, and more
+- Cartographer system for centrally defining a world structure, regions, and area links
+- UI elements such as a scroll panel, status panels, input widgets, lens panel, and more
 - Built for flexibility -- mix and match URE classes, extend and replace with your own
 
 ![ure gif](https://raw.githubusercontent.com/gilmore606/ure/master/thumb3.gif)
@@ -43,7 +43,6 @@ own custom level generators
 - Drop-in replacement renderer modules to allow graphical tile rendering, isometric views, or
 other visualizations without changing the underlying game
 - Complex NPC AI, conversation trees, shops, quest-givers, and other rich NPC features
-- Event system with awareness checks
 - Status effects
 - Object materials and composition
 - Environmental effects such as liquid flow, smoke/vapors, and their interactions
