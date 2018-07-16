@@ -40,10 +40,6 @@ public class UArea implements UTimeListener, Serializable {
     @JsonIgnore
     UTerrainCzar terrainCzar;
 
-    public interface Listener {
-        void areaChanged();
-    }
-
     protected String label;
 
     protected UCell[][] cells;
@@ -63,9 +59,6 @@ public class UArea implements UTimeListener, Serializable {
     protected ArrayList<UColor> sunColorLerps = new ArrayList<>();
     protected HashMap<Integer,String> sunCycleMessages = new HashMap<>();
     protected int sunCycleLastAnnounceMarker;
-
-    @JsonIgnore
-    private Set<Listener> listeners = new HashSet<>(); // TODO: Reconnect after deserialization
 
     public UArea() {
         Injector.getAppComponent().inject(this);
@@ -102,7 +95,6 @@ public class UArea implements UTimeListener, Serializable {
 
     public void close() {
         setLights(null);
-        listeners = null;
         setActors(null);
         setCells(null);
     }
@@ -146,14 +138,6 @@ public class UArea implements UTimeListener, Serializable {
         for (UParticle particle : particles) {
             particle.reconnect(this);
         }
-    }
-
-    public void addListener(Listener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeListener(Listener listener) {
-        listeners.remove(listener);
     }
 
     public HashSet<ULight> lights() {
@@ -355,7 +339,6 @@ public class UArea implements UTimeListener, Serializable {
     public void hearTimeTick(UCommander cmdr) {
         System.out.println(getLabel() + " tick");
         adjustSunColor(commander.daytimeMinutes());
-        updateListeners();
     }
 
     /**
@@ -370,12 +353,6 @@ public class UArea implements UTimeListener, Serializable {
             if (actor.canSee(action.actor)) {
                 actor.hearEvent(action);
             }
-        }
-    }
-
-    void updateListeners() {
-        for (Listener listener : listeners) {
-            listener.areaChanged();
         }
     }
 
