@@ -59,5 +59,8 @@ public class ThingDeco implements UThing, Interactable {
     public void setStat(String stat, int value) { thing.setStat(stat, value); }
     public boolean isTagAndLevel(String tag, int level) { return thing.isTagAndLevel(tag, level); }
     public boolean canSpawnOnTerrain(String terrain) { return thing.canSpawnOnTerrain(terrain); }
+    public boolean isUsable(UActor actor) { return thing.isUsable(actor); }
+    public float useFrom(UActor actor) { return thing.useFrom(actor); }
+
 }
 

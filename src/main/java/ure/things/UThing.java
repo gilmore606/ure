@@ -50,4 +50,6 @@ public interface UThing  {
     void setStat(String stat, int value);
     boolean isTagAndLevel(String tag, int level);
     boolean canSpawnOnTerrain(String terrain);
+    boolean isUsable(UActor actor);
+    float useFrom(UActor actor);
 }

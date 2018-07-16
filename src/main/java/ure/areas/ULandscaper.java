@@ -153,7 +153,7 @@ public class ULandscaper {
      *
      * @param area
      */
-    public void buildArea(UArea area) {
+    public void buildArea(UArea area, int level, String[] tags) {
         System.out.println("Default landscaper cannot build areas!");
     }
 

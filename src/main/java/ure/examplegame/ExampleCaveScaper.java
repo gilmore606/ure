@@ -13,7 +13,7 @@ public class ExampleCaveScaper extends ULandscaper {
 
 
     @Override
-    public void buildArea(UArea area) {
+    public void buildArea(UArea area, int level, String[] tags) {
         buildCaves(area, "floor", 0,0,area.xsize-1, area.ysize-1);
     }
 

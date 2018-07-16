@@ -28,7 +28,8 @@ public class ActionInteract extends UAction {
         if (target.isInteractable(actor))
             timeTaken = target.interactionFrom(actor);
         else {
-            commander.printScroll(noInteractMsg);
+            if (actor == commander.player())
+                commander.printScroll(noInteractMsg);
             suppressEvent();
         }
     }

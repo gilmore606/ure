@@ -411,4 +411,12 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
         }
         return false;
     }
+
+    public boolean isUsable(UActor actor) {
+        return false;
+    }
+
+    public float useFrom(UActor actor) {
+        return 0f;
+    }
 }
