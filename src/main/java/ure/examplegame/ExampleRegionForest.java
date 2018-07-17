@@ -11,6 +11,6 @@ public class ExampleRegionForest extends URegion {
 
     @Override
     public String describeLabel(String label, String labelname, int labeldata) {
-        return name;
+        return getName();
     }
 }
