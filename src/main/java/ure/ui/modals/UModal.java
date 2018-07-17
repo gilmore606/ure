@@ -7,6 +7,7 @@ import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.sys.UConfig;
+import ure.terrain.UTerrainCzar;
 import ure.ui.Icon;
 import ure.ui.UCamera;
 import ure.ui.View;
@@ -23,7 +24,9 @@ import java.util.HashMap;
 public class UModal extends View implements UAnimator {
 
     @Inject
-    UCommander commander;
+    public UCommander commander;
+    @Inject
+    public UTerrainCzar terrainCzar;
 
     HearModal callback;
     String callbackContext;

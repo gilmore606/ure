@@ -230,7 +230,7 @@ public class UCartographer {
     public void playerLeftArea(UPlayer player, UArea area) {
         // for now we're just gonna immediately freeze that old area
         // TODO: keep old areas around until they're 2 exits away
-        //freezeArea(area);
+        freezeArea(area);
     }
 
     /**
@@ -240,6 +240,8 @@ public class UCartographer {
      * @return
      */
     public String describeLabel(String label) {
+        if (label.equals("vaulted"))
+            return "VaultEd";
         String labelname = GetLabelName(label);
         int labeldata = GetLabelData(label);
         if (regions.containsKey(labelname))

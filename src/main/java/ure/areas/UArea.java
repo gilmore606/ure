@@ -290,7 +290,7 @@ public class UArea implements UTimeListener, Serializable {
         }
     }
 
-    private void wakeCheckAll(int playerx, int playery) {
+    public void wakeCheckAll(int playerx, int playery) {
         for (UActor actor : getActors()) {
             actor.wakeCheck(playerx, playery);
         }

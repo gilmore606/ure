@@ -1,4 +1,14 @@
 [
+  {
+    "name": "null",
+    "filechar": "@",
+    "passable": true,
+    "opaque": false,
+    "sunvis": 1.0,
+    "glyph": "x",
+    "fgcolor": [200,110,0],
+    "bgcolor": [0,0,0]
+  },
     {
       "name": "grass",
       "filechar": ".",

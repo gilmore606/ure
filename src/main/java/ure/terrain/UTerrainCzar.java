@@ -3,6 +3,7 @@ package ure.terrain;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ure.sys.Injector;
@@ -98,5 +99,9 @@ public class UTerrainCzar {
      */
     public UTerrain getTerrainByName(String name) {
         return (UTerrain)(getTerrainForFilechar(terrainsByName.get(name).getFilechar()));
+    }
+
+    public Set<String> getAllTerrains() {
+        return terrainsByName.keySet();
     }
 }

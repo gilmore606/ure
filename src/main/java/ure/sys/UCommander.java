@@ -16,6 +16,8 @@ import ure.ui.modals.UModal;
 import ure.ui.UScrollPanel;
 import ure.ui.UStatusPanel;
 import ure.ui.USpeaker;
+import ure.vaulted.VaultedArea;
+import ure.vaulted.VaultedModal;
 
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -175,24 +177,26 @@ public class UCommander implements URenderer.KeyListener {
         if (!keyBuffer.isEmpty()) {
             Character c = keyBuffer.remove();
             UCommand command = keyBindings.get(c);
-            if (command != null) {
-                hearCommand(keyBindings.get(c), c);
-            } else if (c == '1') {
-                debug_1();
-            } else if (c == '2') {
-                debug_2();
-            } else if (c == 'q') {
-                debug();
+            hearCommand(keyBindings.get(c), c);
+            if (modal == null) {
+                if (c == '1') {
+                    debug_1();
+                } else if (c == '2') {
+                    debug_2();
+                } else if (c == 'q') {
+                    debug();
+                } else if (c == '`') {
+                    launchVaulted();
+                }
             }
         }
     }
 
     void hearCommand(UCommand command, Character c) {
-        System.out.println("actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
+        if (command != null) System.out.println("actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
         if (modal != null) {
-            System.out.println("sent " + command.id + " to modal");
             modal.hearCommand(command, c);
-        } else {
+        } else if (command != null) {
             command.execute((UPlayer)player);
         }
     }
@@ -405,4 +409,11 @@ public class UCommander implements URenderer.KeyListener {
         }
     }
 
+    public void launchVaulted() {
+        printScroll("Launching VaultEd...");
+        UArea edarea = new VaultedArea(15,15);
+        player.moveToCell(edarea, 2, 2);
+        UModal edmodal = new VaultedModal(edarea);
+        showModal(edmodal);
+    }
 }
