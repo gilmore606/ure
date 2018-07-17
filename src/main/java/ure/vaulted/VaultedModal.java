@@ -10,13 +10,13 @@ import java.util.Set;
 
 public class VaultedModal extends UModal {
 
-    UArea area;
+    VaultedArea area;
     int currentTerrain = 0;
     int nullTerrain;
     int[] terrainPalette;
     String[] terrains;
 
-    public VaultedModal(UArea edarea) {
+    public VaultedModal(VaultedArea edarea) {
         super(null, "", UColor.COLOR_BLACK);
         area = edarea;
         setDimensions(15,30);
@@ -41,6 +41,7 @@ public class VaultedModal extends UModal {
         drawString(renderer, "Q/A = cycle terrains", 1, 15);
         drawString(renderer, "1-9 = palette pick", 1, 16);
         drawString(renderer, "pass = place terrain", 1, 17);
+        drawString(renderer, "shf-C = crop to corner", 1, 18);
 
         drawIcon(renderer, terrainCzar.getTerrainByName(terrains[currentTerrain]).getIcon(), 1, 1);
         drawString(renderer, terrains[currentTerrain], 3, 1);
@@ -49,6 +50,8 @@ public class VaultedModal extends UModal {
             drawIcon(renderer, terrainCzar.getTerrainByName(terrains[terrainPalette[i]]).getIcon(), 2, 3+i);
             drawString(renderer, terrains[terrainPalette[i]], 4, 3+i);
         }
+
+        drawString(renderer, Integer.toString(commander.player().areaX()) + "," + Integer.toString(commander.player().areaY()), 6, 0);
     }
 
     @Override
@@ -89,6 +92,8 @@ public class VaultedModal extends UModal {
             currentTerrain = terrainPalette[7];
         else if (c.equals('9'))
             currentTerrain = terrainPalette[8];
+        else if (c.equals('C'))
+            cropToCorner();
 
     }
 
@@ -104,5 +109,9 @@ public class VaultedModal extends UModal {
                 return;
             }
         }
+    }
+
+    public void cropToCorner() {
+        area.cropSize(commander.player().areaX()+1, commander.player().areaY()+1);
     }
 }
