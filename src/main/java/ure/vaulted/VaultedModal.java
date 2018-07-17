@@ -42,6 +42,7 @@ public class VaultedModal extends UModal {
         drawString(renderer, "1-9 = palette pick", 1, 16);
         drawString(renderer, "pass = place terrain", 1, 17);
         drawString(renderer, "shf-C = crop to corner", 1, 18);
+        drawString(renderer, "shf-W = wipe!", 1, 19);
 
         drawIcon(renderer, terrainCzar.getTerrainByName(terrains[currentTerrain]).getIcon(), 1, 1);
         drawString(renderer, terrains[currentTerrain], 3, 1);
@@ -94,10 +95,12 @@ public class VaultedModal extends UModal {
             currentTerrain = terrainPalette[8];
         else if (c.equals('C'))
             cropToCorner();
+        else if (c.equals('W'))
+            wipeAll();
 
     }
 
-    public void stampTerrain() {
+    void stampTerrain() {
         area.setTerrain(commander.player().areaX(), commander.player().areaY(), terrains[currentTerrain]);
         for (int i=0;i<terrainPalette.length;i++) {
             if (terrainPalette[i] == currentTerrain)
@@ -111,7 +114,15 @@ public class VaultedModal extends UModal {
         }
     }
 
-    public void cropToCorner() {
+    void cropToCorner() {
         area.cropSize(commander.player().areaX()+1, commander.player().areaY()+1);
+    }
+
+    void wipeAll() {
+        for (int x=0;x<area.xsize;x++) {
+            for (int y=0;y<area.ysize;y++) {
+                area.setTerrain(x,y,terrains[currentTerrain]);
+            }
+        }
     }
 }
