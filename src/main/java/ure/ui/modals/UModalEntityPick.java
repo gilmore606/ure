@@ -110,6 +110,7 @@ public class UModalEntityPick extends UModal {
 
     @Override
     public void hearCommand(UCommand command, Character c) {
+        if (command == null) return;
         if (command.id.equals("MOVE_N")) {
             selection--;
             if (selection < 0) {

@@ -413,7 +413,7 @@ public class UCommander implements URenderer.KeyListener {
         printScroll("Launching VaultEd...");
         VaultedArea edarea = new VaultedArea(30,30);
         player.moveToCell(edarea, 2, 2);
-        UModal edmodal = new VaultedModal(edarea);
+        UModal edmodal = new VaultedModal(edarea, "testfile");
         showModal(edmodal);
     }
 }

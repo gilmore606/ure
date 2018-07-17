@@ -6,6 +6,7 @@ import ure.math.UColor;
 import ure.render.URenderer;
 import ure.ui.modals.UModal;
 
+import java.io.PrintWriter;
 import java.util.Set;
 
 public class VaultedModal extends UModal {
@@ -15,10 +16,12 @@ public class VaultedModal extends UModal {
     int nullTerrain;
     int[] terrainPalette;
     String[] terrains;
+    String filename;
 
-    public VaultedModal(VaultedArea edarea) {
+    public VaultedModal(VaultedArea edarea, String _filename) {
         super(null, "", UColor.COLOR_BLACK);
         area = edarea;
+        filename = _filename;
         setDimensions(15,30);
         Set<String> terrainset = terrainCzar.getAllTerrains();
         terrains = new String[terrainset.size()];
@@ -97,6 +100,8 @@ public class VaultedModal extends UModal {
             cropToCorner();
         else if (c.equals('W'))
             wipeAll();
+        else if (c.equals('S'))
+            writeFile();
 
     }
 
@@ -123,6 +128,35 @@ public class VaultedModal extends UModal {
             for (int y=0;y<area.ysize;y++) {
                 area.setTerrain(x,y,terrains[currentTerrain]);
             }
+        }
+    }
+
+    void writeFile() {
+        try {
+            PrintWriter writer = new PrintWriter(filename + ".json", "UTF-8");
+            writer.println("{");
+            writer.println("  \"xsize\": " + Integer.toString(area.xsize) + ",");
+            writer.println("  \"ysize\": " + Integer.toString(area.ysize) + ",");
+            writer.println("  \"terrain\": [");
+            for (int y=0;y<area.ysize;y++) {
+                String tline = "    \"";
+                for (int x=0;x<area.xsize;x++) {
+                    tline = tline + area.terrainAt(x,y).getFilechar();
+                }
+                tline = tline + "\"";
+                if (y < area.ysize-1)
+                    tline = tline + ",";
+                writer.println(tline);
+            }
+            writer.println("  ],");
+            writer.println("  \"tags\": [],");
+            writer.println("  \"things\": [],");
+            writer.println("  \"actors\": [],");
+            writer.println("  \"levels\": [1,10]");
+            writer.println("}");
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
