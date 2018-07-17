@@ -48,13 +48,7 @@ public class UModalChoices extends UModal {
 
     @Override
     public void drawContent(URenderer renderer) {
-        if (prompt != null) {
-            int i = 0;
-            for (String line : prompt) {
-                drawString(renderer, line, 0, i);
-                i++;
-            }
-        }
+        drawStrings(renderer, prompt, 0, 0);
         int xtab = 0;
         int drawSelection = 0;
         for (String choice : choices) {
@@ -79,9 +73,8 @@ public class UModalChoices extends UModal {
             selection++;
         if (command.id.equals("PASS"))
             pickSelection();
-        if (command.id.equals("ESC")) {
-            if (escapable)
-                escape();
+        if (command.id.equals("ESC") && escapable) {
+            escape();
         }
 
         if (selection < 0) {

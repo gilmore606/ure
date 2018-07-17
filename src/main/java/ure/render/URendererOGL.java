@@ -135,6 +135,8 @@ public class URendererOGL implements URenderer {
                 if (key == GLFW_KEY_RIGHT) key = 3;
                 if (key == GLFW_KEY_DOWN) key = 4;
                 if (key == GLFW_KEY_LEFT) key = 5;
+                if (key == GLFW_KEY_ENTER) key = 6;
+                if (key == GLFW_KEY_BACKSPACE) key = 7;
                 if (keyState[GLFW_KEY_LEFT_SHIFT] || keyState[GLFW_KEY_RIGHT_SHIFT]) {
                     if (key > 1 && key < 6) {
                         key = key + 4;

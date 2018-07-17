@@ -211,4 +211,14 @@ public class UModal extends View implements UAnimator {
         }
         return longest;
     }
+
+    public void drawStrings(URenderer renderer, String[] lines, int x, int y) {
+        if (lines != null) {
+            int i = 0;
+            for (String line: lines) {
+                drawString(renderer, line, x, y+i);
+                i++;
+            }
+        }
+    }
 }

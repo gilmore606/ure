@@ -36,12 +36,15 @@ public class UConfig {
     private String textFont = "Px437_Phoenix_BIOS-2y.ttf";
     private int glyphWidth = 16;
     private int glyphHeight = 17;
+    private int textWidth = 9;
+    private int textHeight = 17;
 
     private String uiFrameGlyphs = "+-+|+-+|";                               // corners and sides for UI box frames
     private int modalFrameLine = 2;                             // thickness of pixel line around modals
     private int modalShadowStyle = UConfig.SHADOW_BLOCK;        // drop shadow style for modal popups
     private int modalPosition = UConfig.POS_CAMERA_CENTER;      // position of modal popups
     private boolean wrapSelect = true;                          // wrap around when scrolling through selections
+    private int cursorBlinkSpeed = 20;
 
     private UColor windowBgColor = UColor.COLOR_BLACK;                          // bgColor of game window
     private UColor cameraBgColor = UColor.COLOR_BLACK;                          // bgColor of camera (for unseen territory)
@@ -209,6 +212,22 @@ public class UConfig {
         this.glyphHeight = glyphHeight;
     }
 
+    public int getTextWidth() {
+        return textWidth;
+    }
+
+    public void setTextWidth(int textWidth) {
+        this.textWidth = textWidth;
+    }
+
+    public int getTextHeight() {
+        return textHeight;
+    }
+
+    public void setTextHeight(int textHeight) {
+        this.textHeight = textHeight;
+    }
+
     public String getUiFrameGlyphs() {
         return uiFrameGlyphs;
     }
@@ -238,6 +257,8 @@ public class UConfig {
 
     public boolean isWrapSelect() { return wrapSelect; }
     public void setWrapSelect(boolean wrap) { wrapSelect = wrap; }
+
+    public int getCursorBlinkSpeed() { return cursorBlinkSpeed; }
 
     public UColor getWindowBgColor() {
         return windowBgColor;

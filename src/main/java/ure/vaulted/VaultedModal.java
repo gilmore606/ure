@@ -46,6 +46,8 @@ public class VaultedModal extends UModal {
         drawString(renderer, "pass = place terrain", 1, 17);
         drawString(renderer, "shf-C = crop to corner", 1, 18);
         drawString(renderer, "shf-W = wipe!", 1, 19);
+        drawString(renderer, "shf-S = save", 1, 20);
+        drawString(renderer, filename + ".json", 1, 29);
 
         drawIcon(renderer, terrainCzar.getTerrainByName(terrains[currentTerrain]).getIcon(), 1, 1);
         drawString(renderer, terrains[currentTerrain], 3, 1);

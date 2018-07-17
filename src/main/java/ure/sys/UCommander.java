@@ -8,14 +8,17 @@ import ure.areas.UArea;
 import ure.areas.UCartographer;
 import ure.commands.*;
 import ure.commands.UCommand;
+import ure.math.UColor;
 import ure.render.URenderer;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
+import ure.ui.modals.HearModalGetString;
 import ure.ui.modals.UModal;
 import ure.ui.UScrollPanel;
 import ure.ui.UStatusPanel;
 import ure.ui.USpeaker;
+import ure.ui.modals.UModalGetString;
 import ure.vaulted.VaultedArea;
 import ure.vaulted.VaultedModal;
 
@@ -31,7 +34,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 
 
-public class UCommander implements URenderer.KeyListener {
+public class UCommander implements URenderer.KeyListener,HearModalGetString {
 
     public UConfig config;
     public Random random;
@@ -409,11 +412,23 @@ public class UCommander implements URenderer.KeyListener {
         }
     }
 
-    public void launchVaulted() {
+    void launchVaulted() {
+        UModalGetString fmodal = new UModalGetString("Filename?\n(Leave off the .json)", 20, true,
+                UColor.COLOR_BLACK, this, "vaulted-start");
         printScroll("Launching VaultEd...");
+        showModal(fmodal);
+
+    }
+
+    void doLaunchVaulted(String filename) {
         VaultedArea edarea = new VaultedArea(30,30);
         player.moveToCell(edarea, 2, 2);
-        UModal edmodal = new VaultedModal(edarea, "testfile");
+        UModal edmodal = new VaultedModal(edarea, filename);
         showModal(edmodal);
+    }
+    public void hearModalGetString(String context, String input) {
+        if (context.equals("vaulted-start")) {
+            doLaunchVaulted(input);
+        }
     }
 }
