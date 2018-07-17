@@ -32,10 +32,16 @@ public class VaultedModal extends UModal {
         }
         terrainPalette = new int[]{nullt,nullt,nullt,nullt,nullt,nullt,nullt,nullt,nullt};
         nullTerrain = nullt;
+        commander.config.setLightEnable(false);
+        commander.config.setVisibilityEnable(false);
     }
 
     @Override
     public void drawContent(URenderer renderer) {
+        drawString(renderer, "Q/A = cycle terrains", 1, 15);
+        drawString(renderer, "1-9 = palette pick", 1, 16);
+        drawString(renderer, "pass = place terrain", 1, 17);
+
         drawIcon(renderer, terrainCzar.getTerrainByName(terrains[currentTerrain]).getIcon(), 1, 1);
         drawString(renderer, terrains[currentTerrain], 3, 1);
         for (int i=0;i<terrainPalette.length;i++) {
