@@ -20,7 +20,7 @@ import java.util.*;
  *
  */
 
-public class UCamera extends View implements UAnimator, UArea.Listener {
+public class UCamera extends View implements UAnimator {
 
     @Inject
     UCommander commander;
@@ -147,10 +147,8 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
         boolean areachange = false;
         if (area != null && theArea != area) {
             areachange = true;
-            area.removeListener(this);
         }
         area = theArea;
-        area.addListener(this);
         moveTo(thex,they);
         if (areachange)
             commander.tickTime();  // TODO: is this necessary?  it redraws the screen but also gives NPCS a turn
@@ -542,10 +540,6 @@ public class UCamera extends View implements UAnimator, UArea.Listener {
             }
         }
         draw(renderer);
-    }
-
-    public void areaChanged() {
-        renderer.render();
     }
 
 }

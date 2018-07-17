@@ -1,6 +1,7 @@
 package ure.terrain;
 
 import ure.actions.Interactable;
+import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.actors.UActor;
@@ -188,8 +189,8 @@ public class TerrainDeco implements UTerrain, Interactable, Entity {
      * DNO
      */
     public UColor getFgColorBuffer() {
-
-        return terrain.getFgColorBuffer(); }
+        return terrain.getFgColorBuffer();
+    }
     /**
      * WARNING: URE uses the name to look up terrains internally.  Overriding this could make your system
      * more fragile.  Think about what you're doing.
@@ -207,4 +208,13 @@ public class TerrainDeco implements UTerrain, Interactable, Entity {
         terrain.setStat(stat,value);
     }
 
+    public UTerrain makeClone() {
+        return terrain.makeClone();
+    }
+
+    public char getFilechar() {
+        return terrain.getFilechar();
+    }
+
+    public void reconnect(UArea area, UCell cell) { terrain.reconnect(area, cell); }
 }

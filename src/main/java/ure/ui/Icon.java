@@ -13,6 +13,8 @@ public class Icon {
     public UColor fgColor;
     public char glyph;
 
+    public Icon() {}
+
     public Icon(char glyph, UColor fgColor, UColor bgColor) {
         this.glyph = glyph;
         this.fgColor = fgColor;

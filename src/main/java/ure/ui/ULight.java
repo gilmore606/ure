@@ -1,5 +1,6 @@
 package ure.ui;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.areas.UArea;
 import ure.math.UColor;
 
@@ -26,8 +27,12 @@ public class ULight {
     protected float flickerIntensity = 0f;
     protected int flickerOffset = 0;
 
+    @JsonIgnore
     UArea area;
+
     public int x,y;
+
+    public ULight() {}
 
     public ULight(int[] thecolor, int therange, int thefalloff) {
         setColor(new UColor(thecolor[0],thecolor[1],thecolor[2]));
@@ -38,6 +43,10 @@ public class ULight {
         setColor(thecolor);
         setRange(therange);
         setFalloff(thefalloff);
+    }
+
+    public void reconnect(UArea area) {
+        this.area = area;
     }
 
     public void setFlicker(int style, float speed, float intensity, int offset) {

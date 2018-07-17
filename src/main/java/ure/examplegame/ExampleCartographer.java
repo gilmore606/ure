@@ -1,6 +1,5 @@
 package ure.examplegame;
 
-import ure.actors.UActor;
 import ure.areas.*;
 
 public class ExampleCartographer extends UCartographer {

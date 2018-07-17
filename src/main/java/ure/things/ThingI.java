@@ -27,6 +27,8 @@ import java.util.Random;
  */
 public abstract class ThingI implements UThing, UContainer, Entity, Interactable, Cloneable {
 
+    public static final String TYPE = "";
+
     @Inject
     @JsonIgnore
     public UCommander commander;
@@ -46,19 +48,16 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
     protected String getFailMsg = "You can't pick that up.";
     protected String category = "misc";
     protected HashMap<String,Integer> stats;
-    public String[] tags;
-    public int[] spawnlevels;
-    public String[] spawnterrain;
-
-
-    public static final String TYPE = "";
+    protected String[] tags;
+    protected int[] spawnlevels;
+    protected String[] spawnterrain;
 
     protected UColor glyphColor;
     protected boolean glyphOutline = false;
     protected Icon icon;
 
     @JsonIgnore
-    protected UContainer location;  // What container am I in?  TODO: Reconnect after deserialization
+    protected UContainer location;  // What container am I in?
 
     protected UCollection contents; // What's inside me?
 
@@ -73,6 +72,11 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
         }
         setIcon(new Icon(getGlyph(), getGlyphColor(), null));
         stats = new HashMap<>();
+    }
+
+    public void reconnect(UArea area, UContainer container) {
+        this.location = container;
+        contents.reconnect(area, this);
     }
 
     public void SetupColors() {
@@ -257,10 +261,6 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
         this.dname = dname;
     }
 
-    public String getDnamec() {
-        return "The " + getName();
-    }
-
     public String getPlural() {
         if (plural != null && !plural.isEmpty())
             return plural;
@@ -393,9 +393,10 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
 
 
     public boolean isTagAndLevel(String tag, int level) {
-        if (spawnlevels == null) return false;
-        if (level >= spawnlevels[0] && level <= spawnlevels[1]) {
-            for (String test : tags) {
+        int[] levels = getSpawnlevels();
+        if (levels == null || levels.length < 2) return false;
+        if (level >= levels[0] && level <= levels[1]) {
+            for (String test : getTags()) {
                 if (test.equals(tag)) return true;
             }
         }
@@ -403,10 +404,10 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
     }
 
     public boolean canSpawnOnTerrain(String terrain) {
-        if (spawnterrain == null) {
+        if (getSpawnterrain() == null) {
             return true;
         }
-        for (String t : spawnterrain) {
+        for (String t : getSpawnterrain()) {
             if (t.equals(terrain))
                 return true;
         }
@@ -423,5 +424,30 @@ public abstract class ThingI implements UThing, UContainer, Entity, Interactable
 
     public void notifyMove() {
 
+    }
+
+
+    public String[] getTags() {
+        return tags;
+    }
+
+    public void setTags(String[] tags) {
+        this.tags = tags;
+    }
+
+    public int[] getSpawnlevels() {
+        return spawnlevels;
+    }
+
+    public void setSpawnlevels(int[] spawnlevels) {
+        this.spawnlevels = spawnlevels;
+    }
+
+    public String[] getSpawnterrain() {
+        return spawnterrain;
+    }
+
+    public void setSpawnterrain(String[] spawnterrain) {
+        this.spawnterrain = spawnterrain;
     }
 }

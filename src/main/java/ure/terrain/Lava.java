@@ -9,7 +9,7 @@ public class Lava extends TerrainI implements UTerrain {
 
     public static final String TYPE = "lava";
 
-    int bubbleFrames = 0;
+    protected int bubbleFrames = 0;
 
     @Override
     public char getGlyph() {
@@ -26,5 +26,13 @@ public class Lava extends TerrainI implements UTerrain {
     @Override
     public char glyph(int x, int y) {
         return getGlyph();
+    }
+
+    public int getBubbleFrames() {
+        return bubbleFrames;
+    }
+
+    public void setBubbleFrames(int bubbleFrames) {
+        this.bubbleFrames = bubbleFrames;
     }
 }

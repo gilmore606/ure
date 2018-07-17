@@ -1,5 +1,8 @@
 package ure.areas;
 
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ure.sys.Injector;
 import ure.sys.UCommander;
@@ -9,10 +12,11 @@ import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * UCartographer implements a central authority for determining where inter-area exits go.  It defines
@@ -96,13 +100,28 @@ public class UCartographer {
      * @param label
      * @return null if no persisted area found.
      */
-    UArea FetchArea(String label, String labelname, int labeldata) {
-        if (!commander.config.isPersistentAreas())
-            return null;
-        for (UArea area : activeAreas) {
+    protected UArea FetchArea(String label, String labelname, int labeldata) {
+
+        // First check for active areas
+        for (UArea area : activeAreas)
             if (area.label.equals(label))
                 return area;
+
+        if (commander.config.isPersistentAreas()) {
+            File file = new File(label + ".area");
+            try (
+                FileInputStream stream = new FileInputStream(file);
+                GZIPInputStream gzip = new GZIPInputStream(stream)
+            ) {
+                UArea area = objectMapper.readValue(gzip, UArea.class);
+                area.reconnect();
+                return area;
+            }
+            catch (IOException e) {
+                System.out.println("Couldn't load area for " + label);
+            }
         }
+
         return null;
     }
 
@@ -113,13 +132,21 @@ public class UCartographer {
      * what actually gets serialized.
      */
     protected void persistArea(UArea area, String filename) {
-        if (!commander.config.isPersistentAreas())
-            return;
-        File areaFile = new File(filename);
-        try {
-            objectMapper.writeValue(areaFile, area);
-        } catch (IOException e) {
-            throw new RuntimeException("Couldn't persist area", e);
+        if (commander.config.isPersistentAreas()) {
+            File file = new File(filename);
+            try (
+                FileOutputStream stream = new FileOutputStream(file);
+                GZIPOutputStream gzip = new GZIPOutputStream(stream)
+            ) {
+                JsonFactory jfactory = new JsonFactory();
+                JsonGenerator jGenerator = jfactory
+                        .createGenerator(gzip, JsonEncoding.UTF8);
+                jGenerator.setCodec(objectMapper);
+                jGenerator.writeObject(area);
+                jGenerator.close();
+            } catch (IOException e) {
+                throw new RuntimeException("Couldn't persist area", e);
+            }
         }
     }
 
@@ -131,8 +158,9 @@ public class UCartographer {
      */
      public UArea makeArea(String label, String labelname, int labeldata) {
          System.out.println("CARTO: make area for " + labelname + " (" + Integer.toString(labeldata) + ")");
-         if (regions.containsKey(labelname))
+         if (regions.containsKey(labelname)) {
              return regions.get(labelname).makeArea(labeldata, label);
+         }
          return null;
     }
 
@@ -158,14 +186,7 @@ public class UCartographer {
             area.freezeForPersist();
             activeAreas.remove(area);
             commander.unregisterTimeListener(area);
-            // TODO: actually serialize the area now
-            // TODO: somehow deref everything in the area so it gets GC'd?  that'd be nice eh.
-            boolean serializationWorksNow = false;
-            if (serializationWorksNow) {
-                persistArea(area, "uarea-" + area.getLabel());
-            } else {
-                System.out.println("I would have serialized " + area.getLabel() + " at this point.");
-            }
+            persistArea(area, area.getLabel() + ".area");
         }
     }
 
@@ -179,7 +200,7 @@ public class UCartographer {
      */
     public String GetLabelName(String label) {
         int i = label.indexOf(" ");
-        if (i < 1) return label;
+        if (i < 0) return label;
         return label.substring(0,i);
     }
 
@@ -231,7 +252,7 @@ public class UCartographer {
      *
      */
     public UArea getTitleArea() {
-        UArea area = new UArea(100,100,terrainCzar,"floor");
+        UArea area = new UArea(100,100,"floor");
         return area;
     }
 

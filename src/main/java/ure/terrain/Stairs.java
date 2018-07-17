@@ -8,7 +8,6 @@ import ure.actors.UActor;
 import ure.ui.modals.HearModalChoices;
 import ure.ui.modals.UModalChoices;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 
 /**
@@ -21,17 +20,16 @@ import java.util.ArrayList;
  */
 public class Stairs extends TerrainI implements UTerrain, HearModalChoices {
 
-    public UCartographer cartographer;
-
     public static final String TYPE = "stairs";
 
-    String label = "";
+    protected String label = "";
 
-    int destX, destY;
-    boolean onstep = true;
-    boolean confirm = true;
+    protected int destX;
+    protected int destY;
+    protected boolean onstep = true;
+    protected boolean confirm = true;
 
-    public String label() {
+    public String getLabel() {
         /**
          * In general you shouldn't override this; you probably want to setLabel() persistently to
          * change your area routing.
@@ -39,11 +37,6 @@ public class Stairs extends TerrainI implements UTerrain, HearModalChoices {
         return label;
     }
 
-    public void setLabel(String thelabel, UCartographer carto) {
-        cartographer = carto;
-        label = thelabel;
-        System.out.println("CARTO : setting stairs dest : " + label);
-    }
     public void setLabel(String thelabel) {
         label = thelabel;
         System.out.println("CARTO : setting stairs dest : " + label);
@@ -82,13 +75,13 @@ public class Stairs extends TerrainI implements UTerrain, HearModalChoices {
 
     @Override
     public void walkedOnBy(UActor actor, UCell cell) {
-        if (actor instanceof UPlayer && onstep) {
-            if (!confirm) {
+        if (actor instanceof UPlayer && isOnstep()) {
+            if (!isConfirm()) {
                 transportActor(actor);
             } else {
                 askConfirm();
             }
-        } else if (onstep)
+        } else if (isOnstep())
             transportActor(actor);
     }
 
@@ -106,5 +99,38 @@ public class Stairs extends TerrainI implements UTerrain, HearModalChoices {
     public void hearModalChoices(String context, String choice) {
         if (choice.equals("Yes"))
             transportActor(commander.player());
+    }
+
+
+    public int getDestX() {
+        return destX;
+    }
+
+    public void setDestX(int destX) {
+        this.destX = destX;
+    }
+
+    public int getDestY() {
+        return destY;
+    }
+
+    public void setDestY(int destY) {
+        this.destY = destY;
+    }
+
+    public boolean isOnstep() {
+        return onstep;
+    }
+
+    public void setOnstep(boolean onstep) {
+        this.onstep = onstep;
+    }
+
+    public boolean isConfirm() {
+        return confirm;
+    }
+
+    public void setConfirm(boolean confirm) {
+        this.confirm = confirm;
     }
 }

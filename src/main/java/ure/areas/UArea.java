@@ -34,15 +34,11 @@ public class UArea implements UTimeListener, Serializable {
 
     @Inject
     @JsonIgnore
-    UCommander commander; // TODO: Reconnect after deserialzation
+    UCommander commander;
 
     @Inject
     @JsonIgnore
-    UTerrainCzar terrainCzar; // TODO: Reconnect after deserialization
-
-    public interface Listener {
-        void areaChanged();
-    }
+    UTerrainCzar terrainCzar;
 
     protected String label;
 
@@ -64,15 +60,14 @@ public class UArea implements UTimeListener, Serializable {
     protected HashMap<Integer,String> sunCycleMessages = new HashMap<>();
     protected int sunCycleLastAnnounceMarker;
 
-    @JsonIgnore
-    private Set<Listener> listeners = new HashSet<>(); // TODO: Reconnect after deserialization
-
-    public UArea(int thexsize, int theysize, UTerrainCzar tczar, String defaultTerrain) {
+    public UArea() {
         Injector.getAppComponent().inject(this);
         commander.config.addDefaultSunCycle(this);
+    }
+    public UArea(int thexsize, int theysize, String defaultTerrain) {
+        this();
         xsize = thexsize;
         ysize = theysize;
-        terrainCzar = tczar;
         cells = new UCell[xsize][ysize];
         for (int i=0;i<xsize;i++) {
             for (int j=0;j<ysize;j++)
@@ -80,10 +75,8 @@ public class UArea implements UTimeListener, Serializable {
         }
     }
 
-    public UArea(String filename, UTerrainCzar tczar) {
-        Injector.getAppComponent().inject(this);
-        commander.config.addDefaultSunCycle(this);
-        terrainCzar = tczar;
+    public UArea(String filename) {
+        this();
         cells = new UCell[200][200];
         InputStream in = getClass().getResourceAsStream(filename);
         Stream<String> lines = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)).lines();
@@ -102,17 +95,49 @@ public class UArea implements UTimeListener, Serializable {
 
     public void close() {
         setLights(null);
-        listeners = null;
         setActors(null);
         setCells(null);
     }
 
-    public void addListener(Listener listener) {
-        listeners.add(listener);
+    /**
+     * Do what's necessary to reconnect all internal references in our data model after deserialization.
+     */
+    public void reconnect() {
+        reconnectCells();
+        reconnectLights();
+        reconnectActors();
+        reconnectParticles();
     }
 
-    public void removeListener(Listener listener) {
-        listeners.remove(listener);
+    protected void reconnectCells() {
+        for (int x=0; x<cells.length; x++)
+            for (int y=0; y<cells[x].length; y++) {
+                cells[x][y].reconnect(this);
+            }
+    }
+
+    protected void reconnectLights() {
+        for (ULight light : lights) {
+            light.reconnect(this);
+        }
+    }
+
+    protected void reconnectActors() {
+        // These will have been filled in by the deserializer, but we want them to be the same reference
+        // that we see in our cell contents.
+        actors = new HashSet<>();
+        for (int x=0; x<cells.length; x++)
+            for (int y=0; y<cells[x].length; y++) {
+                for (UActor actor : cells[x][y].contents.getActors()) {
+                    actors.add(actor);
+                }
+            }
+    }
+
+    protected void reconnectParticles() {
+        for (UParticle particle : particles) {
+            particle.reconnect(this);
+        }
     }
 
     public HashSet<ULight> lights() {
@@ -139,7 +164,7 @@ public class UArea implements UTimeListener, Serializable {
         this.getSunColor().set(r, g, b);
     }
 
-    public void setSunColor(int minutes) {
+    public void adjustSunColor(int minutes) {
         UColor lerp1, lerp2;
         int min1, min2;
         min1 = 0;
@@ -302,7 +327,7 @@ public class UArea implements UTimeListener, Serializable {
         for (int x=0;x<xsize;x++) {
             for (int y=0;y<ysize;y++) {
                 if (cells[x][y].terrain() instanceof Stairs) {
-                    if (((Stairs)cells[x][y].terrain()).label().equals(label)) {
+                    if (((Stairs)cells[x][y].terrain()).getLabel().equals(label)) {
                         return cells[x][y];
                     }
                 }
@@ -313,8 +338,7 @@ public class UArea implements UTimeListener, Serializable {
 
     public void hearTimeTick(UCommander cmdr) {
         System.out.println(getLabel() + " tick");
-        setSunColor(commander.daytimeMinutes());
-        updateListeners();
+        adjustSunColor(commander.daytimeMinutes());
     }
 
     /**
@@ -329,12 +353,6 @@ public class UArea implements UTimeListener, Serializable {
             if (actor.canSee(action.actor)) {
                 actor.hearEvent(action);
             }
-        }
-    }
-
-    void updateListeners() {
-        for (Listener listener : listeners) {
-            listener.areaChanged();
         }
     }
 

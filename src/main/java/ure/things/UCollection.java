@@ -2,6 +2,8 @@ package ure.things;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UActor;
+import ure.areas.UArea;
+import ure.areas.UCell;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,15 +16,25 @@ import java.util.Iterator;
 public class UCollection {
 
     @JsonIgnore
-    private UContainer container; // TODO: Reconnect this after deserialization
+    private UContainer container;
 
-    protected ArrayList<UThing> things;
-    protected ArrayList<UActor> actors;
+    protected ArrayList<UThing> things = new ArrayList<>();
+    protected ArrayList<UActor> actors = new ArrayList<>();
+
+    public UCollection() {}
 
     public UCollection(UContainer cont) {
         container = cont;
-        things = new ArrayList<UThing>();
-        actors = new ArrayList<UActor>();
+    }
+
+    public void reconnect(UArea area, UContainer container) {
+        this.container = container;
+        for (UThing thing : things) {
+            thing.reconnect(area, container);
+        }
+        for (UActor actor : actors) {
+            actor.reconnect(area, container);
+        }
     }
 
     public void remove(UThing thing) {

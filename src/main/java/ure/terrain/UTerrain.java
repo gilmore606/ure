@@ -1,6 +1,6 @@
 package ure.terrain;
 
-import ure.actions.Interactable;
+import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.actors.UActor;
@@ -21,6 +21,7 @@ public interface UTerrain {
     char getGlyph();
     char glyph(int x, int y);
     Icon getIcon();
+    char getFilechar();
     String[] UIdetails(String context);
     int glyphOffsetX();
     int glyphOffsetY();
@@ -43,4 +44,6 @@ public interface UTerrain {
     String getBonkmsg();
     int getStat(String stat);
     void setStat(String stat, int value);
+    UTerrain makeClone();
+    void reconnect(UArea area, UCell cell);
 }

@@ -40,7 +40,6 @@ public interface UThing  {
     String getPlural();
     String getIname();
     String getDname();
-    String getDnamec();
     String getCategory();
     Icon getIcon();
     UContainer getLocation();
@@ -50,6 +49,8 @@ public interface UThing  {
     void setStat(String stat, int value);
     boolean isTagAndLevel(String tag, int level);
     boolean canSpawnOnTerrain(String terrain);
+    UThing makeClone();
+    void reconnect(UArea area, UContainer container);
     boolean isUsable(UActor actor);
     float useFrom(UActor actor);
     void notifyMove();

@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Set;
 
-public class ThingDeserializer extends JsonDeserializer<ThingI> {
+public class ThingDeserializer extends JsonDeserializer<UThing> {
 
     private Reflections reflections = new Reflections("ure", new SubTypesScanner());
     private Set<Class<? extends ThingI>> thingClasses = reflections.getSubTypesOf(ThingI.class);
@@ -25,11 +25,11 @@ public class ThingDeserializer extends JsonDeserializer<ThingI> {
     }
 
     @Override
-    public ThingI deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
+    public ThingI deserialize(JsonParser parser, DeserializationContext context) throws IOException {
         ObjectCodec codec = parser.getCodec();
         JsonNode node = codec.readTree(parser);
         JsonNode typeNode = node.get("type");
-        String type = typeNode != null ? node.get("type").asText() : null;
+        String type = (typeNode != null && !typeNode.isNull()) ? node.get("type").asText() : null;
         Class<? extends ThingI> thingClass = classForType(type);
         return objectMapper.treeToValue(node, thingClass);
     }

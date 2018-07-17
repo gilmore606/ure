@@ -1,6 +1,7 @@
 package ure.actors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang.StringUtils;
 import ure.actions.ActionEmote;
 import ure.actions.UAction;
 import ure.actions.ActionGet;
@@ -46,7 +47,7 @@ public class UNPC extends UActor {
     public void hearEvent(UAction action) {
         if (action.actor != this) {
             if (action instanceof ActionGet) {
-                emote(getDnamec() + " says, \"Hey that's mine!\"");
+                emote(StringUtils.capitalize(getDname()) + " says, \"Hey that's mine!\"");
             }
         }
     }

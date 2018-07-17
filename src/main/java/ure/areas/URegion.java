@@ -69,7 +69,7 @@ public class URegion {
     public UArea makeArea(int level, String label) {
         System.out.println("REGION " + id + " : making area " + Integer.toString(level));
         ULandscaper scaper = getLandscaperForLevel(level);
-        UArea area = new UArea(xsize, ysize, terrainCzar, scaper.floorterrain);
+        UArea area = new UArea(xsize, ysize, scaper.floorterrain);
         area.label = label;
         scaper.buildArea(area, level, tags);
 

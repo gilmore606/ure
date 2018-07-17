@@ -38,13 +38,23 @@ public class UCell implements UContainer {
     protected UCollection contents;
     protected boolean isSeen = false;
 
-    public UCell(UArea theArea, int thex, int they, UTerrain theTerrain) {
+    public UCell() {
         Injector.getAppComponent().inject(this);
+    }
+
+    public UCell(UArea theArea, int thex, int they, UTerrain theTerrain) {
+        this();
         setContents(new UCollection(this));
         area = theArea;
         x = thex;
         y = they;
         useTerrain(theTerrain);
+    }
+
+    public void reconnect(UArea area) {
+        this.area = area;
+        terrain.reconnect(area, this);
+        contents.reconnect(area, this);
     }
 
     public float sunBrightness() {
@@ -185,5 +195,9 @@ public class UCell implements UContainer {
 
     public void setContents(UCollection contents) {
         this.contents = contents;
+    }
+
+    public void setArea(UArea area) {
+        this.area = area;
     }
 }

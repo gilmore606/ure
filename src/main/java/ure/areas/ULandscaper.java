@@ -632,7 +632,8 @@ public class ULandscaper {
      * @param t
      */
     public void SetStairsLabel(UArea area, UCartographer carto, int x, int y, Stairs t) {
-        t.setLabel("", carto);
+        // TODO: Should this be setting area.label() ?
+        t.setLabel("");
     }
 
     public void buildRoom(UArea area, int x, int y, int w, int h, String floort, String wallt) {

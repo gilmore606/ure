@@ -9,7 +9,7 @@ public class UParticle implements UAnimator {
     private int ticksLeft;
 
     @JsonIgnore
-    private UArea area;  // TODO: Reconnect after deserialization
+    private UArea area;
 
     private int x, y;
 
@@ -19,6 +19,10 @@ public class UParticle implements UAnimator {
         y = they;
         ticksLeft = lifeticks;
         area.addParticle(this);
+    }
+
+    public void reconnect(UArea area) {
+        this.area = area;
     }
 
     public void animationTick() {

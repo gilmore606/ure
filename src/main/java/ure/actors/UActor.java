@@ -1,6 +1,7 @@
 package ure.actors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang.StringUtils;
 import ure.actions.Interactable;
 import ure.actions.UAction;
 import ure.areas.UArea;
@@ -195,7 +196,7 @@ public class UActor extends ThingI implements Interactable {
             if (this instanceof UPlayer)
                 commander.printScroll("You pick up " + thing.getIname() + ".");
             else
-                commander.printScrollIfSeen(this, this.getDnamec() + " picks up " + thing.getIname() + ".");
+                commander.printScrollIfSeen(this, StringUtils.capitalize(this.getDname()) + " picks up " + thing.getIname() + ".");
             thing.gotBy(this);
             return true;
         }
@@ -212,7 +213,7 @@ public class UActor extends ThingI implements Interactable {
             if (this instanceof UPlayer)
                 commander.printScroll("You drop " + thing.getIname() + ".");
             else
-                commander.printScrollIfSeen(this, this.getDnamec() + " drops " + thing.getIname() + ".");
+                commander.printScrollIfSeen(this, StringUtils.capitalize(this.getDname()) + " drops " + thing.getIname() + ".");
             thing.droppedBy(this);
             return true;
         }
