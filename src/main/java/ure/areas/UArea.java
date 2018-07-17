@@ -152,6 +152,10 @@ public class UArea implements UTimeListener, Serializable {
         getLights().remove(light);
     }
 
+    public void resetSunColorLerps() {
+        getSunColorLerps().clear();
+        getSunColorLerpMarkers().clear();
+    }
     public void addSunColorLerp(int minutes, UColor color) { addSunColorLerp(minutes, color, null); }
     public void addSunColorLerp(int minutes, UColor color, String msg) {
         getSunColorLerps().add(color);

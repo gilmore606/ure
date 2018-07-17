@@ -12,6 +12,7 @@ public class VaultedModal extends UModal {
 
     UArea area;
     int currentTerrain = 0;
+    int nullTerrain;
     int[] terrainPalette;
     String[] terrains;
 
@@ -22,11 +23,15 @@ public class VaultedModal extends UModal {
         Set<String> terrainset = terrainCzar.getAllTerrains();
         terrains = new String[terrainset.size()];
         int i = 0;
+        int nullt = 0;
         for (String t : terrainset) {
             terrains[i] = t;
+            if (t.equals("null"))
+                nullt = i;
             i++;
         }
-        terrainPalette = new int[]{0,0,0,0,0,0,0,0,0};
+        terrainPalette = new int[]{nullt,nullt,nullt,nullt,nullt,nullt,nullt,nullt,nullt};
+        nullTerrain = nullt;
     }
 
     @Override
@@ -88,7 +93,7 @@ public class VaultedModal extends UModal {
                 return;
         }
         for (int i=0;i<terrainPalette.length;i++) {
-            if (terrainPalette[i] == 0) {
+            if (terrainPalette[i] == nullTerrain) {
                 terrainPalette[i] = currentTerrain;
                 return;
             }
