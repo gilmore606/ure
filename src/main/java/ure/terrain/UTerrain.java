@@ -89,7 +89,7 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
         this.cell = cell;
     }
 
-    public void close() {
+    public void closeOut() {
         icon = null;
         stats = null;
     }

@@ -81,6 +81,7 @@ public class UConfig {
 
     // Game functionality
 
+    private boolean backgroundLoader = true;        // load and save areas in the background?
     private boolean persistentAreas = true;         // persist and recover generated areas?
     private boolean runNeighborAreas = true;        // TODO: keep areas adjacent to current area awake?
 
@@ -434,6 +435,9 @@ public class UConfig {
     public void setPersistentAreas(boolean persistentAreas) {
         this.persistentAreas = persistentAreas;
     }
+
+    public boolean isBackgroundLoader() { return backgroundLoader; }
+    public void setBackgroundLoader(boolean value) { backgroundLoader = value; }
 
     public boolean isRunNeighborAreas() {
         return runNeighborAreas;

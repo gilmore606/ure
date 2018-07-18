@@ -238,6 +238,8 @@ public abstract class ULandscaper {
             UCell cell = randomCell(area, terrains);
             String name = things[random.nextInt(things.length)];
             UThing thing = thingCzar.getThingByName(name);
+            if (thing.getContents().getThings() == null)
+                System.out.println("*** BUG scatterThings got a thing back with no contents.things bound for area " + area.label);
             thing.moveToCell(area, cell.x, cell.y);
         }
     }

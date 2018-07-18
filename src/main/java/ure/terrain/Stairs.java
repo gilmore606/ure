@@ -81,8 +81,12 @@ public class Stairs extends UTerrain implements HearModalChoices {
             } else {
                 askConfirm();
             }
-        } else if (isOnstep())
-            transportActor(actor);
+        } else if (isOnstep()) {
+            if (commander.cartographer.areaIsActive(label))
+                transportActor(actor);
+            else
+                System.out.println(name + " tried to enter " + label + ", but it's not active");
+        }
     }
 
     public void askConfirm() {

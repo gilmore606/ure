@@ -21,6 +21,7 @@ public class UThingCzar {
     }
 
     public void loadThings(String resourceName) {
+        System.out.println("*** thingCzar loading from " + resourceName);
         thingsByName = new HashMap<>();
         try {
             InputStream inputStream = getClass().getResourceAsStream("/things.json");
@@ -35,7 +36,20 @@ public class UThingCzar {
     }
 
     public UThing getThingByName(String name) {
-        return thingsByName.get(name).makeClone();
+        UThing clone = thingsByName.get(name).makeClone();
+        if (clone.getContents() == null) {
+            System.out.println("*** BUG thingCzar spawned a clone with null contents");
+        }
+        if (clone.getContents().getThings() == null) {
+            System.out.println("+++ BUG thingCzar spawned a clone with contents with null things");
+            if (clone.closed) {
+                System.out.println("IT WAS A CLOSED THING");
+                if (thingsByName.get(name).closed) {
+                    System.out.println("THE SOURCE WAS CLOSED TOO");
+                }
+            }
+        }
+        return clone;
     }
 
     public String[] getThingsByTag(String tag, int level) {

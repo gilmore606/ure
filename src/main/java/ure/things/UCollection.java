@@ -18,12 +18,17 @@ public class UCollection {
     @JsonIgnore
     private UContainer container;
 
-    protected ArrayList<UThing> things = new ArrayList<>();
-    protected ArrayList<UActor> actors = new ArrayList<>();
+    protected ArrayList<UThing> things;
+    protected ArrayList<UActor> actors;
 
-    public UCollection() {}
+    public UCollection() {
+        things = new ArrayList<>();
+        actors = new ArrayList<>();
+    }
 
     public UCollection(UContainer cont) {
+        things = new ArrayList<>();
+        actors = new ArrayList<>();
         container = cont;
     }
 
@@ -37,15 +42,15 @@ public class UCollection {
         }
     }
 
-    public void close() {
+    public void closeOut() {
         if (things != null) {
             for (UThing thing : things) {
-                thing.close();
+                thing.closeOut();
             }
         }
         if (actors != null) {
             for (UActor actor : actors) {
-                actor.close();
+                actor.closeOut();
             }
         }
         things = null;

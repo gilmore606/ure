@@ -57,9 +57,9 @@ public class UCell implements UContainer {
         contents.reconnect(area, this);
     }
 
-    public void close() {
-        if (terrain != null) terrain.close();
-        contents.close();
+    public void closeOut() {
+        if (terrain != null) terrain.closeOut();
+        contents.closeOut();
         terrain = null;
         contents = null;
     }

@@ -96,11 +96,11 @@ public class UArea implements UTimeListener, Serializable {
         lines.close();
     }
 
-    public void close() {
+    public void closeOut() {
         for (int x=0;x<xsize;x++) {
             for (int y=0;y<ysize;y++) {
                 if (cells[x][y] != null) {
-                    cells[x][y].close();
+                    cells[x][y].closeOut();
                     cells[x][y] = null;
                 }
             }
@@ -109,6 +109,8 @@ public class UArea implements UTimeListener, Serializable {
         setActors(null);
         setCells(null);
         closed = true;
+        label = "closed (" + label + ")";
+        System.out.println("AREA : " + label);
     }
 
     /**

@@ -61,6 +61,9 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
 
     protected UCollection contents; // What's inside me?
 
+    @JsonIgnore
+    protected boolean closed;
+
     public UThing() {
         Injector.getAppComponent().inject(this);
     }
@@ -79,11 +82,12 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         contents.reconnect(area, this);
     }
 
-    public void close() {
+    public void closeOut() {
         icon = null;
         stats = null;
-        contents.close();
+        contents.closeOut();
         contents = null;
+        closed = true;
     }
 
     public void SetupColors() {

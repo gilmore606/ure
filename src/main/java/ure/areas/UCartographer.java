@@ -232,6 +232,7 @@ public class UCartographer implements Runnable {
 
     /**
      * Shut down an active Area and serialize it to disk.
+     * After this method there should be no refs to that Area object or anything in it, anywhere.
      *
      * @param area
      */
@@ -245,7 +246,7 @@ public class UCartographer implements Runnable {
             removeActiveArea(area);
             commander.unregisterTimeListener(area);
             persist(area, area.getLabel() + ".area");
-            area.close();
+            //area.closeOut();
         }
     }
 
@@ -323,7 +324,12 @@ public class UCartographer implements Runnable {
     public synchronized void removeActiveArea(UArea area) {
         activeAreas.remove(area);
     }
-
+    public synchronized boolean areaIsActive(String label) {
+        for (UArea area : activeAreas)
+            if (area.label.equals(label))
+                return true;
+        return false;
+    }
     /**
      * This runs in a background thread and services the area load/save queues.
      *
