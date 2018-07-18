@@ -246,7 +246,7 @@ public class UCartographer implements Runnable {
             removeActiveArea(area);
             commander.unregisterTimeListener(area);
             persist(area, area.getLabel() + ".area");
-            //area.closeOut();
+            area.closeOut();
         }
     }
 

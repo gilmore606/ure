@@ -37,6 +37,7 @@ public class UThingCzar {
 
     public UThing getThingByName(String name) {
         UThing clone = thingsByName.get(name).makeClone();
+        clone.initialize();
         if (clone.getContents() == null) {
             System.out.println("*** BUG thingCzar spawned a clone with null contents");
         }
