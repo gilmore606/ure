@@ -58,6 +58,8 @@ public class UCartographer implements Runnable {
     UArea  savingArea;
     Thread loaderThread;
 
+    public boolean waitingForLoad;
+
     public UCartographer() {
         Injector.getAppComponent().inject(this);
         activeAreas = new ArrayList<UArea>();
@@ -123,18 +125,33 @@ public class UCartographer implements Runnable {
      * @return A new or existing UArea.
      */
     public UArea getArea(String label) {
-        UArea area;
+        // First check for active areas
+        for (UArea area : activeAreas)
+            if (area.label.equals(label))
+                return area;
+
         String labelname = GetLabelName(label);
         int labeldata = GetLabelData(label);
-
-        area = FetchArea(label, labelname, labeldata);
-        if (area == null) {
-            area = makeArea(label, labelname, labeldata);
-            area.setLabel(label);
+        addAreaToLoadQueue(label);
+        waitingForLoad = true;
+        //commander.printScroll("Loading...");
+        while (!areaIsActive(label)) {
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        addActiveArea(area);
-        commander.registerTimeListener(area);
-        return area;
+        waitingForLoad = false;
+        //UArea area = FetchArea(label, labelname, labeldata);
+        //if (area == null) {
+        //    area = makeArea(label, labelname, labeldata);
+        //    area.setLabel(label);
+        //}
+        //addActiveArea(area);
+        //commander.registerTimeListener(area);
+        //return area;
+        return activeAreaNamed(label);
     }
 
     /**
@@ -329,6 +346,15 @@ public class UCartographer implements Runnable {
             if (area.label.equals(label))
                 return true;
         return false;
+    }
+    public synchronized UArea activeAreaNamed(String label) {
+        for (UArea area : activeAreas)
+            if (area.label.equals(label))
+                return area;
+        return null;
+    }
+    public synchronized void addAreaToLoadQueue(String label) {
+        loadQueue.add(label);
     }
     /**
      * This runs in a background thread and services the area load/save queues.
