@@ -73,16 +73,7 @@ building an API frontend for Python and possibly Lua as well.
 
 ## Getting Started
 
-To get started with URE, clone the repo and take a look at the included ExampleGame package.  We do not yet provide a jar; coming soon.
-
-Setup instructions for IntelliJ:
-
-- Clone the repo into a URE folder.
-- Open IntelliJ and Import Project.  Select build.gradle in your cloned repo.
-- Once the project imports, make a Run Config (click Edit Configurations in the upper right next to the green play button)
-- Make your Run Config of type Gradle, for Tasks type 'run'
-
-At this point you should be able to build and run ExampleGame.  The main() method is in the class ExampleMain in the root project folder.
+See [the HOWTO](HOWTO.md) to get started on a URE project.
 
 If you're excited about URE and would like to start trying it out in its early state, we would welcome your feedback
 and be happy to work with you to get features implemented to help you achieve your roguelike dream.
