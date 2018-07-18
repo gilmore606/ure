@@ -4,14 +4,17 @@ import ure.areas.UArea;
 import ure.areas.ULandscaper;
 import ure.math.UColor;
 import ure.terrain.UTerrain;
-import ure.terrain.UTerrainCzar;
-import ure.things.UThingCzar;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class ExampleDungeonScaper extends ULandscaper {
 
+    public static final String TYPE = "dungeonscaper";
+
+    public ExampleDungeonScaper() {
+        super(TYPE);
+    }
 
     class RoomStruct{
         int x, y, w, h, weight;

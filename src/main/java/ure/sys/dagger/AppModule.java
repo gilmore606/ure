@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import dagger.Module;
 import dagger.Provides;
+import ure.areas.LandscaperDeserializer;
 import ure.areas.UCartographer;
+import ure.areas.ULandscaper;
 import ure.sys.UCommander;
 import ure.actors.ActorDeserializer;
 import ure.actors.UActor;
@@ -34,6 +36,7 @@ public class AppModule {
         module.addDeserializer(UTerrain.class, new TerrainDeserializer(objectMapper));
         module.addDeserializer(UThing.class, new ThingDeserializer(objectMapper));
         module.addDeserializer(UActor.class, new ActorDeserializer(objectMapper));
+        module.addDeserializer(ULandscaper.class, new LandscaperDeserializer(objectMapper));
         objectMapper.registerModule(module);
         return objectMapper;
     }

@@ -16,3 +16,7 @@ target/
 .gradle/
 build/
 
+# URE
+*.region
+*.area
+

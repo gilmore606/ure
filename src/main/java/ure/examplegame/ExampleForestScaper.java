@@ -1,11 +1,14 @@
 package ure.examplegame;
 
 import ure.areas.*;
-import ure.terrain.Stairs;
-import ure.terrain.UTerrainCzar;
-import ure.things.UThingCzar;
 
 public class ExampleForestScaper extends ULandscaper {
+
+    public static final String TYPE = "forestscaper";
+
+    public ExampleForestScaper() {
+        super(TYPE);
+    }
 
     @Override
     public void buildArea(UArea area, int level, String[] tags) {
