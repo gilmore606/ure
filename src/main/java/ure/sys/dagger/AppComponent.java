@@ -11,7 +11,7 @@ import ure.commands.UCommand;
 import ure.examplegame.ExampleGame;
 import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
-import ure.things.ThingI;
+import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
 import ure.ui.ULensPanel;
@@ -43,7 +43,7 @@ public interface AppComponent {
     void inject(UCommander cmdr);
     void inject(ExampleGame game);
     void inject(UAction act);
-    void inject(ThingI thingi);
+    void inject(UThing thingi);
     void inject(UArea uarea);
     void inject(UCamera cam);
     void inject(UCell cel);
