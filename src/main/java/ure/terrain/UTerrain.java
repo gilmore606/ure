@@ -71,6 +71,7 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
     protected int animationFrame;
     protected int animationFrames;
 
+
     public UTerrain() {
         Injector.getAppComponent().inject(this);
     }
@@ -86,6 +87,11 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
     public void reconnect(UArea area, UCell cell) {
         // TODO: Back reference
         this.cell = cell;
+    }
+
+    public void close() {
+        icon = null;
+        stats = null;
     }
 
     public String[] UIdetails(String context) { return null; }

@@ -57,6 +57,13 @@ public class UCell implements UContainer {
         contents.reconnect(area, this);
     }
 
+    public void close() {
+        if (terrain != null) terrain.close();
+        contents.close();
+        terrain = null;
+        contents = null;
+    }
+
     public float sunBrightness() {
         return getTerrain().getSunvis();
     }
@@ -72,9 +79,11 @@ public class UCell implements UContainer {
     }
 
     public void addThing(UThing thing) {
+        if (thing instanceof UActor) commander.registerActor((UActor)thing);
         getContents().add(thing);
     }
     public void removeThing(UThing thing) {
+        if (thing instanceof UActor) commander.unregisterActor((UActor)thing);
         getContents().remove(thing);
         area.hearRemoveThing(thing);
     }

@@ -37,6 +37,18 @@ public class UCollection {
         }
     }
 
+    public void close() {
+        for (UThing thing : things) {
+            thing.close();
+        }
+        for (UActor actor : actors) {
+            actor.close();
+        }
+        things = null;
+        actors = null;
+        container = null;
+    }
+
     public void remove(UThing thing) {
         actors.remove(thing);
         things.remove(thing);

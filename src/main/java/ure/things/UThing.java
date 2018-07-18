@@ -79,6 +79,13 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         contents.reconnect(area, this);
     }
 
+    public void close() {
+        icon = null;
+        stats = null;
+        contents.close();
+        contents = null;
+    }
+
     public void SetupColors() {
         Random random = new Random();
         int[] thecolor = new int[]{color[0], color[1], color[2]};

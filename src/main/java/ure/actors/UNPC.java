@@ -39,6 +39,7 @@ public class UNPC extends UActor {
                 this.setActionTime(0f);
                 return;
             }
+            if (area().closed) return;
             doAction(action);
         }
     }

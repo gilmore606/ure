@@ -232,12 +232,10 @@ public class UActor extends UThing implements Interactable {
     public void startActing() {
             commander.registerActor(this);
             setAwake(true);
-            System.out.println(this.getName() + ": waking up!");
     }
     public void stopActing() {
         commander.unregisterActor(this);
         setAwake(false);
-        System.out.println(this.getName() + ": going to sleep.");
     }
 
     public void act() {
@@ -264,6 +262,7 @@ public class UActor extends UThing implements Interactable {
      * @return
      */
     public boolean canSee(UThing thing) {
+        if (thing.area() != area()) return false;
         int x1 = areaX(); int y1 = areaY();
         int x2 = thing.areaX(); int y2 = thing.areaY();
         if (UPath.mdist(x1,y1,x2,y2) > getSightrange())

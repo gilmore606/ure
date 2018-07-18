@@ -128,11 +128,10 @@ public class UCartographer implements Runnable {
         int labeldata = GetLabelData(label);
 
         area = FetchArea(label, labelname, labeldata);
-        if (area != null)
-            return area;
-
-        area = makeArea(label, labelname, labeldata);
-        area.setLabel(label);
+        if (area == null) {
+            area = makeArea(label, labelname, labeldata);
+            area.setLabel(label);
+        }
         addActiveArea(area);
         commander.registerTimeListener(area);
         return area;
@@ -173,7 +172,6 @@ public class UCartographer implements Runnable {
             ) {
                 UArea area = objectMapper.readValue(gzip, UArea.class);
                 area.reconnect();
-                addActiveArea(area);
                 return area;
             }
             catch (IOException e) {
@@ -247,6 +245,7 @@ public class UCartographer implements Runnable {
             removeActiveArea(area);
             commander.unregisterTimeListener(area);
             persist(area, area.getLabel() + ".area");
+            area.close();
         }
     }
 
@@ -342,6 +341,8 @@ public class UCartographer implements Runnable {
                 System.out.println("CARTO LOADER: fetching area " + next + " for queue");
                 loadingArea = next;
                 UArea area = FetchArea(next, GetLabelName(next), GetLabelData(next));
+                addActiveArea(area);
+                commander.registerTimeListener(area);
                 loadingArea = null;
             }
             while (!saveQueue.isEmpty()) {

@@ -60,6 +60,9 @@ public class UArea implements UTimeListener, Serializable {
     protected HashMap<Integer,String> sunCycleMessages = new HashMap<>();
     protected int sunCycleLastAnnounceMarker;
 
+    @JsonIgnore
+    public boolean closed = false;
+
     public UArea() {
         Injector.getAppComponent().inject(this);
         commander.config.addDefaultSunCycle(this);
@@ -94,9 +97,18 @@ public class UArea implements UTimeListener, Serializable {
     }
 
     public void close() {
+        for (int x=0;x<xsize;x++) {
+            for (int y=0;y<ysize;y++) {
+                if (cells[x][y] != null) {
+                    cells[x][y].close();
+                    cells[x][y] = null;
+                }
+            }
+        }
         setLights(null);
         setActors(null);
         setCells(null);
+        closed = true;
     }
 
     /**
@@ -235,6 +247,9 @@ public class UArea implements UTimeListener, Serializable {
 
     public UCell cellAt(int x, int y) {
         if (isValidXY(x,y)) {
+            if (getCells() == null) {
+                System.out.println("ACK!!! getCells() was null for area " + label);
+            }
             return getCells()[x][y];
         }
         return null;
@@ -342,7 +357,7 @@ public class UArea implements UTimeListener, Serializable {
     }
 
     public void hearTimeTick(UCommander cmdr) {
-        System.out.println(getLabel() + " tick");
+        System.out.println("AREA: " + getLabel() + " tick");
         adjustSunColor(commander.daytimeMinutes());
     }
 
@@ -378,8 +393,11 @@ public class UArea implements UTimeListener, Serializable {
      */
     public void freezeForPersist() {
         for (UActor actor : getActors()) {
+            System.out.println("AREA " + label + ": sleeping " + actor.getName() + " for freeze");
             commander.unregisterActor(actor);
         }
+        commander.unregisterTimeListener(this);
+        setActors(null);
         terrainCzar = null;
         commander = null;
     }
