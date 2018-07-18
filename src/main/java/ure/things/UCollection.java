@@ -38,11 +38,15 @@ public class UCollection {
     }
 
     public void close() {
-        for (UThing thing : things) {
-            thing.close();
+        if (things != null) {
+            for (UThing thing : things) {
+                thing.close();
+            }
         }
-        for (UActor actor : actors) {
-            actor.close();
+        if (actors != null) {
+            for (UActor actor : actors) {
+                actor.close();
+            }
         }
         things = null;
         actors = null;
