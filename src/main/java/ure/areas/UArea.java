@@ -130,6 +130,7 @@ public class UArea implements UTimeListener, Serializable {
             for (int y=0; y<cells[x].length; y++) {
                 for (UActor actor : cells[x][y].contents.getActors()) {
                     actors.add(actor);
+                    commander.registerActor(actor);
                 }
             }
     }

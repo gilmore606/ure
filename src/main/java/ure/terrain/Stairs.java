@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * overriding the label methods on Stairs directly.
  *
  */
-public class Stairs extends TerrainI implements UTerrain, HearModalChoices {
+public class Stairs extends UTerrain implements HearModalChoices {
 
     public static final String TYPE = "stairs";
 

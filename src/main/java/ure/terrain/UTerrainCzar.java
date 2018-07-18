@@ -23,26 +23,12 @@ public class UTerrainCzar {
     private  HashMap<Character,UTerrain> terrains;
     private  HashMap<String,UTerrain> terrainsByName;
 
-    private Class<TerrainDeco> decorator;
-
     @Inject
     ObjectMapper objectMapper;
 
-    /**
-     * When creating your TerrainCzar, pass in your TerrainDeco class if you have one to extend
-     * functionality of all Terrain.
-     *
-     * @param myDecorator
-     */
-    public UTerrainCzar(String jsonfilename, Class<TerrainDeco> myDecorator) {
+    public UTerrainCzar(String jsonfilename) {
         this();
-        decorator = myDecorator;
         loadTerrains(jsonfilename);
-    }
-
-    public UTerrainCzar(Class<TerrainDeco> myDecorator) {
-        this();
-        decorator = myDecorator;
     }
 
     public UTerrainCzar() {
@@ -79,15 +65,6 @@ public class UTerrainCzar {
      */
     public UTerrain getTerrainForFilechar(char thechar) {
         UTerrain terrain = terrains.get(thechar).makeClone();
-        if (decorator != null) {
-            TerrainDeco decoInstance = null;
-            try {
-                decoInstance = decorator.getDeclaredConstructor(new Class[]{UTerrain.class}).newInstance(terrain);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return (UTerrain)decoInstance;
-        }
         return terrain;
     }
 

@@ -9,9 +9,8 @@ import ure.areas.UCell;
 import ure.math.UPath;
 import ure.terrain.UTerrain;
 import ure.things.Lightsource;
-import ure.things.ThingI;
-import ure.things.UContainer;
 import ure.things.UThing;
+import ure.things.UContainer;
 import ure.ui.UCamera;
 
 /**
@@ -21,7 +20,7 @@ import ure.ui.UCamera;
  * or subclass NPC.  To change base actor behavior, use an ActorDeco decorator class.
  *
  */
-public class UActor extends ThingI implements Interactable {
+public class UActor extends UThing implements Interactable {
 
     protected boolean awake = false;
     protected int wakerange = 20;

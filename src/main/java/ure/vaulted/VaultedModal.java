@@ -1,6 +1,7 @@
 package ure.vaulted;
 
 import ure.areas.UArea;
+import ure.areas.UVault;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
@@ -17,6 +18,7 @@ public class VaultedModal extends UModal {
     int[] terrainPalette;
     String[] terrains;
     String filename;
+    UVault vault;
 
     public VaultedModal(VaultedArea edarea, String _filename) {
         super(null, "", UColor.COLOR_BLACK);
@@ -37,6 +39,9 @@ public class VaultedModal extends UModal {
         nullTerrain = nullt;
         commander.config.setLightEnable(false);
         commander.config.setVisibilityEnable(false);
+
+        // TODO: if filename.json exists, deserialize UVault back
+        vault = new UVault();
     }
 
     @Override
