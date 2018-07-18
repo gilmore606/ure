@@ -100,6 +100,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString {
         player = theplayer;
     }
 
+    public boolean isQuitGame() { return quitGame; }
+
     /**
      * Any object which implements UTimeListener can register with this method to have its hearTimeTick() called
      * on every game tick.

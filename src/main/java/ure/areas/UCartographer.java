@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -34,7 +35,7 @@ import java.util.zip.GZIPOutputStream;
  */
 // TODO: split custom stuff into ExampleCartographer and make generic
 
-public class UCartographer {
+public class UCartographer implements Runnable {
 
     @Inject
     protected UCommander commander;
@@ -51,12 +52,27 @@ public class UCartographer {
     HashMap<String,URegion> regions;
     public String startArea;
 
+    LinkedBlockingQueue<String> loadQueue;
+    LinkedBlockingQueue<UArea> saveQueue;
+    String loadingArea;
+    UArea  savingArea;
+    Thread loaderThread;
+
     public UCartographer() {
         Injector.getAppComponent().inject(this);
         activeAreas = new ArrayList<UArea>();
         regions = new HashMap<>();
+        loadQueue = new LinkedBlockingQueue<>();
+        saveQueue = new LinkedBlockingQueue<>();
+
     }
 
+    public synchronized void startLoader() {
+        if (loaderThread == null) {
+            loaderThread = new Thread(this);
+            loaderThread.start();
+        }
+    }
     /**
      * Fetch the UArea corresponding to a label.  This looks for a persisted level, or
      * creates a new one if needed.  You probably shouldn't override this.
@@ -75,7 +91,7 @@ public class UCartographer {
 
         area = makeArea(label, labelname, labeldata);
         area.setLabel(label);
-        activeAreas.add(area);
+        addActiveArea(area);
         commander.registerTimeListener(area);
         return area;
     }
@@ -115,6 +131,7 @@ public class UCartographer {
             ) {
                 UArea area = objectMapper.readValue(gzip, UArea.class);
                 area.reconnect();
+                addActiveArea(area);
                 return area;
             }
             catch (IOException e) {
@@ -184,7 +201,7 @@ public class UCartographer {
             System.out.println("ERROR: attempted to freeze an area not in activeAreas!  Where'd that come from?");
         } else {
             area.freezeForPersist();
-            activeAreas.remove(area);
+            removeActiveArea(area);
             commander.unregisterTimeListener(area);
             persistArea(area, area.getLabel() + ".area");
         }
@@ -256,6 +273,53 @@ public class UCartographer {
     public UArea getTitleArea() {
         UArea area = new UArea(100,100,"floor");
         return area;
+    }
+
+    public synchronized void addActiveArea(UArea area) {
+        activeAreas.add(area);
+    }
+    public synchronized void removeActiveArea(UArea area) {
+        activeAreas.remove(area);
+    }
+
+    /**
+     * This runs in a background thread and services the area load/save queues.
+     *
+     */
+    public void run() {
+        System.out.println("CARTO LOADER: background thread starting");
+        while (!commander.isQuitGame()) {
+            while (!loadQueue.isEmpty()) {
+                String next = null;
+                try {
+                    next = loadQueue.take();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                System.out.println("CARTO LOADER: fetching area " + next + " for queue");
+                loadingArea = next;
+                UArea area = FetchArea(next, GetLabelName(next), GetLabelData(next));
+                loadingArea = null;
+            }
+            while (!saveQueue.isEmpty()) {
+                UArea area = null;
+                try {
+                    area = saveQueue.take();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                System.out.println("CARTO LOADER: saving area " + area.label + " from queue");
+                savingArea = area;
+                freezeArea(area);
+                savingArea = null;
+            }
+            try {
+                Thread.sleep(200);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("CARTO LOADER: game quit detected, shutting down background thread");
     }
 
 }
