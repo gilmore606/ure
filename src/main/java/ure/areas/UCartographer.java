@@ -47,15 +47,26 @@ public class UCartographer {
     @Inject
     protected ObjectMapper objectMapper;
 
-    ArrayList<UArea> activeAreas = new ArrayList<>();
-    HashMap<String,URegion> regions = new HashMap<>();
-    public String startArea;
+    protected ArrayList<UArea> activeAreas = new ArrayList<>();
+    protected HashMap<String,URegion> regions = new HashMap<>();
+    protected String startArea;
 
     public UCartographer() {
         Injector.getAppComponent().inject(this);
-        loadRegions();
     }
 
+    /**
+     * Do what is necessary to initialize the regions this cartographer will start with.
+     */
+    public void setupRegions() {
+        if (commander.config.isPersistentAreas()) {
+            loadRegions();
+        }
+    }
+
+    /**
+     * Load all regions that have been persisted to disk.
+     */
     public void loadRegions() {
         File dir = new File(".");
         File[] files = dir.listFiles(new FilenameFilter() {
@@ -69,6 +80,11 @@ public class UCartographer {
         }
     }
 
+    /**
+     * Load a single region from disk.
+     * @param file
+     * @return the region
+     */
     protected URegion loadRegion(File file) {
         try (
                 FileInputStream stream = new FileInputStream(file);
