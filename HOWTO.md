@@ -90,6 +90,10 @@ Cartographer class without extending it, however you will need to supply it with
 algorithms.  Once your Cartographer is configured with your initial world structure, you can generate the starting area with
 Cartographer.getStartArea() and move the Player into it.
 
+Cartographer will also manage saving areas to disk (by default, when the player is separated from them by one intervening area) and loading them from disk again (by default, when the player is one exit away from a new area).  This happens in the
+background and should be transparent to you and the player.
+
+
 ## StatusPanel, ScrollPanel, LensPanel
 
 These panel UI classes relay game information via the Commander, but they aren't required for the engine to operate.
