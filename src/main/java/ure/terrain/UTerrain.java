@@ -27,7 +27,7 @@ import java.util.Random;
  *
  */
 
-public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator, Interactable {
+public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interactable {
 
     @Inject
     @JsonIgnore
@@ -71,7 +71,7 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
     protected int animationFrame;
     protected int animationFrames;
 
-    public TerrainI() {
+    public UTerrain() {
         Injector.getAppComponent().inject(this);
     }
 
@@ -157,9 +157,9 @@ public abstract class TerrainI implements UTerrain, Entity, Cloneable, UAnimator
                 commander.printScroll(msg);
     }
 
-    public TerrainI makeClone() {
+    public UTerrain makeClone() {
         try {
-            return (TerrainI) super.clone();
+            return (UTerrain) super.clone();
         } catch (CloneNotSupportedException e) {
             System.out.println(" Cloning not allowed. ");
             return this;

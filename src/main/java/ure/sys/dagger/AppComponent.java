@@ -9,7 +9,7 @@ import ure.actors.UActorCzar;
 import ure.behaviors.UBehavior;
 import ure.commands.UCommand;
 import ure.examplegame.ExampleGame;
-import ure.terrain.TerrainI;
+import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
 import ure.things.ThingI;
 import ure.things.UThingCzar;
@@ -47,7 +47,7 @@ public interface AppComponent {
     void inject(UArea uarea);
     void inject(UCamera cam);
     void inject(UCell cel);
-    void inject(TerrainI terr);
+    void inject(UTerrain terr);
     void inject(UBehavior behav);
     void inject(UModal mod);
     void inject(UCommand comm);

@@ -19,28 +19,28 @@ public class TerrainDeserializer extends JsonDeserializer<UTerrain> {
     ObjectMapper objectMapper;
 
     private Reflections reflections = new Reflections("ure", new SubTypesScanner());
-    private Set<Class<? extends TerrainI>> terrainClasses = reflections.getSubTypesOf(TerrainI.class);
+    private Set<Class<? extends UTerrain>> terrainClasses = reflections.getSubTypesOf(UTerrain.class);
 
     public TerrainDeserializer(ObjectMapper mapper) {
         objectMapper = mapper;
     }
 
     @Override
-    public TerrainI deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
+    public UTerrain deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
         ObjectCodec codec = parser.getCodec();
         JsonNode node = codec.readTree(parser);
         JsonNode typeNode = node.get("type");
         String type = (typeNode != null && !typeNode.isNull()) ? node.get("type").asText() : null;
-        Class<? extends TerrainI> terrainClass = classForType(type);
+        Class<? extends UTerrain> terrainClass = classForType(type);
         return (objectMapper.treeToValue(node, terrainClass));
     }
 
-    private Class<? extends TerrainI> classForType(String type) {
+    private Class<? extends UTerrain> classForType(String type) {
         if (type == null || type.equals("")) {
             return Blank.class;
         }
         try {
-            for (Class<? extends TerrainI> terrainClass : terrainClasses) {
+            for (Class<? extends UTerrain> terrainClass : terrainClasses) {
                 Field typeField = terrainClass.getField("TYPE");
                 String typeValue = (String) typeField.get(null);
                 if (type.equals(typeValue)) {

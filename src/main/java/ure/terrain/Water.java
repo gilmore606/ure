@@ -4,7 +4,7 @@ package ure.terrain;
  * Water has a pretty animation.  It should probably do something more interesting.
  *
  */
-public class Water extends TerrainI implements UTerrain {
+public class Water extends UTerrain {
 
     public static final String TYPE = "water";
 

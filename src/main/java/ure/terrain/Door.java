@@ -8,7 +8,7 @@ import ure.actors.UActor;
  * when closed.
  *
  */
-public class Door extends TerrainI implements UTerrain {
+public class Door extends UTerrain {
 
     public static final String TYPE = "door";
 
