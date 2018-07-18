@@ -370,6 +370,10 @@ public class UArea implements UTimeListener, Serializable {
      * @param action
      */
     public void broadcastEvent(UAction action) {
+        if (closed) {
+            System.out.println("WARN: " + action.id + " event in closed area " + label);
+            return;
+        }
         for (UActor actor : getActors()) {
             // TODO: some events should probably go further than just seeing?
             if (actor.canSee(action.actor)) {
