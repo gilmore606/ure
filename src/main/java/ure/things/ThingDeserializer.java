@@ -46,7 +46,7 @@ public class ThingDeserializer extends JsonDeserializer<UThing> {
                     return thingClass;
                 }
             }
-            throw new RuntimeException("No ThingI class of type '" + type + "' was found in the classpath");
+            throw new RuntimeException("No UThing class of type '" + type + "' was found in the classpath");
         } catch (NoSuchFieldException e) {
             throw new RuntimeException("All sublcasses of ThingI must define a static TYPE field", e);
         } catch (IllegalAccessException e) {
