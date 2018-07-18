@@ -59,3 +59,59 @@ Finally, you'll need to add a line to ure.sys.dagger.AppComponent.java interface
 void inject(ExampleGame game);
 ```
 
+# Key components
+
+Let's briefly look at the main component objects of a URE game, in the order we encounter them in the ExampleGame.startUp() sequence.
+
+## UCommander
+
+A UCommander instance is the central control hub of the game; it runs the main gameLoop(), listens for player input, controls
+UI, provides configuration access, and handles other system functions.  Your main class will create a UCommander during startup, and then hand control to it by calling commander.gameLoop(), which runs until the player quits.
+
+## UConfig
+
+The Commander creates a UConfig instance to hold all configuration settings for the engine.  Although you could edit UConfig directly to change settings, we recommend changing them by calling setter methods in your game's startup, to minimize conflicts with future URE updates.
+
+## URendererOGL
+
+The Renderer knows how to render a Camera onto the screen.  The default RendererOGL is an ASCII renderer (using OpenGL to create the glyphs), but other renderers are planned, such as a graphical tile renderer.
+
+## UPlayer
+
+A Player represents the player.  It extends Actor (which extends Thing) and mostly acts like a normal Actor.  You'll probably make just one in your startup, however there's no hard rule that says only one can exist.
+
+## UCartographer and Area
+
+The Cartographer serves Areas (game levels) on demand as the player moves through the gameworld.  An Area represents a single contiguous game map as a 2D grid of Cell objects.  Each Cell has a single Terrain, and can hold Actors and Things.
+
+You can use the default
+Cartographer class without extending it, however you will need to supply it with at least one Region.  A Region represents a
+'stack' of linearly connected Areas which share some characteristics such as size dimensions, flavor tags, and generator
+algorithms.  Once your Cartographer is configured with your initial world structure, you can generate the starting area with
+Cartographer.getStartArea() and move the Player into it.
+
+## StatusPanel, ScrollPanel, LensPanel
+
+These panel UI classes relay game information via the Commander, but they aren't required for the engine to operate.
+
+## View
+
+URE roughly follows a Model-View-Controller (MVC) architecture.  The View object represents a rendering order tree to allow
+components to draw to the screen.  You will create a root View for your game and addChild() other views to it to give them
+access to the renderer.
+
+## Camera
+
+Camera represents a panel which uses the Renderer to show a portion of an Area.  You will create a Camera and add it to your
+View, and probably not interact with it much beyond that.  More than one Camera can exist, and they can be pinned to other
+actors besides the Player, or pointed at static locations.
+
+## ThingCzar, TerrainCzar, ActorCzar
+
+The -Czar objects are singletons which generate new instances of game entities.  Czar reads from a .json file to create all
+possible types of its entity, and serves new copies of those types to the game as needed.  These singletons are often @Inject'ed into other classes for convenience to allow easy spawning of entities into the world.
+
+You don't need to create these objects yourself (as the injector will take care of this) and you shouldn't need to modify them.  They load from default filenames (things.json, terrain.json, actors.json) but have methods to reload from any provided .json file.
+
+
+
