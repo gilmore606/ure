@@ -47,14 +47,54 @@ public class UCartographer {
     @Inject
     protected ObjectMapper objectMapper;
 
-    ArrayList<UArea> activeAreas;
-    HashMap<String,URegion> regions;
-    public String startArea;
+    protected ArrayList<UArea> activeAreas = new ArrayList<>();
+    protected HashMap<String,URegion> regions = new HashMap<>();
+    protected String startArea;
 
     public UCartographer() {
         Injector.getAppComponent().inject(this);
-        activeAreas = new ArrayList<UArea>();
-        regions = new HashMap<>();
+    }
+
+    /**
+     * Do what is necessary to initialize the regions this cartographer will start with.
+     */
+    public void setupRegions() {
+        if (commander.config.isPersistentAreas()) {
+            loadRegions();
+        }
+    }
+
+    /**
+     * Load all regions that have been persisted to disk.
+     */
+    public void loadRegions() {
+        File dir = new File(".");
+        File[] files = dir.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".region");
+            }
+        });
+        for (File file : files) {
+            URegion region = loadRegion(file);
+            regions.put(region.getId(), region);
+        }
+    }
+
+    /**
+     * Load a single region from disk.
+     * @param file
+     * @return the region
+     */
+    protected URegion loadRegion(File file) {
+        try (
+                FileInputStream stream = new FileInputStream(file);
+                GZIPInputStream gzip = new GZIPInputStream(stream)
+        ) {
+            return objectMapper.readValue(gzip, URegion.class);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Couldn't load region at " + file.getPath(), e);
+        }
     }
 
     /**
@@ -126,26 +166,26 @@ public class UCartographer {
     }
 
     /**
-     * Persist an area to disk.
-     *
-     * This doesn't work yet because there are a lot of things to sort out with regard to
-     * what actually gets serialized.
+     * Persist an object to disk.  This will most likely be an area or region, but in theory you could
+     * write anything that serializes properly.
+     * @param object
+     * @param filename
      */
-    protected void persistArea(UArea area, String filename) {
+    protected void persist(Object object, String filename) {
         if (commander.config.isPersistentAreas()) {
             File file = new File(filename);
             try (
-                FileOutputStream stream = new FileOutputStream(file);
-                GZIPOutputStream gzip = new GZIPOutputStream(stream)
+                    FileOutputStream stream = new FileOutputStream(file);
+                    GZIPOutputStream gzip = new GZIPOutputStream(stream)
             ) {
                 JsonFactory jfactory = new JsonFactory();
                 JsonGenerator jGenerator = jfactory
                         .createGenerator(gzip, JsonEncoding.UTF8);
                 jGenerator.setCodec(objectMapper);
-                jGenerator.writeObject(area);
+                jGenerator.writeObject(object);
                 jGenerator.close();
             } catch (IOException e) {
-                throw new RuntimeException("Couldn't persist area", e);
+                throw new RuntimeException("Couldn't persist object " + object.toString(), e);
             }
         }
     }
@@ -167,9 +207,10 @@ public class UCartographer {
     /**
      * Add a region to the world.  This lets the carto spawn areas for that region's label id.
      */
-    public void addRegion(URegion _region) {
-         System.out.println("CARTO : adding region " + _region.id);
-         regions.put(_region.id, _region);
+    public void addRegion(URegion region) {
+         System.out.println("CARTO : adding region " + region.getId());
+         persist(region, region.getId() + ".region");
+         regions.put(region.getId(), region);
     }
 
     /**
@@ -186,7 +227,7 @@ public class UCartographer {
             area.freezeForPersist();
             activeAreas.remove(area);
             commander.unregisterTimeListener(area);
-            persistArea(area, area.getLabel() + ".area");
+            persist(area, area.getLabel() + ".area");
         }
     }
 

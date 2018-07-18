@@ -1,5 +1,6 @@
 package ure.areas;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.sys.Injector;
@@ -24,21 +25,37 @@ import java.util.Random;
  * methods.  Then use an instance of your subclass in your UCartographer implementation.
  *
  */
-public class ULandscaper {
+public abstract class ULandscaper {
 
     @Inject
+    @JsonIgnore
     public UCommander commander;
+
     @Inject
+    @JsonIgnore
     UActorCzar actorCzar;
+
     @Inject
+    @JsonIgnore
     UTerrainCzar terrainCzar;
+
     @Inject
+    @JsonIgnore
     UThingCzar thingCzar;
 
-    public Random random;
-    USimplexNoise simplexNoise;
+    @JsonIgnore
+    protected Random random = new Random();
 
-    public String floorterrain = "rock";
+    @JsonIgnore
+    USimplexNoise simplexNoise = new USimplexNoise();
+
+    protected String floorterrain = "rock";
+
+    /**
+     * This field will be use to match the proper ULandscaper subclass when deserializing.  It will need
+     * to match the static TYPE field in the subclass.
+     */
+    protected String type = "";
 
     /**
      * Grid implements a 2D boolean grid useful for proxy calculations about terrain.
@@ -136,10 +153,23 @@ public class ULandscaper {
         }
     }
 
+    /**
+     * This constructor is necessary for deserialization, but generally you'll want your subclass
+     * to call the one that allows you to pass in the type string below.
+     */
     public ULandscaper() {
         Injector.getAppComponent().inject(this);
-        random = new Random();
-        simplexNoise = new USimplexNoise();
+    }
+
+    /**
+     * Use this constructor to set the type field for this landscaper.  Usually you would invoke this
+     * from a subclass' constructor and pass in the static TYPE field from your subclass so that we can
+     * properly match up the classes when deserializing them.
+     * @param type The type string that matches the subclass' TYPE field.
+     */
+    public ULandscaper(String type) {
+        this();
+        this.type = type;
     }
 
     /**
@@ -842,6 +872,10 @@ public class ULandscaper {
         region.addLink(destlevel, backexittype, area.label);
         commander.cartographer.addRegion(region);
         area.setTerrain(x,y,exittype);
-        ((Stairs)area.terrainAt(x,y)).setLabel(region.id + " " + Integer.toString(destlevel));
+        ((Stairs)area.terrainAt(x,y)).setLabel(region.getId() + " " + Integer.toString(destlevel));
+    }
+
+    public String getType() {
+        return type;
     }
 }

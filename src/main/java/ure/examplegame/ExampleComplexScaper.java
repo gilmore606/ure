@@ -2,10 +2,14 @@ package ure.examplegame;
 
 import ure.areas.UArea;
 import ure.areas.ULandscaper;
-import ure.terrain.UTerrainCzar;
-import ure.things.UThingCzar;
 
 public class ExampleComplexScaper extends ULandscaper {
+
+    public static final String TYPE = "complexscaper";
+
+    public ExampleComplexScaper() {
+        super(TYPE);
+    }
 
     @Override
     public void buildArea(UArea area, int level, String[] tags) {

@@ -1,16 +1,16 @@
 package ure.examplegame;
 
 import ure.areas.UArea;
-import ure.areas.UCartographer;
-import ure.areas.UCell;
 import ure.math.UColor;
 import ure.areas.ULandscaper;
-import ure.terrain.Stairs;
-import ure.terrain.UTerrainCzar;
-import ure.things.UThingCzar;
 
 public class ExampleCaveScaper extends ULandscaper {
 
+    public static final String TYPE = "cavescaper";
+
+    public ExampleCaveScaper() {
+        super(TYPE);
+    }
 
     @Override
     public void buildArea(UArea area, int level, String[] tags) {

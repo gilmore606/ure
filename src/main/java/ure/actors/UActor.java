@@ -140,6 +140,7 @@ public class UActor extends UThing implements Interactable {
             oldarea = area();
         }
         super.moveToCell(thearea, destX, destY);
+        // TODO: Move the following logic to UCamera
         if (camera != null) {
             if (getCameraPinStyle() == UCamera.PINSTYLE_HARD)
                 camera.moveTo(area(), destX, destY);
