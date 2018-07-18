@@ -8,8 +8,10 @@ import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
+import ure.terrain.Stairs;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
+import ure.ui.modals.UModalLoading;
 
 import javax.inject.Inject;
 import java.io.*;
@@ -135,6 +137,10 @@ public class UCartographer implements Runnable {
         addAreaToLoadQueue(label);
         waitingForLoad = true;
         //commander.printScroll("Loading...");
+        if (commander.modalCamera() != null) {
+            commander.showModal(new UModalLoading());
+            commander.printScroll("Loading...");
+        }
         while (!areaIsActive(label)) {
             try {
                 Thread.sleep(100);
@@ -143,14 +149,8 @@ public class UCartographer implements Runnable {
             }
         }
         waitingForLoad = false;
-        //UArea area = FetchArea(label, labelname, labeldata);
-        //if (area == null) {
-        //    area = makeArea(label, labelname, labeldata);
-        //    area.setLabel(label);
-        //}
-        //addActiveArea(area);
-        //commander.registerTimeListener(area);
-        //return area;
+        if (commander.modalCamera() != null)
+            commander.detachModal();
         return activeAreaNamed(label);
     }
 
@@ -189,6 +189,7 @@ public class UCartographer implements Runnable {
             ) {
                 UArea area = objectMapper.readValue(gzip, UArea.class);
                 area.reconnect();
+                area.setLinks();
                 return area;
             }
             catch (IOException e) {
@@ -233,7 +234,10 @@ public class UCartographer implements Runnable {
      public UArea makeArea(String label, String labelname, int labeldata) {
          System.out.println("CARTO: make area for " + labelname + " (" + Integer.toString(labeldata) + ")");
          if (regions.containsKey(labelname)) {
-             return regions.get(labelname).makeArea(labeldata, label);
+             UArea area = regions.get(labelname).makeArea(labeldata, label);
+             area.setLabel(label);
+             area.setLinks();
+             return area;
          }
          return null;
     }
@@ -256,6 +260,8 @@ public class UCartographer implements Runnable {
     void freezeArea(UArea area) {
         if (commander.player().area() == area) {
             System.out.println("ERROR: attempted to freeze player's current area!");
+        } else if (area.closed) {
+            System.out.println("CARTO LOADER: WARNING - tried to freeze " + area.label + " which is already frozen");
         } else if (!activeAreas.contains(area)) {
             System.out.println("ERROR: attempted to freeze an area not in activeAreas!  Where'd that come from?");
         } else {
@@ -305,9 +311,15 @@ public class UCartographer implements Runnable {
      * @param area
      */
     public void playerLeftArea(UPlayer player, UArea area) {
-        // for now we're just gonna immediately freeze that old area
-        // TODO: keep old areas around until they're 2 exits away
-        freezeArea(area);
+        if (!commander.config.isRunNeighborAreas() && area != null)
+            freezeArea(area);
+        if (commander.config.isLoadAreasAhead()) {
+            UArea newArea = player.area();
+            for (Stairs stair : newArea.stairsLinks()) {
+                String nextArea = stair.getLabel();
+                addAreaToLoadQueue(nextArea);
+            }
+        }
     }
 
     /**
@@ -343,8 +355,9 @@ public class UCartographer implements Runnable {
     }
     public synchronized boolean areaIsActive(String label) {
         for (UArea area : activeAreas)
-            if (area.label.equals(label))
-                return true;
+            if (area.label != null)
+                if (area.label.equals(label))
+                    return true;
         return false;
     }
     public synchronized UArea activeAreaNamed(String label) {
@@ -354,7 +367,16 @@ public class UCartographer implements Runnable {
         return null;
     }
     public synchronized void addAreaToLoadQueue(String label) {
+        if (label.equals(loadingArea)) {
+            return;
+        }
         loadQueue.add(label);
+    }
+    public synchronized void addAreaToSaveQueue(UArea area) {
+        if (area == savingArea) {
+            return;
+        }
+        saveQueue.add(area);
     }
     /**
      * This runs in a background thread and services the area load/save queues.
@@ -372,7 +394,16 @@ public class UCartographer implements Runnable {
                 }
                 System.out.println("CARTO LOADER: fetching area " + next + " for queue");
                 loadingArea = next;
-                UArea area = FetchArea(next, GetLabelName(next), GetLabelData(next));
+                String nextname = GetLabelName(next);
+                int nextdata = GetLabelData(next);
+                UArea area = FetchArea(next, nextname, nextdata);
+                if (area == null) {
+                    System.out.println("CARTO LOADER:  tried to fetch " + next + " and got null, creating");
+                    area = makeArea(next, nextname, nextdata);
+                    if (area == null) {
+                        System.out.println("CARTO LOADER : ***FAIL*** to make area " + next);
+                    }
+                }
                 addActiveArea(area);
                 commander.registerTimeListener(area);
                 loadingArea = null;
@@ -393,6 +424,15 @@ public class UCartographer implements Runnable {
                 Thread.sleep(200);
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+            UArea playerArea = commander.player().area();
+            for (UArea area : activeAreas) {
+                if (area != playerArea) {
+                    if (area.findExitTo(playerArea.getLabel()) == null) {
+                        System.out.println("CARTO LOADER: found area " + area.label + " to harvest and freeze");
+                        addAreaToSaveQueue(area);
+                    }
+                }
             }
         }
         System.out.println("CARTO LOADER: game quit detected, shutting down background thread");

@@ -62,6 +62,8 @@ public class UArea implements UTimeListener, Serializable {
 
     @JsonIgnore
     public boolean closed = false;
+    @JsonIgnore
+    public ArrayList<Stairs> stairsLinks;
 
     public UArea() {
         Injector.getAppComponent().inject(this);
@@ -357,6 +359,18 @@ public class UArea implements UTimeListener, Serializable {
         }
         return null;
     }
+
+    public void setLinks() {
+        stairsLinks = new ArrayList<Stairs>();
+        for (int x=0;x<xsize;x++) {
+            for (int y=0;y<ysize;y++) {
+                if (cells[x][y].terrain() instanceof Stairs) {
+                    stairsLinks.add((Stairs)cells[x][y].terrain());
+                }
+            }
+        }
+    }
+    public ArrayList<Stairs> stairsLinks() { return stairsLinks; }
 
     public void hearTimeTick(UCommander cmdr) {
         System.out.println("AREA: " + getLabel() + " tick");

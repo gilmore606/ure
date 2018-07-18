@@ -49,7 +49,7 @@ public class ExampleForestScaper extends ULandscaper {
                     String name = names[rand(names.length)];
                     String id = "cavern-" + Integer.toString(doorcell.x*1000+doorcell.y);
                     URegion region = new URegion(id, name,
-                            new ULandscaper[]{new ExampleCaveScaper()}, new String[]{"cave"}, 50, 50,
+                            new ULandscaper[]{new ExampleCaveScaper()}, new String[]{"cave"}, 150, 150,
                             rand(5)+3, "cave entrance", "cave exit");
                     linkRegionAt(area, doorcell.x, doorcell.y, "cave entrance", region, 1, "cave exit");
                 }

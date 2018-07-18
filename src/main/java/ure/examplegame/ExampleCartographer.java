@@ -17,8 +17,8 @@ public class ExampleCartographer extends UCartographer {
                             "Mystic Forest",
                             new ULandscaper[]{new ExampleForestScaper()},
                             new String[]{"start"},
-                            100,
-                            100,
+                            200,
+                            200,
                             1,
                             "",
                             ""

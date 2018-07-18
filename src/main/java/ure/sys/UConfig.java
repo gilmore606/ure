@@ -83,7 +83,8 @@ public class UConfig {
 
     private boolean backgroundLoader = true;        // load and save areas in the background?
     private boolean persistentAreas = true;         // persist and recover generated areas?
-    private boolean runNeighborAreas = true;        // TODO: keep areas adjacent to current area awake?
+    private boolean runNeighborAreas = true;        // keep areas we just left awake?
+    private boolean loadAreasAhead = true;          // preemptively load upcoming areas?
 
     private boolean smartInteract = false;           // autodetect targets for interact command?
     private boolean interactStairs = true;          // interact command can trigger stairs?
@@ -446,6 +447,9 @@ public class UConfig {
     public void setRunNeighborAreas(boolean runNeighborAreas) {
         this.runNeighborAreas = runNeighborAreas;
     }
+
+    public boolean isLoadAreasAhead() { return loadAreasAhead; }
+    public void setLoadAreasAhead(boolean loadAreasAhead) { this.loadAreasAhead = loadAreasAhead; }
 
     public boolean isSmartInteract() {
         return smartInteract;

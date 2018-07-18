@@ -314,7 +314,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString {
                 // need to use a clone to iterate, since actors might drop out during this loop
                 ArrayList<UActor> tmpactors = (ArrayList<UActor>)actors.clone();
                 for (UActor actor : tmpactors) {
-                    actor.act();
+                    if (actors.contains(actor))
+                        actor.act();
                 }
                 waitingForInput = true;
             }

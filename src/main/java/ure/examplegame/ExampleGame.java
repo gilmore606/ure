@@ -23,7 +23,7 @@ public class ExampleGame implements UTimeListener {
 
     static UArea area;
     static UCamera camera;
-    static UActor player;
+    static UPlayer player;
     static UStatusPanel statusPanel;
     static UScrollPanel scrollPanel;
     static ULensPanel lensPanel;
@@ -109,6 +109,7 @@ public class ExampleGame implements UTimeListener {
         player.moveToCell(area, startcell.x, startcell.y);
         player.attachCamera(camera, UCamera.PINSTYLE_SOFT);
         player.startActing();
+        cartographer.playerLeftArea(player, null);
         UThing item = thingCzar.getThingByName("rock"); item.moveTo(player);
         item = thingCzar.getThingByName("trucker hat"); item.moveTo(player);
         item = thingCzar.getThingByName("torch"); item.moveTo(player);
