@@ -348,6 +348,7 @@ public class UArea implements UTimeListener, Serializable {
     }
 
     public UCell findExitTo(String label) {
+        if (closed) return null;
         for (int x=0;x<xsize;x++) {
             for (int y=0;y<ysize;y++) {
                 if (cells[x][y].terrain() instanceof Stairs) {

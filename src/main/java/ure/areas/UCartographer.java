@@ -262,6 +262,8 @@ public class UCartographer implements Runnable {
             System.out.println("ERROR: attempted to freeze player's current area!");
         } else if (area.closed) {
             System.out.println("CARTO LOADER: WARNING - tried to freeze " + area.label + " which is already frozen");
+            removeActiveArea(area);
+            commander.unregisterTimeListener(area);
         } else if (!activeAreas.contains(area)) {
             System.out.println("ERROR: attempted to freeze an area not in activeAreas!  Where'd that come from?");
         } else {
@@ -348,7 +350,8 @@ public class UCartographer implements Runnable {
     }
 
     public synchronized void addActiveArea(UArea area) {
-        activeAreas.add(area);
+        if (!activeAreas.contains(area))
+            activeAreas.add(area);
     }
     public synchronized void removeActiveArea(UArea area) {
         activeAreas.remove(area);
@@ -370,13 +373,15 @@ public class UCartographer implements Runnable {
         if (label.equals(loadingArea)) {
             return;
         }
-        loadQueue.add(label);
+        if (!loadQueue.contains(label))
+            loadQueue.add(label);
     }
     public synchronized void addAreaToSaveQueue(UArea area) {
         if (area == savingArea) {
             return;
         }
-        saveQueue.add(area);
+        if (!saveQueue.contains(area))
+            saveQueue.add(area);
     }
     /**
      * This runs in a background thread and services the area load/save queues.

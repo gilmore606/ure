@@ -15,6 +15,8 @@ public class UVault {
     }
     public String name;
     public String[] tags;
+    public String description;  // printed on room-enter trigger
+
     public int[] levels;
     public int cols, rows;
     public boolean rotate = true;
@@ -23,4 +25,18 @@ public class UVault {
     public String[] terrain;
     public VSpawn[] things;
     public VSpawn[] actors;
+
+    public UVault() {
+
+    }
+
+    public int[] getLevels() {
+        return levels;
+    }
+
+    public void setLevels(int[] levels) {
+        this.levels = levels;
+    }
+
+
 }
