@@ -106,3 +106,4 @@ Hopefully someday there will be links here to actual games.
 - [JOML](https://github.com/JOML-CI/JOML) Low level OpenGL math.
 - [Dagger](http://square.github.io/dagger/) Dependency injection.  Pretty handy for game projects and lazy devs!
 - [Guava](https://github.com/google/guava) Provides a lightweight global event bus.
+- [RexPaint](http://www.gridsagegames.com/rexpaint/) URE imports and renders Rexpaint .xp files for splash screens, sprites, terrain decorations, etc.
