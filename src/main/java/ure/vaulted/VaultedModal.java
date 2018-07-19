@@ -1,16 +1,22 @@
 package ure.vaulted;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ure.areas.UArea;
 import ure.areas.UVault;
+import ure.areas.UVaultSet;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.ui.modals.UModal;
 
+import javax.inject.Inject;
 import java.io.PrintWriter;
 import java.util.Set;
 
 public class VaultedModal extends UModal {
+
+    @Inject
+    ObjectMapper objectMapper;
 
     VaultedArea area;
     int currentTerrain = 0;
@@ -18,7 +24,8 @@ public class VaultedModal extends UModal {
     int[] terrainPalette;
     String[] terrains;
     String filename;
-    UVault vault;
+    UVaultSet vaultSet;
+    int cursor;
 
     public VaultedModal(VaultedArea edarea, String _filename) {
         super(null, "", UColor.COLOR_BLACK);
@@ -40,18 +47,26 @@ public class VaultedModal extends UModal {
         commander.config.setLightEnable(false);
         commander.config.setVisibilityEnable(false);
 
-        // TODO: if filename.json exists, deserialize UVault back
-        vault = new UVault();
+        vaultSet = commander.cartographer.loadVaultSet(filename);
+        if (vaultSet == null) {
+            vaultSet = new UVaultSet();
+            vaultSet.initialize();
+        }
+        loadVault();
     }
 
     @Override
     public void drawContent(URenderer renderer) {
-        drawString(renderer, "Q/A = cycle terrains", 1, 15);
-        drawString(renderer, "1-9 = palette pick", 1, 16);
-        drawString(renderer, "pass = place terrain", 1, 17);
-        drawString(renderer, "shf-C = crop to corner", 1, 18);
-        drawString(renderer, "shf-W = wipe!", 1, 19);
-        drawString(renderer, "shf-S = save", 1, 20);
+        drawString(renderer, "q/a : cycle terrains", 1, 15);
+        drawString(renderer, "1-9 : palette pick", 1, 16);
+        drawString(renderer, "pass: place terrain", 1, 17);
+        drawString(renderer, "C   : crop to corner", 1, 18);
+        drawString(renderer, "W   : wipe!", 1, 19);
+        drawString(renderer, "o/l : cycle vaults", 1, 21);
+        drawString(renderer, "O   : add new vault", 1, 22);
+        drawString(renderer, "S   : save", 1, 23);
+        drawString(renderer, "vault " + Integer.toString(cursor + 1) + " (of " + Integer.toString(vaultSet.size()) + ")", 1, 27);
+        drawString(renderer, "'" + vaultSet.vaultAt(cursor).getName() + "'", 1, 28);
         drawString(renderer, filename + ".json", 1, 29);
 
         drawIcon(renderer, terrainCzar.getTerrainByName(terrains[currentTerrain]).getIcon(), 1, 1);
@@ -109,6 +124,12 @@ public class VaultedModal extends UModal {
             wipeAll();
         else if (c.equals('S'))
             writeFile();
+        else if (c.equals('o'))
+            switchVault(-1);
+        else if (c.equals('l'))
+            switchVault(1);
+        else if (c.equals('O'))
+            addNewVault();
 
     }
 
@@ -127,7 +148,11 @@ public class VaultedModal extends UModal {
     }
 
     void cropToCorner() {
-        area.cropSize(commander.player().areaX()+1, commander.player().areaY()+1);
+        int xsize = commander.player().areaX()+1;
+        int ysize = commander.player().areaY()+1;
+        area.cropSize(xsize,ysize);
+        vaultSet.vaultAt(cursor).cropSize(xsize,ysize);
+        saveVault();
     }
 
     void wipeAll() {
@@ -139,31 +164,31 @@ public class VaultedModal extends UModal {
     }
 
     void writeFile() {
-        try {
-            PrintWriter writer = new PrintWriter(filename + ".json", "UTF-8");
-            writer.println("{");
-            writer.println("  \"xsize\": " + Integer.toString(area.xsize) + ",");
-            writer.println("  \"ysize\": " + Integer.toString(area.ysize) + ",");
-            writer.println("  \"terrain\": [");
-            for (int y=0;y<area.ysize;y++) {
-                String tline = "    \"";
-                for (int x=0;x<area.xsize;x++) {
-                    tline = tline + area.terrainAt(x,y).getFilechar();
-                }
-                tline = tline + "\"";
-                if (y < area.ysize-1)
-                    tline = tline + ",";
-                writer.println(tline);
-            }
-            writer.println("  ],");
-            writer.println("  \"tags\": [],");
-            writer.println("  \"things\": [],");
-            writer.println("  \"actors\": [],");
-            writer.println("  \"levels\": [1,10]");
-            writer.println("}");
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        vaultSet.persist();
+    }
+
+    void loadVault() {
+        area.loadVault(vaultSet.vaultAt(cursor));
+    }
+
+    void saveVault() {
+        area.saveVault(vaultSet.vaultAt(cursor));
+    }
+
+    void switchVault(int delta) {
+        saveVault();
+        cursor += delta;
+        if (cursor < 0)
+            cursor = vaultSet.size()-1;
+        if (cursor >= vaultSet.size())
+            cursor = 0;
+        loadVault();
+    }
+
+    void addNewVault() {
+        saveVault();
+        vaultSet.addVault();
+        cursor = vaultSet.size()-1;
+        loadVault();
     }
 }

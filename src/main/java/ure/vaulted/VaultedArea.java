@@ -4,8 +4,10 @@ import ure.actions.UAction;
 import ure.actors.UPlayer;
 import ure.areas.UArea;
 import ure.areas.UCell;
+import ure.areas.UVault;
 import ure.math.UColor;
 import ure.sys.UCommander;
+import ure.terrain.UTerrain;
 import ure.things.UThing;
 
 public class VaultedArea extends UArea {
@@ -48,5 +50,41 @@ public class VaultedArea extends UArea {
         }
         xsize = newx;
         ysize = newy;
+    }
+
+    public void loadVault(UVault vault) {
+        System.out.println("Loading vault...");
+            resize(vault.getCols(), vault.getRows());
+        for (int x=0;x<vault.getCols();x++) {
+            for (int y=0;y<vault.getRows();y++) {
+                setTerrain(x,y,vault.terrainCharAt(x,y));
+            }
+        }
+        commander.player().moveToCell(this, 1,1);
+    }
+
+
+    public void resize(int newx, int newy) {
+        xsize = newx;
+        ysize = newy;
+        for (int x=0;x<xsize;x++) {
+            for (int y=0;y<ysize;y++) {
+                cells[x][y] = new UCell(this,x,y,terrainCzar.getTerrainForFilechar('@'));
+            }
+        }
+    }
+
+    public void saveVault(UVault vault) {
+        System.out.println("Saving vault...");
+        String[] tlines = new String[ysize];
+        for (int y=0; y<vault.getRows();y++) {
+            String line = "";
+            for (int x=0;x<vault.getCols();x++) {
+                UTerrain t = terrainAt(x,y);
+                line += t.getFilechar();
+            }
+            tlines[y] = line;
+        }
+        vault.setTerrain(tlines);
     }
 }

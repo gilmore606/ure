@@ -1,19 +1,29 @@
 package ure.areas;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class UVaultSet {
 
     public String filename;
     public ArrayList<UVault> vaults;
     public String[] tags;
+    @JsonIgnore
+    ObjectMapper objectMapper;
 
     public UVaultSet() {
-
-    }
-
-    public UVaultSet(String _filename) {
-        filename = _filename;
+        vaults = new ArrayList<>();
     }
 
     public void setVaults(ArrayList<UVault> _vaults) {
@@ -25,4 +35,37 @@ public class UVaultSet {
     public void setFilename(String _filename) { filename = _filename; }
     public String getFilename() { return filename; }
 
+    public int size() { return vaults.size(); }
+    public UVault vaultAt(int i) { return vaults.get(i); }
+    public void putVault(int i, UVault vault) { vaults.set(i, vault); }
+    public void setObjectMapper(ObjectMapper om) { objectMapper = om; }
+
+    public void initialize() {
+        vaults = new ArrayList<>();
+        addVault();
+    }
+
+    public void addVault() {
+        UVault vault = new UVault();
+        vault.initialize();
+        vaults.add(vault);
+    }
+
+    public void persist() {
+        File file = new File(filename);
+        try (
+                FileOutputStream stream = new FileOutputStream(file);
+                GZIPOutputStream gzip = new GZIPOutputStream(stream)
+        ) {
+            JsonFactory jfactory = new JsonFactory();
+            JsonGenerator jGenerator = jfactory
+                    .createGenerator(gzip, JsonEncoding.UTF8);
+            jGenerator.setCodec(objectMapper);
+            jGenerator.writeObject(this);
+            jGenerator.close();
+            System.out.println("Saved " + filename + " vaultset");
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't persist object " + toString(), e);
+        }
+    }
 }

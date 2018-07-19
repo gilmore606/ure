@@ -443,4 +443,21 @@ public class UCartographer implements Runnable {
         System.out.println("CARTO LOADER: game quit detected, shutting down background thread");
     }
 
+    /**
+     * Load and create a VaultSet from a serialized json file.
+     */
+    public UVaultSet loadVaultSet(String filename) {
+        File file = new File(filename);
+        try (
+                FileInputStream stream = new FileInputStream(file);
+                GZIPInputStream gzip = new GZIPInputStream(stream);
+        ) {
+            UVaultSet vaultSet = objectMapper.readValue(gzip, UVaultSet.class);
+            vaultSet.setObjectMapper(objectMapper);
+            return vaultSet;
+        }
+        catch (IOException e) {
+            return null;
+        }
+    }
 }

@@ -30,6 +30,17 @@ public class UVault {
 
     }
 
+    public void initialize() {
+        name = "";
+        tags = null;
+        description = null;
+        terrain = new String[30];
+        for (int i=0;i<30;i++) {
+            terrain[i] = "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@";
+        }
+        cols = 30;
+        rows = 30;
+    }
     public int[] getLevels() {
         return levels;
     }
@@ -38,5 +49,21 @@ public class UVault {
         this.levels = levels;
     }
 
+    public String getName() { return name; }
+    public void setName(String n) { name = n; }
 
+    public int getCols() { return cols; }
+    public int getRows() { return rows; }
+
+    public String[] getTerrain() { return terrain; }
+    public void setTerrain(String[] _terrain) { terrain = _terrain; }
+
+    public char terrainCharAt(int x, int y) {
+        return terrain[y].charAt(x);
+    }
+
+    public void cropSize(int xsize, int ysize) {
+        cols = xsize;
+        rows = ysize;
+    }
 }

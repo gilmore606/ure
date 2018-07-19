@@ -10,8 +10,8 @@ public class UModalURESplash extends UModal {
     RexFile logo;
     float alpha;
     int waitTick = 0;
-    int waitMax = 70;
-    float fadetick = 0.05f;
+    int waitMax = 90;
+    float fadetick = 0.04f;
 
     public UModalURESplash() {
         super(null, "", UColor.COLOR_BLACK);

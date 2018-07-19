@@ -19,6 +19,7 @@ import ure.ui.UScrollPanel;
 import ure.ui.UStatusPanel;
 import ure.ui.USpeaker;
 import ure.ui.modals.UModalGetString;
+import ure.ui.modals.UModalURESplash;
 import ure.vaulted.VaultedArea;
 import ure.vaulted.VaultedModal;
 
@@ -192,6 +193,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString {
                     debug();
                 } else if (c == '`') {
                     launchVaulted();
+                } else if (c == '3') {
+                    showModal(new UModalURESplash());
                 }
             }
         }
@@ -424,7 +427,6 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString {
         showModal(fmodal);
 
     }
-
     void doLaunchVaulted(String filename) {
         VaultedArea edarea = new VaultedArea(30,30);
         player.moveToCell(edarea, 2, 2);

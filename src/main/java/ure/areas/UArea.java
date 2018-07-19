@@ -34,11 +34,11 @@ public class UArea implements UTimeListener, Serializable {
 
     @Inject
     @JsonIgnore
-    UCommander commander;
+    public UCommander commander;
 
     @Inject
     @JsonIgnore
-    UTerrainCzar terrainCzar;
+    public UTerrainCzar terrainCzar;
 
     protected String label;
 
@@ -245,6 +245,12 @@ public class UArea implements UTimeListener, Serializable {
     public void setTerrain(int x, int y, String t) {
         if (isValidXY(x, y)) {
             UTerrain terrain = terrainCzar.getTerrainByName(t);
+            getCells()[x][y].useTerrain(terrain);
+        }
+    }
+    public void setTerrain(int x, int y, char c) {
+        if (isValidXY(x,y)) {
+            UTerrain terrain = terrainCzar.getTerrainForFilechar(c);
             getCells()[x][y].useTerrain(terrain);
         }
     }
