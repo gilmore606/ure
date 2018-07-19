@@ -49,8 +49,10 @@ public class VaultedModal extends UModal {
 
         vaultSet = commander.cartographer.loadVaultSet(filename);
         if (vaultSet == null) {
+            commander.printScroll("No such file " + filename + ".json -- creating new vaultSet.");
             vaultSet = new UVaultSet();
             vaultSet.initialize();
+            vaultSet.setFilename(filename);
         }
         loadVault();
     }

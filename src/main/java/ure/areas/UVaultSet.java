@@ -17,38 +17,58 @@ import java.util.zip.GZIPOutputStream;
 public class UVaultSet {
 
     public String filename;
-    public ArrayList<UVault> vaults;
+    public UVault[] vaults;
     public String[] tags;
     @JsonIgnore
     ObjectMapper objectMapper;
 
     public UVaultSet() {
-        vaults = new ArrayList<>();
+        vaults = null;
     }
 
-    public void setVaults(ArrayList<UVault> _vaults) {
+    public void setVaults(UVault[] _vaults) {
         vaults = _vaults;
     }
-    public ArrayList<UVault> getVaults() { return vaults; }
+    public UVault[] getVaults() { return vaults; }
     public void setTags(String[] _tags) { tags = _tags; }
     public String[] getTags() { return tags; }
     public void setFilename(String _filename) { filename = _filename; }
     public String getFilename() { return filename; }
 
-    public int size() { return vaults.size(); }
-    public UVault vaultAt(int i) { return vaults.get(i); }
-    public void putVault(int i, UVault vault) { vaults.set(i, vault); }
+    public int size() { return vaults.length; }
+    public UVault vaultAt(int i) {
+        //System.out.println("(vaultAt " + Integer.toString(i) + vaults[i].toString());
+        return vaults[i];
+    }
+    public void putVault(int i, UVault vault) {
+        if (vaults == null) {
+            vaults = new UVault[1];
+            vaults[0] = vault;
+        } else if (i >= vaults.length) {
+            UVault[] newVaults = new UVault[vaults.length + 1];
+            for (int n=0;n<vaults.length;n++) {
+                newVaults[n] = vaults[n];
+            }
+            newVaults[newVaults.length - 1] = vault;
+            vaults = newVaults;
+        } else {
+            vaults[i] = vault;
+        }
+    }
     public void setObjectMapper(ObjectMapper om) { objectMapper = om; }
 
     public void initialize() {
-        vaults = new ArrayList<>();
+        vaults = null;
         addVault();
     }
 
     public void addVault() {
         UVault vault = new UVault();
         vault.initialize();
-        vaults.add(vault);
+        if (vaults == null)
+            putVault(0,vault);
+        else
+            putVault(vaults.length, vault);
     }
 
     public void persist() {
@@ -61,7 +81,7 @@ public class UVaultSet {
             JsonGenerator jGenerator = jfactory
                     .createGenerator(gzip, JsonEncoding.UTF8);
             jGenerator.setCodec(objectMapper);
-            jGenerator.writeObject(this);
+            jGenerator.writeObject(vaults);
             jGenerator.close();
             System.out.println("Saved " + filename + " vaultset");
         } catch (IOException e) {
