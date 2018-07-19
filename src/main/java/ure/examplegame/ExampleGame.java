@@ -16,6 +16,7 @@ import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.*;
+import ure.ui.modals.UModalURESplash;
 
 import javax.inject.Inject;
 
@@ -118,7 +119,7 @@ public class ExampleGame implements UTimeListener {
         item = thingCzar.getThingByName("flashlight"); item.moveTo(player);
 
         // commander.speaker.switchBGM("/ultima_wanderer.ogg", 0);
-
+        commander.showModal(new UModalURESplash());
         commander.gameLoop();
     }
 

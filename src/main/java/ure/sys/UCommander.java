@@ -291,6 +291,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString {
     public void gameLoop() {
         long tickRate = 1000000000 / config.getFPStarget();
         long gameTime = System.nanoTime();
+        tickTime();
+        player.moveToCell(player.area(), player.areaX(), player.areaY());
         while (!renderer.windowShouldClose() && !quitGame) {
             frameCounter++;
             renderer.pollEvents();
