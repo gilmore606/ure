@@ -105,3 +105,4 @@ Hopefully someday there will be links here to actual games.
 - [LWJGL](https://www.lwjgl.org/) Low level OpenGL access.
 - [JOML](https://github.com/JOML-CI/JOML) Low level OpenGL math.
 - [Dagger](http://square.github.io/dagger/) Dependency injection.  Pretty handy for game projects and lazy devs!
+- [Guava](https://github.com/google/guava) Provides a lightweight global event bus.
