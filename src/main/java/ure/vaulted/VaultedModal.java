@@ -7,8 +7,9 @@ import ure.areas.UVaultSet;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.GLKey;
 import ure.ui.modals.UModal;
-
+import static org.lwjgl.glfw.GLFW.*;
 import javax.inject.Inject;
 import java.io.PrintWriter;
 import java.util.Set;
@@ -66,8 +67,8 @@ public class VaultedModal extends UModal {
         drawString(renderer, "pass: place terrain", 1, 17);
         drawString(renderer, "C   : crop to corner", 1, 18);
         drawString(renderer, "W   : wipe!", 1, 19);
-        drawString(renderer, "o/l : cycle vaults", 1, 21);
-        drawString(renderer, "O   : add new vault", 1, 22);
+        drawString(renderer, "pgUp/Dn: cycle vaults", 1, 21);
+        drawString(renderer, "ins    : add new vault", 1, 22);
         drawString(renderer, "S   : save", 1, 23);
         drawString(renderer, "vault " + Integer.toString(cursor + 1) + " (of " + Integer.toString(vaultSet.size()) + ")", 1, 27);
         drawString(renderer, "'" + vaultSet.vaultAt(cursor).getName() + "'", 1, 28);
@@ -85,7 +86,7 @@ public class VaultedModal extends UModal {
     }
 
     @Override
-    public void hearCommand(UCommand command, Character c) {
+    public void hearCommand(UCommand command, GLKey k) {
         if (command != null) {
             if (command.id.equals("MOVE_N"))
                 commander.player().walkDir(0, -1);
@@ -98,41 +99,26 @@ public class VaultedModal extends UModal {
             else if (command.id.equals("PASS"))
                 stampTerrain();
         }
-        if (c.equals('q')) {
+        if (k.k == GLFW_KEY_Q) {
             currentTerrain++;
             if (currentTerrain >= terrains.length) currentTerrain = 0;
-        } else if (c.equals('a')) {
+        } else if (k.k == GLFW_KEY_A) {
             currentTerrain--;
             if (currentTerrain < 0) currentTerrain = terrains.length - 1;
-        } else if (c.equals('1'))
-            currentTerrain = terrainPalette[0];
-        else if (c.equals('2'))
-            currentTerrain = terrainPalette[1];
-        else if (c.equals('3'))
-            currentTerrain = terrainPalette[2];
-        else if (c.equals('4'))
-            currentTerrain = terrainPalette[3];
-        else if (c.equals('5'))
-            currentTerrain = terrainPalette[4];
-        else if (c.equals('6'))
-            currentTerrain = terrainPalette[5];
-        else if (c.equals('7'))
-            currentTerrain = terrainPalette[6];
-        else if (c.equals('8'))
-            currentTerrain = terrainPalette[7];
-        else if (c.equals('9'))
-            currentTerrain = terrainPalette[8];
-        else if (c.equals('C'))
+        } else if (k.k >= GLFW_KEY_1 && k.k <= GLFW_KEY_9) {
+            currentTerrain = terrainPalette[k.k - GLFW_KEY_1];
+        }
+        else if (k.k == GLFW_KEY_C && k.shift)
             cropToCorner();
-        else if (c.equals('W'))
+        else if (k.k == GLFW_KEY_W && k.shift)
             wipeAll();
-        else if (c.equals('S'))
+        else if (k.k == GLFW_KEY_S && k.shift)
             writeFile();
-        else if (c.equals('o'))
+        else if (k.k == GLFW_KEY_PAGE_UP)
             switchVault(-1);
-        else if (c.equals('l'))
+        else if (k.k == GLFW_KEY_PAGE_DOWN)
             switchVault(1);
-        else if (c.equals('O'))
+        else if (k.k == GLFW_KEY_INSERT)
             addNewVault();
 
     }

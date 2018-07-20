@@ -3,6 +3,7 @@ package ure.ui.modals;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.GLKey;
 
 public class UModalLoading extends UModal {
 
@@ -24,7 +25,7 @@ public class UModalLoading extends UModal {
     }
 
     @Override
-    public void hearCommand(UCommand command, Character c) {
+    public void hearCommand(UCommand command, GLKey k) {
 
     }
 }

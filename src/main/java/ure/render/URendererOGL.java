@@ -5,6 +5,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import ure.math.UColor;
+import ure.sys.GLKey;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.ui.View;
@@ -126,25 +127,10 @@ public class URendererOGL implements URenderer {
                 if(key < 0 || key >= keyState.length) return; // Bail, oob key press.
                 keyState[key] = action != GLFW_RELEASE;
 
-                //if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
-                //    glfwSetWindowShouldClose(window, true);
-                //    System.out.println("Exiting.");
-                //}
-                if (key == GLFW_KEY_ESCAPE) key = 1;
-                if (key == GLFW_KEY_UP) key = 2;
-                if (key == GLFW_KEY_RIGHT) key = 3;
-                if (key == GLFW_KEY_DOWN) key = 4;
-                if (key == GLFW_KEY_LEFT) key = 5;
-                if (key == GLFW_KEY_ENTER) key = 6;
-                if (key == GLFW_KEY_BACKSPACE) key = 7;
-                if (keyState[GLFW_KEY_LEFT_SHIFT] || keyState[GLFW_KEY_RIGHT_SHIFT]) {
-                    if (key > 1 && key < 6) {
-                        key = key + 4;
-                    }
-                }
-                if (keyListener != null && key < 256 && key >= 0 && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-                    if(keyState[GLFW_KEY_LEFT_SHIFT] || keyState[GLFW_KEY_RIGHT_SHIFT]) keyListener.keyPressed((char)key);
-                    else keyListener.keyPressed(Character.toLowerCase((char)key));
+                if (keyListener != null && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+                    GLKey glkey = new GLKey(key, keyState[GLFW_KEY_LEFT_SHIFT] || keyState[GLFW_KEY_RIGHT_SHIFT],
+                                                    keyState[GLFW_KEY_LEFT_CONTROL] || keyState[GLFW_KEY_RIGHT_CONTROL]);
+                    keyListener.keyPressed(glkey);
                 }
             }
         });

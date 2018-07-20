@@ -24,6 +24,8 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 
 /**
  * UCommander is a singleton class (you only make one of these!) which receives player input, converts it to
@@ -38,7 +40,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public UConfig config;
     public Random random;
 
-    private HashMap<Character, UCommand> keyBindings;
+
     private HashSet<UTimeListener> timeListeners;
     private HashSet<UAnimator> animators;
     private ArrayList<UActor> actors;
@@ -61,7 +63,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     private boolean breakLatchOnInput = true;
 
-    private LinkedBlockingQueue<Character> keyBuffer;
+    private HashMap<GLKey, UCommand> keyBindings;
+    private LinkedBlockingQueue<GLKey> keyBuffer;
     private int keyBufferSize = 2;
 
     private boolean waitingForInput = false;
@@ -89,7 +92,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         setPlayer(theplayer);
         readKeyBinds();
         renderer.setKeyListener(this);
-        keyBuffer = new LinkedBlockingQueue<Character>();
+        keyBuffer = new LinkedBlockingQueue<GLKey>();
         speaker = new USpeaker();
     }
 
@@ -149,29 +152,29 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void readKeyBinds() {
         // TODO: Actually read keybinds.txt
         //
-        keyBindings = new HashMap<Character, UCommand>();
-        keyBindings.put((char)1, new CommandEsc());
-        keyBindings.put((char)2, new CommandMoveN());
-        keyBindings.put((char)4, new CommandMoveS());
-        keyBindings.put((char)5, new CommandMoveW());
-        keyBindings.put((char)3, new CommandMoveE());
-        keyBindings.put((char)6, new CommandLatchN());
-        keyBindings.put((char)8, new CommandLatchS());
-        keyBindings.put((char)9, new CommandLatchW());
-        keyBindings.put((char)7, new CommandLatchE());
-        keyBindings.put('Q', new CommandQuit());
-        keyBindings.put(' ', new CommandPass());
-        keyBindings.put('e', new CommandInteract());
-        keyBindings.put('i', new CommandInventory());
-        keyBindings.put('g', new CommandGet());
-        keyBindings.put('d', new CommandDrop());
-        keyBindings.put('.', new CommandTravel());
-        keyBindings.put('t', new CommandThrow());
-        keyBindings.put('u', new CommandUse());
+        keyBindings = new HashMap<GLKey, UCommand>();
+        keyBindings.put(new GLKey(GLFW_KEY_ESCAPE), new CommandEsc());
+        keyBindings.put(new GLKey(GLFW_KEY_UP), new CommandMoveN());
+        keyBindings.put(new GLKey(GLFW_KEY_DOWN), new CommandMoveS());
+        keyBindings.put(new GLKey(GLFW_KEY_LEFT), new CommandMoveW());
+        keyBindings.put(new GLKey(GLFW_KEY_RIGHT), new CommandMoveE());
+        keyBindings.put(new GLKey(GLFW_KEY_UP, true, false), new CommandLatchN());
+        keyBindings.put(new GLKey(GLFW_KEY_DOWN, true, false), new CommandLatchS());
+        keyBindings.put(new GLKey(GLFW_KEY_LEFT, true, false), new CommandLatchW());
+        keyBindings.put(new GLKey(GLFW_KEY_RIGHT, true, false), new CommandLatchE());
+        keyBindings.put(new GLKey(GLFW_KEY_Q, true, false), new CommandQuit());
+        keyBindings.put(new GLKey(GLFW_KEY_SPACE), new CommandPass());
+        keyBindings.put(new GLKey(GLFW_KEY_E), new CommandInteract());
+        keyBindings.put(new GLKey(GLFW_KEY_I), new CommandInventory());
+        keyBindings.put(new GLKey(GLFW_KEY_G), new CommandGet());
+        keyBindings.put(new GLKey(GLFW_KEY_D), new CommandDrop());
+        keyBindings.put(new GLKey(GLFW_KEY_PERIOD), new CommandTravel());
+        keyBindings.put(new GLKey(GLFW_KEY_T), new CommandThrow());
+        keyBindings.put(new GLKey(GLFW_KEY_U), new CommandUse());
     }
 
-    public void keyPressed(char c) {
-        keyBuffer.add(c);
+    public void keyPressed(GLKey k) {
+        keyBuffer.add(k);
     }
 
     public int mouseX() { return renderer.getMousePosX(); }
@@ -179,29 +182,33 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     public void consumeKeyFromBuffer() {
         if (!keyBuffer.isEmpty()) {
-            Character c = keyBuffer.remove();
-            UCommand command = keyBindings.get(c);
-            hearCommand(keyBindings.get(c), c);
+            GLKey k = keyBuffer.remove();
+            UCommand command = null;
+            for (GLKey bindkey : keyBindings.keySet()) {
+                if (bindkey.sameKeyAs(k))
+                    command = keyBindings.get(bindkey);
+            }
+            hearCommand(command, k);
             if (modal == null) {
-                if (c == '1') {
+                if (k.k == GLFW_KEY_1) {
                     debug_1();
-                } else if (c == '2') {
+                } else if (k.k == GLFW_KEY_2) {
                     debug_2();
-                } else if (c == 'q') {
+                } else if (k.k == GLFW_KEY_Q) {
                     debug();
-                } else if (c == '`') {
+                } else if (k.k == GLFW_KEY_F1) {
                     launchVaulted();
-                } else if (c == '3') {
+                } else if (k.k == GLFW_KEY_F2) {
                     showModal(new UModalURESplash());
                 }
             }
         }
     }
 
-    void hearCommand(UCommand command, Character c) {
+    void hearCommand(UCommand command, GLKey k) {
         if (command != null) System.out.println("actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
         if (modal != null) {
-            modal.hearCommand(command, c);
+            modal.hearCommand(command, k);
         } else if (command != null) {
             command.execute((UPlayer)player);
         }

@@ -1,12 +1,9 @@
 package ure.ui.modals;
 
-import ure.sys.Injector;
-import ure.sys.UAnimator;
-import ure.sys.UCommander;
+import ure.sys.*;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
-import ure.sys.UConfig;
 import ure.terrain.UTerrainCzar;
 import ure.ui.Icon;
 import ure.ui.UCamera;
@@ -152,7 +149,7 @@ public class UModal extends View implements UAnimator {
     public int relx(int x)  { return (x * commander.config.getGlyphWidth()) + xpos; }
     public int rely(int y)  { return (y * commander.config.getGlyphHeight()) + ypos; }
 
-    public void hearCommand(UCommand command, Character c) {
+    public void hearCommand(UCommand command, GLKey k) {
         dismiss();
     }
 

@@ -4,6 +4,7 @@ import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.sys.Entity;
+import ure.sys.GLKey;
 
 import java.util.ArrayList;
 
@@ -54,7 +55,7 @@ public class UModalTarget extends UModal {
     }
 
     @Override
-    public void hearCommand(UCommand command, Character c) {
+    public void hearCommand(UCommand command, GLKey k) {
         if (command.id.equals("MOVE_N"))
             celly -= 1;
         if (command.id.equals("MOVE_S"))

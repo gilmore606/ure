@@ -3,6 +3,7 @@ package ure.ui.modals;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.GLKey;
 
 import java.util.ArrayList;
 
@@ -57,7 +58,7 @@ public class UModalStringPick extends UModal {
     }
 
     @Override
-    public void hearCommand(UCommand command, Character c) {
+    public void hearCommand(UCommand command, GLKey k) {
         if (command == null) return;
         if (command.id.equals("MOVE_N")) {
             selection--;

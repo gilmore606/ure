@@ -4,6 +4,7 @@ import ure.commands.UCommand;
 import ure.commands.UCommandMove;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.GLKey;
 
 /**
  * ModalDirection queries the user for a cardinal direction (or space for no direction, if allowed).
@@ -41,7 +42,7 @@ public class UModalDirection extends UModal {
     }
 
     @Override
-    public void hearCommand(UCommand command, Character c) {
+    public void hearCommand(UCommand command, GLKey k) {
         if (command.id.startsWith("MOVE")) {
             dismiss();
             ((HearModalDirection) callback).hearModalDirection(callbackContext, ((UCommandMove) command).xdir, ((UCommandMove) command).ydir);

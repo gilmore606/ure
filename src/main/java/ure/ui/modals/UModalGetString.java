@@ -3,6 +3,10 @@ package ure.ui.modals;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.GLKey;
+
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 
 public class UModalGetString extends UModal {
 
@@ -64,21 +68,22 @@ public class UModalGetString extends UModal {
     }
 
     @Override
-    public void hearCommand(UCommand command, Character c) {
+    public void hearCommand(UCommand command, GLKey k) {
         if (command != null) {
             if (command.id.equals("ESC") && escapable)
                 dismiss();
         }
-        if (c == 7) {
+        if (k.k == GLFW_KEY_BACKSPACE) {
             if (!input.isEmpty()) {
                 if (input.length() == 1)
                     input = "";
                 else
                     input = input.substring(0, input.length() - 1);
             }
-        } else if (c == 6) {
+        } else if (k.k == GLFW_KEY_ENTER) {
             sendInput();
         } else {
+            Character c = (char)Math.min(127,k.k);
             input = input + c.toString();
         }
     }

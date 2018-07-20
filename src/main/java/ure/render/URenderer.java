@@ -2,13 +2,14 @@ package ure.render;
 
 
 import ure.math.UColor;
+import ure.sys.GLKey;
 import ure.sys.Injector;
 import ure.ui.View;
 
 public interface URenderer {
 
     interface KeyListener {
-        void keyPressed(char key);
+        void keyPressed(GLKey key);
     }
 
     /**

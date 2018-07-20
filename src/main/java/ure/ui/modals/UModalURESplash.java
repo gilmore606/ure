@@ -3,6 +3,7 @@ package ure.ui.modals;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.GLKey;
 import ure.ui.RexFile;
 
 public class UModalURESplash extends UModal {
@@ -20,7 +21,7 @@ public class UModalURESplash extends UModal {
     }
 
     @Override
-    public void hearCommand(UCommand command, Character c) {
+    public void hearCommand(UCommand command, GLKey k) {
         waitTick = 10000;
         alpha = Math.min(alpha, 0.7f);
         fadetick = 0.06f;
