@@ -421,7 +421,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString {
     }
 
     void launchVaulted() {
-        UModalGetString fmodal = new UModalGetString("Filename?\n(Leave off the .json)", 20, true,
+        UModalGetString fmodal = new UModalGetString("Filename?", 20, true,
                 UColor.COLOR_BLACK, this, "vaulted-start");
         printScroll("Launching VaultEd...");
         showModal(fmodal);

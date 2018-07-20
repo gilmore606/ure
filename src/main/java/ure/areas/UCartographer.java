@@ -447,16 +447,17 @@ public class UCartographer implements Runnable {
      * Load and create a VaultSet from a serialized json file.
      */
     public UVaultSet loadVaultSet(String filename) {
-        File file = new File(filename);
+        File file = new File(commander.config.getResourcePath() + filename + ".json");
         try (
                 FileInputStream stream = new FileInputStream(file);
-                GZIPInputStream gzip = new GZIPInputStream(stream);
+                //GZIPInputStream gzip = new GZIPInputStream(stream);
         ) {
-            UVaultSet vaultSet = objectMapper.readValue(gzip, UVaultSet.class);
+            UVaultSet vaultSet = objectMapper.readValue(stream, UVaultSet.class);
             vaultSet.setObjectMapper(objectMapper);
             return vaultSet;
         }
         catch (IOException e) {
+            e.printStackTrace();
             return null;
         }
     }

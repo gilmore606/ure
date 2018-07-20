@@ -71,19 +71,18 @@ public class UVaultSet {
             putVault(vaults.length, vault);
     }
 
-    public void persist() {
-        File file = new File(filename);
+    public void persist(String absoluteFilepath) {
+        File file = new File(absoluteFilepath);
         try (
                 FileOutputStream stream = new FileOutputStream(file);
-                GZIPOutputStream gzip = new GZIPOutputStream(stream)
+                //GZIPOutputStream gzip = new GZIPOutputStream(stream)
         ) {
             JsonFactory jfactory = new JsonFactory();
             JsonGenerator jGenerator = jfactory
-                    .createGenerator(gzip, JsonEncoding.UTF8);
-            jGenerator.setCodec(objectMapper);
-            jGenerator.writeObject(vaults);
+                    .createGenerator(stream, JsonEncoding.UTF8);
+            jGenerator.setCodec(new ObjectMapper());
+            jGenerator.writeObject(this);
             jGenerator.close();
-            System.out.println("Saved " + filename + " vaultset");
         } catch (IOException e) {
             throw new RuntimeException("Couldn't persist object " + toString(), e);
         }

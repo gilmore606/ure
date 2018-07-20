@@ -53,6 +53,8 @@ public class VaultedModal extends UModal {
             vaultSet = new UVaultSet();
             vaultSet.initialize();
             vaultSet.setFilename(filename);
+        } else {
+            commander.printScroll("Opening vaultset " + filename + ".json for editing.");
         }
         loadVault();
     }
@@ -166,7 +168,8 @@ public class VaultedModal extends UModal {
     }
 
     void writeFile() {
-        vaultSet.persist();
+        vaultSet.persist(commander.config.getResourcePath() + filename + ".json");
+        commander.printScroll("Saved vaultset " + filename + ".json to resources.");
     }
 
     void loadVault() {

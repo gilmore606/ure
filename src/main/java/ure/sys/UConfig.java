@@ -81,6 +81,7 @@ public class UConfig {
 
     // Game functionality
 
+    private String resourcePath = "src/main/resources/";     // path to resource files
     private boolean backgroundLoader = true;        // load and save areas in the background?
     private boolean persistentAreas = true;         // persist and recover generated areas?
     private boolean runNeighborAreas = true;        // keep areas we just left awake?
@@ -428,6 +429,9 @@ public class UConfig {
     public void setLightHueToActors(float lightHueToActors) {
         this.lightHueToActors = lightHueToActors;
     }
+
+    public String getResourcePath() { return resourcePath; }
+    public void setResourcePath(String path) { resourcePath = path; }
 
     public boolean isPersistentAreas() {
         return persistentAreas;

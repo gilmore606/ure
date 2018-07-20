@@ -252,7 +252,9 @@ public class UActor extends UThing implements Interactable {
     }
 
     public void walkFail(UCell cell) {
-        commander.printScroll(cell.terrain().getBonkmsg());
+        if (this instanceof UPlayer) {
+            commander.printScroll(cell.terrain().getBonkmsg());
+        }
     }
 
     /**
