@@ -106,11 +106,14 @@ public class RexFile extends View {
             for (int x = 0;x < width;x++) {
                 for (int y = 0;y < height;y++) {
                     UColor bgColor = layer.bgColors[x][y];
-                    bgColor.setAlpha(alpha);
-                    renderer.drawRect(xpos + x * gw, ypos + y * gh, gw, gh, bgColor);
-                    UColor fgColor = layer.fgColors[x][y];
-                    fgColor.setAlpha(alpha);
-                    renderer.drawGlyph((char)layer.glyphs[x][y], xpos+x*gw, ypos+y*gh, fgColor, 0, 0);
+                    if (!(bgColor.iR() == 255 && bgColor.iG() == 0 && bgColor.iB() == 255)) { // 255,0,255 = transparent
+                        bgColor.setAlpha(alpha);
+                        renderer.drawRect(xpos + x * gw, ypos + y * gh, gw, gh, bgColor);
+
+                        UColor fgColor = layer.fgColors[x][y];
+                        fgColor.setAlpha(alpha);
+                        renderer.drawGlyph((char) layer.glyphs[x][y], xpos + x * gw, ypos + y * gh, fgColor, 0, 0);
+                    }
                 }
             }
         }
