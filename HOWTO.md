@@ -74,9 +74,13 @@ UI, provides configuration access, and handles other system functions.  Your mai
 
 The Commander creates a UConfig instance to hold all configuration settings for the engine.  Although you could edit UConfig directly to change settings, we recommend changing them by calling setter methods in your game's startup, to minimize conflicts with future URE updates.
 
+(more info: [Configuration](doc/Configuration.md))
+
 ## URendererOGL
 
 The Renderer knows how to render a Camera onto the screen.  The default RendererOGL is an ASCII renderer (using OpenGL to create the glyphs), but other renderers are planned, such as a graphical tile renderer.
+
+(more info: [Rendering](doc/Rendering.md))
 
 ## UPlayer
 
@@ -87,18 +91,18 @@ A Player represents the player.  It extends Actor (which extends Thing) and most
 The Cartographer serves Areas (game levels) on demand as the player moves through the gameworld.  An Area represents a single contiguous game map as a 2D grid of Cell objects.  Each Cell has a single Terrain, and can hold Actors and Things.
 
 You can use the default
-Cartographer class without extending it, however you will need to supply it with at least one Region.  A Region represents a
+Cartographer class without extending it, but you will need to supply it with at least one Region.  A Region represents a
 'stack' of linearly connected Areas which share some characteristics such as size dimensions, flavor tags, and generator
 algorithms.  Once your Cartographer is configured with your initial world structure, you can generate the starting area with
 Cartographer.getStartArea() and move the Player into it.
 
-Cartographer will also manage saving areas to disk (by default, when the player is separated from them by one intervening area) and loading them from disk again (by default, when the player is one exit away from a new area).  This happens in the
-background and should be transparent to you and the player.
-
+(more info: [Cartographer](doc/Cartographer.md))
 
 ## StatusPanel, ScrollPanel, LensPanel
 
 These panel UI classes relay game information via the Commander, but they aren't required for the engine to operate.
+
+(more info: [Panels](doc/Panels.md))
 
 ## View
 
@@ -112,9 +116,13 @@ Camera represents a panel which uses the Renderer to show a portion of an Area. 
 View, and probably not interact with it much beyond that.  More than one Camera can exist, and they can be pinned to other
 actors besides the Player, or pointed at static locations.
 
+(more info: [Cameras](doc/Cameras.md))
+
 ## ThingCzar, TerrainCzar, ActorCzar
 
-The -Czar objects are singletons which generate new instances of game entities.  These singletons are often @Inject'ed into other classes for convenience to allow easy spawning of entities into the world.  You don't need to create these objects yourself (as the injector will take care of this) and you shouldn't need to modify them.  For more information, see [Object Creation](doc/ObjectCreation.md).
+The -Czar objects are singletons which generate new instances of game entities.  These singletons are often @Inject'ed into other classes for convenience to allow easy spawning of entities into the world.  You don't need to create these objects yourself (as the injector will take care of this) and you shouldn't need to modify them.  
+
+(more info: [Object Creation](doc/ObjectCreation.md))
 
 
 
