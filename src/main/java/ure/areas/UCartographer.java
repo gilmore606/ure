@@ -15,6 +15,9 @@ import ure.ui.modals.UModalLoading;
 
 import javax.inject.Inject;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -75,6 +78,11 @@ public class UCartographer implements Runnable {
      * Do what is necessary to initialize the regions this cartographer will start with.
      */
     public void setupRegions() {
+        String savePath = commander.savePath();
+        File f = new File(savePath);
+        if (!f.isDirectory()) {
+            f.mkdir();
+        }
         if (commander.config.isPersistentAreas()) {
             loadRegions();
         }
