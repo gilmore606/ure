@@ -65,8 +65,10 @@ Let's briefly look at the main component objects of a URE game, in the order we 
 
 ## UCommander
 
-A UCommander instance is the central control hub of the game; it runs the main gameLoop(), listens for player input, controls
+A UCommander instance is the central control hub of the game; it runs the [main gameLoop()](doc/GameLoop.md), listens for [player input](doc/Input.md), controls
 UI, provides configuration access, and handles other system functions.  Your main class will create a UCommander during startup, and then hand control to it by calling commander.gameLoop(), which runs until the player quits.
+
+(more info: [GameLoop](doc/GameLoop.md), [Input](doc/Input.md))
 
 ## UConfig
 
