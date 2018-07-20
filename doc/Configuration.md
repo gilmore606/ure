@@ -5,7 +5,7 @@ that affect various aspects of how URE renders and operates.  You can edit this 
 but it's recommended that instead you call the setter methods on UConfig during your game's startup, so the class remains 
 easily mergeable with future URE updates.
 
-There are many of these properties controlling everything from light blending and UI colors to framerate and area caching.  Most
+There are many of these properties controlling everything from light blending and UI [colors](doc/Colors.md) to framerate and area caching.  Most
 of them are documented in comments in the UConfig class file.  These settings can be changed at runtime by your game if you wish;
 some may produce unexpected behavior if used this way.
 
