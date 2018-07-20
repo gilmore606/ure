@@ -48,6 +48,8 @@ other visualizations without changing the underlying game
 - Environmental effects such as liquid flow, smoke/vapors, and their interactions
 - Visual particle system
 
+(see the [Roadmap](ROADMAP.md) for more details on planned features.)
+
 ## Why Java?
 
 The decision to implement URE into Java was not made lightly.  We recognize that there are more popular
