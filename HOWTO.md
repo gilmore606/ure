@@ -112,10 +112,8 @@ actors besides the Player, or pointed at static locations.
 
 ## ThingCzar, TerrainCzar, ActorCzar
 
-The -Czar objects are singletons which generate new instances of game entities.  Czar reads from a .json file to create all
-possible types of its entity, and serves new copies of those types to the game as needed.  These singletons are often @Inject'ed into other classes for convenience to allow easy spawning of entities into the world.
+The -Czar objects are singletons which generate new instances of game entities.  These singletons are often @Inject'ed into other classes for convenience to allow easy spawning of entities into the world.  You don't need to create these objects yourself (as the injector will take care of this) and you shouldn't need to modify them.  For more information, see [Object Creation](doc/ObjectCreation.md).
 
-You don't need to create these objects yourself (as the injector will take care of this) and you shouldn't need to modify them.  They load from default filenames (things.json, terrain.json, actors.json) but have methods to reload from any provided .json file.
 
 
 # Initialization order
