@@ -418,6 +418,18 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
     }
 
+    /**
+     * Get the filesystem path to the current savestate (the world we're playing now), or the top level save path.
+     * @return
+     */
+    public String savePath() {
+        String world = cartographer.worldName();
+        if (world == null)
+            return config.getSavePath();
+        else
+            return config.getSavePath() + world + "/";
+    }
+
     void launchVaulted() {
         File dirfile = new File(config.getResourcePath() + "vaults/");
         ArrayList<String> filelist = new ArrayList<>();

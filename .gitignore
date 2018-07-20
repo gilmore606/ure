@@ -19,4 +19,5 @@ build/
 # URE
 *.region
 *.area
+saves/*
 

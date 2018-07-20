@@ -102,8 +102,9 @@ public class UCartographer implements Runnable {
      * @return the region
      */
     protected URegion loadRegion(File file) {
+        String path = commander.savePath();
         try (
-                FileInputStream stream = new FileInputStream(file);
+                FileInputStream stream = new FileInputStream(path + file);
                 GZIPInputStream gzip = new GZIPInputStream(stream)
         ) {
             return objectMapper.readValue(gzip, URegion.class);
@@ -163,6 +164,14 @@ public class UCartographer implements Runnable {
         return getArea(startArea);
     }
 
+    /**
+     * Get the name of the current world.  By default this is used to name the savestate file.
+     * @return
+     */
+    public String worldName() {
+        return null;
+    }
+
     public void setStartArea(String label) {
         startArea = label;
     }
@@ -182,7 +191,8 @@ public class UCartographer implements Runnable {
                 return area;
 
         if (commander.config.isPersistentAreas()) {
-            File file = new File(label + ".area");
+            String path = commander.savePath();
+            File file = new File(path + label + ".area");
             try (
                 FileInputStream stream = new FileInputStream(file);
                 GZIPInputStream gzip = new GZIPInputStream(stream)
@@ -207,8 +217,9 @@ public class UCartographer implements Runnable {
      * @param filename
      */
     protected void persist(Object object, String filename) {
+        String path = commander.savePath();
         if (commander.config.isPersistentAreas()) {
-            File file = new File(filename);
+            File file = new File(path + filename);
             try (
                     FileOutputStream stream = new FileOutputStream(file);
                     GZIPOutputStream gzip = new GZIPOutputStream(stream)

@@ -94,9 +94,9 @@ public class ExampleGame implements UTimeListener {
 
         player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
         cartographer = new ExampleCartographer();
+        commander.registerComponents(player, renderer, thingCzar, actorCzar, cartographer);
         cartographer.setupRegions();
         cartographer.startLoader();
-        commander.registerComponents(player, renderer, thingCzar, actorCzar, cartographer);
 
         area = cartographer.getStartArea();
 
