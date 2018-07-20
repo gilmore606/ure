@@ -35,7 +35,6 @@ Brighten this color.  Intensity of 1.0f is no change, less is darker, more is br
 UColor.desaturateBy(float amount)
 ```
 Reduce this color's saturation toward gray.  Below 1.0f reduces saturation, above increases it.  0f will produce a pure grayscale.
-```
 
 The UColor class also includes static objects representing common named colors including COLOR_BLACK and COLOR_WHITE, useful
 for referring to these common color values in code.  Check the JavaDoc for a full list.
