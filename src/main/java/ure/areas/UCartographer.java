@@ -91,9 +91,11 @@ public class UCartographer implements Runnable {
                 return name.endsWith(".region");
             }
         });
-        for (File file : files) {
-            URegion region = loadRegion(file);
-            regions.put(region.getId(), region);
+        if (files != null) {
+            for (File file : files) {
+                URegion region = loadRegion(file);
+                regions.put(region.getId(), region);
+            }
         }
     }
 
