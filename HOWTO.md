@@ -59,12 +59,6 @@ UI, provides [configuration access](doc/Configuration.md), and handles other sys
 
 (more info: [GameLoop](doc/GameLoop.md), [Input](doc/Input.md), [Configuration](doc/Configuration.md))
 
-## UConfig
-
-The Commander creates a UConfig instance to hold all configuration settings for the engine.  Although you could edit UConfig directly to change settings, we recommend changing them by calling setter methods in your game's startup, to minimize conflicts with future URE updates.
-
-(more info: [Configuration](doc/Configuration.md))
-
 ## URendererOGL
 
 The Renderer knows how to render a Camera onto the screen.  The default RendererOGL is an ASCII renderer (using OpenGL to create the glyphs), but other renderers are planned, such as a graphical tile renderer.
