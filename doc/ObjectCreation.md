@@ -10,3 +10,9 @@ The czars create their libraries of entity types by reading JSON config files lo
 On startup, the czar reads the JSON and creates a template object for each entry, and stores a hashmap of these templates by name.  When a new object is requested from the czar it simply clones the template and returns the fresh new object.
 
 The 'type' field is special, as this controls the subclass the object will assume.  'type' is checked against the .type field of all subclasses of the base class discovered (for ThingCzar, all subclasses of UThing); the first subclass found whose .type matches the JSON type entry is used.
+
+An example of spawning a new UThing:
+```
+  UThing item = thingCzar.getThingByName("apple");
+```
+Notice we get the new thing by its name -- this is the name referenced in the things.json file.  For this reason, these names must be unique.  Now you can move this item into a Cell, Actor, etc. to place it in the gameworld.
