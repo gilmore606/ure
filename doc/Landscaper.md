@@ -16,7 +16,7 @@ buildArea(UArea area, int level, String[] tags)
 'tags' is a list of Strings passed in from the Region.  Your Landscaper can choose to use these tags to alter the flavor of its activity.
 
 
-# How do I do that?
+## How do I do that?
 
 The topic of how best to generate a roguelike area map is beyond the scope of this document; if you've gone this far toward making
 a game, you hopefully have some ideas on this subject yourself.  For inspiration you can look at the buildArea() methods on the
