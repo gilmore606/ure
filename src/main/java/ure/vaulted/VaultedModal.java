@@ -168,7 +168,7 @@ public class VaultedModal extends UModal {
     }
 
     void writeFile() {
-        vaultSet.persist(commander.config.getResourcePath() + filename + ".json");
+        vaultSet.persist(commander.config.getResourcePath() + "vaults/" + filename + ".json");
         commander.printScroll("Saved vaultset " + filename + ".json to resources.");
     }
 

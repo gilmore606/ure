@@ -447,7 +447,7 @@ public class UCartographer implements Runnable {
      * Load and create a VaultSet from a serialized json file.
      */
     public UVaultSet loadVaultSet(String filename) {
-        File file = new File(commander.config.getResourcePath() + filename + ".json");
+        File file = new File(commander.config.getResourcePath() + "vaults/" + filename + ".json");
         try (
                 FileInputStream stream = new FileInputStream(file);
                 //GZIPInputStream gzip = new GZIPInputStream(stream);
