@@ -6,7 +6,7 @@ files to save the world's state.  This process is called *serialization* and is 
 Jackson has particular requirements about these objects' properties to make them serializable.  When you modify or subclass
 these classes you will need to follow these requirements too, so your data can be persisted to disk and restored correctly.
 
-* Any object that needs to be serialized and deserialized needs a default constructor ( MyObject() ).  This is a good place to call Injector.getAppModule().inject(this) if it's a class that needs injected fields.  Other constructors can call the default as part of their setup by invoking this().
+* Any object that needs to be serialized and deserialized needs a default constructor ( MyObject() ).  This is a good place to call Injector.getAppModule().inject(this) if it's a class that needs [injected fields](doc/Injection.md).  Other constructors can call the default as part of their setup by invoking this().
 
 * Public fields will be serialized and deserialized without needing getter/setter methods, but we should avoid this in favor of protected or private access unless there is a good reason.
 
