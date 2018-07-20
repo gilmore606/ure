@@ -118,4 +118,16 @@ possible types of its entity, and serves new copies of those types to the game a
 You don't need to create these objects yourself (as the injector will take care of this) and you shouldn't need to modify them.  They load from default filenames (things.json, terrain.json, actors.json) but have methods to reload from any provided .json file.
 
 
+# Initialization order
+
+These components are sensitive to the order in which they're instantiated; unless you have a brilliant plan, we suggest you make 
+and perform initial setup of these objects in the order seen in ExampleGame:
+
+- URendererOGL, UPlayer, Cartographer
+- commander.registerComponents()
+- cartographer setup
+- starting area, window and UI components
+- place player in starting area and attach the camera
+- commander.gameLoop();
+
 
