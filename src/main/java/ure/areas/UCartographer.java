@@ -84,7 +84,8 @@ public class UCartographer implements Runnable {
      * Load all regions that have been persisted to disk.
      */
     public void loadRegions() {
-        File dir = new File(".");
+        String path = commander.savePath();
+        File dir = new File(path + ".");
         File[] files = dir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return name.endsWith(".region");
@@ -102,9 +103,8 @@ public class UCartographer implements Runnable {
      * @return the region
      */
     protected URegion loadRegion(File file) {
-        String path = commander.savePath();
         try (
-                FileInputStream stream = new FileInputStream(path + file);
+                FileInputStream stream = new FileInputStream(file);
                 GZIPInputStream gzip = new GZIPInputStream(stream)
         ) {
             return objectMapper.readValue(gzip, URegion.class);
@@ -219,6 +219,7 @@ public class UCartographer implements Runnable {
     protected void persist(Object object, String filename) {
         String path = commander.savePath();
         if (commander.config.isPersistentAreas()) {
+            System.out.println("CARTO : saving file " + path + filename);
             File file = new File(path + filename);
             try (
                     FileOutputStream stream = new FileOutputStream(file);
@@ -416,6 +417,7 @@ public class UCartographer implements Runnable {
                 if (area == null) {
                     System.out.println("CARTO LOADER:  tried to fetch " + next + " and got null, creating");
                     area = makeArea(next, nextname, nextdata);
+                    persist(area, area.label + ".area");
                     if (area == null) {
                         System.out.println("CARTO LOADER : ***FAIL*** to make area " + next);
                     }
@@ -443,6 +445,8 @@ public class UCartographer implements Runnable {
             }
             UArea playerArea = commander.player().area();
             for (UArea area : activeAreas) {
+                if (area == null)
+                    System.out.println("******* NULL AREA IN ACTIVEAREAS");
                 if (area != playerArea) {
                     if (area.findExitTo(playerArea.getLabel()) == null) {
                         System.out.println("CARTO LOADER: found area " + area.label + " to harvest and freeze");

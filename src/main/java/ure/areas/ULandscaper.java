@@ -791,7 +791,6 @@ public abstract class ULandscaper {
                 fails = 0;
             } else {
                 fails++;
-                System.out.println("CARTO : couldn't add room");
             }
         }
         for (int[] room : rooms) {
