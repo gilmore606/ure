@@ -1,3 +1,5 @@
+# the gameLoop
+
 After your game does its initial setup, splash screen, title menu etc, it hands control to UCommander to run the main
 game loop:
 ```
