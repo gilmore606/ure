@@ -16,7 +16,7 @@ public class UModalURESplash extends UModal {
 
     public UModalURESplash() {
         super(null, "", UColor.COLOR_BLACK);
-        logo = new RexFile("src/main/resources/ure_logo.xp");
+        logo = new RexFile(commander.config.getResourcePath() + "ure_logo.xp");
         alpha = 0f;
     }
 

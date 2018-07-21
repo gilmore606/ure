@@ -27,6 +27,7 @@ public class ULensPanel extends View {
     int cellw,cellh;
     int xpos,ypos;
     int charWidth, charHeight;
+    boolean hidden;
 
     int updateFrame = 0;
 
@@ -47,7 +48,7 @@ public class ULensPanel extends View {
         fgColor = fg;
         bgColor = bg;
         borderColor = borderc;
-
+        hidden = true;
     }
 
     public void setDimensions(int x, int y) {
@@ -68,33 +69,38 @@ public class ULensPanel extends View {
 
     @Override
     public void draw(URenderer renderer) {
-        renderer.drawRectBorder(1,1,width-2,height-2,1,bgColor,borderColor);
-        int mousex = commander.mouseX();
-        int mousey = commander.mouseY();
-        int x = toCellX(mousex);
-        int y = toCellY(mousey);
-        if (camera.visibilityAt(x,y) < commander.config.getVisibilityThreshold())
-            return;
-        UTerrain t = camera.terrainAt(x,y);
-        if (t != null) {
-            renderer.drawString(xpos + padX + renderer.glyphWidth()*2, ypos + padY, commander.config.getTextColor(), t.getName());
-            t.getIcon().draw(renderer, xpos + padX, ypos + padY);
-        }
-        UCell cell = camera.area.cellAt(x+camera.leftEdge,y+camera.topEdge);
-        if (cell != null) {
-            UThing thing = cell.topThingAt();
-            if (thing != null) {
-                thing.getIcon().draw(renderer, xpos+padX, ypos+padY+renderer.glyphHeight());
-                renderer.drawString(xpos + padX + renderer.glyphWidth()*2, ypos + padY + renderer.glyphHeight(), commander.config.getTextColor(), thing.getIname());
-
+        if (!hidden) {
+            renderer.drawRectBorder(1, 1, width - 2, height - 2, 1, bgColor, borderColor);
+            int mousex = commander.mouseX();
+            int mousey = commander.mouseY();
+            int x = toCellX(mousex);
+            int y = toCellY(mousey);
+            if (camera.visibilityAt(x, y) < commander.config.getVisibilityThreshold())
+                return;
+            UTerrain t = camera.terrainAt(x, y);
+            if (t != null) {
+                renderer.drawString(xpos + padX + renderer.glyphWidth() * 2, ypos + padY, commander.config.getTextColor(), t.getName());
+                t.getIcon().draw(renderer, xpos + padX, ypos + padY);
             }
-            UActor actor = cell.actorAt();
-            if (actor != null) {
-                actor.icon().draw(renderer, xpos+padX, ypos+padY+renderer.glyphHeight()*2);
-                renderer.drawString(xpos + padX + renderer.glyphWidth()*2, ypos + padY + commander.config.getGlyphHeight() * 2, commander.config.getTextColor(), actor.getIname());
+            UCell cell = camera.area.cellAt(x + camera.leftEdge, y + camera.topEdge);
+            if (cell != null) {
+                UThing thing = cell.topThingAt();
+                if (thing != null) {
+                    thing.getIcon().draw(renderer, xpos + padX, ypos + padY + renderer.glyphHeight());
+                    renderer.drawString(xpos + padX + renderer.glyphWidth() * 2, ypos + padY + renderer.glyphHeight(), commander.config.getTextColor(), thing.getIname());
+
+                }
+                UActor actor = cell.actorAt();
+                if (actor != null) {
+                    actor.icon().draw(renderer, xpos + padX, ypos + padY + renderer.glyphHeight() * 2);
+                    renderer.drawString(xpos + padX + renderer.glyphWidth() * 2, ypos + padY + commander.config.getGlyphHeight() * 2, commander.config.getTextColor(), actor.getIname());
+                }
             }
         }
     }
+
+    public void hide() { hidden = true; }
+    public void unHide() { hidden = false; }
 
     public int toCellX(int x) {
         return (x - cameraX) / commander.config.getGlyphWidth();

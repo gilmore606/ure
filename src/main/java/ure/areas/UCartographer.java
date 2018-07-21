@@ -367,7 +367,10 @@ public class UCartographer implements Runnable {
      *
      */
     public UArea getTitleArea() {
-        UArea area = new UArea(100,100,"floor");
+        UArea area = new UArea(100,100,"water");
+        area.label = "TITLE";
+        addActiveArea(area);
+        commander.config.addDefaultSunCycle(area);
         return area;
     }
 

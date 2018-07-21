@@ -16,8 +16,8 @@ import java.util.zip.GZIPInputStream;
 public class RexFile extends View {
 
     ArrayList<RexLayer> layers;
-    int width;
-    int height;
+    public int width;
+    public int height;
 
     public class RexLayer {
         int width;
@@ -97,9 +97,8 @@ public class RexFile extends View {
         }
     }
 
-    public void draw(URenderer renderer, float alpha) {
-        int xpos = 0;
-        int ypos = 0;
+    public void draw(URenderer renderer, float alpha) { draw(renderer, alpha, 0, 0); }
+    public void draw(URenderer renderer, float alpha, int xpos, int ypos) {
         int gw = renderer.glyphWidth();
         int gh = renderer.glyphHeight();
         for (RexLayer layer : layers) {

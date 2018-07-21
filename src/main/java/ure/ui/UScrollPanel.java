@@ -23,6 +23,7 @@ public class UScrollPanel extends View {
     String lastMessage;
     ArrayList<String> lines;
     ArrayList<UColor> lineFades;
+    boolean hidden;
 
     public UScrollPanel(int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg, UColor borderc) {
         lines = new ArrayList<String>();
@@ -38,6 +39,7 @@ public class UScrollPanel extends View {
         fgColor = fg;
         bgColor = bg;
         borderColor = borderc;
+        hidden = true;
     }
 
     public void addLineFade(UColor fade) {
@@ -53,23 +55,32 @@ public class UScrollPanel extends View {
         }
     }
 
+    public void unHide() {
+        hidden = false;
+    }
+    public void hide() {
+        hidden = true;
+    }
+
     @Override
     public void draw(URenderer renderer) {
-        renderer.drawRectBorder(1, 1, width-2, height-2, 1, bgColor, borderColor);
-        int i = 0;
-        while (i < textRows) {
-            if (i < lines.size()) {
-                UColor col;
-                //MM FINISH THIS
-                if (i < lineFades.size())
-                    col = lineFades.get(i);
-                else
-                    col = lineFades.get(lineFades.size() - 1);
-                renderer.drawString(padX, (padY + pixelh + 4) - ((i + 1) * (charHeight + spacing)), col, lines.get(i));
-                //g.drawString(lines.get(i), padX, (padY + pixelh + 4) - ((i + 1) * (charHeight + spacing)));
+        if (!hidden) {
+            renderer.drawRectBorder(1, 1, width - 2, height - 2, 1, bgColor, borderColor);
+            int i = 0;
+            while (i < textRows) {
+                if (i < lines.size()) {
+                    UColor col;
+                    //MM FINISH THIS
+                    if (i < lineFades.size())
+                        col = lineFades.get(i);
+                    else
+                        col = lineFades.get(lineFades.size() - 1);
+                    renderer.drawString(padX, (padY + pixelh + 4) - ((i + 1) * (charHeight + spacing)), col, lines.get(i));
+                    //g.drawString(lines.get(i), padX, (padY + pixelh + 4) - ((i + 1) * (charHeight + spacing)));
 
+                }
+                i++;
             }
-            i++;
         }
     }
 }

@@ -58,7 +58,7 @@ public class Lightsource extends UThing {
             return false;
         if (getLight() == null)
             makeLight();
-        if (isSpawnOn())
+        if (isSpawnOn() && !isSwitchable())
             setOn(true);
         return isOn();
     }

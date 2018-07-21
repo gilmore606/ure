@@ -257,7 +257,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     void hearCommand(UCommand command, GLKey k) {
-        if (command != null) System.out.println("actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
+        if (command != null && player != null) System.out.println("actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
         if (modal != null) {
             modal.hearCommand(command, k);
         } else if (command != null) {
@@ -354,7 +354,6 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         long tickRate = 1000000000 / config.getFPStarget();
         long gameTime = System.nanoTime();
         tickTime();
-        player.moveToCell(player.area(), player.areaX(), player.areaY());
         while (!renderer.windowShouldClose() && !quitGame) {
             frameCounter++;
             renderer.pollEvents();
@@ -385,7 +384,12 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             }
             // if it's the player's turn, do a command if we have one
             if (waitingForInput) {
-                if (!keyBuffer.isEmpty() || moveLatch) {
+                if (player == null) {
+                    if (!keyBuffer.isEmpty()) {
+                        consumeKeyFromBuffer();
+                        tickTime();
+                    }
+                } else if (!keyBuffer.isEmpty() || moveLatch) {
                     if (moveLatch) {
                         if (breakLatchOnInput && !keyBuffer.isEmpty()) {
                             latchBreak();

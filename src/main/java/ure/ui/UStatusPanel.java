@@ -20,6 +20,7 @@ public class UStatusPanel extends View {
     int padX, padY;
     int charWidth, charHeight;
     HashMap<String,TextFrag> texts;
+    boolean hidden;
 
     private int lensUpdateFrame = 0;
 
@@ -54,6 +55,7 @@ public class UStatusPanel extends View {
         fgColor = fg;
         bgColor = bg;
         borderColor = borderc;
+        hidden = true;
     }
 
     public void addText(String name, String text, int row, int col) {
@@ -71,13 +73,19 @@ public class UStatusPanel extends View {
         frag.text = text;
     }
 
+    public void hide() { hidden = true; }
+    public void unHide() { hidden = false; }
+    public boolean isHidden() { return hidden; }
+
     @Override
     public void draw(URenderer renderer) {
-        renderer.drawRectBorder(1, 1, width-2, height-2, 1, bgColor, borderColor);
-        //renderer.addQuad(xPos, yPos, width, height, bgColor);
-        for (String textName : texts.keySet()) {
-            TextFrag frag = texts.get(textName);
-            renderer.drawString(frag.row * charWidth + padX, (frag.col + 1) * charHeight + padY, frag.color, frag.text);
+        if (!hidden) {
+            renderer.drawRectBorder(1, 1, width - 2, height - 2, 1, bgColor, borderColor);
+            //renderer.addQuad(xPos, yPos, width, height, bgColor);
+            for (String textName : texts.keySet()) {
+                TextFrag frag = texts.get(textName);
+                renderer.drawString(frag.row * charWidth + padX, (frag.col + 1) * charHeight + padY, frag.color, frag.text);
+            }
         }
     }
 

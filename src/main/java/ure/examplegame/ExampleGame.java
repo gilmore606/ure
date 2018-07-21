@@ -16,11 +16,13 @@ import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.*;
+import ure.ui.modals.HearModalTitleScreen;
+import ure.ui.modals.UModalTitleScreen;
 import ure.ui.modals.UModalURESplash;
 
 import javax.inject.Inject;
 
-public class ExampleGame implements UTimeListener {
+public class ExampleGame implements HearModalTitleScreen, UTimeListener {
 
     static UArea area;
     static UCamera camera;
@@ -92,25 +94,58 @@ public class ExampleGame implements UTimeListener {
         renderer = new URendererOGL();
         renderer.initialize();
 
-        player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
-        cartographer = new ExampleCartographer();
+                cartographer = new ExampleCartographer();
         commander.registerComponents(player, renderer, thingCzar, actorCzar, cartographer);
         cartographer.setupRegions();
-        cartographer.startLoader();
 
-        area = cartographer.getStartArea();
+
+        area = cartographer.getTitleArea();
+
 
         makeWindow();
+
+        camera.moveTo(area, 50, 50);
+        commander.config.setVisibilityEnable(false);
 
         commander.registerScrollPrinter(scrollPanel);
         commander.registerTimeListener(this);
         commander.addAnimator(camera);
+        commander.showModal(new UModalTitleScreen(50, 30, this, "start", UColor.COLOR_BLACK));
 
+
+
+
+
+        // commander.speaker.switchBGM("/ultima_wanderer.ogg", 0);
+        //commander.showModal(new UModalURESplash());
+        commander.gameLoop();
+    }
+
+    public void hearTimeTick(UCommander cmdr) {
+        if (statusPanel != null && !statusPanel.isHidden()) {
+            statusPanel.setText("turn", "T " + Integer.toString(commander.getTurn()));
+            statusPanel.setText("time", commander.timeString(true, " "));
+            statusPanel.setText("location", commander.cartographer.describeLabel(commander.player().area().getLabel()));
+        }
+    }
+
+    public void hearModalTitleScreen(String context) {
+        System.out.println("Creating the @Player");
+        player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
+        commander.setPlayer(player);
+        System.out.println("Un-hiding interface panels");
+        statusPanel.unHide();
+        lensPanel.unHide();
+        scrollPanel.unHide();
+        cartographer.startLoader();
+        area = cartographer.getStartArea();
         UCell startcell = area.randomOpenCell(player);
-        player.moveToCell(area, startcell.x, startcell.y);
+        commander.config.setVisibilityEnable(true);
         player.attachCamera(camera, UCamera.PINSTYLE_SOFT);
+        player.moveToCell(area, startcell.x, startcell.y);
         player.startActing();
-        cartographer.playerLeftArea(player, null);
+        //cartographer.playerLeftArea(player, null);
+
         UThing item = thingCzar.getThingByName("rock"); item.moveTo(player);
         item = thingCzar.getThingByName("trucker hat"); item.moveTo(player);
         item = thingCzar.getThingByName("torch"); item.moveTo(player);
@@ -122,15 +157,5 @@ public class ExampleGame implements UTimeListener {
         item = thingCzar.getThingByName("butcher knife"); item.moveTo(player);
         item = thingCzar.getThingByName("gold statue"); item.moveTo(player);
         item = thingCzar.getThingByName("skull"); item.moveTo(player);
-
-        // commander.speaker.switchBGM("/ultima_wanderer.ogg", 0);
-        commander.showModal(new UModalURESplash());
-        commander.gameLoop();
-    }
-
-    public void hearTimeTick(UCommander cmdr) {
-        statusPanel.setText("turn", "T " + Integer.toString(commander.getTurn()));
-        statusPanel.setText("time", commander.timeString(true, " "));
-        statusPanel.setText("location", commander.cartographer.describeLabel(commander.player().area().getLabel()));
     }
 }

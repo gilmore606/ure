@@ -55,7 +55,8 @@ public class UActor extends UThing implements Interactable {
         camera = thecamera;
         setCameraPinStyle(pinstyle);
         camera.addVisibilitySource(this);
-        camera.moveTo(area(), areaX(),  areaY());
+        if (area() != null)
+            camera.moveTo(area(), areaX(),  areaY());
     }
     public void detachCamera() {
         camera.removeVisibilitySource(this);
