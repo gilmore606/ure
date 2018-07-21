@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
+import ure.examplegame.ExampleCaveScaper;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actors.UActorCzar;
@@ -88,6 +90,16 @@ public class UCartographer implements Runnable {
         }
     }
 
+    public void wipeWorld() {
+        String savePath = commander.savePath();
+        try {
+            FileUtils.cleanDirectory(new File(savePath));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        regions = new HashMap<>();
+        setupRegions();
+    }
     /**
      * Load all regions that have been persisted to disk.
      */
@@ -367,10 +379,15 @@ public class UCartographer implements Runnable {
      *
      */
     public UArea getTitleArea() {
-        UArea area = new UArea(100,100,"water");
+        UArea area = new UArea(100,100,"floor");
         area.label = "TITLE";
         addActiveArea(area);
         commander.config.addDefaultSunCycle(area);
+        ExampleCaveScaper scaper = new ExampleCaveScaper();
+        scaper.scatterThings(area, new String[]{"crystal stalagmite"}, new String[]{"floor"}, 60);
+        scaper.scatterThings(area, new String[]{"magma vent"}, new String[]{"floor"}, 40);
+        scaper.scatterActorsByTags(area, 0,0,area.xsize-1, area.ysize-1, new String[]{"title"}, 1, 40);
+        scaper.scatterThings(area, new String[]{"lamppost"}, new String[]{"floor"}, 10);
         return area;
     }
 

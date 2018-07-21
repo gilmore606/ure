@@ -319,8 +319,9 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      * @param text
      */
     public void printScrollIfSeen(UThing source, String text) {
-        if (player.canSee(source))
-            printScroll(text);
+        if (player != null)
+            if (player.canSee(source))
+                printScroll(text);
     }
 
     void animationFrame() {
@@ -374,12 +375,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             }
 
             if (!waitingForInput) {
-                // need to use a clone to iterate, since actors might drop out during this loop
-                ArrayList<UActor> tmpactors = (ArrayList<UActor>)actors.clone();
-                for (UActor actor : tmpactors) {
-                    if (actors.contains(actor))
-                        actor.act();
-                }
+                tickActors();
                 waitingForInput = true;
             }
             // if it's the player's turn, do a command if we have one
@@ -410,6 +406,14 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
     }
 
+    public void tickActors() {
+        // need to use a clone to iterate, since actors might drop out during this loop
+        ArrayList<UActor> tmpactors = (ArrayList<UActor>)actors.clone();
+        for (UActor actor : tmpactors) {
+            if (actors.contains(actor))
+                actor.act();
+        }
+    }
     public void quitGame() {
         quitGame = true;
     }

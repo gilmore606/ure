@@ -4,7 +4,7 @@
     "glyph": "M",
     "description": "A somber monk clad in rough robes.",
     "color": [240,160,70],
-    "tags": [ "rock" ],
+    "tags": [ "rock", "title" ],
     "spawnlevels": [1,4],
     "ambients": [ "The monk scratches his balls under his robe.",
                   "The monk says, 'Wh...whose skulls are those?'",
@@ -17,7 +17,7 @@
     "glyph": "r",
     "description": "A big wet rat.",
     "color": [120,120,254],
-    "tags": [ "cavern", "complex" ],
+    "tags": [ "cavern", "complex", "title" ],
     "spawnlevels": [ 1,5 ]
   },
   {
@@ -70,7 +70,7 @@
     "glyph": "H",
     "description": "Some desk jockey.",
     "color": [ 75, 75, 85 ],
-    "tags": [ "complex" ],
+    "tags": [ "complex", "title" ],
     "spawnterrain": [ "floor", "floormoss" ],
     "spawnlevels": [ 1, 2 ]
   }

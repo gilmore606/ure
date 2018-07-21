@@ -833,6 +833,7 @@ public abstract class ULandscaper {
             for (String name: thenames) {
                 names.add(name);
             }
+            System.out.println("got " + Integer.toString(names.size()) + " names");
         }
         while (amount > 0) {
             amount--;

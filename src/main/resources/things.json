@@ -175,7 +175,7 @@
     "movable": false,
     "spawnOn": true,
     "switchable": false,
-    "glyph": "P",
+    "glyph": "|",
     "description": "A gas-fired lamp on a wrought iron pole.",
     "tags": ["complex"],
     "spawnlevels": [1,2],

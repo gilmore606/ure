@@ -110,7 +110,7 @@ public class ExampleGame implements HearModalTitleScreen, UTimeListener {
         commander.registerScrollPrinter(scrollPanel);
         commander.registerTimeListener(this);
         commander.addAnimator(camera);
-        commander.showModal(new UModalTitleScreen(50, 30, this, "start", UColor.COLOR_BLACK));
+        commander.showModal(new UModalTitleScreen(35, 20, this, "start", UColor.COLOR_BLACK, area));
 
 
 
@@ -130,6 +130,8 @@ public class ExampleGame implements HearModalTitleScreen, UTimeListener {
     }
 
     public void hearModalTitleScreen(String context) {
+        if (context.equals("new"))
+            cartographer.wipeWorld();
         System.out.println("Creating the @Player");
         player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
         commander.setPlayer(player);

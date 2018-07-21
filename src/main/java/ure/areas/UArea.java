@@ -325,6 +325,11 @@ public class UArea implements UTimeListener, Serializable {
             actor.wakeCheck(playerx, playery);
         }
     }
+    public void wakeAllNPCs() {
+        for (UActor actor : getActors()) {
+            actor.startActing();
+        }
+    }
 
     public UCell randomOpenCell(UThing thing) {
         UCell cell = null;
