@@ -4,7 +4,7 @@ URE is still in its early stages, and lacks critical features before it can trul
 roguelike.  Here's our intended roadmap of feature additions that will get us to that 1.0 state.
 
 ## 0.8
-- keybinds.txt support
+- ~~keybinds.txt support~~
 - Vault stamping support in Landscaper
 - JSON configuration of main window layout, with resize support
 - better Landscaper generic method tools
