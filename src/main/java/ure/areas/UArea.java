@@ -13,7 +13,7 @@ import ure.terrain.Stairs;
 import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
-import ure.ui.UParticle;
+import ure.ui.particles.UParticle;
 
 import javax.inject.Inject;
 import java.io.BufferedReader;
@@ -406,12 +406,31 @@ public class UArea implements UTimeListener, Serializable {
     public void setLabel(String thelabel) {
         label = thelabel;
     }
+
     public void addParticle(UParticle particle) {
-        getParticles().add(particle);
+        if (isValidXY(particle.x, particle.y)) {
+            cellAt(particle.x,particle.y).addParticle(particle);
+            particles.add(particle);
+        }
     }
     public void fizzleParticle(UParticle particle) {
-        getParticles().remove(particle);
+        cellAt(particle.x,particle.y).fizzleParticle();
+        particles.remove(particle);
     }
+
+    public void animationTick() {
+        ArrayList<UParticle> fizzles = new ArrayList<>();
+        for (UParticle particle : particles) {
+            particle.animationTick();
+            if (particle.isFizzled())
+                fizzles.add(particle);
+        }
+        for (UParticle particle : fizzles) {
+            System.out.println("PARTICLE: fizzled one");
+            fizzleParticle(particle);
+        }
+    }
+
 
     /**
      * Do what it takes to make this area ready for serialization.

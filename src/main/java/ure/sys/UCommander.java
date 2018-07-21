@@ -324,6 +324,9 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     void animationFrame() {
+        if (player != null)
+            if (player.area() != null)
+                player.area().animationTick();
         for (UAnimator anim : animators) {
             anim.animationTick();
         }

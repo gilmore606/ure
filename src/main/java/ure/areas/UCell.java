@@ -10,6 +10,7 @@ import ure.things.UContainer;
 import ure.actors.UActor;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
+import ure.ui.particles.UParticle;
 
 import javax.inject.Inject;
 import java.util.Iterator;
@@ -30,6 +31,8 @@ public class UCell implements UContainer {
 
     @JsonIgnore
     UArea area;
+    @JsonIgnore
+    UParticle particle;
 
     public int x,y;
 
@@ -181,6 +184,15 @@ public class UCell implements UContainer {
         getTerrain().animationTick();
     }
 
+    public void addParticle(UParticle _particle) {
+        if (particle != null) {
+            area.fizzleParticle(particle);
+        }
+        particle = _particle;
+    }
+    public void fizzleParticle() {
+        particle = null;
+    }
 
     public UTerrain getTerrain() {
         return terrain;
@@ -209,4 +221,6 @@ public class UCell implements UContainer {
     public void setArea(UArea area) {
         this.area = area;
     }
+
+    public UParticle getParticle() { return particle; }
 }

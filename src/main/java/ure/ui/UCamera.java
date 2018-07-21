@@ -2,6 +2,7 @@ package ure.ui;
 
 import ure.actors.UActor;
 import ure.areas.UArea;
+import ure.areas.UCell;
 import ure.math.UColor;
 import ure.math.USimplexNoise;
 import ure.render.URenderer;
@@ -11,6 +12,7 @@ import ure.sys.UCommander;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
 import ure.ui.modals.UModal;
+import ure.ui.particles.UParticle;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -453,6 +455,7 @@ public class UCamera extends View implements UAnimator {
         return area.thingsAt(localCol + leftEdge, localRow + topEdge);
     }
     public UActor actorAt(int localCol, int localRow) { return area.actorAt(localCol+ leftEdge,localRow+ topEdge); }
+    public UCell cellAt(int localCol, int localRow) { return area.cellAt(localCol+ leftEdge, localRow+ topEdge); }
 
     @Override
     public void draw(URenderer renderer) {
@@ -518,6 +521,13 @@ public class UCamera extends View implements UAnimator {
         if (things != null) {
             while (things.hasNext()) {
                 things.next().render(renderer, col * cellw, row * cellh, light, vis);
+            }
+        }
+        UCell cell = cellAt(col,row);
+        if (cell != null) {
+            UParticle particle = cellAt(col, row).getParticle();
+            if (particle != null) {
+                particle.render(renderer, col * cellw, row * cellh, light, vis);
             }
         }
     }

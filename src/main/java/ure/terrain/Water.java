@@ -1,5 +1,11 @@
 package ure.terrain;
 
+import ure.actors.UActor;
+import ure.areas.UCell;
+import ure.math.UColor;
+import ure.ui.particles.ParticleSplash;
+import ure.ui.particles.UParticle;
+
 /**
  * Water has a pretty animation.  It should probably do something more interesting.
  *
@@ -27,5 +33,15 @@ public class Water extends UTerrain {
 
     public void setWaves(int waves) {
         this.waves = waves;
+    }
+
+    @Override
+    public void walkedOnBy(UActor actor, UCell cell) {
+        cell.area().addParticle(new ParticleSplash(actor.areaX(), actor.areaY(), UColor.COLOR_WHITE, 75, 0.9f));
+        if (commander.random.nextFloat() < 0.5f) {
+            cell.area().addParticle(new ParticleSplash(actor.areaX() - 1 + commander.random.nextInt(3),
+                    actor.areaY() - 1 + commander.random.nextInt(3),
+                    UColor.COLOR_CYAN, 60, 0.6f));
+        }
     }
 }
