@@ -110,9 +110,17 @@ public class UModal extends View implements UAnimator {
     }
 
     public void drawString(URenderer renderer, String string, int x, int y) {
-        renderer.drawString(x*gw()+xpos,y*gh()+ypos, commander.config.getTextColor(), string);
+        drawString(renderer,string,x,y,commander.config.getTextColor(), null);
     }
     public void drawString(URenderer renderer, String string, int x, int y, UColor color) {
+        drawString(renderer,string,x,y,color, null);
+    }
+    public void drawString(URenderer renderer, String string, int x, int y, UColor color, UColor highlight) {
+        if (highlight != null)
+            renderer.drawRect(x*gw()+xpos-2, y*gh()+ypos-1,
+                    commander.config.getTextWidth()*string.length()+4, commander.config.getTextHeight()+2, highlight);
+        if (color == null)
+            color = commander.config.getTextColor();
         renderer.drawString(x*gw()+xpos,y*gh()+ypos,color,string);
     }
 
@@ -220,5 +228,23 @@ public class UModal extends View implements UAnimator {
                 i++;
             }
         }
+    }
+
+    public int cursorMove(int cursor, int delta, int total) {
+        cursor += delta;
+        if (cursor < 0) {
+            if (commander.config.isWrapSelect()) {
+                cursor = total - 1;
+            } else {
+                cursor = 0;
+            }
+        } else if (cursor >= total) {
+            if (commander.config.isWrapSelect()) {
+                cursor = 0;
+            } else {
+                cursor = total - 1;
+            }
+        }
+        return cursor;
     }
 }

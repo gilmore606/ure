@@ -20,6 +20,7 @@ public class UModalEntityPick extends UModal {
     boolean categorize;
     ArrayList<String> categories;
     ArrayList<ArrayList<Entity>> categoryLists;
+    ArrayList<ArrayList<String>> categoryItemNames;
     int biggestCategoryLength;
     int textWidth = 0;
     int selection = 0;
@@ -73,6 +74,7 @@ public class UModalEntityPick extends UModal {
     public void Categorize() {
         categories = new ArrayList<>();
         categoryLists = new ArrayList<>();
+        categoryItemNames = new ArrayList<>();
         for (Entity entity : entities) {
             String cat = entity.getCategory();
             if (categories.contains(cat)) {
@@ -84,19 +86,25 @@ public class UModalEntityPick extends UModal {
                 categoryLists.add(newList);
             }
         }
+        int i = 0;
         for (ArrayList<Entity> theList : categoryLists) {
             if (theList.size() > biggestCategoryLength)
                 biggestCategoryLength = theList.size();
+            ArrayList<String> names = deDupeEntities(theList);
+            categoryItemNames.add(names);
+            System.out.println("names " + categories.get(i) + " = " + Integer.toString(names.size()) + " items " + Integer.toString(theList.size()));
+            i++;
         }
     }
 
 
-    public ArrayList<String> deDupeEntities(ArrayList<Entity> entities) {
+    public ArrayList<String> deDupeEntities(ArrayList<Entity> sourceEntities) {
         ArrayList<Entity> newent = new ArrayList<>();
         ArrayList<String> displaynames = new ArrayList<>();
         ArrayList<Integer> totals = new ArrayList<>();
+        ArrayList<Entity> writeList = sourceEntities;
         int i = 0;
-        for (Entity entity : entities) {
+        for (Entity entity : sourceEntities) {
             boolean gotone = false;
             int ni = 0;
             for (Entity nent: newent) {
@@ -114,15 +122,17 @@ public class UModalEntityPick extends UModal {
                 totals.set(ni, totals.get(ni) + 1);
             }
         }
-        entities = newent;
+        sourceEntities = newent;
         i = 0;
-        for (Entity entity : entities) {
+        writeList.clear();
+        for (Entity entity : sourceEntities) {
             int total = totals.get(i);
             if (total > 1)
                 displaynames.add(Integer.toString(totals.get(i)) + " " + entity.getPlural());
             else
                 displaynames.add(entity.getName());
             i++;
+            writeList.add(entity);
         }
         return displaynames;
     }
@@ -133,11 +143,11 @@ public class UModalEntityPick extends UModal {
             drawString(renderer, header, 0, 0);
         int y = 0;
         for (Entity entity : shownEntities()) {
-            if (y == selection) {
-                renderer.drawRect(gw()+xpos,(y+2)*gh()+ypos, textWidth*gw(), gh(), tempHiliteColor);
-            }
             drawIcon(renderer, entity.getIcon(), 1, y + 2);
-            drawString(renderer, entity.getName(), 3, y + 2);
+            String n = entity.getName();
+            if (categorize)
+                n = (categoryItemNames.get(selectionCategory)).get(y);
+            drawString(renderer, n, 3, y + 2, null, (y == selection) ? tempHiliteColor : null);
             y++;
         }
         if (showDetail) {
@@ -149,17 +159,13 @@ public class UModalEntityPick extends UModal {
                 linepos++;
             }
         }
-        if (categorize) {
+        if (categorize && !dismissed) {
             int caty = 7;
             if (!showDetail) caty = 1;
             int i =0;
             for (String cat : categories) {
-                if (i == selectionCategory) {
-                    renderer.drawRect((4 + textWidth) * gw() + xpos, (2 + caty + i) * gh() + ypos, 9 * gw(), gh(), tempHiliteColor);
-                    drawString(renderer, cat, 4 + textWidth, 2 + caty + i);
-                } else {
-                    drawString(renderer, cat, 4+textWidth, 2+caty+i, UColor.COLOR_DARKGRAY);
-                }
+                drawString(renderer, cat, 4+textWidth, 2+caty+i, (i == selectionCategory) ? null : UColor.COLOR_GRAY,
+                        (i == selectionCategory) ? tempHiliteColor : null);
                 i++;
             }
         }
@@ -169,43 +175,15 @@ public class UModalEntityPick extends UModal {
     public void hearCommand(UCommand command, GLKey k) {
         if (command == null) return;
         if (command.id.equals("MOVE_N")) {
-            selection--;
-            if (selection < 0) {
-                if (commander.config.isWrapSelect()) {
-                    selection = shownEntities().size() - 1;
-                } else {
-                    selection = 0;
-                }
-            }
+            selection = cursorMove(selection, -1, shownEntities().size());
         } else if (command.id.equals("MOVE_S")) {
-            selection++;
-            if (selection >= shownEntities().size()) {
-                if (commander.config.isWrapSelect()) {
-                    selection = 0;
-                } else {
-                    selection = shownEntities().size() - 1;
-                }
-            }
+            selection = cursorMove(selection, 1, shownEntities().size());
         } else if (command.id.equals("MOVE_W")) {
             selection = 0;
-            selectionCategory--;
-            if (selectionCategory < 0) {
-                if (commander.config.isWrapSelect()) {
-                    selectionCategory = categoryLists.size() - 1;
-                } else {
-                    selectionCategory = 0;
-                }
-            }
+            selectionCategory = cursorMove(selectionCategory, -1, categoryLists.size());
         } else if (command.id.equals("MOVE_E")) {
             selection = 0;
-            selectionCategory++;
-            if (selectionCategory >= categoryLists.size()) {
-                if (commander.config.isWrapSelect()) {
-                    selectionCategory = 0;
-                } else {
-                    selectionCategory = categoryLists.size() - 1;
-                }
-            }
+            selectionCategory = cursorMove(selectionCategory, 1, categoryLists.size());
         } else if (command.id.equals("PASS")) {
             selectEntity();
         } else if (command.id.equals("ESC") && escapable) {

@@ -25,8 +25,9 @@
     "lightfalloff": 3,
     "lightflicker": 1,
     "lightflickerspeed": 1.0,
-    "lightflickerintensity": 0.3,
+    "lightflickerintensity": 0.4,
     "lightflickeroffset": 60,
+    "sparkrate": 0.1,
     "weight": 2,
     "value": 5
   },

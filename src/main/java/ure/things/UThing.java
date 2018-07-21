@@ -462,4 +462,8 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public void setSpawnterrain(String[] spawnterrain) {
         this.spawnterrain = spawnterrain;
     }
+
+    public void animationTick() {
+
+    }
 }

@@ -5,7 +5,7 @@ import ure.math.UColor;
 public class ParticleSplash extends UParticle {
 
     public ParticleSplash(int _x, int _y, UColor fgColor, int frames, float alpha) {
-        super(_x, _y, frames, fgColor, alpha);
+        super(_x, _y, frames, fgColor, alpha, true);
     }
 
     @Override

@@ -4,6 +4,7 @@ import ure.actors.UActor;
 import ure.math.UColor;
 import ure.areas.UArea;
 import ure.ui.ULight;
+import ure.ui.particles.ParticleSpark;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -26,6 +27,7 @@ public class Lightsource extends UThing {
     protected int lightflickeroffset;
     protected boolean spawnOn = false;
     protected boolean switchable = false;
+    protected float sparkrate = 0f;
     protected int[] onglyphcolor;
     protected String isOnMsg = "It's on.";
     protected String isOffMsg = "It's off.";
@@ -248,5 +250,20 @@ public class Lightsource extends UThing {
     public void setOnglyphcolor(int[] i) { onglyphcolor = i; }
     public char getOnglyph() { return onglyph; }
     public void setOnglyph(char c) { onglyph = c; }
+    public float getSparkrate() { return sparkrate; }
+    public void setSparkrate(float r) { sparkrate = r; }
+
+    @Override
+    public void animationTick() {
+        if (commander.random.nextFloat() < sparkrate) {
+            if (commander.random.nextFloat() < 0.3f) {
+                area().addParticle(new ParticleSpark(areaX() - 1 + commander.random.nextInt(3),
+                        areaY() - 1 + commander.random.nextInt(3),
+                        UColor.COLOR_YELLOW, 8 + commander.random.nextInt(10), 0.3f + commander.random.nextFloat() * 0.4f));
+            } else {
+                area().addParticle(new ParticleSpark(areaX(), areaY() - (commander.random.nextInt(2)),  UColor.COLOR_YELLOW, 8 + commander.random.nextInt(10), 0.6f));
+            }
+        }
+    }
 
 }

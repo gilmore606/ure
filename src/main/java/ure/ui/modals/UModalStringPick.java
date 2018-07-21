@@ -49,10 +49,7 @@ public class UModalStringPick extends UModal {
             drawString(renderer, header, 0, 0);
         int y = 0;
         for (String choice : choices) {
-            if (y == selection) {
-                renderer.drawRect(gw()+xpos,(y+2)*gh()+ypos, textWidth*gw(), gh(), tempHiliteColor);
-            }
-            drawString(renderer, choices.get(y), 3, y+2);
+            drawString(renderer, choices.get(y), 3, y+2, null, (y == selection) ? tempHiliteColor : null);
             y++;
         }
     }
@@ -61,23 +58,9 @@ public class UModalStringPick extends UModal {
     public void hearCommand(UCommand command, GLKey k) {
         if (command == null) return;
         if (command.id.equals("MOVE_N")) {
-            selection--;
-            if (selection < 0) {
-                if (commander.config.isWrapSelect()) {
-                    selection = choices.size() - 1;
-                } else {
-                    selection = 0;
-                }
-            }
+            selection = cursorMove(selection, -1, choices.size());
         } else if (command.id.equals("MOVE_S")) {
-            selection++;
-            if (selection >= choices.size()) {
-                if (commander.config.isWrapSelect()) {
-                    selection = 0;
-                } else {
-                    selection = choices.size() - 1;
-                }
-            }
+            selection = cursorMove(selection, 1, choices.size());
         } else if (command.id.equals("PASS")) {
             selectChoice();
         } else if (command.id.equals("ESC") && escapable) {

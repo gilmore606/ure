@@ -33,10 +33,7 @@ public class UModalTitleScreen extends UModal {
         drawTitleSplash(renderer);
         drawString(renderer, "Example Quest : Curse of the Feature Creep", 7, 13);
         for (int i=0;i<options.length;i++) {
-            if (i == cursor) {
-                renderer.drawRect(15 * gw() + xpos, (15+i)*gh() + ypos, gw()*6, gh(), commander.config.getHiliteColor());
-            }
-            drawString(renderer, options[i], 15, 15+i);
+            drawString(renderer, options[i], 15, 15+i,  (i == cursor) ? null : UColor.COLOR_GRAY, (i == cursor) ? commander.config.getHiliteColor() : null);
         }
     }
 
@@ -50,21 +47,9 @@ public class UModalTitleScreen extends UModal {
     public void hearCommand(UCommand command, GLKey k) {
         if (command != null) {
             if (command.id.equals("MOVE_N")) {
-                cursor -= 1;
-                if (cursor < 0) {
-                    if (commander.config.isWrapSelect())
-                        cursor = options.length - 1;
-                    else
-                        cursor = 0;
-                }
+                cursor = cursorMove(cursor, -1, options.length);
             } else if (command.id.equals("MOVE_S")) {
-                cursor += 1;
-                if (cursor >= options.length) {
-                    if (commander.config.isWrapSelect())
-                        cursor = 0;
-                    else
-                        cursor = options.length - 1;
-                }
+                cursor = cursorMove(cursor, 1, options.length);
             } else if (command.id.equals("PASS") || command.id.equals("ESC")) {
                 if (cursor == 0)
                     resumeGame();

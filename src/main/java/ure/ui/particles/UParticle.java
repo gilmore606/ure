@@ -22,13 +22,13 @@ public class UParticle implements UAnimator {
     float alphadecay;
     UColor colorbuffer;
 
-    public UParticle(int thex, int they, int lifeticks, UColor _fgColor, float startalpha) {
+    public UParticle(int thex, int they, int lifeticks, UColor _fgColor, float startalpha, boolean _receiveLight) {
         x = thex;
         y = they;
         ticksLeft = lifeticks;
         ticksInitial = lifeticks;
         glyph = '*';
-        receiveLight = true;
+        receiveLight = _receiveLight;
         fgR = _fgColor.fR();
         fgG = _fgColor.fG();
         fgB = _fgColor.fB();

@@ -431,7 +431,6 @@ public class UArea implements UTimeListener, Serializable {
                 fizzles.add(particle);
         }
         for (UParticle particle : fizzles) {
-            System.out.println("PARTICLE: fizzled one");
             fizzleParticle(particle);
         }
     }

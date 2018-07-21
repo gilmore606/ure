@@ -53,14 +53,7 @@ public class UModalChoices extends UModal {
         int xtab = 0;
         int drawSelection = 0;
         for (String choice : choices) {
-            if (selection == drawSelection) {
-                hiliteX = xtab * gw() + xpos;
-                hiliteY = (cellh - 1) * gh() + ypos;
-                hiliteW = choice.length() * gw();
-                hiliteH = gh();
-                renderer.drawRect(hiliteX, hiliteY, hiliteW, hiliteH, tempHiliteColor);
-            }
-            drawString(renderer, choice, xtab, cellh-1);
+            drawString(renderer, choice, xtab, cellh-1, (selection == drawSelection) ? null : UColor.COLOR_GRAY, (selection == drawSelection) ? tempHiliteColor : null);
             xtab += choice.length() + 1;
             drawSelection++;
         }
@@ -70,26 +63,14 @@ public class UModalChoices extends UModal {
     public void hearCommand(UCommand command, GLKey k) {
         if (command != null) {
             if (command.id.equals("MOVE_W") || command.id.equals("MOVE_N"))
-                selection--;
+                selection = cursorMove(selection, -1, choices.size());
             if (command.id.equals("MOVE_E") || command.id.equals("MOVE_S"))
-                selection++;
+                selection = cursorMove(selection, 1, choices.size());
             if (command.id.equals("PASS"))
                 pickSelection();
             if (command.id.equals("ESC") && escapable) {
                 escape();
             }
-        }
-
-        if (selection < 0) {
-            if (commander.config.isWrapSelect())
-                selection = choices.size()-1;
-            else
-                selection = 0;
-        } else if (selection >= choices.size()) {
-            if (commander.config.isWrapSelect())
-                selection = 0;
-            else
-                selection = choices.size()-1;
         }
     }
 

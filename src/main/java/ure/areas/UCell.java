@@ -181,6 +181,11 @@ public class UCell implements UContainer {
         UActor actor = actorAt();
         if (actor != null)
             actor.animationTick();
+        if (contents.hasThings()) {
+            for (UThing thing : contents.getThings()) {
+                thing.animationTick();
+            }
+        }
         getTerrain().animationTick();
     }
 
