@@ -1,6 +1,5 @@
 package ure.examplegame;
 
-import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
 import ure.areas.UArea;
@@ -18,7 +17,9 @@ import ure.things.UThingCzar;
 import ure.ui.*;
 import ure.ui.modals.HearModalTitleScreen;
 import ure.ui.modals.UModalTitleScreen;
-import ure.ui.modals.UModalURESplash;
+import ure.ui.panels.ULensPanel;
+import ure.ui.panels.UScrollPanel;
+import ure.ui.panels.UStatusPanel;
 
 import javax.inject.Inject;
 
@@ -55,7 +56,9 @@ public class ExampleGame implements HearModalTitleScreen, UTimeListener {
         camera.moveTo(area, 40,20);
         rootView.addChild(camera);
 
-        statusPanel = new UStatusPanel(15, 10, 16, 16, 10, 10, commander.config.getTextColor(), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
+        UColor borderColor = UColor.COLOR_DARKGRAY;
+
+        statusPanel = new UStatusPanel(200, 200, 10, 10, commander.config.getTextColor(), UColor.COLOR_BLACK, borderColor);
         statusPanel.addText("name", "Kaffo",0,0);
         statusPanel.addText("race", "Owl",0,1);
         statusPanel.addText("class", "Ornithologist",0,2);
@@ -63,23 +66,25 @@ public class ExampleGame implements HearModalTitleScreen, UTimeListener {
         statusPanel.addText("time", "", 0, 6);
         statusPanel.addText("location", "?", 0, 8);
         statusPanel.addText("lens", "", 0, 20);
-        statusPanel.setBounds(1200,0,200,800);
+        statusPanel.setPosition(1200,0);
         rootView.addChild(statusPanel);
 
-        lensPanel = new ULensPanel(camera, 0, 0, 5, 15, 16, 16, 20, 20, commander.config.getTextColor(), UColor.COLOR_BLACK, new UColor(0.3f,0.3f,0.3f));
-        lensPanel.setBounds(1200,800,200,200);
+        lensPanel = new ULensPanel(camera, 0, 0, 200, 200, 12, 12, commander.config.getTextColor(), UColor.COLOR_BLACK, borderColor);
+        lensPanel.setPosition(1200,800);
         rootView.addChild(lensPanel);
 
-        scrollPanel = new UScrollPanel(5, 80, 16, 16, 5, 5, commander.config.getTextColor(), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
+        scrollPanel = new UScrollPanel(1200, 200, 12, 12, commander.config.getTextColor(), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
         scrollPanel.addLineFade(new UColor(1.0f, 1.0f, 1.0f));
         scrollPanel.addLineFade(new UColor(0.6f, 0.6f, 0.6f));
         scrollPanel.addLineFade(new UColor(0.4f, 0.4f, 0.4f));
         scrollPanel.addLineFade(new UColor(0.3f, 0.3f, 0.3f));
+        scrollPanel.setPosition(0,800);
         scrollPanel.setBounds(0,800,1200,200);
         scrollPanel.print("Welcome to UnRogueEngine!");
         scrollPanel.print("The universal java toolkit for roguelike games.");
         scrollPanel.print("Your journey begins...");
         rootView.addChild(scrollPanel);
+
         renderer.setRootView(rootView);
 
 

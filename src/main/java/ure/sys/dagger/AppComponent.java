@@ -14,8 +14,9 @@ import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
-import ure.ui.ULensPanel;
-import ure.ui.UStatusPanel;
+import ure.ui.panels.ULensPanel;
+import ure.ui.panels.UPanel;
+import ure.ui.panels.UStatusPanel;
 import ure.ui.modals.UModal;
 
 import javax.inject.Singleton;
@@ -56,4 +57,5 @@ public interface AppComponent {
     void inject(ULensPanel lenspan);
     void inject(ULandscaper landscape);
     void inject(URegion reg);
+    void inject(UPanel pan);
 }

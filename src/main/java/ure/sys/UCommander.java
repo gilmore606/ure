@@ -1,6 +1,5 @@
 package ure.sys;
 
-import org.lwjgl.glfw.GLFW;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import ure.actions.ActionWalk;
@@ -9,7 +8,6 @@ import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
 import ure.areas.UArea;
 import ure.areas.UCartographer;
-import ure.commands.*;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
@@ -17,8 +15,8 @@ import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
 import ure.ui.modals.*;
-import ure.ui.UScrollPanel;
-import ure.ui.UStatusPanel;
+import ure.ui.panels.UScrollPanel;
+import ure.ui.panels.UStatusPanel;
 import ure.ui.USpeaker;
 import ure.vaulted.VaultedArea;
 import ure.vaulted.VaultedModal;

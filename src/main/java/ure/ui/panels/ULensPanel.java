@@ -1,66 +1,39 @@
-package ure.ui;
+package ure.ui.panels;
 
 import ure.actors.UActor;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.render.URenderer;
-import ure.sys.Injector;
-import ure.sys.UAnimator;
-import ure.sys.UCommander;
 import ure.sys.UConfig;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
+import ure.ui.UCamera;
 
-import javax.inject.Inject;
-
-public class ULensPanel extends View {
-
-    @Inject
-    UCommander commander;
+public class ULensPanel extends UPanel {
 
     UCamera camera;
-    UColor fgColor, bgColor, borderColor;
     int cameraX,cameraY;
-    int textRows,textColumns;
-    int pixelw, pixelh;
-    int padX, padY;
     int cellw,cellh;
     int xpos,ypos;
-    int charWidth, charHeight;
-    boolean hidden;
 
     int updateFrame = 0;
 
-    public ULensPanel(UCamera watchCamera, int cameraOffsetX, int cameraOffsetY, int rows, int columns, int cw, int ch, int px, int py, UColor fg, UColor bg, UColor borderc) {
-        super();
-        Injector.getAppComponent().inject(this);
+    public ULensPanel(UCamera watchCamera, int cameraOffsetX, int cameraOffsetY, int _pixelw, int _pixelh, int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
+        super(_pixelw,_pixelh,_padx,_pady,_fgColor,_bgColor,_borderColor);
         camera = watchCamera;
         cameraX = cameraOffsetX;
         cameraY = cameraOffsetY;
-        textRows = rows;
-        textColumns = columns;
-        charWidth = cw;
-        charHeight = ch;
-        padX = px;
-        padY = py;
-        pixelw = textRows * cw;
-        pixelh = textColumns * ch;
-        fgColor = fg;
-        bgColor = bg;
-        borderColor = borderc;
-        hidden = true;
+        setCameraOffsets();
     }
 
-    public void setDimensions(int x, int y) {
-        cellw = x;
-        cellh = y;
+    public void setCameraOffsets() {
         int screenw = 0, screenh = 0;
         if (commander.config.getModalPosition() == UConfig.POS_WINDOW_CENTER) {
             screenw = commander.config.getScreenWidth();
             screenh = commander.config.getScreenHeight();
         } else {
-            screenw = commander.modalCamera().getWidthInCells() * commander.config.getGlyphWidth();
-            screenh = commander.modalCamera().getHeightInCells() * commander.config.getGlyphHeight();
+            screenw = camera.getWidthInCells() * commander.config.getGlyphWidth();
+            screenh = camera.getHeightInCells() * commander.config.getGlyphHeight();
         }
 
         xpos = (screenw - (cellw * commander.config.getGlyphWidth())) / 2;
@@ -98,9 +71,6 @@ public class ULensPanel extends View {
             }
         }
     }
-
-    public void hide() { hidden = true; }
-    public void unHide() { hidden = false; }
 
     public int toCellX(int x) {
         return (x - cameraX) / commander.config.getGlyphWidth();
