@@ -16,7 +16,10 @@
     "category": "tools",
     "glyph": "t",
     "description": "A wooden torch dipped in pitch.",
+    "isOnMsg": "It's burning.",
+    "isOffMsg": "",
     "color": [200,155,55],
+    "onglyphcolor": [255,200,90],
     "lightcolor": [255,235,185],
     "lightrange": 20,
     "lightfalloff": 3,
@@ -132,6 +135,18 @@
     "value": 3
   },
   {
+    "name": "biscuit",
+    "type": "food",
+    "category": "consumables",
+    "glyph": ",",
+    "description": "A hardtack traveler's biscuit.",
+    "tags":  [ "food", "product" ],
+    "spawnlevels": [1,50],
+    "color": [200,250,190],
+    "weight": 0,
+    "value": 4
+  },
+  {
     "name": "lantern",
     "type": "lightsource",
     "category": "tools",
@@ -140,6 +155,7 @@
     "tags": [ "complex" ],
     "spawnlevels": [1,50],
     "color": [190,205,30],
+    "onglyphcolor": [220,255,90],
     "lightcolor": [195,255,215],
     "lightrange": 25,
     "lightfalloff": 5,

@@ -15,6 +15,7 @@ import ure.ui.Icon;
 import ure.ui.UCamera;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
@@ -116,11 +117,11 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
 
     public Icon icon() { return getIcon(); }
 
-    public String[] UIdetails(String context) {
-        return new String[]{
-                "Weight " + Integer.toString(getWeight()),
-                "Value " + Integer.toString(getValue())
-        };
+    public ArrayList<String> UIdetails(String context) {
+        ArrayList<String> d = new ArrayList<>();
+        d.add("Weight " + Integer.toString(getWeight()));
+        d.add("Value " + Integer.toString(getValue()));
+        return d;
     }
 
     public boolean drawGlyphOutline() {

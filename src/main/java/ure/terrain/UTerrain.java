@@ -15,6 +15,7 @@ import ure.actors.UActor;
 import ure.ui.Icon;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -46,6 +47,7 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
     protected char filechar;
     protected char glyph;
     protected Icon icon;
+    protected String category;
     protected String variants;
     protected HashMap<String,Integer> stats = new HashMap<>();
     protected int[] fgcolor;
@@ -94,7 +96,7 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
         stats = null;
     }
 
-    public String[] UIdetails(String context) { return null; }
+    public ArrayList<String> UIdetails(String context) { return null; }
 
     public void becomeReal(UCell c) {
         cell = c;
@@ -188,6 +190,7 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
     public String getPlural() { return plural != null ? plural : getName() + "s"; }
     public Icon getIcon() { return icon; }
     public char getGlyph() { return glyph; }
+    public String getCategory() { return category; }
 
     public int getStat(String stat) {
         if (getStats().containsKey(stat))

@@ -112,6 +112,9 @@ public class UModal extends View implements UAnimator {
     public void drawString(URenderer renderer, String string, int x, int y) {
         renderer.drawString(x*gw()+xpos,y*gh()+ypos, commander.config.getTextColor(), string);
     }
+    public void drawString(URenderer renderer, String string, int x, int y, UColor color) {
+        renderer.drawString(x*gw()+xpos,y*gh()+ypos,color,string);
+    }
 
     public void drawFrame(URenderer renderer) {
         if (commander.config.getModalShadowStyle() == UConfig.SHADOW_BLOCK) {

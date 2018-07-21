@@ -117,6 +117,11 @@ public class ExampleGame implements UTimeListener {
         item = thingCzar.getThingByName("apple"); item.moveTo(player);
         item = thingCzar.getThingByName("apple"); item.moveTo(player);
         item = thingCzar.getThingByName("flashlight"); item.moveTo(player);
+        item = thingCzar.getThingByName("biscuit"); item.moveTo(player);
+        item = thingCzar.getThingByName("lantern"); item.moveTo(player);
+        item = thingCzar.getThingByName("butcher knife"); item.moveTo(player);
+        item = thingCzar.getThingByName("gold statue"); item.moveTo(player);
+        item = thingCzar.getThingByName("skull"); item.moveTo(player);
 
         // commander.speaker.switchBGM("/ultima_wanderer.ogg", 0);
         commander.showModal(new UModalURESplash());

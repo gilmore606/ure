@@ -5,6 +5,7 @@ roguelike.  Here's our intended roadmap of feature additions that will get us to
 
 ## 0.8
 - ~~keybinds.txt support~~
+- ~~Particle system~~
 - Vault stamping support in Landscaper
 - JSON configuration of main window layout, with resize support
 - better Landscaper generic method tools
@@ -27,7 +28,7 @@ roguelike.  Here's our intended roadmap of feature additions that will get us to
 ## 1.1+
 - Fluid/fire/gas cell simulation
 - RexPaint images embedded in terrain/vaults
-- Particle system
+
 - Actor conversation trees / quests
 - Object materials and composition
 

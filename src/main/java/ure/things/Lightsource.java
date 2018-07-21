@@ -5,6 +5,7 @@ import ure.math.UColor;
 import ure.areas.UArea;
 import ure.ui.ULight;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -25,6 +26,10 @@ public class Lightsource extends UThing {
     protected int lightflickeroffset;
     protected boolean spawnOn = false;
     protected boolean switchable = false;
+    protected int[] onglyphcolor;
+    protected String isOnMsg = "It's on.";
+    protected String isOffMsg = "It's off.";
+    protected char onglyph = 0;
 
     protected boolean on;
 
@@ -123,7 +128,22 @@ public class Lightsource extends UThing {
         return 0.5f;
     }
 
+    @Override
+    public ArrayList<String> UIdetails(String context) {
+            ArrayList<String> d = super.UIdetails(context);
+            if (isOn())
+                d.add(isOnMsg);
+            else
+                d.add(isOffMsg);
+            return d;
+    }
 
+    @Override
+    public char getGlyph() {
+        if (isOn() && onglyph != 0)
+            return onglyph;
+        return super.getGlyph();
+    }
     public int[] getLightcolor() {
         return lightcolor;
     }
@@ -219,4 +239,14 @@ public class Lightsource extends UThing {
     public void setLight(ULight light) {
         this.light = light;
     }
+
+    public void setIsOnMsg(String s) { isOnMsg = s; }
+    public String getIsOnMsg() { return isOnMsg; }
+    public void setIsOffMsg(String s) { isOffMsg = s; }
+    public String getIsOffMsg() { return isOffMsg; }
+    public int[] getOnglyphcolor() { return onglyphcolor; }
+    public void setOnglyphcolor(int[] i) { onglyphcolor = i; }
+    public char getOnglyph() { return onglyph; }
+    public void setOnglyph(char c) { onglyph = c; }
+
 }
