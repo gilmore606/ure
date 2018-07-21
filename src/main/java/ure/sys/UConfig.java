@@ -28,7 +28,7 @@ public class UConfig {
 
     // Visuals
 
-    private int FPStarget = 60;                                 // render at this FPS
+    private int FPStarget = 30;                                 // render at this FPS
     private int animFrameMilliseconds = 33;                     // milliseconds between animation frames
     private int screenWidth = 1400;                             // window width in pixels
     private int screenHeight = 1000;                            // window height in pixels
