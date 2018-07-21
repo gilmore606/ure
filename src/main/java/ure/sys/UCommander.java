@@ -1,5 +1,8 @@
 package ure.sys;
 
+import org.lwjgl.glfw.GLFW;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
 import ure.actions.ActionWalk;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
@@ -21,6 +24,10 @@ import ure.vaulted.VaultedArea;
 import ure.vaulted.VaultedModal;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -150,27 +157,71 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      *
      */
     public void readKeyBinds() {
-        // TODO: Actually read keybinds.txt
-        //
         keyBindings = new HashMap<GLKey, UCommand>();
-        keyBindings.put(new GLKey(GLFW_KEY_ESCAPE), new CommandEsc());
-        keyBindings.put(new GLKey(GLFW_KEY_UP), new CommandMoveN());
-        keyBindings.put(new GLKey(GLFW_KEY_DOWN), new CommandMoveS());
-        keyBindings.put(new GLKey(GLFW_KEY_LEFT), new CommandMoveW());
-        keyBindings.put(new GLKey(GLFW_KEY_RIGHT), new CommandMoveE());
-        keyBindings.put(new GLKey(GLFW_KEY_UP, true, false), new CommandLatchN());
-        keyBindings.put(new GLKey(GLFW_KEY_DOWN, true, false), new CommandLatchS());
-        keyBindings.put(new GLKey(GLFW_KEY_LEFT, true, false), new CommandLatchW());
-        keyBindings.put(new GLKey(GLFW_KEY_RIGHT, true, false), new CommandLatchE());
-        keyBindings.put(new GLKey(GLFW_KEY_Q, true, false), new CommandQuit());
-        keyBindings.put(new GLKey(GLFW_KEY_SPACE), new CommandPass());
-        keyBindings.put(new GLKey(GLFW_KEY_E), new CommandInteract());
-        keyBindings.put(new GLKey(GLFW_KEY_I), new CommandInventory());
-        keyBindings.put(new GLKey(GLFW_KEY_G), new CommandGet());
-        keyBindings.put(new GLKey(GLFW_KEY_D), new CommandDrop());
-        keyBindings.put(new GLKey(GLFW_KEY_PERIOD), new CommandTravel());
-        keyBindings.put(new GLKey(GLFW_KEY_T), new CommandThrow());
-        keyBindings.put(new GLKey(GLFW_KEY_U), new CommandUse());
+        HashMap<String,Integer> glmap = new HashMap<>();
+        Class constantsClass = org.lwjgl.glfw.GLFW.class;
+        for (Field field : constantsClass.getDeclaredFields()) {
+            if (field.getName().startsWith("GLFW_KEY_")) {
+                try {
+                    glmap.put(field.getName(), field.getInt(null));
+                    System.out.println("REFLECT: read GLFW keymap pair " + field.getName() + " as " + Integer.toString(field.getInt(null)));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        List<String> lines = null;
+        try {
+            lines = Files.readAllLines(Paths.get(config.getResourcePath() + "keybinds.txt"), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Reflections reflections = new Reflections("ure.commands", new SubTypesScanner());
+        Set<Class<? extends UCommand>> commandClasses = reflections.getSubTypesOf(UCommand.class);
+        HashMap<String,Class> commandMap = new HashMap<>();
+        try {
+            for (Class<? extends UCommand> commandClass : commandClasses) {
+                Field idField = commandClass.getField("id");
+                String idValue = (String) idField.get(null);
+                if (idValue != null) {
+                    System.out.println("REFLECT: found command " + idValue);
+                    commandMap.put(idValue, commandClass);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        for (String line : lines) {
+            int comma = line.indexOf(",");
+            String commandid = line.substring(comma+1,line.length());
+            String keystr = line.substring(0,comma);
+            boolean shiftkey = false;
+            boolean ctrlkey = false;
+            int plus = keystr.indexOf("+");
+            if (plus > 0) {
+                String modstr = line.substring(0,plus);
+                if (modstr.equals("shift") || modstr.equals("SHIFT"))
+                    shiftkey = true;
+                if (modstr.equals("ctrl") || modstr.equals("CTRL") || modstr.equals("control") || modstr.equals("CONTROL"))
+                    ctrlkey = true;
+                keystr = keystr.substring(plus+1,keystr.length());
+            }
+            int k = glmap.get("GLFW_KEY_" + keystr.toUpperCase());
+            GLKey glkey = new GLKey(k, shiftkey, ctrlkey);
+            Class commandClass = commandMap.get(commandid);
+            if (commandClass == null) {
+                System.out.println("KEYBIND: ERROR - no command found for '" + commandid + "' -- check mapping file!");
+            } else {
+                try {
+                    UCommand cmd = (UCommand) commandClass.newInstance();
+                    keyBindings.put(glkey, cmd);
+                    System.out.println("KEYBIND: mapping GLKey " + Integer.toString(k) + " to " + cmd.id);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 
     public void keyPressed(GLKey k) {

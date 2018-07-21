@@ -1,6 +1,18 @@
-w,MOVE_N
-s,NOVE_S
-a,MOVE_W
-d,MOVE_E
- ,PASS
-
+escape,ESC
+kp_8,MOVE_N
+kp_2,MOVE_S
+kp_4,MOVE_W
+kp_6,MOVE_E
+shift+kp_8,LATCH_N
+shift+kp_2,LATCH_S
+shift+kp_4,LATCH_W
+shift+kp_6,LATCH_E
+shift+q,QUIT
+space,PASS
+e,INTERACT
+i,INVENTORY
+g,GET
+d,DROP
+period,TRAVEL
+t,THROW
+u,USE

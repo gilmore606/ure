@@ -13,12 +13,12 @@ import javax.inject.Inject;
  * executed.
  *
  */
-public class UCommand {
+public abstract class UCommand {
 
     @Inject
     UCommander commander;
 
-    public String id;
+    public String id = "";
 
     /**
      * Your subclass should super() down to this constructor if you override.
@@ -27,7 +27,10 @@ public class UCommand {
     public UCommand() {
         Injector.getAppComponent().inject(this);
     }
-
+    public UCommand(String id) {
+        this();
+        this.id = id;
+    }
     /**
      * Override execute to actually do what your command does (cause player to do an Action, open a UModal, etc).
      *

@@ -13,9 +13,10 @@ import java.util.Iterator;
 
 public class CommandInventory extends UCommand implements HearModalEntityPick {
 
+    public static final String id = "INVENTORY";
+
     public CommandInventory() {
-        super();
-        id = "INVENTORY";
+        super(id);
     }
 
     @Override

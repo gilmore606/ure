@@ -11,11 +11,12 @@ import java.util.Iterator;
 
 public class CommandUse extends UCommand implements HearModalEntityPick {
 
+    public static final String id = "USE";
+
     public static String useNothingMsg = "You aren't carrying anything you can use.";
     public static String useDialog = "Use what?";
     public CommandUse() {
-        super();
-        id = "USE";
+        super(id);
     }
 
     @Override

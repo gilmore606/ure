@@ -4,9 +4,10 @@ import ure.actors.UPlayer;
 
 public class CommandEsc extends UCommand {
 
+    public static final String id = "ESC";
+
     public CommandEsc() {
-        super();
-        id = "ESC";
+        super(id);
     }
 
     @Override

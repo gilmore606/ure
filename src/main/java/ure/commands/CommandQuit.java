@@ -8,13 +8,14 @@ import java.util.ArrayList;
 
 public class CommandQuit extends UCommand implements HearModalChoices {
 
+    public static final String id = "QUIT";
+
     public static String quitConfirmMsg = "Quit and save progress?";
     public static String quitYes = "Yes";
     public static String quitNo = "No";
 
     public CommandQuit() {
-        super();
-        id = "QUIT";
+        super(id);
     }
 
     @Override

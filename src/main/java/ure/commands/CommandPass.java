@@ -5,9 +5,10 @@ import ure.actors.UPlayer;
 
 public class CommandPass extends UCommand {
 
+    public static final String id = "PASS";
+
     public CommandPass() {
-        super();
-        id = "PASS";
+        super(id);
     }
     @Override
     public void execute(UPlayer player) {

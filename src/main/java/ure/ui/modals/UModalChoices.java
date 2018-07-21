@@ -68,14 +68,16 @@ public class UModalChoices extends UModal {
 
     @Override
     public void hearCommand(UCommand command, GLKey k) {
-        if (command.id.equals("MOVE_W") || command.id.equals("MOVE_N"))
-            selection--;
-        if (command.id.equals("MOVE_E") || command.id.equals("MOVE_S"))
-            selection++;
-        if (command.id.equals("PASS"))
-            pickSelection();
-        if (command.id.equals("ESC") && escapable) {
-            escape();
+        if (command != null) {
+            if (command.id.equals("MOVE_W") || command.id.equals("MOVE_N"))
+                selection--;
+            if (command.id.equals("MOVE_E") || command.id.equals("MOVE_S"))
+                selection++;
+            if (command.id.equals("PASS"))
+                pickSelection();
+            if (command.id.equals("ESC") && escapable) {
+                escape();
+            }
         }
 
         if (selection < 0) {

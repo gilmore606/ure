@@ -12,12 +12,13 @@ import java.util.Iterator;
 
 public class CommandDrop extends UCommand implements HearModalEntityPick {
 
+    public static final String id = "DROP";
+
     public static String dropNothingMsg = "You aren't carrying anything to drop.";
     public static String dropDialog = "Drop what?";
 
     public CommandDrop() {
-        super();
-        id = "DROP";
+        super(id);
     }
 
     @Override

@@ -13,12 +13,13 @@ import java.util.Iterator;
 
 public class CommandThrow extends UCommand implements HearModalEntityPick, HearModalTarget {
 
+    public static final String id = "THROW";
+
     public static String throwNothingMsg = "You have nothing to throw.";
     public static String throwDialogMsg = "Throw what?";
     public static String throwTargetDialogMsg = "Select target.  Hold shift for free targeting.";
     public CommandThrow() {
-        super();
-        id = "THROW";
+        super(id);
     }
 
     @Override

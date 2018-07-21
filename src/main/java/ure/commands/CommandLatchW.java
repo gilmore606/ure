@@ -2,8 +2,9 @@ package ure.commands;
 
 public class CommandLatchW extends UCommandMove {
 
+    public static final String id = "LATCH_W";
+
     public CommandLatchW() {
-        super(-1,0,true);
-        id = "LATCH_W";
+        super(id, -1,0,true);
     }
 }
