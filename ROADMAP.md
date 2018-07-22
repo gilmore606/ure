@@ -1,5 +1,7 @@
 # Release roadmap
 
+*NOTE: we are now developing on the develop branch.  This will be merged back to master when stable.*
+
 URE is still in its early stages, and lacks critical features before it can truly support a full blown 'commercial quality'
 roguelike.  Here's our intended roadmap of feature additions that will get us to that 1.0 state.
 
