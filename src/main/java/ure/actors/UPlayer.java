@@ -55,4 +55,9 @@ public class UPlayer extends UActor {
     public int bounceAnimY() {
         return 0;
     }
+
+    @Override
+    public void closeOut() {
+
+    }
 }

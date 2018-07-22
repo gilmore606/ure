@@ -410,7 +410,7 @@ public class UCartographer implements Runnable {
         closeableAreas.remove(area);
     }
     public boolean areaIsCloseable(UArea area) {
-        if (System.nanoTime() - area.closeRequestedTime > (1000*500))
+        if (System.nanoTime() - area.closeRequestedTime > (1000*1000))
             return true;
         return false;
     }
@@ -464,9 +464,11 @@ public class UCartographer implements Runnable {
                 if (area == null) {
                     System.out.println("CARTO LOADER:  tried to fetch " + next + " and got null, creating");
                     area = makeArea(next, nextname, nextdata);
-                    persist(area, area.label + ".area");
+
                     if (area == null) {
                         System.out.println("CARTO LOADER : ***FAIL*** to make area " + next);
+                    } else {
+                        persist(area, area.label + ".area");
                     }
                 }
                 addActiveArea(area);

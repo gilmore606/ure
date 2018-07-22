@@ -8,13 +8,16 @@ import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.sys.GLKey;
+import ure.ui.modals.HearModalGetString;
 import ure.ui.modals.UModal;
+import ure.ui.modals.UModalGetString;
+
 import static org.lwjgl.glfw.GLFW.*;
 import javax.inject.Inject;
 import java.io.PrintWriter;
 import java.util.Set;
 
-public class VaultedModal extends UModal {
+public class VaultedModal extends UModal implements HearModalGetString {
 
     @Inject
     ObjectMapper objectMapper;
@@ -69,7 +72,8 @@ public class VaultedModal extends UModal {
         drawString(renderer, "W   : wipe!", 1, 19);
         drawString(renderer, "pgUp/Dn: cycle vaults", 1, 21);
         drawString(renderer, "ins    : add new vault", 1, 22);
-        drawString(renderer, "S   : save", 1, 23);
+        drawString(renderer, "n   : name vault", 1, 23);
+        drawString(renderer, "S   : save", 1, 24);
         drawString(renderer, "vault " + Integer.toString(cursor + 1) + " (of " + Integer.toString(vaultSet.size()) + ")", 1, 27);
         drawString(renderer, "'" + vaultSet.vaultAt(cursor).getName() + "'", 1, 28);
         drawString(renderer, filename + ".json", 1, 29);
@@ -120,6 +124,8 @@ public class VaultedModal extends UModal {
             switchVault(1);
         else if (k.k == GLFW_KEY_INSERT)
             addNewVault();
+        else if (k.k == GLFW_KEY_N)
+            renameVault();
 
     }
 
@@ -181,5 +187,14 @@ public class VaultedModal extends UModal {
         vaultSet.addVault();
         cursor = vaultSet.size()-1;
         loadVault();
+    }
+
+    void renameVault() {
+        UModalGetString nmodal = new UModalGetString("Vault name:", 30, true, null, this, "rename");
+        commander.showModal(nmodal);
+    }
+
+    public void hearModalGetString(String context, String input) {
+        vaultSet.vaultAt(cursor).setName(input);
     }
 }

@@ -79,6 +79,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     private int moveLatchY = 0;
 
     private UModal modal;
+    private Stack<UModal> modalStack;
+
     private boolean quitGame = false;
 
     public UCommander() {
@@ -101,6 +103,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         renderer.setKeyListener(this);
         keyBuffer = new LinkedBlockingQueue<GLKey>();
         speaker = new USpeaker();
+        modalStack = new Stack<>();
     }
 
     public int getTurn() { return turnCounter; };
@@ -476,7 +479,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     void attachModal(UModal newmodal) {
         if (modal != null) {
-            detachModal();
+            modalStack.push(modal);
+            modal = null;
         }
         modal = newmodal;
         renderer.getRootView().addChild(modal);
@@ -485,11 +489,16 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void detachModal() {
         renderer.getRootView().removeChild(modal);
         modal = null;
+        if (!modalStack.isEmpty())
+            modal = modalStack.pop();
     }
 
     public void detachModal(UModal modal) {
         if (this.modal == modal) {
             detachModal();
+        } else {
+            if (modalStack.contains(modal))
+                modalStack.remove(modal);
         }
     }
 

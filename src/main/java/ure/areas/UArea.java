@@ -453,7 +453,7 @@ public class UArea implements UTimeListener, Serializable {
      */
     public void freezeForPersist() {
         for (UActor actor : getActors()) {
-            System.out.println("AREA " + label + ": sleeping " + actor.getName() + " for freeze");
+            //System.out.println("AREA " + label + ": sleeping " + actor.getName() + " for freeze");
             commander.unregisterActor(actor);
         }
         commander.unregisterTimeListener(this);
