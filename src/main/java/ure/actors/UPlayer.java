@@ -40,7 +40,7 @@ public class UPlayer extends UActor {
     public boolean canSee(UThing thing) {
         int x = thing.areaX();
         int y = thing.areaY();
-        if (camera.visibilityAt(x - camera.leftEdge, y - camera.topEdge) > 0.1f)
+        if (camera.visibilityAt(x - camera.leftEdge, y - camera.topEdge) > commander.config.getVisibilityThreshold())
             return true;
         return false;
     }

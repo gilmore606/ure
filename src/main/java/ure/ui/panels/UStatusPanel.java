@@ -37,14 +37,13 @@ public class UStatusPanel extends UPanel {
 
     @Override
     public void draw(URenderer renderer) {
+        super.draw(renderer);
         if (!hidden) {
-            renderer.drawRectBorder(1, 1, width - 2, height - 2, 1, bgColor, borderColor);
             for (String textName : texts.keySet()) {
                 TextFrag frag = texts.get(textName);
                 renderer.drawString(frag.row * charWidth + padX, (frag.col + 1) * charHeight + padY, frag.color, frag.text);
             }
         }
     }
-
 
 }

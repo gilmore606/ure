@@ -1,8 +1,10 @@
 package ure.ui.panels;
 
 import ure.math.UColor;
+import ure.render.URenderer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
+import ure.ui.Icon;
 import ure.ui.View;
 
 import javax.inject.Inject;
@@ -20,7 +22,7 @@ public class UPanel extends View {
     int pixelw, pixelh;
     int padX, padY;
 
-    boolean hidden;
+    public boolean hidden;
 
     class TextFrag {
         String name;
@@ -57,4 +59,12 @@ public class UPanel extends View {
     public void setPosition(int posx, int posy) {
         setBounds(posx, posy, pixelw, pixelh);
     }
+
+    public void draw(URenderer renderer) {
+        // TODO : support glyph based frames same as UModal
+        if (!hidden)
+            renderer.drawRectBorder(1, 1, width - 2, height - 2, 1, bgColor, borderColor);
+    }
+
+
 }

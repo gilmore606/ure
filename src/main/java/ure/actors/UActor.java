@@ -6,6 +6,7 @@ import ure.actions.Interactable;
 import ure.actions.UAction;
 import ure.areas.UArea;
 import ure.areas.UCell;
+import ure.math.UColor;
 import ure.math.UPath;
 import ure.terrain.UTerrain;
 import ure.things.Lightsource;
@@ -261,6 +262,8 @@ public class UActor extends UThing implements Interactable {
     /**
      * Can I see that thing from where I am (and I'm awake, and can see, etc)?
      *
+     * TODO : actually check line of sight instead of just distance!
+     *
      * @param thing
      * @return
      */
@@ -385,4 +388,10 @@ public class UActor extends UThing implements Interactable {
         return movespeed;
     }
 
+    public String UIstatus() {
+        return "(wandering)";
+    }
+    public UColor UIstatusColor() {
+        return UColor.COLOR_GRAY;
+    }
 }

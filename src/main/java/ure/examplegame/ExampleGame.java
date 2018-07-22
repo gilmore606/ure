@@ -17,6 +17,7 @@ import ure.things.UThingCzar;
 import ure.ui.*;
 import ure.ui.modals.HearModalTitleScreen;
 import ure.ui.modals.UModalTitleScreen;
+import ure.ui.panels.UActorPanel;
 import ure.ui.panels.ULensPanel;
 import ure.ui.panels.UScrollPanel;
 import ure.ui.panels.UStatusPanel;
@@ -31,6 +32,7 @@ public class ExampleGame implements HearModalTitleScreen, UTimeListener {
     static UStatusPanel statusPanel;
     static UScrollPanel scrollPanel;
     static ULensPanel lensPanel;
+    static UActorPanel actorPanel;
     static URenderer renderer;
 
     @Inject
@@ -68,6 +70,10 @@ public class ExampleGame implements HearModalTitleScreen, UTimeListener {
         statusPanel.addText("lens", "", 0, 20);
         statusPanel.setPosition(1200,0);
         rootView.addChild(statusPanel);
+
+        actorPanel = new UActorPanel(200,600,10,10,commander.config.getTextColor(), UColor.COLOR_BLACK, borderColor);
+        actorPanel.setPosition(1200,200);
+        rootView.addChild(actorPanel);
 
         lensPanel = new ULensPanel(camera, 0, 0, 200, 200, 12, 12, commander.config.getTextColor(), UColor.COLOR_BLACK, borderColor);
         lensPanel.setPosition(1200,800);
@@ -132,6 +138,9 @@ public class ExampleGame implements HearModalTitleScreen, UTimeListener {
             statusPanel.setText("time", commander.timeString(true, " "));
             statusPanel.setText("location", commander.cartographer.describeLabel(commander.player().area().getLabel()));
         }
+        if (actorPanel != null && !actorPanel.isHidden() && commander.player() != null) {
+            actorPanel.updateActors((UPlayer)commander.player());
+        }
     }
 
     public void hearModalTitleScreen(String context) {
@@ -144,6 +153,7 @@ public class ExampleGame implements HearModalTitleScreen, UTimeListener {
         statusPanel.unHide();
         lensPanel.unHide();
         scrollPanel.unHide();
+        actorPanel.unHide();
         cartographer.startLoader();
         area = cartographer.getStartArea();
         UCell startcell = area.randomOpenCell(player);
