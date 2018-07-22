@@ -64,13 +64,13 @@ public class UModalTitleScreen extends UModal {
     @Override
     public void animationTick() {
         super.animationTick();
+        area.animationTick();
         alpha += 0.04f;
         if (alpha >1f) alpha = 1f;
         fakeTickCount++;
         if (fakeTickCount > 20) {
             fakeTickCount = 0;
             commander.tickTime();
-            area.wakeAllNPCs();
             commander.tickActors();
         }
     }

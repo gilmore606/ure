@@ -120,6 +120,7 @@
     "lightflickerspeed": 3.0,
     "lightflickerintensity": 0.25,
     "lightflickeroffset": 15,
+    "sparkrate": 0.06,
     "movable": false,
     "spawnOn": true
   },

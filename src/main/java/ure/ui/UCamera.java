@@ -543,9 +543,14 @@ public class UCamera extends View implements UAnimator {
     }
 
     public void animationTick() {
+        float visThreshold;
+        if (commander.config.isVisibilityEnable())
+            visThreshold = commander.config.getVisibilityThreshold();
+        else
+            visThreshold = -1f;
         for (int col = leftEdge; col< rightEdge; col++) {
             for (int row = topEdge; row< bottomEdge; row++) {
-                if (area.isValidXY(col,row) && lightcells[col- leftEdge][row- topEdge].visibility() > commander.config.getVisibilityThreshold())
+                if (area.isValidXY(col,row) && lightcells[col- leftEdge][row- topEdge].visibility() > visThreshold)
                     area.cellAt(col,row).animationTick();
             }
         }

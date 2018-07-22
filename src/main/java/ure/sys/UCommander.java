@@ -397,9 +397,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                         consumeKeyFromBuffer();
                     }
                     renderer.render();
-                    while (player.actionTime() <= 0f) {
-                        tickTime();
-                        waitingForInput = false;
+                    if (player != null) {
+                        while (player.actionTime() <= 0f) {
+                            tickTime();
+                            waitingForInput = false;
+                        }
                     }
                 }
             }

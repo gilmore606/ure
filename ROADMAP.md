@@ -15,7 +15,7 @@ roguelike.  Here's our intended roadmap of feature additions that will get us to
 - Audio : ogg playback, background music loop/crossfade, stereo SFX position, ambient sounds tied to entities
 - improved A* pathing
 - Main Menu modal with gamesave manager and title screen
-- ActorPanel UI display
+- ~~ActorPanel UI display~~
 - Actor AI behavior set
 
 ## 1.0
