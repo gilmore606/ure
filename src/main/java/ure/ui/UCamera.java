@@ -496,6 +496,8 @@ public class UCamera extends View implements UAnimator {
             if ((vis < commander.config.getVisibilityThreshold()) && area.seenCell(col + leftEdge, row + topEdge)) {
                 tOpacity = commander.config.getSeenOpacity();
                 tSaturation = commander.config.getSeenSaturation();
+                if (commander.config.isSeenLightGray())
+                    light = UColor.COLOR_GRAY;
             }
             UColor terrainLight = light;
             // TODO: clean up access to terrain obj here, wtf methodcalls
