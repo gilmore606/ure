@@ -117,8 +117,8 @@ public class UModal extends View implements UAnimator {
     }
     public void drawString(URenderer renderer, String string, int x, int y, UColor color, UColor highlight) {
         if (highlight != null)
-            renderer.drawRect(x*gw()+xpos-2, y*gh()+ypos-1,
-                    commander.config.getTextWidth()*string.length()+4, commander.config.getTextHeight()+2, highlight);
+            renderer.drawRect(x*gw()+xpos-2, y*gh()+ypos-3,
+                    commander.config.getTextWidth()*string.length()+4, commander.config.getTextHeight()+4, highlight);
         if (color == null)
             color = commander.config.getTextColor();
         renderer.drawString(x*gw()+xpos,y*gh()+ypos,color,string);

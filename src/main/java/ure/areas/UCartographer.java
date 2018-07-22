@@ -56,6 +56,7 @@ public class UCartographer implements Runnable {
     protected ObjectMapper objectMapper;
 
     protected ArrayList<UArea> activeAreas = new ArrayList<>();
+    protected ArrayList<UArea> closeableAreas = new ArrayList<>();
     protected HashMap<String,URegion> regions = new HashMap<>();
     protected String startArea;
 
@@ -70,6 +71,7 @@ public class UCartographer implements Runnable {
     public UCartographer() {
         Injector.getAppComponent().inject(this);
         activeAreas = new ArrayList<UArea>();
+        closeableAreas = new ArrayList<UArea>();
         regions = new HashMap<>();
         loadQueue = new LinkedBlockingQueue<>();
         saveQueue = new LinkedBlockingQueue<>();
@@ -305,7 +307,8 @@ public class UCartographer implements Runnable {
             removeActiveArea(area);
             commander.unregisterTimeListener(area);
             persist(area, area.getLabel() + ".area");
-            area.closeOut();
+            addCloseableArea(area);
+            area.requestCloseOut();
         }
     }
 
@@ -398,6 +401,19 @@ public class UCartographer implements Runnable {
     public synchronized void removeActiveArea(UArea area) {
         activeAreas.remove(area);
     }
+
+    public synchronized void addCloseableArea(UArea area) {
+        if (!closeableAreas.contains(area))
+            closeableAreas.add(area);
+    }
+    public synchronized void removeCloseableArea(UArea area) {
+        closeableAreas.remove(area);
+    }
+    public boolean areaIsCloseable(UArea area) {
+        if (System.nanoTime() - area.closeRequestedTime > (1000*500))
+            return true;
+        return false;
+    }
     public synchronized boolean areaIsActive(String label) {
         for (UArea area : activeAreas)
             if (area.label != null)
@@ -474,7 +490,9 @@ public class UCartographer implements Runnable {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            UArea playerArea = commander.player().area();
+            UArea playerArea = null;
+            if (commander.player() != null)
+                playerArea = commander.player().area();
             for (UArea area : activeAreas) {
                 if (area == null)
                     System.out.println("******* NULL AREA IN ACTIVEAREAS");
@@ -485,6 +503,17 @@ public class UCartographer implements Runnable {
                     } else if (area.findExitTo(playerArea.getLabel()) == null) {
                         System.out.println("CARTO LOADER: found area " + area.label + " to harvest and freeze");
                         addAreaToSaveQueue(area);
+                    }
+                }
+            }
+            if (!closeableAreas.isEmpty()) {
+                ArrayList<UArea> tempCloseable = (ArrayList<UArea>) closeableAreas.clone();
+                for (UArea area : tempCloseable) {
+                    if (area != null) {
+                        if (areaIsCloseable(area)) {
+                            area.closeOut();
+                            removeCloseableArea(area);
+                        }
                     }
                 }
             }

@@ -63,6 +63,11 @@ public class UArea implements UTimeListener, Serializable {
     @JsonIgnore
     public boolean closed = false;
     @JsonIgnore
+    public boolean closeRequested = false;
+    @JsonIgnore
+    public double closeRequestedTime;
+
+    @JsonIgnore
     public ArrayList<Stairs> stairsLinks;
 
     public UArea() {
@@ -96,6 +101,11 @@ public class UArea implements UTimeListener, Serializable {
             xsize = cellsX;
         });
         lines.close();
+    }
+
+    public void requestCloseOut() {
+        closeRequested = true;
+        closeRequestedTime = System.nanoTime();
     }
 
     public void closeOut() {
@@ -447,7 +457,6 @@ public class UArea implements UTimeListener, Serializable {
             commander.unregisterActor(actor);
         }
         commander.unregisterTimeListener(this);
-        setActors(null);
         terrainCzar = null;
         commander = null;
     }
