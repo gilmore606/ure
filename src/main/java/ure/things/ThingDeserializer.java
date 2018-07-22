@@ -31,7 +31,8 @@ public class ThingDeserializer extends JsonDeserializer<UThing> {
         JsonNode typeNode = node.get("type");
         String type = (typeNode != null && !typeNode.isNull()) ? node.get("type").asText() : null;
         Class<? extends UThing> thingClass = classForType(type);
-        return objectMapper.treeToValue(node, thingClass);
+        UThing t = objectMapper.treeToValue(node, thingClass);
+        return t;
     }
 
     private Class<? extends UThing> classForType(String type) {

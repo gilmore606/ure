@@ -36,6 +36,12 @@ public class UPlayer extends UActor {
         }
     }
 
+    public void initialize() {
+        for (UThing thing : contents.getThings()) {
+            thing.setLocation(this);
+        }
+    }
+
     @Override
     public void moveToCell(UArea area, int destX, int destY) {
         super.moveToCell(area,destX,destY);

@@ -77,9 +77,7 @@ public class Lightsource extends UThing {
     public void moveTo(UContainer container) {
         super.moveTo(container);
         if (on()) {
-            if (container.containerType() == UContainer.TYPE_CELL) {
                 getLight().moveTo(area(), areaX(), areaY());
-            }
         }
     }
 
@@ -123,7 +121,7 @@ public class Lightsource extends UThing {
 
     @Override
     public float useFrom(UActor actor) {
-        if (!on())
+        if (!isOn())
             turnOn();
         else
             turnOff();

@@ -475,6 +475,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
         if (p != null)
             turnCounter = p.saveTurn;
+        p.initialize();
         return p;
     }
 

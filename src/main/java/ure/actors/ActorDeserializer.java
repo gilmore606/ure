@@ -47,7 +47,7 @@ public class ActorDeserializer extends JsonDeserializer<UActor> {
                     return actorClass;
                 }
             }
-            throw new RuntimeException("No UREActor class of type '" + type + "' was found in the classpath");
+            throw new RuntimeException("No UActor class of type '" + type + "' was found in the classpath");
         } catch (NoSuchFieldException e) {
             throw new RuntimeException("All subclasses of UREActor must define a static TYPE field", e);
         } catch (IllegalAccessException e) {
