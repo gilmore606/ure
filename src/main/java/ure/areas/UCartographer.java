@@ -186,7 +186,8 @@ public class UCartographer implements Runnable {
      * By default, if we have regions, pick the first region and return its first level.
      */
 
-    public UArea getStartArea() {
+    public String getStartArea() { return startArea; }
+    public UArea makeStartArea() {
         return getArea(startArea);
     }
 

@@ -454,7 +454,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             JsonFactory jfactory = new JsonFactory();
             JsonGenerator jGenerator = jfactory.createGenerator(stream, JsonEncoding.UTF8);
             jGenerator.setCodec(objectMapper);
-            jGenerator.writeObject((UActor)player);
+            jGenerator.writeObject(player);
             jGenerator.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -473,6 +473,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if (p != null)
+            turnCounter = p.saveTurn;
         return p;
     }
 

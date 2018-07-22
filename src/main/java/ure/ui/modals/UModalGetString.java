@@ -5,8 +5,7 @@ import ure.math.UColor;
 import ure.render.URenderer;
 import ure.sys.GLKey;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class UModalGetString extends UModal {
 
@@ -83,8 +82,9 @@ public class UModalGetString extends UModal {
         } else if (k.k == GLFW_KEY_ENTER) {
             sendInput();
         } else {
-            Character c = (char)Math.min(127,k.k);
-            input = input + c.toString();
+            String typed = k.typed();
+            if (typed != null)
+                input = input + typed;
         }
     }
 

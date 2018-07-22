@@ -62,7 +62,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
         UColor borderColor = UColor.COLOR_DARKGRAY;
 
         statusPanel = new UStatusPanel(200, 200, 10, 10, commander.config.getTextColor(), UColor.COLOR_BLACK, borderColor);
-        statusPanel.addText("name", "Kaffo",0,0);
+        statusPanel.addText("name", " ",0,0);
         statusPanel.addText("race", "Owl",0,1);
         statusPanel.addText("class", "Ornithologist",0,2);
         statusPanel.addText("turn", "T 1", 0, 5);
@@ -145,6 +145,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
             statusPanel.setText("turn", "T " + Integer.toString(commander.getTurn()));
             statusPanel.setText("time", commander.timeString(true, " "));
             statusPanel.setText("location", commander.cartographer.describeLabel(commander.player().area().getLabel()));
+            statusPanel.setText("name", commander.player().getName());
         }
         if (actorPanel != null && !actorPanel.isHidden() && commander.player() != null) {
             actorPanel.updateActors((UPlayer)commander.player());
@@ -157,16 +158,19 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
         } else {
             if (context.equals("New World")) {
                 cartographer.wipeWorld();
+                continueGame(optional);
+            } else {
+                continueGame(optional);
             }
-            continueGame();
         }
     }
 
-    public void continueGame() {
+    public void continueGame(String playername) {
         player = commander.loadPlayer();
         if (player == null) {
             System.out.println("Creating the @Player");
             player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
+            player.setName(playername);
             UThing item = thingCzar.getThingByName("rock");
             item.moveTo(player);
             item = thingCzar.getThingByName("trucker hat");
@@ -189,8 +193,9 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
             item.moveTo(player);
             item = thingCzar.getThingByName("skull");
             item.moveTo(player);
-            area = cartographer.getStartArea();
+            System.out.println("Getting the starting area");
             cartographer.startLoader();
+            area = cartographer.makeStartArea();
             UCell startcell = area.randomOpenCell(player);
             player.setSaveAreaLabel(area.getLabel());
             player.setSaveAreaX(startcell.x);

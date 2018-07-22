@@ -18,6 +18,7 @@ public class UPlayer extends UActor {
     public String saveAreaLabel;
     public int saveAreaX;
     public int saveAreaY;
+    public int saveTurn;
 
     @JsonIgnore
     ULight light;
@@ -76,6 +77,7 @@ public class UPlayer extends UActor {
         saveAreaLabel = area().getLabel();
         saveAreaX = areaX();
         saveAreaY = areaY();
+        saveTurn = commander.getTurn();
     }
 
     public void setSaveAreaLabel(String l) { saveAreaLabel = l; }
@@ -84,4 +86,6 @@ public class UPlayer extends UActor {
     public void setSaveAreaY(int _y) { saveAreaY = _y; }
     public int getSaveAreaX() { return saveAreaX; }
     public int getSaveAreaY() { return saveAreaY; }
+    public int getSaveTurn() { return saveTurn; }
+    public void setSaveTurn(int s) { saveTurn = s; }
 }
