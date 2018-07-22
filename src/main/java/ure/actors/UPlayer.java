@@ -36,7 +36,7 @@ public class UPlayer extends UActor {
         }
     }
 
-    public void initialize() {
+    public void reconnectThings() {
         for (UThing thing : contents.getThings()) {
             thing.setLocation(this);
         }

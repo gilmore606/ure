@@ -230,8 +230,11 @@ public class UCartographer implements Runnable {
                 return area;
             }
             catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("Couldn't load area for " + label);
+                if (e instanceof FileNotFoundException) {
+                    System.out.println("CARTO: no save found for " + label);
+                } else {
+                    e.printStackTrace();
+                }
             }
         }
 

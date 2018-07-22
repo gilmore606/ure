@@ -463,19 +463,19 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     public UPlayer loadPlayer() {
         String path = savePath();
-        File file = new File(path + "player");
         UPlayer p = null;
-        try (
+        try {
+            File file = new File(path + "player");
             FileInputStream stream = new FileInputStream(file);
             //GZIPInputStream gzip = new GZIPInputStream(stream)
-        ) {
+
             p = objectMapper.readValue(stream, UPlayer.class);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            //e.printStackTrace();
+            return null;
         }
-        if (p != null)
-            turnCounter = p.saveTurn;
-        p.initialize();
+        turnCounter = p.saveTurn;
+        p.reconnectThings();
         return p;
     }
 
