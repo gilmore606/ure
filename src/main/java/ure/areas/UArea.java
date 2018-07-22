@@ -46,6 +46,7 @@ public class UArea implements UTimeListener, Serializable {
     public int xsize, ysize;
     protected HashSet<ULight> lights = new HashSet<>();
     protected HashSet<UActor> actors = new HashSet<>();
+    @JsonIgnore
     protected HashSet<UParticle> particles = new HashSet<>();
 
 

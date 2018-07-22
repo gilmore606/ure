@@ -142,6 +142,8 @@ public class UCartographer implements Runnable {
         if (loaderThread == null) {
             loaderThread = new Thread(this);
             loaderThread.start();
+        } else if (!loaderThread.isAlive()) {
+            loaderThread.start();
         }
     }
     /**
@@ -227,6 +229,7 @@ public class UCartographer implements Runnable {
                 return area;
             }
             catch (IOException e) {
+                e.printStackTrace();
                 System.out.println("Couldn't load area for " + label);
             }
         }
