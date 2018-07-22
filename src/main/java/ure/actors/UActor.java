@@ -262,10 +262,6 @@ public class UActor extends UThing implements Interactable {
     /**
      * Can I see that thing from where I am (and I'm awake, and can see, etc)?
      *
-     * TODO : actually check line of sight instead of just distance!
-     *
-     * @param thing
-     * @return
      */
     public boolean canSee(UThing thing) {
         if (thing.area() != area()) return false;

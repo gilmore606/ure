@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ure.sys.Injector;
+import ure.sys.UCommander;
 
 import javax.inject.Inject;
 
@@ -25,6 +26,8 @@ public class UTerrainCzar {
 
     @Inject
     ObjectMapper objectMapper;
+    @Inject
+    UCommander commander;
 
     public UTerrainCzar(String jsonfilename) {
         this();
@@ -65,6 +68,7 @@ public class UTerrainCzar {
      */
     public UTerrain getTerrainForFilechar(char thechar) {
         UTerrain terrain = terrains.get(thechar).makeClone();
+        terrain.setID(commander.generateNewID(terrain));
         return terrain;
     }
 

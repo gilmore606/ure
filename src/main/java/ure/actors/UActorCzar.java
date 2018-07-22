@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ure.sys.Injector;
+import ure.sys.UCommander;
 
 import javax.inject.Inject;
 
@@ -16,6 +17,8 @@ public class UActorCzar {
 
     @Inject
     ObjectMapper objectMapper;
+    @Inject
+    UCommander commander;
 
     public UActorCzar() {
         Injector.getAppComponent().inject(this);
@@ -38,6 +41,7 @@ public class UActorCzar {
     public UActor getActorByName(String name) {
         UActor clone = (UActor)actorsByName.get(name).makeClone();
         clone.initialize();
+        clone.setID(commander.generateNewID(clone));
         return clone;
     }
 

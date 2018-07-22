@@ -169,8 +169,9 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
         player = commander.loadPlayer();
         if (player == null) {
             System.out.println("Creating the @Player");
-            player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
+            player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.2f, 0.2f, 0.5f), 2, 3);
             player.setName(playername);
+            player.setID(commander.generateNewID(player));
             UThing item = thingCzar.getThingByName("rock");
             item.moveTo(player);
             item = thingCzar.getThingByName("trucker hat");

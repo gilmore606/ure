@@ -2,6 +2,7 @@ package ure.things;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ure.sys.Injector;
+import ure.sys.UCommander;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -15,6 +16,8 @@ public class UThingCzar {
 
     @Inject
     ObjectMapper objectMapper;
+    @Inject
+    UCommander commander;
 
     public UThingCzar() {
         Injector.getAppComponent().inject(this);
@@ -50,6 +53,7 @@ public class UThingCzar {
                 }
             }
         }
+        clone.setID(commander.generateNewID(clone));
         return clone;
     }
 
