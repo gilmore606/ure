@@ -431,7 +431,8 @@ public class UCartographer implements Runnable {
      */
     public void run() {
         System.out.println("CARTO LOADER: background thread starting");
-        while (!commander.isQuitGame()) {
+        while (!commander.isQuitGame() && (commander.player() != null) ||
+                (!loadQueue.isEmpty() || !saveQueue.isEmpty())) {
             while (!loadQueue.isEmpty()) {
                 String next = null;
                 try {
@@ -478,7 +479,10 @@ public class UCartographer implements Runnable {
                 if (area == null)
                     System.out.println("******* NULL AREA IN ACTIVEAREAS");
                 if (area != playerArea) {
-                    if (area.findExitTo(playerArea.getLabel()) == null) {
+                    if (playerArea == null) {
+                        System.out.println("CARTO LOADER: found area " + area.label + " + to harvest and freeze, player has left the world");
+                        addAreaToSaveQueue(area);
+                    } else if (area.findExitTo(playerArea.getLabel()) == null) {
                         System.out.println("CARTO LOADER: found area " + area.label + " to harvest and freeze");
                         addAreaToSaveQueue(area);
                     }

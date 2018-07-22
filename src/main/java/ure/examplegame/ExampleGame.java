@@ -10,6 +10,7 @@ import ure.render.URenderer;
 import ure.render.URendererOGL;
 import ure.sys.Injector;
 import ure.sys.UCommander;
+import ure.sys.UREGame;
 import ure.sys.UTimeListener;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
@@ -24,7 +25,7 @@ import ure.ui.panels.UStatusPanel;
 
 import javax.inject.Inject;
 
-public class ExampleGame implements HearModalTitleScreen, UTimeListener {
+public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener {
 
     static UArea area;
     static UCamera camera;
@@ -105,31 +106,37 @@ public class ExampleGame implements HearModalTitleScreen, UTimeListener {
         renderer = new URendererOGL();
         renderer.initialize();
 
-                cartographer = new ExampleCartographer();
-        commander.registerComponents(player, renderer, thingCzar, actorCzar, cartographer);
-        cartographer.setupRegions();
+        cartographer = new ExampleCartographer();
 
-
-        area = cartographer.getTitleArea();
-
+        commander.registerComponents(this, player, renderer, thingCzar, actorCzar, cartographer);
 
         makeWindow();
-
-        camera.moveTo(area, 50, 50);
-        commander.config.setVisibilityEnable(false);
 
         commander.registerScrollPrinter(scrollPanel);
         commander.registerTimeListener(this);
         commander.addAnimator(camera);
+
+        setupTitleScreen();
+
+        commander.gameLoop();
+    }
+
+    public void setupTitleScreen() {
+        scrollPanel.hide();
+        lensPanel.hide();
+        statusPanel.hide();
+        actorPanel.hide();
+        cartographer.setupRegions();
+        area = cartographer.getTitleArea();
+        if (player != null) {
+            player.setCameraPinStyle(0);
+            player.moveToCell(area, 50, 50);
+            player = null;
+        }
+        camera.moveTo(area, 50, 50);
+        commander.config.setVisibilityEnable(false);
         commander.showModal(new UModalTitleScreen(35, 20, this, "start", UColor.COLOR_BLACK, area));
 
-
-
-
-
-        // commander.speaker.switchBGM("/ultima_wanderer.ogg", 0);
-        //commander.showModal(new UModalURESplash());
-        commander.gameLoop();
     }
 
     public void hearTimeTick(UCommander cmdr) {
@@ -144,8 +151,17 @@ public class ExampleGame implements HearModalTitleScreen, UTimeListener {
     }
 
     public void hearModalTitleScreen(String context) {
-        if (context.equals("new"))
-            cartographer.wipeWorld();
+        if (context.equals("Credits") || context.equals("Quit")) {
+            commander.quitGame();
+        } else {
+            if (context.equals("New World")) {
+                cartographer.wipeWorld();
+            }
+            continueGame();
+        }
+    }
+
+    public void continueGame() {
         System.out.println("Creating the @Player");
         player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
         commander.setPlayer(player);
@@ -163,16 +179,27 @@ public class ExampleGame implements HearModalTitleScreen, UTimeListener {
         player.startActing();
         //cartographer.playerLeftArea(player, null);
 
-        UThing item = thingCzar.getThingByName("rock"); item.moveTo(player);
-        item = thingCzar.getThingByName("trucker hat"); item.moveTo(player);
-        item = thingCzar.getThingByName("torch"); item.moveTo(player);
-        item = thingCzar.getThingByName("apple"); item.moveTo(player);
-        item = thingCzar.getThingByName("apple"); item.moveTo(player);
-        item = thingCzar.getThingByName("flashlight"); item.moveTo(player);
-        item = thingCzar.getThingByName("biscuit"); item.moveTo(player);
-        item = thingCzar.getThingByName("lantern"); item.moveTo(player);
-        item = thingCzar.getThingByName("butcher knife"); item.moveTo(player);
-        item = thingCzar.getThingByName("gold statue"); item.moveTo(player);
-        item = thingCzar.getThingByName("skull"); item.moveTo(player);
+        UThing item = thingCzar.getThingByName("rock");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("trucker hat");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("torch");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("apple");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("apple");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("flashlight");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("biscuit");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("lantern");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("butcher knife");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("gold statue");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("skull");
+        item.moveTo(player);
     }
 }

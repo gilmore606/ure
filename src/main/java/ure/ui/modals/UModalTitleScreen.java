@@ -24,7 +24,7 @@ public class UModalTitleScreen extends UModal {
         alpha = 0f;
         fakeTickCount = 0;
         area = _area;
-        options = new String[]{"Continue", "New World", "Credits"};
+        options = new String[]{"Continue", "New World", "Credits", "Quit"};
         cursor = 0;
     }
 
@@ -50,23 +50,15 @@ public class UModalTitleScreen extends UModal {
                 cursor = cursorMove(cursor, -1, options.length);
             } else if (command.id.equals("MOVE_S")) {
                 cursor = cursorMove(cursor, 1, options.length);
-            } else if (command.id.equals("PASS") || command.id.equals("ESC")) {
-                if (cursor == 0)
-                    resumeGame();
-                else if (cursor == 1)
-                    newGame();
+            } else if (command.id.equals("PASS")) {
+                pickSelection();
             }
         }
     }
 
-    void resumeGame() {
+    void pickSelection() {
         dismiss();
-        ((HearModalTitleScreen)callback).hearModalTitleScreen("resume");
-    }
-
-    void newGame() {
-        dismiss();
-        ((HearModalTitleScreen)callback).hearModalTitleScreen("new");
+        ((HearModalTitleScreen)callback).hearModalTitleScreen(options[cursor]);
     }
 
     @Override

@@ -10,7 +10,7 @@ public class CommandQuit extends UCommand implements HearModalChoices {
 
     public static final String id = "QUIT";
 
-    public static String quitConfirmMsg = "Quit and save progress?";
+    public static String quitConfirmMsg = "Quit to main menu?\nAll progress will be saved.";
     public static String quitYes = "Yes";
     public static String quitNo = "No";
 
@@ -29,7 +29,7 @@ public class CommandQuit extends UCommand implements HearModalChoices {
 
     public void hearModalChoices(String callbackContext, String choice) {
         if (choice.equals(quitYes))
-            commander.quitGame();
+            commander.quitToTitle();
     }
 
 }

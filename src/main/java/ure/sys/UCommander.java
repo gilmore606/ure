@@ -50,6 +50,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     private HashSet<UAnimator> animators;
     private ArrayList<UActor> actors;
 
+    private UREGame game;
     private URenderer renderer;
     private UActor player;
     private UScrollPanel scrollPrinter;
@@ -85,7 +86,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         config = new UConfig();
         random = new Random();
     }
-    public void registerComponents(UActor theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
+    public void registerComponents(UREGame _game, UActor theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
+        game = _game;
         renderer = theRenderer;
         timeListeners = new HashSet<UTimeListener>();
         animators = new HashSet<UAnimator>();
@@ -414,6 +416,10 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
     public void quitGame() {
         quitGame = true;
+    }
+
+    public void quitToTitle() {
+        game.setupTitleScreen();
     }
 
     public void tickTime() {
