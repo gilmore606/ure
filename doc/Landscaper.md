@@ -22,3 +22,5 @@ The topic of how best to generate a roguelike area map is beyond the scope of th
 a game, you hopefully have some ideas on this subject yourself.  For inspiration you can look at the buildArea() methods on the
 Landscapers included in the ExampleGame.  These methods call a large number of helper methods on Landscaper to do things like
 dig caves, build complexes of rooms, stamp out [vaults](Vaults.md), and place appropriate things and actors.
+
+(More info: [Vaults](doc/Vaults.md), [Noise](doc/Noise.md), [Object Creation](doc/ObjectCreation.md))
