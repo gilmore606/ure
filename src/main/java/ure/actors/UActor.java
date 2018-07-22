@@ -278,6 +278,13 @@ public class UActor extends UThing implements Interactable {
         return true;
     }
 
+    /**
+     * Can I see through this cell?
+     */
+    public boolean canSeeThrough(UCell cell) {
+        return !cell.getTerrain().isOpaque();
+    }
+
     public void wakeCheck(int playerx, int playery) {
         if (getLocation() == null) return;
         int dist = Math.abs(areaX() - playerx) + Math.abs(areaY() - playery);
