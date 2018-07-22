@@ -1,5 +1,9 @@
 package ure.sys;
 
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import ure.actions.ActionWalk;
@@ -11,6 +15,7 @@ import ure.areas.UCartographer;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.things.ThingDeserializer;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
@@ -21,13 +26,19 @@ import ure.ui.USpeaker;
 import ure.vaulted.VaultedArea;
 import ure.vaulted.VaultedModal;
 
+import javax.inject.Inject;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -42,6 +53,9 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class UCommander implements URenderer.KeyListener,HearModalGetString,HearModalStringPick {
 
+    @Inject
+    protected ObjectMapper objectMapper;
+
     public UConfig config;
     public Random random;
 
@@ -52,7 +66,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     private UREGame game;
     private URenderer renderer;
-    private UActor player;
+    private UPlayer player;
     private UScrollPanel scrollPrinter;
     private UCamera modalCamera;
 
@@ -88,7 +102,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         config = new UConfig();
         random = new Random();
     }
-    public void registerComponents(UREGame _game, UActor theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
+    public void registerComponents(UREGame _game, UPlayer theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
         game = _game;
         renderer = theRenderer;
         timeListeners = new HashSet<UTimeListener>();
@@ -108,7 +122,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     public int getTurn() { return turnCounter; };
 
-    public void setPlayer(UActor theplayer) {
+    public void setPlayer(UPlayer theplayer) {
         player = theplayer;
     }
 
@@ -424,7 +438,42 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public void quitToTitle() {
+        persistPlayer();
         game.setupTitleScreen();
+    }
+
+    public void persistPlayer() {
+        System.out.println("Persisting player " + player.getName() + "...");
+        player.saveStateData();
+        String path = savePath();
+        File file = new File(path + "player");
+        try (
+                FileOutputStream stream = new FileOutputStream(file);
+                //GZIPOutputStream gzip = new GZIPOutputStream(stream)
+        ) {
+            JsonFactory jfactory = new JsonFactory();
+            JsonGenerator jGenerator = jfactory.createGenerator(stream, JsonEncoding.UTF8);
+            jGenerator.setCodec(objectMapper);
+            jGenerator.writeObject((UActor)player);
+            jGenerator.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public UPlayer loadPlayer() {
+        String path = savePath();
+        File file = new File(path + "player");
+        UPlayer p = null;
+        try (
+            FileInputStream stream = new FileInputStream(file);
+            //GZIPInputStream gzip = new GZIPInputStream(stream)
+        ) {
+            p = objectMapper.readValue(stream, UPlayer.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return p;
     }
 
     public void tickTime() {

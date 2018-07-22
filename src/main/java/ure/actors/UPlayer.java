@@ -1,5 +1,6 @@
 package ure.actors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.areas.UArea;
@@ -14,7 +15,16 @@ public class UPlayer extends UActor {
 
     public boolean awake = true;
 
+    public String saveAreaLabel;
+    public int saveAreaX;
+    public int saveAreaY;
+
+    @JsonIgnore
     ULight light;
+
+    public UPlayer() {
+        super();
+    }
 
     public UPlayer(String thename, char theicon, UColor thecolor, boolean addOutline, UColor selfLightColor, int selfLight, int selfLightFalloff) {
         super();
@@ -61,4 +71,17 @@ public class UPlayer extends UActor {
     public void closeOut() {
 
     }
+
+    public void saveStateData() {
+        saveAreaLabel = area().getLabel();
+        saveAreaX = areaX();
+        saveAreaY = areaY();
+    }
+
+    public void setSaveAreaLabel(String l) { saveAreaLabel = l; }
+    public String getSaveAreaLabel() { return saveAreaLabel; }
+    public void setSaveAreaX(int _x) { saveAreaX = _x; }
+    public void setSaveAreaY(int _y) { saveAreaY = _y; }
+    public int getSaveAreaX() { return saveAreaX; }
+    public int getSaveAreaY() { return saveAreaY; }
 }

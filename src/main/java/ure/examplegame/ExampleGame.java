@@ -163,44 +163,57 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
     }
 
     public void continueGame() {
-        System.out.println("Creating the @Player");
-        player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
+        player = commander.loadPlayer();
+        if (player == null) {
+            System.out.println("Creating the @Player");
+            player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
+            UThing item = thingCzar.getThingByName("rock");
+            item.moveTo(player);
+            item = thingCzar.getThingByName("trucker hat");
+            item.moveTo(player);
+            item = thingCzar.getThingByName("torch");
+            item.moveTo(player);
+            item = thingCzar.getThingByName("apple");
+            item.moveTo(player);
+            item = thingCzar.getThingByName("apple");
+            item.moveTo(player);
+            item = thingCzar.getThingByName("flashlight");
+            item.moveTo(player);
+            item = thingCzar.getThingByName("biscuit");
+            item.moveTo(player);
+            item = thingCzar.getThingByName("lantern");
+            item.moveTo(player);
+            item = thingCzar.getThingByName("butcher knife");
+            item.moveTo(player);
+            item = thingCzar.getThingByName("gold statue");
+            item.moveTo(player);
+            item = thingCzar.getThingByName("skull");
+            item.moveTo(player);
+            area = cartographer.getStartArea();
+            cartographer.startLoader();
+            UCell startcell = area.randomOpenCell(player);
+            player.setSaveAreaLabel(area.getLabel());
+            player.setSaveAreaX(startcell.x);
+            player.setSaveAreaY(startcell.y);
+        } else {
+            System.out.println("Loading existing player into " + player.getSaveAreaLabel());
+            cartographer.startLoader();
+            area = cartographer.getArea(player.getSaveAreaLabel());
+        }
         commander.setPlayer(player);
         System.out.println("Un-hiding interface panels");
         statusPanel.unHide();
         lensPanel.unHide();
         scrollPanel.unHide();
         actorPanel.unHide();
-        cartographer.startLoader();
-        area = cartographer.getStartArea();
-        UCell startcell = area.randomOpenCell(player);
+
+
         commander.config.setVisibilityEnable(true);
         player.attachCamera(camera, UCamera.PINSTYLE_SOFT);
-        player.moveToCell(area, startcell.x, startcell.y);
+        player.moveToCell(area, player.getSaveAreaX(), player.getSaveAreaY());
         player.startActing();
         //cartographer.playerLeftArea(player, null);
 
-        UThing item = thingCzar.getThingByName("rock");
-        item.moveTo(player);
-        item = thingCzar.getThingByName("trucker hat");
-        item.moveTo(player);
-        item = thingCzar.getThingByName("torch");
-        item.moveTo(player);
-        item = thingCzar.getThingByName("apple");
-        item.moveTo(player);
-        item = thingCzar.getThingByName("apple");
-        item.moveTo(player);
-        item = thingCzar.getThingByName("flashlight");
-        item.moveTo(player);
-        item = thingCzar.getThingByName("biscuit");
-        item.moveTo(player);
-        item = thingCzar.getThingByName("lantern");
-        item.moveTo(player);
-        item = thingCzar.getThingByName("butcher knife");
-        item.moveTo(player);
-        item = thingCzar.getThingByName("gold statue");
-        item.moveTo(player);
-        item = thingCzar.getThingByName("skull");
-        item.moveTo(player);
+
     }
 }

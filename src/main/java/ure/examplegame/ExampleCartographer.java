@@ -32,12 +32,14 @@ public class ExampleCartographer extends UCartographer {
     @Override
     public UArea getTitleArea() {
         UArea area = super.getTitleArea();
+        removeActiveArea(area);
         ExampleCaveScaper scaper = new ExampleCaveScaper();
         scaper.buildArea(area, 1, new String[]{"cave","title"});
         scaper.scatterThings(area, new String[]{"crystal stalagmite"}, new String[]{"floor"}, 30);
         scaper.scatterThings(area, new String[]{"magma vent"}, new String[]{"floor"}, 30);
         scaper.scatterActorsByTags(area, 0,0,area.xsize-1, area.ysize-1, new String[]{"title"}, 1, 20);
         scaper.scatterThings(area, new String[]{"lamppost"}, new String[]{"floor"}, 10);
+        addActiveArea(area);
         return area;
     }
 
