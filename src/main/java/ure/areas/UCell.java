@@ -47,7 +47,7 @@ public class UCell implements UContainer {
 
     public UCell(UArea theArea, int thex, int they, UTerrain theTerrain) {
         this();
-        setContents(new UCollection(this));
+        setContents(new UCollection(this, "cell" + Integer.toString(thex) + ","+Integer.toString(they) + " area " + theArea.label));
         area = theArea;
         x = thex;
         y = they;

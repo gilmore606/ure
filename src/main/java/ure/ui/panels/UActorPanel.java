@@ -3,9 +3,11 @@ package ure.ui.panels;
 import ure.actors.UActor;
 import ure.actors.UPlayer;
 import ure.math.UColor;
+import ure.math.UPath;
 import ure.render.URenderer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class UActorPanel extends UPanel {
 
@@ -23,6 +25,22 @@ public class UActorPanel extends UPanel {
                 actors.add(actor);
             }
         }
+        sortActors(player);
+    }
+
+    public void sortActors(UPlayer player) {
+        Collections.sort(actors, (a,b) -> isAcloser(a,b,player));
+    }
+
+    public int isAcloser(UActor a, UActor b, UPlayer player) {
+        int dista = UPath.mdist(a.areaX(), a.areaY(), player.areaX(), player.areaY());
+        int distb = UPath.mdist(b.areaX(), b.areaY(), player.areaX(), player.areaY());
+        if (dista < distb)
+            return -1;
+        else if (distb < dista)
+            return 1;
+        else
+            return 0;
     }
 
     @Override
@@ -30,13 +48,17 @@ public class UActorPanel extends UPanel {
         super.draw(renderer);
         if (!hidden) {
             int i = 0;
-            int entryHeight = commander.config.getGlyphHeight() * 3;
             for (UActor actor : actors) {
-                actor.getIcon().draw(renderer, padX, padY + (i * entryHeight));
-                renderer.drawString(padX + commander.config.getGlyphWidth() * 2, padY + (i * entryHeight), fgColor, actor.getName());
-                renderer.drawString(padX + commander.config.getGlyphWidth() * 2, padY + (i * entryHeight) + commander.config.getTextHeight(), actor.UIstatusColor(), actor.UIstatus());
+                drawActor(renderer, actor, i);
                 i++;
             }
         }
+    }
+
+    public void drawActor(URenderer renderer, UActor actor, int pos) {
+        int entryHeight = commander.config.getGlyphHeight() * 3;
+        actor.getIcon().draw(renderer, padX, padY + (pos * entryHeight));
+        renderer.drawString(padX + commander.config.getGlyphWidth() * 2, padY + (pos * entryHeight), fgColor, actor.getName());
+        renderer.drawString(padX + commander.config.getGlyphWidth() * 2, padY + (pos * entryHeight) + commander.config.getTextHeight(), actor.UIstatusColor(), actor.UIstatus());
     }
 }

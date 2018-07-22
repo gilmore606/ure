@@ -2,6 +2,7 @@ package ure.things;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UActor;
+import ure.actors.UPlayer;
 import ure.areas.UArea;
 import ure.areas.UCell;
 
@@ -17,6 +18,10 @@ public class UCollection {
 
     @JsonIgnore
     private UContainer container;
+    @JsonIgnore
+    boolean closed;
+    @JsonIgnore
+    String debugtag;
 
     protected ArrayList<UThing> things;
     protected ArrayList<UActor> actors;
@@ -24,12 +29,14 @@ public class UCollection {
     public UCollection() {
         things = new ArrayList<>();
         actors = new ArrayList<>();
+        closed = false;
     }
 
-    public UCollection(UContainer cont) {
+    public UCollection(UContainer cont, String debugtag) {
         things = new ArrayList<>();
         actors = new ArrayList<>();
         container = cont;
+        this.debugtag = debugtag;
     }
 
     public void reconnect(UArea area, UContainer container) {
@@ -43,6 +50,8 @@ public class UCollection {
     }
 
     public void closeOut() {
+        if (container instanceof UPlayer)
+            System.out.println("*** BUG : player's collection is closing!");
         if (things != null) {
             for (UThing thing : things) {
                 thing.closeOut();
@@ -56,6 +65,7 @@ public class UCollection {
         things = null;
         actors = null;
         container = null;
+        closed = true;
     }
 
     public void remove(UThing thing) {
@@ -98,6 +108,12 @@ public class UCollection {
      * Whatever we're in just moved.
      */
     public void notifyMove() {
+        if (things == null) {
+            System.out.println("***BUG null things in collection.notifyMove() - i was made by: " + debugtag);
+            if (closed)
+                System.out.println("*** THIS COLLECTION IS CLOSED");
+            System.out.println("*** container: " + container.toString());
+        }
         for (UThing thing : things)
             thing.notifyMove();
     }

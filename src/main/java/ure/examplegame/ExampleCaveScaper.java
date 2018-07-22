@@ -15,6 +15,7 @@ public class ExampleCaveScaper extends ULandscaper {
     @Override
     public void buildArea(UArea area, int level, String[] tags) {
         buildCaves(area, "floor", 0,0,area.xsize-1, area.ysize-1);
+        scatterActorsByTags(area,1,1,area.xsize-1,area.ysize-1, new String[]{"cave"}, level, 10);
     }
 
     public void buildCaves(UArea area, String floorTerrain,

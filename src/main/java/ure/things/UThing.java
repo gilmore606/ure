@@ -70,7 +70,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     }
 
     public void initialize() {
-        setContents(new UCollection(this));
+        setContents(new UCollection(this, this.name));
         if (getGlyphColor() == null && getColor() != null) {
             SetupColors();
         }
