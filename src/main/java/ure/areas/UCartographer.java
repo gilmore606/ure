@@ -403,6 +403,9 @@ public class UCartographer implements Runnable {
     public synchronized void removeActiveArea(UArea area) {
         activeAreas.remove(area);
     }
+    public synchronized UArea getActiveAreaAt(int i) {
+        return activeAreas.get(i);
+    }
 
     public synchronized void addCloseableArea(UArea area) {
         if (!closeableAreas.contains(area))
@@ -497,7 +500,8 @@ public class UCartographer implements Runnable {
             UArea playerArea = null;
             if (commander.player() != null)
                 playerArea = commander.player().area();
-            for (UArea area : activeAreas) {
+            for (int i=0;i<activeAreas.size();i++) {
+                UArea area = getActiveAreaAt(i);
                 if (area == null)
                     System.out.println("******* NULL AREA IN ACTIVEAREAS");
                 if (area != playerArea) {

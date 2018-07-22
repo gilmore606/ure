@@ -6,6 +6,7 @@
  * user guide available at https://docs.gradle.org/4.8/userguide/tutorial_java_projects.html
  */
 
+
 plugins {
     // IntelliJ integration
     id 'idea'
@@ -13,12 +14,16 @@ plugins {
     // Dagger
     id "net.ltgt.apt" version "0.10"
 
+    // Shadow for fatjar build
+    id 'com.github.johnrengelman.shadow' version '2.0.4'
+
     // Apply the java plugin to add support for Java
     id 'java'
 
     // Apply the application plugin to add support for building an application
     id 'application'
 }
+
 
 // Define the main class for the application
 mainClassName = 'ure.ExampleMain'
