@@ -6,8 +6,11 @@ import ure.actions.ActionEmote;
 import ure.actions.UAction;
 import ure.actions.ActionGet;
 import ure.actions.ActionWalk;
+import ure.areas.UArea;
 import ure.behaviors.UBehavior;
 import ure.math.UPath;
+import ure.sys.Entity;
+import ure.things.UContainer;
 import ure.ui.modals.UModal;
 import ure.ui.modals.UModalNotify;
 
@@ -28,6 +31,8 @@ public class UNPC extends UActor {
 
     @JsonIgnore
     public Random random = new Random();
+    @JsonIgnore
+    public ArrayList<Entity> seenEntities;
 
     @Override
     public void act() {
@@ -55,6 +60,8 @@ public class UNPC extends UActor {
 
     UAction nextAction() {
         // What should we do next?  Override this for custom AI.
+        //
+        updateSeenEntities();
         for (UBehavior behavior : getBehaviorObjects()) {
             UAction action = behavior.action(this);
             if (action != null) return action;
@@ -70,6 +77,36 @@ public class UNPC extends UActor {
         }
         return null;
     }
+
+    void updateSeenEntities() {
+        if (seenEntities == null)
+            seenEntities = new ArrayList<>();
+        else
+            seenEntities.clear();
+        for (int x=areaX()-getVisionRange();x<areaX()+getVisionRange();x++) {
+            for (int y=areaY()-getVisionRange();y<areaY()+getVisionRange();y++) {
+                UActor actor = area().actorAt(x,y);
+                if (caresAbout(actor))
+                    if (canSee(actor)) {
+                        seenEntities.add(actor);
+                        System.out.println(this.name + " (" + Long.toString(ID) + ") notices " + actor.getName() + "...");
+                    }
+            }
+        }
+
+    }
+
+    boolean caresAbout(Entity entity) {
+        if (entity == this) return false;
+        for (UBehavior behavior : behaviorObjects) {
+            if (behavior.caresAbout(entity))
+                return true;
+        }
+        if (entity instanceof UPlayer)
+            return true;
+        return false;
+    }
+
     UAction Wander() {
         int dir = random.nextInt(4);
         int wx,wy;

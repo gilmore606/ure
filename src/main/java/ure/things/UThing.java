@@ -35,7 +35,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public UCommander commander;
 
     protected String name;
-    protected double ID;
+    protected long ID;
     protected String iname;
     protected String dname;
     protected String plural;
@@ -79,8 +79,8 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         stats = new HashMap<>();
     }
 
-    public double getID() { return ID; }
-    public void setID(double newID) { ID = newID; }
+    public long getID() { return ID; }
+    public void setID(long newID) { ID = newID; }
 
     public void reconnect(UArea area, UContainer container) {
         this.location = container;

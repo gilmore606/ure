@@ -120,8 +120,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         modalStack = new Stack<>();
     }
 
-    public double generateNewID(Entity entity) {
-        return random.nextDouble();
+    public long generateNewID(Entity entity) {
+        return random.nextLong();
     }
 
     public int getTurn() { return turnCounter; };

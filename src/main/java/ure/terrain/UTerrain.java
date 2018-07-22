@@ -40,7 +40,7 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
     public static final String TYPE = "";
 
     protected String name;
-    protected double ID;
+    protected long ID;
     protected String plural;
     protected String type;
     protected String walkmsg = "";
@@ -396,6 +396,6 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
         this.animationFrames = animationFrames;
     }
 
-    public double getID() { return ID; }
-    public void setID(double newID) { ID = newID; }
+    public long getID() { return ID; }
+    public void setID(long newID) { ID = newID; }
 }

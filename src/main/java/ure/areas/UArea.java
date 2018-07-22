@@ -110,6 +110,10 @@ public class UArea implements UTimeListener, Serializable {
     }
 
     public void closeOut() {
+        closed = true;
+        if (actors != null)
+            for (UActor actor : actors)
+                commander.unregisterActor(actor);
         for (int x=0;x<xsize;x++) {
             for (int y=0;y<ysize;y++) {
                 if (cells[x][y] != null) {
@@ -121,7 +125,6 @@ public class UArea implements UTimeListener, Serializable {
         setLights(null);
         setActors(null);
         setCells(null);
-        closed = true;
         label = "closed (" + label + ")";
         System.out.println("AREA : " + label);
     }
@@ -364,7 +367,8 @@ public class UArea implements UTimeListener, Serializable {
     }
     public UActor actorAt(int x, int y) {
         if (isValidXY(x,y)) {
-            return getCells()[x][y].actorAt();
+            if (cells[x][y] != null)
+                return cells[x][y].actorAt();
         }
         return null;
     }
@@ -458,8 +462,6 @@ public class UArea implements UTimeListener, Serializable {
             commander.unregisterActor(actor);
         }
         commander.unregisterTimeListener(this);
-        terrainCzar = null;
-        commander = null;
     }
 
     public String getLabel() {

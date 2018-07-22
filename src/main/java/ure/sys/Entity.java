@@ -11,8 +11,8 @@ import java.util.ArrayList;
 public interface Entity {
 
     String getName();
-    double getID();
-    void setID(double newID);
+    long getID();
+    void setID(long newID);
     String getPlural();
     Icon getIcon();
     String getCategory();

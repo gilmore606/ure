@@ -12,6 +12,8 @@ public class BehaviorWander extends UBehavior {
 
     public static String TYPE = "wander";
 
+
+
     @Override
     public UAction action(UNPC actor) {
         int dir = actor.random.nextInt(4);
@@ -25,6 +27,9 @@ public class BehaviorWander extends UBehavior {
         } else {
             wx = 0; wy = -1;
         }
-        return new ActionWalk(actor, wx,wy);
+        UAction act = new ActionWalk(actor, wx,wy);
+        currentUrgency = 1f;
+        currentStatus = "wandering";
+        return act;
     }
 }
