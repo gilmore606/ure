@@ -7,7 +7,7 @@ import ure.render.URenderer;
 import ure.sys.GLKey;
 import ure.ui.RexFile;
 
-public class UModalTitleScreen extends UModal {
+public class UModalTitleScreen extends UModal implements HearModalGetString {
 
     RexFile logoSplash;
     float alpha;
@@ -31,9 +31,11 @@ public class UModalTitleScreen extends UModal {
     @Override
     public void drawContent(URenderer renderer) {
         drawTitleSplash(renderer);
-        drawString(renderer, "Example Quest : Curse of the Feature Creep", 7, 13);
-        for (int i=0;i<options.length;i++) {
-            drawString(renderer, options[i], 15, 15+i,  (i == cursor) ? null : UColor.COLOR_GRAY, (i == cursor) ? commander.config.getHiliteColor() : null);
+        if (alpha >= 1f) {
+            drawString(renderer, "Example Quest : Curse of the Feature Creep", 7, 13);
+            for (int i = 0;i < options.length;i++) {
+                drawString(renderer, options[i], 15, 15 + i, (i == cursor) ? null : UColor.COLOR_GRAY, (i == cursor) ? commander.config.getHiliteColor() : null);
+            }
         }
     }
 
@@ -45,7 +47,9 @@ public class UModalTitleScreen extends UModal {
 
     @Override
     public void hearCommand(UCommand command, GLKey k) {
-        if (command != null) {
+        if (alpha < 1f) {
+            alpha = 1f;
+        } else if (command != null) {
             if (command.id.equals("MOVE_N")) {
                 cursor = cursorMove(cursor, -1, options.length);
             } else if (command.id.equals("MOVE_S")) {
@@ -57,15 +61,28 @@ public class UModalTitleScreen extends UModal {
     }
 
     void pickSelection() {
-        dismiss();
-        ((HearModalTitleScreen)callback).hearModalTitleScreen(options[cursor]);
+        if (options[cursor].equals("New World")) {
+            UModalGetString smodal = new UModalGetString("Name your character:", 20, true,
+                                    null, this, "name-new-world");
+            commander.showModal(smodal);
+        } else {
+            dismiss();
+            ((HearModalTitleScreen) callback).hearModalTitleScreen(options[cursor], null);
+        }
+    }
+
+    public void hearModalGetString(String context, String input) {
+        if (context.equals("name-new-world")) {
+            dismiss();
+            ((HearModalTitleScreen) callback).hearModalTitleScreen("New World", input);
+        }
     }
 
     @Override
     public void animationTick() {
         super.animationTick();
         area.animationTick();
-        alpha += 0.04f;
+        alpha += 0.02f;
         if (alpha >1f) alpha = 1f;
         fakeTickCount++;
         if (fakeTickCount > 20) {

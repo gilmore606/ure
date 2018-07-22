@@ -150,7 +150,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
         }
     }
 
-    public void hearModalTitleScreen(String context) {
+    public void hearModalTitleScreen(String context, String optional) {
         if (context.equals("Credits") || context.equals("Quit")) {
             commander.quitGame();
         } else {

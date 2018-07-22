@@ -386,11 +386,6 @@ public class UCartographer implements Runnable {
         area.label = "TITLE";
         addActiveArea(area);
         commander.config.addDefaultSunCycle(area);
-        ExampleCaveScaper scaper = new ExampleCaveScaper();
-        scaper.scatterThings(area, new String[]{"crystal stalagmite"}, new String[]{"floor"}, 60);
-        scaper.scatterThings(area, new String[]{"magma vent"}, new String[]{"floor"}, 40);
-        scaper.scatterActorsByTags(area, 0,0,area.xsize-1, area.ysize-1, new String[]{"title"}, 1, 40);
-        scaper.scatterThings(area, new String[]{"lamppost"}, new String[]{"floor"}, 10);
         return area;
     }
 

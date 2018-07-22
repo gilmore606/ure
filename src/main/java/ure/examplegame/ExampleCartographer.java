@@ -1,5 +1,6 @@
 package ure.examplegame;
 
+import ure.areas.UArea;
 import ure.areas.UCartographer;
 import ure.areas.ULandscaper;
 
@@ -26,6 +27,18 @@ public class ExampleCartographer extends UCartographer {
             );
         }
         startArea = "forest 1";
+    }
+
+    @Override
+    public UArea getTitleArea() {
+        UArea area = super.getTitleArea();
+        ExampleCaveScaper scaper = new ExampleCaveScaper();
+        scaper.buildArea(area, 1, new String[]{"cave","title"});
+        scaper.scatterThings(area, new String[]{"crystal stalagmite"}, new String[]{"floor"}, 30);
+        scaper.scatterThings(area, new String[]{"magma vent"}, new String[]{"floor"}, 30);
+        scaper.scatterActorsByTags(area, 0,0,area.xsize-1, area.ysize-1, new String[]{"title"}, 1, 20);
+        scaper.scatterThings(area, new String[]{"lamppost"}, new String[]{"floor"}, 10);
+        return area;
     }
 
 }
