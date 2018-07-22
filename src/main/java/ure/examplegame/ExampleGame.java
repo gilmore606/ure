@@ -135,6 +135,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
         }
         camera.moveTo(area, 50, 50);
         commander.config.setVisibilityEnable(false);
+        commander.wipeModals();
         commander.showModal(new UModalTitleScreen(35, 20, this, "start", UColor.COLOR_BLACK, area));
 
     }

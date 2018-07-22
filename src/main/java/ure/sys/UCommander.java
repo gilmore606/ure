@@ -502,6 +502,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
     }
 
+    public void wipeModals() {
+        while (modal != null)
+            detachModal();
+    }
+
     /**
      * Get the filesystem path to the current savestate (the world we're playing now), or the top level save path.
      * @return

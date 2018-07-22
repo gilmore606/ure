@@ -405,7 +405,7 @@ public class UCartographer implements Runnable {
         closeableAreas.remove(area);
     }
     public boolean areaIsCloseable(UArea area) {
-        if (System.nanoTime() - area.closeRequestedTime > (1000*1000))
+        if (System.nanoTime() - area.closeRequestedTime > (1000*300))
             return true;
         return false;
     }
