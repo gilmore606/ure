@@ -7,6 +7,8 @@ import ure.render.URenderer;
 import ure.sys.GLKey;
 import ure.ui.RexFile;
 
+import java.io.File;
+
 public class UModalTitleScreen extends UModal implements HearModalGetString {
 
     RexFile logoSplash;
@@ -25,6 +27,9 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         fakeTickCount = 0;
         area = _area;
         options = new String[]{"Continue", "New World", "Credits", "Quit"};
+        File file = new File(commander.savePath() + "player");
+        if (!file.isFile())
+            options = new String[]{"New World", "Credits", "Quit"};
         cursor = 0;
     }
 
