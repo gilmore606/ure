@@ -93,20 +93,32 @@ public class UNPC extends UActor {
         // What should we do next?  Override this for custom AI.
         //
         updateSeenEntities();
+        UAction bestAction = null;
+        float bestUrgency = 0f;
         for (UBehavior behavior : getBehaviorObjects()) {
             UAction action = behavior.action(this);
-            if (action != null) return action;
+            if (action != null) {
+                if (bestAction == null) {
+                    bestAction = action;
+                    bestUrgency = behavior.getCurrentUrgency();
+                } else if (behavior.getCurrentUrgency() > bestUrgency) {
+                    bestAction = action;
+                    bestUrgency = behavior.getCurrentUrgency();
+                }
+            }
         }
-
-
-        float wut = commander.random.nextFloat();
-        if (wut < 0.1f) {
-            if (getAmbients() != null)
-                return Ambient();
-        } else if (wut < 0.5f) {
-            return Wander();
+        return bestAction;
+    }
+    UBehavior controllingBehavior() {
+        float bestUrgency = 0f;
+        UBehavior b = null;
+        for (UBehavior behavior : getBehaviorObjects()) {
+            if (behavior.getCurrentUrgency() > bestUrgency) {
+                b = behavior;
+                bestUrgency = behavior.getCurrentUrgency();
+            }
         }
-        return null;
+        return b;
     }
 
     void updateSeenEntities() {
@@ -138,27 +150,13 @@ public class UNPC extends UActor {
         return false;
     }
 
-    UAction Wander() {
-        int dir = commander.random.nextInt(4);
-        int wx,wy;
-        if (dir == 0) {
-            wx = -1; wy = 0;
-        } else if (dir == 1) {
-            wx = 1; wy = 0;
-        } else if (dir == 2) {
-            wx = 0; wy = 1;
-        } else {
-            wx = 0; wy = -1;
+    @Override
+    public String UIstatus() {
+        UBehavior behavior = controllingBehavior();
+        if (behavior != null) {
+            return behavior.getCurrentStatus();
         }
-        return new ActionWalk(this,wx,wy);
-    }
-    UAction HuntPlayer() {
-        System.out.println(this.getName() + " hunting from " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
-        int[] step = UPath.nextStep(area(), areaX(), areaY(), commander.player().areaX(), commander.player().areaY(), this, 25);
-        if (step != null) {
-            return new ActionWalk(this,step[0] - areaX(), step[1] - areaY());
-        }
-        return null;
+        return super.UIstatus();
     }
 
     UAction Ambient() {

@@ -392,7 +392,7 @@ public class UActor extends UThing implements Interactable {
     }
 
     public String UIstatus() {
-        return "(wandering)";
+        return "";
     }
     public UColor UIstatusColor() {
         return UColor.COLOR_GRAY;

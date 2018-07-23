@@ -44,7 +44,8 @@
     "actionspeed": 0.9,
     "movespeed": 1.2,
     "wakerange": 30,
-    "sleeprange": 35
+    "sleeprange": 35,
+    "behaviors": [ "wander" ]
   },
   {
     "name": "sasquatch",
