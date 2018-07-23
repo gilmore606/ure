@@ -271,7 +271,7 @@ public class UCamera extends View implements UAnimator {
     void setVisibilityAt(int col, int row, float vis) {
         if (isValidCell(col, row)) {
             lightcells[col][row].setVisibility(vis);
-            if (vis > 0.5f)
+            if (vis > commander.config.getVisibilityThreshold() && lightAt(col,row).grayscale() > commander.config.getVisibilityThreshold())
                 area.setSeen(col + leftEdge, row + topEdge);
         }
     }

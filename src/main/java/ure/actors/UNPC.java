@@ -30,7 +30,8 @@ public class UNPC extends UActor {
     protected ArrayList<UBehavior> behaviorObjects = new ArrayList<>();
 
     @JsonIgnore
-    public Random random = new Random();
+    protected String[] defaultBehaviors;
+
     @JsonIgnore
     public ArrayList<Entity> seenEntities;
 
@@ -68,7 +69,7 @@ public class UNPC extends UActor {
         }
 
 
-        float wut = random.nextFloat();
+        float wut = commander.random.nextFloat();
         if (wut < 0.1f) {
             if (getAmbients() != null)
                 return Ambient();
@@ -108,7 +109,7 @@ public class UNPC extends UActor {
     }
 
     UAction Wander() {
-        int dir = random.nextInt(4);
+        int dir = commander.random.nextInt(4);
         int wx,wy;
         if (dir == 0) {
             wx = -1; wy = 0;
@@ -131,7 +132,7 @@ public class UNPC extends UActor {
     }
 
     UAction Ambient() {
-        return new ActionEmote(this, getAmbients()[random.nextInt(getAmbients().length)]);
+        return new ActionEmote(this, getAmbients()[commander.random.nextInt(getAmbients().length)]);
     }
 
 
