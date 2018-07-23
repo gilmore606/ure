@@ -30,7 +30,8 @@
     "spawnlevels": [ 1,2 ],
     "actionspeed": 1.1,
     "movespeed": 1.3,
-    "wakerange": 35
+    "wakerange": 35,
+    "behaviors": [ "wander" ]
   },
   {
     "name": "deer",

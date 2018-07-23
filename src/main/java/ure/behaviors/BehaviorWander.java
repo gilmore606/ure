@@ -10,9 +10,9 @@ import ure.actors.UNPC;
  */
 public class BehaviorWander extends UBehavior {
 
-    public static String TYPE = "wander";
+    public static final String TYPE = "wander";
 
-
+    public BehaviorWander() { super(TYPE);}
 
     @Override
     public UAction action(UNPC actor) {

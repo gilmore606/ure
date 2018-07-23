@@ -1,5 +1,6 @@
 package ure.behaviors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UActor;
 import ure.sys.Entity;
 import ure.sys.Injector;
@@ -20,11 +21,12 @@ import javax.inject.Inject;
 public abstract class UBehavior {
 
     @Inject
+    @JsonIgnore
     UCommander commander;
 
     public UActor actor;        // the actor we're a part of
 
-    public static String TYPE = "";
+    protected String TYPE = "";
 
     float relativeUrgency;      // how urgent are we vs our NPC's other behaviors?
     float currentUrgency;       // urgency of our last action request
@@ -32,6 +34,12 @@ public abstract class UBehavior {
 
     public UBehavior() {
         Injector.getAppComponent().inject(this);
+        currentUrgency = 0f;
+        currentStatus = "";
+    }
+    public UBehavior(String type) {
+        this();
+        this.TYPE = type;
     }
 
     /**
@@ -59,4 +67,6 @@ public abstract class UBehavior {
     public void setCurrentStatus(String status) { currentStatus = status; }
     public UActor getActor() { return actor; }
     public void setActor(UActor _actor) { actor = _actor; }
+    public String getTYPE() { return TYPE; }
+    public void setTYPE(String t) { TYPE = t; }
 }

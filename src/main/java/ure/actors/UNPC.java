@@ -36,6 +36,36 @@ public class UNPC extends UActor {
     public ArrayList<Entity> seenEntities;
 
     @Override
+    public void initialize() {
+        super.initialize();
+        initializeBehaviors();
+    }
+
+    public void initializeBehaviors() {
+        if (defaultBehaviors != null) {
+            for (String bname : defaultBehaviors) {
+                UBehavior b = getBehaviorByType(bname);
+                behaviorObjects.add(b);
+            }
+        }
+        if (behaviors != null) {
+            for (String bname : behaviors) {
+                UBehavior b = getBehaviorByType(bname);
+                behaviorObjects.add(b);
+            }
+        }
+    }
+    public UBehavior getBehaviorByType(String behaviorType) {
+        Class<? extends UBehavior> type = commander.actorCzar.behaviorDeserializer.classForType(behaviorType);
+        try {
+            return type.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
     public void act() {
         // Keep acting until we don't have any action time left.
         // You shouldn't override this.  You probably want nextAction().

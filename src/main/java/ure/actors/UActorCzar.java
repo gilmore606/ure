@@ -5,7 +5,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ure.behaviors.BehaviorDeserializer;
+import ure.behaviors.UBehavior;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 
@@ -20,11 +23,14 @@ public class UActorCzar {
     @Inject
     UCommander commander;
 
+    public BehaviorDeserializer behaviorDeserializer;
+
     public UActorCzar() {
         Injector.getAppComponent().inject(this);
     }
 
     public void loadActors(String resourceName) {
+        behaviorDeserializer = new BehaviorDeserializer(objectMapper);
         actorsByName = new HashMap<>();
         try {
             InputStream inputStream = getClass().getResourceAsStream(resourceName);

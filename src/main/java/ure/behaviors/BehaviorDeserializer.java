@@ -32,7 +32,7 @@ public class BehaviorDeserializer extends JsonDeserializer<UBehavior> {
         return objectMapper.treeToValue(node, behaviorClass);
     }
 
-    private Class<? extends UBehavior> classForType(String type) {
+    public Class<? extends UBehavior> classForType(String type) {
         if (type == null || type.equals("")) {
             throw new RuntimeException("UBehavior JSON must specify a valid type field that matches a UBehavior subclass");
         }

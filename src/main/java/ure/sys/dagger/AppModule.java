@@ -7,6 +7,8 @@ import dagger.Provides;
 import ure.areas.LandscaperDeserializer;
 import ure.areas.UCartographer;
 import ure.areas.ULandscaper;
+import ure.behaviors.BehaviorDeserializer;
+import ure.behaviors.UBehavior;
 import ure.sys.UCommander;
 import ure.actors.ActorDeserializer;
 import ure.actors.UActor;
@@ -37,6 +39,7 @@ public class AppModule {
         module.addDeserializer(UThing.class, new ThingDeserializer(objectMapper));
         module.addDeserializer(UActor.class, new ActorDeserializer(objectMapper));
         module.addDeserializer(ULandscaper.class, new LandscaperDeserializer(objectMapper));
+        module.addDeserializer(UBehavior.class, new BehaviorDeserializer(objectMapper));
         objectMapper.registerModule(module);
         return objectMapper;
     }
@@ -52,7 +55,7 @@ public class AppModule {
     @Singleton
     public UActorCzar providesActorCzar() {
         UActorCzar czar = new UActorCzar();
-        czar.loadActors("/actors.json");
+        //czar.loadActors("/actors.json");
         return czar;
     }
 
