@@ -148,7 +148,10 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      * Newly spawned actors must register with the commander to get action time and thereby...act.
      *
      */
-    public void registerActor(UActor actor) { actors.add(actor); }
+    public void registerActor(UActor actor) {
+        if (!actors.contains(actor))
+            actors.add(actor);
+    }
     public void unregisterActor(UActor actor) { actors.remove(actor); }
 
     /**
@@ -419,10 +422,10 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     }
                     renderer.render();
                     if (player != null) {
-                        while (player.actionTime() <= 0f) {
+                        if (player.actionTime() <= 0f) {
                             tickTime();
-                            waitingForInput = false;
                         }
+                        waitingForInput = false;
                     }
                 }
             }

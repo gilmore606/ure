@@ -36,6 +36,12 @@ public class UPlayer extends UActor {
         }
     }
 
+    @Override
+    public void addActionTime(float v) {
+        System.out.println("adding action time to player");
+        super.addActionTime(v);
+    }
+
     public void reconnectThings() {
         for (UThing thing : contents.getThings()) {
             thing.setLocation(this);
