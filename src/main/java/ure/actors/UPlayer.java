@@ -13,6 +13,8 @@ import ure.things.UThing;
  */
 public class UPlayer extends UActor {
 
+    public static final String TYPE = "player";
+
     public boolean awake = true;
 
     public String saveAreaLabel;
