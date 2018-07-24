@@ -116,6 +116,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         keyBuffer = new LinkedBlockingQueue<GLKey>();
         speaker = new USpeaker();
         modalStack = new Stack<>();
+        actorCzar.loadActors("/actors.json");
     }
 
     public long generateNewID(Entity entity) {
@@ -491,6 +492,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         turnCounter = p.saveTurn;
         p.reconnectThings();
         p.setActionTime(0f);
+        cartographer.setupRegions();
         return p;
     }
 

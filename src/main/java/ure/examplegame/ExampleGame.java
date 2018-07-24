@@ -109,7 +109,6 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
         cartographer = new ExampleCartographer();
 
         commander.registerComponents(this, player, renderer, thingCzar, actorCzar, cartographer);
-        actorCzar.loadActors("/actors.json");
         makeWindow();
 
         commander.registerScrollPrinter(scrollPanel);
