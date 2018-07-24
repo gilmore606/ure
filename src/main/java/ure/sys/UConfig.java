@@ -2,6 +2,7 @@ package ure.sys;
 
 import ure.areas.UArea;
 import ure.math.UColor;
+import ure.ui.UCamera;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,6 +63,7 @@ public class UConfig {
     private float actorBounceSpeed = 0.8f;                // how fast to make actors animate-bounce?
     private float actorBounceAmount = 0.8f;               // how much to make actors animate-bounce?
 
+    private int cameraPinStyle = UCamera.PINSTYLE_SOFT; // default pinstyle for player camera
     private boolean visibilityEnable = true;            // if false, assume everything is visible (no occlusion)
     private boolean lightEnable = true;                 // if false, assume all areas lit 100%
     private boolean lightBloom = true;                  // TODO: lights adding to >fullbright bloom to white
@@ -332,6 +334,9 @@ public class UConfig {
     public void setOutlineThings(boolean outlineThings) {
         this.outlineThings = outlineThings;
     }
+
+    public int getCameraPinStyle() { return cameraPinStyle; }
+    public void setCameraPinStyle(int p) { cameraPinStyle = p; }
 
     public boolean isVisibilityEnable() {
         return visibilityEnable;

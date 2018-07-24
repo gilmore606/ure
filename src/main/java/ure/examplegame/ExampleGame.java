@@ -183,10 +183,9 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
 
 
         commander.config.setVisibilityEnable(true);
-        player.attachCamera(camera, UCamera.PINSTYLE_SOFT);
+        player.attachCamera(camera, commander.config.getCameraPinStyle());
         player.moveToCell(area, player.getSaveAreaX(), player.getSaveAreaY());
         player.startActing();
-        //cartographer.playerLeftArea(player, null);
     }
 
     public UPlayer makeNewPlayer(String playername) {
