@@ -82,10 +82,8 @@ public class UNPC extends UActor {
 
     @Override
     public void hearEvent(UAction action) {
-        if (action.actor != this) {
-            if (action instanceof ActionGet) {
-                emote(StringUtils.capitalize(getDname()) + " says, \"Hey that's mine!\"");
-            }
+        for (UBehavior behavior : behaviorObjects) {
+            behavior.hearEvent(this, action);
         }
     }
 
@@ -142,11 +140,9 @@ public class UNPC extends UActor {
     boolean caresAbout(Entity entity) {
         if (entity == this) return false;
         for (UBehavior behavior : behaviorObjects) {
-            if (behavior.caresAbout(entity))
+            if (behavior.caresAbout(this, entity))
                 return true;
         }
-        if (entity instanceof UPlayer)
-            return true;
         return false;
     }
 

@@ -152,7 +152,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         if (!actors.contains(actor))
             actors.add(actor);
     }
-    public void unregisterActor(UActor actor) { actors.remove(actor); }
+    public void unregisterActor(UActor actor) {
+        actors.remove(actor);
+        if (actors.contains(actor))
+            System.out.println("****IMPOSSIBLE BUG : actor removed from commander.actors but still there");
+    }
 
     /**
      * Register a UI component to print scroll messages.  Right now this can only be a UScrollPrinter.
@@ -446,6 +450,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     public void quitToTitle() {
         persistPlayer();
+        player.prepareToVanish();
+        player = null;
+        cartographer.setupRegions();
+        config.setVisibilityEnable(false);
+        wipeModals();
         game.setupTitleScreen();
     }
 
@@ -483,6 +492,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
         turnCounter = p.saveTurn;
         p.reconnectThings();
+        p.setActionTime(0f);
         return p;
     }
 

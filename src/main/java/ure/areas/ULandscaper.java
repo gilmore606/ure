@@ -828,12 +828,13 @@ public abstract class ULandscaper {
     public void scatterActorsByTags(UArea area, int x1, int x2, int y1, int y2, String[] tags, int level, int amount) {
         ArrayList<String> names = new ArrayList<>();
         for (String tag : tags) {
-            System.out.println("get names for " + tag);
             String[] thenames = actorCzar.getActorsByTag(tag,level);
             for (String name: thenames) {
                 names.add(name);
             }
-            System.out.println("got " + Integer.toString(names.size()) + " names");
+            System.out.println("SCAPER: got " + Integer.toString(names.size()) + " actor types to scatter");
+            if (names.size() < 1)
+                return;
         }
         while (amount > 0) {
             amount--;

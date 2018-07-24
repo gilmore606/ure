@@ -143,6 +143,7 @@ public class UCartographer implements Runnable {
             loaderThread = new Thread(this);
             loaderThread.start();
         } else if (!loaderThread.isAlive()) {
+            loaderThread = new Thread(this);
             loaderThread.start();
         }
     }
@@ -301,22 +302,26 @@ public class UCartographer implements Runnable {
      * @param area
      */
     void freezeArea(UArea area) {
-        if (commander.player().area() == area) {
-            System.out.println("ERROR: attempted to freeze player's current area!");
+        if (commander.player() != null) {
+            if (commander.player().area() == area) {
+                System.out.println("ERROR: attempted to freeze player's current area!");
+                return;
+            }
         } else if (area.closed) {
             System.out.println("CARTO LOADER: WARNING - tried to freeze " + area.label + " which is already frozen");
             removeActiveArea(area);
             commander.unregisterTimeListener(area);
+            return;
         } else if (!activeAreas.contains(area)) {
             System.out.println("ERROR: attempted to freeze an area not in activeAreas!  Where'd that come from?");
-        } else {
-            area.freezeForPersist();
-            removeActiveArea(area);
-            commander.unregisterTimeListener(area);
-            persist(area, area.getLabel() + ".area");
-            addCloseableArea(area);
-            area.requestCloseOut();
+            return;
         }
+        area.freezeForPersist();
+        removeActiveArea(area);
+        commander.unregisterTimeListener(area);
+        persist(area, area.getLabel() + ".area");
+        addCloseableArea(area);
+        area.requestCloseOut();
     }
 
     /**
@@ -504,7 +509,7 @@ public class UCartographer implements Runnable {
                 UArea area = getActiveAreaAt(i);
                 if (area == null)
                     System.out.println("******* NULL AREA IN ACTIVEAREAS");
-                if (area != playerArea) {
+                if (area != playerArea && !(area.label.equals("TITLE"))) {
                     if (playerArea == null) {
                         System.out.println("CARTO LOADER: found area " + area.label + " + to harvest and freeze, player has left the world");
                         addAreaToSaveQueue(area);

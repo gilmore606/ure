@@ -152,8 +152,9 @@ public class UCamera extends View implements UAnimator {
         }
         area = theArea;
         moveTo(thex,they);
-        if (areachange)
-            commander.tickTime();  // TODO: is this necessary?  it redraws the screen but also gives NPCS a turn
+        if (areachange) {
+            renderer.render();
+        }
     }
 
     public void moveTo(int thex, int they) {

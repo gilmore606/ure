@@ -210,6 +210,7 @@ public class URendererOGL implements URenderer {
 
     @Override
     public void drawString(int x, int y, UColor col, String str){
+        if (str == null) return;
         //TODO: HANDLE FONT CHANGES
         x += context.absoluteX();
         y += context.absoluteY();

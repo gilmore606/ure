@@ -55,9 +55,17 @@ public abstract class UBehavior {
     /**
      * Do we care about perceiving this entity?
      */
-    public boolean caresAbout(Entity entity) {
+    public boolean caresAbout(UActor actor, Entity entity) {
         return false;
     }
+
+    /**
+     * React to an event we saw.
+     */
+    public void hearEvent(UActor actor, UAction action) {
+
+    }
+
 
     public float getRelativeUrgency() { return relativeUrgency; }
     public void setRelativeUrgency(float urg) { relativeUrgency = urg; }
