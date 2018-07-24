@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import ure.actions.ActionWalk;
@@ -27,10 +28,7 @@ import ure.vaulted.VaultedArea;
 import ure.vaulted.VaultedModal;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -198,11 +196,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                 }
             }
         }
-        List<String> lines = null;
-        try {
-            lines = Files.readAllLines(Paths.get(config.getResourcePath() + "keybinds.txt"), StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            e.printStackTrace();
+        List<String> lines;
+        try (InputStream inputStream = getClass().getResourceAsStream("/keybinds.txt")) {
+            lines = IOUtils.readLines(inputStream, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException("Can't load keybinds.txt", e);
         }
         Reflections reflections = new Reflections("ure.commands", new SubTypesScanner());
         Set<Class<? extends UCommand>> commandClasses = reflections.getSubTypesOf(UCommand.class);
