@@ -36,6 +36,21 @@ public class USpeaker implements UAnimator {
     private ALCCapabilities alcCapabilities;
     private ALCapabilities alCapabilities;
 
+    /**
+     * TODO: BGM DJ
+     *
+     * two decks, can be playing a track or null
+     * onrequest:
+     *  both null : start fadein on one
+     *  one playing: start fadeout on playing, start fadein on null
+     *  both playing, no queue: put queue
+     *  both playing, queue: replace queue w request
+     * onfadeoutEnd:
+     *  null deck
+     *  if queue: start fadein on this, null queue, start fadeout on other
+     *
+     *
+     */
     public USpeaker() {
         Injector.getAppComponent().inject(this);
     }
