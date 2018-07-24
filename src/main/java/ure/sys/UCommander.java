@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import org.apache.commons.io.IOUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
@@ -11,12 +13,11 @@ import ure.actions.ActionWalk;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
-import ure.areas.UArea;
 import ure.areas.UCartographer;
 import ure.commands.UCommand;
+import ure.events.PlayerChangedAreaEvent;
 import ure.math.UColor;
 import ure.render.URenderer;
-import ure.things.ThingDeserializer;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
@@ -31,12 +32,8 @@ import javax.inject.Inject;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -53,6 +50,9 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     @Inject
     protected ObjectMapper objectMapper;
+
+    @Inject
+    EventBus bus;
 
     public UConfig config;
     public Random random;
@@ -97,6 +97,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     public UCommander() {
         Injector.getAppComponent().inject(this);
+        bus.register(this);
         config = new UConfig();
         random = new Random();
     }
@@ -372,8 +373,9 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         scrollPanel = panel;
     }
 
-    public void playerChangedArea(UArea sourcearea, UArea destarea) {
-        statusPanel.setText("location", cartographer.describeLabel(destarea.getLabel()));
+    @Subscribe
+    public void playerChangedArea(PlayerChangedAreaEvent event) {
+        statusPanel.setText("location", cartographer.describeLabel(event.destArea.getLabel()));
     }
     /**
      * The gameLoop() runs forever (until the player exits the game).  It should be the last thing you call from

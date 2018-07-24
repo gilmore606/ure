@@ -4,12 +4,13 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import org.apache.commons.io.FileUtils;
-import ure.examplegame.ExampleCaveScaper;
+import ure.events.PlayerChangedAreaEvent;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actors.UActorCzar;
-import ure.actors.UPlayer;
 import ure.terrain.Stairs;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
@@ -17,9 +18,6 @@ import ure.ui.modals.UModalLoading;
 
 import javax.inject.Inject;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -54,6 +52,8 @@ public class UCartographer implements Runnable {
     protected UActorCzar actorCzar;
     @Inject
     protected ObjectMapper objectMapper;
+    @Inject
+    protected EventBus bus;
 
     protected ArrayList<UArea> activeAreas = new ArrayList<>();
     protected ArrayList<UArea> closeableAreas = new ArrayList<>();
@@ -70,12 +70,12 @@ public class UCartographer implements Runnable {
 
     public UCartographer() {
         Injector.getAppComponent().inject(this);
+        bus.register(this);
         activeAreas = new ArrayList<UArea>();
         closeableAreas = new ArrayList<UArea>();
         regions = new HashMap<>();
         loadQueue = new LinkedBlockingQueue<>();
         saveQueue = new LinkedBlockingQueue<>();
-
     }
 
     /**
@@ -160,11 +160,8 @@ public class UCartographer implements Runnable {
             if (area.label.equals(label))
                 return area;
 
-        String labelname = GetLabelName(label);
-        int labeldata = GetLabelData(label);
         addAreaToLoadQueue(label);
         waitingForLoad = true;
-        //commander.printScroll("Loading...");
         if (commander.modalCamera() != null) {
             commander.showModal(new UModalLoading());
             commander.printScroll("Loading...");
@@ -358,15 +355,14 @@ public class UCartographer implements Runnable {
      * Player has left an area -- check and see if we need to serialize anything or preemptively make
      * new areas.
      *
-     * @param player
-     * @param area
+     * @param event
      */
-    public void playerLeftArea(UPlayer player, UArea area) {
-        if (!commander.config.isRunNeighborAreas() && area != null)
-            freezeArea(area);
+    @Subscribe
+    public void playerChangedArea(PlayerChangedAreaEvent event) {
+        if (!commander.config.isRunNeighborAreas() && event.sourceArea != null)
+            freezeArea(event.sourceArea);
         if (commander.config.isLoadAreasAhead()) {
-            UArea newArea = player.area();
-            for (Stairs stair : newArea.stairsLinks()) {
+            for (Stairs stair : event.destArea.stairsLinks()) {
                 String nextArea = stair.getLabel();
                 addAreaToLoadQueue(nextArea);
             }

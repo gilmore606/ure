@@ -2,6 +2,7 @@ package ure.sys.dagger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.common.eventbus.EventBus;
 import dagger.Module;
 import dagger.Provides;
 import ure.areas.LandscaperDeserializer;
@@ -80,5 +81,11 @@ public class AppModule {
     public UCartographer providesCartographer() {
         UCartographer cartographer = new UCartographer();
         return cartographer;
+    }
+
+    @Provides
+    @Singleton
+    public EventBus providesEventBus() {
+        return new EventBus();
     }
 }

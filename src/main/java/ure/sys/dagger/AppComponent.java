@@ -9,6 +9,7 @@ import ure.actors.UActorCzar;
 import ure.behaviors.UBehavior;
 import ure.commands.UCommand;
 import ure.examplegame.ExampleGame;
+import ure.terrain.Stairs;
 import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
@@ -60,4 +61,5 @@ public interface AppComponent {
     void inject(URegion reg);
     void inject(UPanel pan);
     void inject(USpeaker speak);
+    void inject(Stairs stairs);
 }
