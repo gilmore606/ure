@@ -21,9 +21,9 @@ public class UPlayer extends UActor {
     public int saveAreaX;
     public int saveAreaY;
     public int saveTurn;
-    //public UColor selfLightColor;
-    //public int selfLight;
-    //public int selfLightFalloff;
+    public UColor selfLightColor;
+    public int selfLight;
+    public int selfLightFalloff;
 
     @JsonIgnore
     ULight light;
@@ -35,9 +35,9 @@ public class UPlayer extends UActor {
     public UPlayer(String thename, char theicon, UColor thecolor, boolean addOutline, UColor selfLightColor, int selfLight, int selfLightFalloff) {
         super();
         initialize();
-        //this.selfLight = selfLight;
-        //this.selfLightFalloff = selfLightFalloff;
-        //this.selfLightColor = selfLightColor;
+        this.selfLight = selfLight;
+        this.selfLightFalloff = selfLightFalloff;
+        this.selfLightColor = selfLightColor;
         setDisplayFields(thename, theicon, thecolor, addOutline);
         if (selfLight > 0) {
             light = new ULight(selfLightColor, selfLightFalloff + selfLight, selfLight);
@@ -54,7 +54,9 @@ public class UPlayer extends UActor {
         for (UThing thing : contents.getThings()) {
             thing.setLocation(this);
         }
-
+        if (selfLight > 0) {
+            light = new ULight(selfLightColor, selfLightFalloff + selfLight, selfLight);
+        }
     }
 
     @Override
@@ -117,11 +119,11 @@ public class UPlayer extends UActor {
     public int getSaveAreaY() { return saveAreaY; }
     public int getSaveTurn() { return saveTurn; }
     public void setSaveTurn(int s) { saveTurn = s; }
-    //public UColor getSelfLightColor() { return selfLightColor; }
-    //public int getSelfLight() { return selfLight; }
-    //public int getSelfLightFallOff() { return selfLightFalloff; }
-    //public void setSelfLightColor(UColor c) { selfLightColor = c; }
-    //public void setSelfLight(int c) { selfLight = c; }
-    //public void setSelfLightFalloff(int c) { selfLightFalloff = c; }
+    public UColor getSelfLightColor() { return selfLightColor; }
+    public int getSelfLight() { return selfLight; }
+    public int getSelfLightFalloff() { return selfLightFalloff; }
+    public void setSelfLightColor(UColor c) { selfLightColor = c; }
+    public void setSelfLight(int c) { selfLight = c; }
+    public void setSelfLightFalloff(int c) { selfLightFalloff = c; }
 
 }

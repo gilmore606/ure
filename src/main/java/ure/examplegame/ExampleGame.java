@@ -191,7 +191,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
 
     public UPlayer makeNewPlayer(String playername) {
         System.out.println("Creating a brand new @Player");
-        player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.2f, 0.2f, 0.5f), 2, 3);
+        player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.1f, 0.1f, 0.4f), 2, 3);
         player.setName(playername);
         player.setID(commander.generateNewID(player));
 
