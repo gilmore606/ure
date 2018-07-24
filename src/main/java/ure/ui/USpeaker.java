@@ -2,15 +2,19 @@ package ure.ui;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.*;
+import org.lwjgl.stb.STBVorbisInfo;
+import org.lwjgl.stb.STBVorbis.*;
 import org.lwjgl.system.MemoryStack;
+import ure.sys.Injector;
+import ure.sys.UAnimator;
+import ure.sys.UCommander;
 
-import java.nio.ByteBuffer;
+import javax.inject.Inject;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.openal.ALC10.*;
-import static org.lwjgl.openal.EXTEfx.ALC_MAX_AUXILIARY_SENDS;
 import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_filename;
 import static org.lwjgl.system.MemoryStack.stackMallocInt;
 import static org.lwjgl.system.MemoryStack.stackPop;
@@ -21,10 +25,19 @@ import static org.lwjgl.system.libc.LibCStdlib.free;
  * A singleton to play background music and sound effects
  *
  */
-public class USpeaker {
+public class USpeaker implements UAnimator {
+
+    @Inject
+    UCommander commander;
+
+    boolean initialized = false;
+
+    private long context;
+    private ALCCapabilities alcCapabilities;
+    private ALCapabilities alCapabilities;
 
     public USpeaker() {
-
+        Injector.getAppComponent().inject(this);
     }
 
     /**
@@ -32,8 +45,56 @@ public class USpeaker {
      *
      * @throws Exception
      */
-    public void initialize() throws Exception {
+    public void initialize() {
+        String defaultDeviceName = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
+        long device = alcOpenDevice(defaultDeviceName);
+        int[] attributes = {0};
+        context = alcCreateContext(device, attributes);
+        alcMakeContextCurrent(context);
+        alcCapabilities = ALC.createCapabilities(device);
+        alCapabilities = AL.createCapabilities(alcCapabilities);
+        if (!alCapabilities.OpenAL10) {
+            System.out.println("WARNING: OpenAL10 audio not supported on this system, giving up on sound");
+            return;
+        }
+        initialized = true;
+    }
 
+    IntBuffer makePlayBuffer(String filename) {
+        stackPush();
+        IntBuffer channelsBuffer = stackMallocInt(1);
+        stackPush();
+        IntBuffer sampleRateBuffer = stackMallocInt(1);
+
+        ShortBuffer rawBuffer = stb_vorbis_decode_filename(filename, channelsBuffer, sampleRateBuffer);
+        int channels = channelsBuffer.get();
+        int sampleRate = sampleRateBuffer.get();
+        stackPop();
+        stackPop();
+
+        int format = -1;
+        if (channels == 1) format = AL_FORMAT_MONO16;
+        else if (channels == 2) format = AL_FORMAT_STEREO16;
+
+        IntBuffer buffer = BufferUtils.createIntBuffer(1);
+        alGenBuffers(buffer);
+        alBufferData(buffer.get(0), format, rawBuffer,sampleRate);
+        free(rawBuffer);
+        return buffer;
+    }
+
+    IntBuffer makePlaySource(float gain) {
+        IntBuffer source = BufferUtils.createIntBuffer(1);
+        alGenSources(source);
+        alSourcef(source.get(0), AL_GAIN, gain);
+        return source;
+    }
+
+    public void playBGM(String filename) {
+        IntBuffer bgmBuffer = makePlayBuffer(filename);
+        IntBuffer bgmSource = makePlaySource(commander.config.getVolumeMusic());
+        alSourcei(bgmSource.get(0), AL_BUFFER, bgmBuffer.get(0));
+        alSourcePlay(bgmSource.get(0));
     }
 
     /**
@@ -42,7 +103,7 @@ public class USpeaker {
      * @param filename
      */
     public void play(String filename) {
-
+        playAt(filename, 0f, 0f);
     }
 
     /**
@@ -57,47 +118,10 @@ public class USpeaker {
     }
 
     /**
-     * Switch to a new background music track.
-     * @param filename
-     * @param xfade Seconds to fade out the current music and fade in the new.
+     * We use the animation ticks to crossfade etc.
      */
-    public void switchBGM(String filename, int xfade) {
-        String defaultDeviceName = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
-        long device = alcOpenDevice(defaultDeviceName);
-        int[] attributes = {0};
-        long context = alcCreateContext(device, attributes);
-        alcMakeContextCurrent(context);
+    public void animationTick() {
 
-        ALCCapabilities alcCapabilities = ALC.createCapabilities(device);
-        ALCapabilities alCapabilities = AL.createCapabilities(alcCapabilities);
-        if (!alCapabilities.OpenAL10) {
-            System.out.println("WARNING: OpenAL10 audio not supported.  Going silent.");
-            return;
-        }
-
-        int channels, sampleRate;
-        ShortBuffer rawAudioBuffer;
-
-        try (MemoryStack stack  = stackPush()) {
-            IntBuffer channelsBuffer = stackMallocInt(1);
-            IntBuffer sampleRateBuffer = stackMallocInt(1);
-            rawAudioBuffer = stb_vorbis_decode_filename(filename, channelsBuffer, sampleRateBuffer);
-            channels = channelsBuffer.get();
-            sampleRate = sampleRateBuffer.get();
-        }
-
-        int format = -1;
-        if (channels == 1)
-            format = AL_FORMAT_MONO16;
-        else if (channels == 2)
-            format = AL_FORMAT_STEREO16;
-        int bufferPointer = alGenBuffers();
-        alBufferData(bufferPointer, format, rawAudioBuffer, sampleRate);
-        free(rawAudioBuffer);
-
-        int sourcePointer = alGenSources();
-        alSourcei(sourcePointer, AL_BUFFER, bufferPointer);
-
-        alSourcePlay(sourcePointer);
     }
+
 }

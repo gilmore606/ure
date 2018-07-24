@@ -82,6 +82,14 @@ public class UConfig {
     private ArrayList<Integer> sunColorLerpMarkers;
     private HashMap<Integer,String> sunCycleMessages;
 
+    // Audio
+
+    private float volumeMaster = 1f;
+    private float volumeMusic = 0.1f;
+    private float volumeAmbient = 1f;
+    private float volumeWorld = 1f;
+    private float volumeUI = 1f;
+
     // Game functionality
 
     private String resourcePath = "src/main/resources/";     // path to resource files
@@ -491,4 +499,15 @@ public class UConfig {
     public void setTurnsPerDay(int turnsPerDay) {
         this.turnsPerDay = turnsPerDay;
     }
+
+    public void setVolumeMaster(float v) { volumeMaster = v; }
+    public void setVolumeMusic(float v) { volumeMusic = v; }
+    public void setVolumeAmbient(float v) { volumeAmbient = v; }
+    public void setVolumeWorld(float v) { volumeWorld = v; }
+    public void setVolumeUI(float v) { volumeUI = v; }
+    public float getVolumeMaster() { return volumeMaster; }
+    public float getVolumeMusic() { return volumeMusic; }
+    public float getVolumeAmbient() { return volumeAmbient; }
+    public float getVolumeWorld() { return volumeWorld; }
+    public float getVolumeUI() { return volumeUI; }
 }

@@ -56,7 +56,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     public UConfig config;
     public Random random;
-
+    public USpeaker speaker;
 
     private HashSet<UTimeListener> timeListeners;
     private HashSet<UAnimator> animators;
@@ -68,13 +68,13 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     private UScrollPanel scrollPrinter;
     private UCamera modalCamera;
 
+
     private UScrollPanel scrollPanel;
     private UStatusPanel statusPanel;
 
     public UThingCzar thingCzar;
     public UActorCzar actorCzar;
     public UCartographer cartographer;
-    public USpeaker speaker;
 
     public int turnCounter = 0;
     public int frameCounter;
@@ -115,6 +115,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         renderer.setKeyListener(this);
         keyBuffer = new LinkedBlockingQueue<GLKey>();
         speaker = new USpeaker();
+        speaker.initialize();
+        addAnimator(speaker);
         modalStack = new Stack<>();
         actorCzar.loadActors("/actors.json");
     }

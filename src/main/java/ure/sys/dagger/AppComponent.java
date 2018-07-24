@@ -14,6 +14,7 @@ import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
+import ure.ui.USpeaker;
 import ure.ui.panels.ULensPanel;
 import ure.ui.panels.UPanel;
 import ure.ui.panels.UStatusPanel;
@@ -58,4 +59,5 @@ public interface AppComponent {
     void inject(ULandscaper landscape);
     void inject(URegion reg);
     void inject(UPanel pan);
+    void inject(USpeaker speak);
 }

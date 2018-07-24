@@ -6,6 +6,7 @@ import ure.math.UColor;
 import ure.render.URenderer;
 import ure.sys.GLKey;
 import ure.ui.RexFile;
+import ure.ui.USpeaker;
 
 import java.io.File;
 
@@ -31,6 +32,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         if (!file.isFile())
             options = new String[]{"New World", "Credits", "Quit"};
         cursor = 0;
+
     }
 
     @Override
