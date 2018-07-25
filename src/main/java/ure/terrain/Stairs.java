@@ -1,13 +1,17 @@
 package ure.terrain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.eventbus.EventBus;
 import ure.actors.UPlayer;
 import ure.areas.UArea;
-import ure.areas.UCartographer;
 import ure.areas.UCell;
 import ure.actors.UActor;
+import ure.events.PlayerChangedAreaEvent;
+import ure.sys.Injector;
 import ure.ui.modals.HearModalChoices;
 import ure.ui.modals.UModalChoices;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 
 /**
@@ -28,6 +32,14 @@ public class Stairs extends UTerrain implements HearModalChoices {
     protected int destY;
     protected boolean onstep = true;
     protected boolean confirm = true;
+
+    @Inject
+    @JsonIgnore
+    EventBus bus;
+
+    public Stairs() {
+        Injector.getAppComponent().inject(this); // This will inject superclass fields too, so no need to call super()
+    }
 
     public String getLabel() {
         /**
@@ -55,8 +67,7 @@ public class Stairs extends UTerrain implements HearModalChoices {
         }
         actor.moveToCell(destarea, dest.areaX(), dest.areaY());
         if (actor instanceof UPlayer) {
-            commander.cartographer.playerLeftArea((UPlayer)actor, sourcearea);
-            commander.playerChangedArea(sourcearea, destarea);
+            bus.post(new PlayerChangedAreaEvent((UPlayer)actor, this, sourcearea, destarea));
         }
     }
 
