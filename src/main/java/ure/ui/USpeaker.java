@@ -12,6 +12,7 @@ import ure.sys.UCommander;
 import javax.inject.Inject;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
 
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.openal.ALC10.*;
@@ -39,6 +40,10 @@ public class USpeaker implements UAnimator {
     Deck BGMdeck1;
     Deck BGMdeck2;
     String BGMqueued;
+
+    ArrayList<Integer[]> activeSounds;
+    ArrayList<Integer[]> activeSoundsTmp;
+
 
     /**
      * A virtual DJ deck for mixing BGM audio
@@ -106,6 +111,7 @@ public class USpeaker implements UAnimator {
             alSourcePlay(source);
         }
         public void stop() {
+            System.out.println("SPEAKER: ending playback for bgm '" + track + "' on deck " + deckID);
             alSourceStop(source);
             alDeleteSources(source);
             alDeleteBuffers(buffer);
@@ -118,10 +124,14 @@ public class USpeaker implements UAnimator {
 
     public USpeaker() {
         Injector.getAppComponent().inject(this);
+
         BGMdeck1 = new Deck(this, "1");
         BGMdeck2 = new Deck(this, "2");
         BGMdeck1.linkOtherDeck(BGMdeck2);
         BGMdeck2.linkOtherDeck(BGMdeck1);
+
+        activeSounds = new ArrayList<>();
+        activeSoundsTmp = new ArrayList<>();
     }
 
     /**
@@ -145,32 +155,38 @@ public class USpeaker implements UAnimator {
     }
 
     IntBuffer makePlayBuffer(String filename) {
-        stackPush();
-        IntBuffer channelsBuffer = stackMallocInt(1);
-        stackPush();
-        IntBuffer sampleRateBuffer = stackMallocInt(1);
-
-        ShortBuffer rawBuffer = stb_vorbis_decode_filename(commander.config.getResourcePath() + filename, channelsBuffer, sampleRateBuffer);
-        int channels = channelsBuffer.get();
-        int sampleRate = sampleRateBuffer.get();
-        stackPop();
-        stackPop();
-
-        int format = -1;
-        if (channels == 1) format = AL_FORMAT_MONO16;
-        else if (channels == 2) format = AL_FORMAT_STEREO16;
-
         IntBuffer buffer = BufferUtils.createIntBuffer(1);
         alGenBuffers(buffer);
-        alBufferData(buffer.get(0), format, rawBuffer,sampleRate);
-        free(rawBuffer);
-        return buffer;
+        if (filename.endsWith(".ogg")) {
+            stackPush();
+            IntBuffer channelsBuffer = stackMallocInt(1);
+            stackPush();
+            IntBuffer sampleRateBuffer = stackMallocInt(1);
+            ShortBuffer rawBuffer = stb_vorbis_decode_filename(commander.config.getResourcePath() + filename, channelsBuffer, sampleRateBuffer);
+            int channels = channelsBuffer.get();
+            int sampleRate = sampleRateBuffer.get();
+            stackPop();
+            stackPop();
+
+            int format = -1;
+            if (channels == 1) format = AL_FORMAT_MONO16;
+            else if (channels == 2) format = AL_FORMAT_STEREO16;
+
+            alBufferData(buffer.get(0), format, rawBuffer, sampleRate);
+            free(rawBuffer);
+            return buffer;
+        } else if (filename.endsWith(".wav")) {
+            System.out.println("SPEAKER: wav playback not yet supported");
+        }
+        return null;
     }
 
     IntBuffer makePlaySource(float gain) {
         IntBuffer source = BufferUtils.createIntBuffer(1);
         alGenSources(source);
         alSourcef(source.get(0), AL_GAIN, gain);
+        alSourcef(source.get(0), AL_REFERENCE_DISTANCE, 2.0f);
+        alSourcef(source.get(0), AL_MAX_DISTANCE, (float)commander.config.getVolumeFalloffDistance());
         return source;
     }
 
@@ -194,31 +210,37 @@ public class USpeaker implements UAnimator {
     public void clearBGMqueued() { BGMqueued = null; }
 
     /**
-     * Play a sound with no particular source position.
-     *
-     * @param filename
-     */
-    public void play(String filename) {
-        playAt(filename, 0f, 0f);
-    }
-
-    /**
-     * Play a sound at a given location, transposed to audio space.
-     *
-     * @param filename
-     * @param x -1.0f to 1.0f representing left-right position
-     * @param y -1.0f to 1.0f representing north-south position
-     */
-    public void playAt(String filename, float x, float y) {
-
-    }
-
-    /**
-     * We use the animation ticks to crossfade etc.
+     * We use the animation ticks to crossfade, and to clean up completed oneshot sounds.
      */
     public void animationTick() {
         BGMdeck1.animationTick();
         BGMdeck2.animationTick();
+        activeSoundsTmp = (ArrayList<Integer[]>)activeSounds.clone();
+        for (Integer[] sound : activeSoundsTmp) {
+            int state = alGetSourcei(sound[0], AL_SOURCE_STATE);
+            if (state == AL_STOPPED) {
+                alDeleteSources(sound[0]);
+                alDeleteBuffers(sound[1]);
+                activeSounds.remove(sound);
+            }
+        }
     }
 
+    public void playUIsound(String file, float gain) {
+        play(file, gain * commander.config.getVolumeUI(), 0, 0, false);
+    }
+    public void playWorldSound(String file, float gain, int x, int y) {
+        play(file, gain * commander.config.getVolumeWorld(), x, y, true);
+    }
+
+    public void play(String file, float gain, int x, int y, boolean useEnvironment) {
+        int buffer = makePlayBuffer(file).get(0);
+        int source = makePlaySource(gain).get(0);
+        alSourcei(source, AL_LOOPING, AL_FALSE);
+        alSource3f(source, AL_POSITION, (float)x, (float)y, 0f);
+        alSource3f(source, AL_VELOCITY, 0f, 0f, 0f);
+        alSourcei(source, AL_BUFFER, buffer);
+        alSourcePlay(source);
+        activeSounds.add(new Integer[]{source,buffer});
+    }
 }

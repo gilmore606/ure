@@ -318,7 +318,9 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      * @param modal
      */
     public void showModal(UModal modal) {
+        speaker.playUIsound(config.soundUImodalOpen, 1f);
         attachModal(modal);
+        modal.onOpen();
     }
 
     void debug() {

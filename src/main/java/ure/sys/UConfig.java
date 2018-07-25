@@ -90,7 +90,17 @@ public class UConfig {
     private float volumeWorld = 1f;
     private float volumeUI = 1f;
     private float musicFadeTime = 2f;                   // seconds to crossfade background music
+
+    private int volumeFalloffDistance = 25;             // cells away for a sound to attenuate to -infDB
     private String titleMusic = "sounds/ultima_dungeon.ogg";
+
+    public String soundUImodalOpen = "sounds/echo_alert_rev.ogg";
+    public String soundUIcursorUp = "sounds/mouse_over3.ogg";
+    public String soundUIcursorDown = "sounds/mouse_over3.ogg";
+    public String soundUIselectClose = "sounds/melodic2_click.ogg";
+    public String soundUIcancelClose = "sounds/echo_alert.ogg";
+    public String soundUIkeystroke = "sounds/mouse_over3.ogg";
+    public String soundUIbumpLimit = "sounds/melodic1_click.ogg";
 
     // Game functionality
 
@@ -516,4 +526,6 @@ public class UConfig {
     public void setMusicFadeTime(float f) { musicFadeTime = f; }
     public String getTitleMusic() { return titleMusic; }
     public void setTitleMusic(String s) { titleMusic = s; }
+    public void setVolumeFalloffDistance(int d) { volumeFalloffDistance = d; }
+    public int getVolumeFalloffDistance() { return volumeFalloffDistance; }
 }

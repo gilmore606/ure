@@ -63,6 +63,10 @@ public class UModal extends View implements UAnimator {
             bgColor = _bgColor;
     }
 
+    public void onOpen() {
+
+    }
+
     public int gw() { return commander.config.getGlyphWidth(); }
     public int gh() { return commander.config.getGlyphHeight(); }
 
@@ -165,12 +169,14 @@ public class UModal extends View implements UAnimator {
     }
 
     void dismiss() {
+        commander.speaker.playUIsound(commander.config.soundUIselectClose, 1f);
         dismissed = true;
     }
 
     void escape() {
         dismissed = true;
         dismissFrameEnd = 0;
+        commander.speaker.playUIsound(commander.config.soundUIcancelClose, 1f);
     }
 
     public void addText(String name, String text, int row, int col) {
@@ -231,6 +237,7 @@ public class UModal extends View implements UAnimator {
     }
 
     public int cursorMove(int cursor, int delta, int total) {
+        int oldcursor = cursor;
         cursor += delta;
         if (cursor < 0) {
             if (commander.config.isWrapSelect()) {
@@ -245,6 +252,15 @@ public class UModal extends View implements UAnimator {
                 cursor = total - 1;
             }
         }
+        String sound;
+        if (cursor > oldcursor) {
+            sound = commander.config.soundUIcursorDown;
+        } else if (cursor < oldcursor) {
+            sound = commander.config.soundUIcursorUp;
+        } else {
+            sound = commander.config.soundUIbumpLimit;
+        }
+        commander.speaker.playUIsound(sound, 0.5f);
         return cursor;
     }
 }
