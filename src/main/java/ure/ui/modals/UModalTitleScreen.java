@@ -32,7 +32,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         if (!file.isFile())
             options = new String[]{"New World", "Credits", "Quit"};
         cursor = 0;
-
+        commander.speaker.playBGM(commander.config.getTitleMusic());
     }
 
     @Override

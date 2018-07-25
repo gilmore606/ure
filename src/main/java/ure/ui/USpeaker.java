@@ -36,23 +36,92 @@ public class USpeaker implements UAnimator {
     private ALCCapabilities alcCapabilities;
     private ALCapabilities alCapabilities;
 
+    Deck BGMdeck1;
+    Deck BGMdeck2;
+    String BGMqueued;
+
     /**
-     * TODO: BGM DJ
-     *
-     * two decks, can be playing a track or null
-     * onrequest:
-     *  both null : start fadein on one
-     *  one playing: start fadeout on playing, start fadein on null
-     *  both playing, no queue: put queue
-     *  both playing, queue: replace queue w request
-     * onfadeoutEnd:
-     *  null deck
-     *  if queue: start fadein on this, null queue, start fadeout on other
-     *
-     *
+     * A virtual DJ deck for mixing BGM audio
      */
+    public class Deck {
+        public String track;
+        public float gain;
+        public int fadeDir;
+        public USpeaker speaker;
+        public Deck otherDeck;
+        int source;
+        int buffer;
+        String deckID;
+
+        public Deck(USpeaker s, String id) {
+            speaker = s;
+            deckID = id;
+        }
+        public void linkOtherDeck(Deck d) { otherDeck = d; }
+
+        public void animationTick() {
+            if (fadeDir != 0) {
+                float fadePerFrame = commander.config.getMusicFadeTime() / (1000 / commander.config.getAnimFrameMilliseconds());
+                gain += fadeDir * fadePerFrame;
+                alSourcef(source, AL_GAIN, gain * commander.config.getVolumeMusic());
+                if (fadeDir == 1 && gain >= 1f) {
+                    fadeInEnd();
+                } else if (fadeDir == -1 && gain <= 0f) {
+                    fadeOutEnd();
+                }
+            }
+        }
+        public void fadeInEnd() {
+            fadeDir = 0;
+        }
+        public void fadeOutEnd() {
+            fadeDir = 0;
+            stop();
+            String queued = speaker.getBGMqueued();
+            if (queued != null) {
+                fadeIn(queued);
+                speaker.clearBGMqueued();
+                otherDeck.fadeOut();
+            }
+        }
+        public void fadeIn(String filename) {
+            fadeDir = 1;
+            gain = 0f;
+            track = filename;
+            start();
+            otherDeck.fadeOut();
+        }
+        public void fadeOut() {
+            if (track != null) {
+                fadeDir = -1;
+            }
+        }
+        public void start() {
+            System.out.println("SPEAKER: starting playback for bgm '" + track + "' on deck " + deckID);
+            IntBuffer b = makePlaySource(0f);
+            source = b.get(0);
+            b = makePlayBuffer(track);
+            buffer = b.get(0);
+            alSourcei(source, AL_BUFFER, buffer);
+            alSourcePlay(source);
+        }
+        public void stop() {
+            alSourceStop(source);
+            alDeleteSources(source);
+            alDeleteBuffers(buffer);
+            track = null;
+            gain = 0f;
+            fadeDir = 0;
+        }
+    }
+
+
     public USpeaker() {
         Injector.getAppComponent().inject(this);
+        BGMdeck1 = new Deck(this, "1");
+        BGMdeck2 = new Deck(this, "2");
+        BGMdeck1.linkOtherDeck(BGMdeck2);
+        BGMdeck2.linkOtherDeck(BGMdeck1);
     }
 
     /**
@@ -81,7 +150,7 @@ public class USpeaker implements UAnimator {
         stackPush();
         IntBuffer sampleRateBuffer = stackMallocInt(1);
 
-        ShortBuffer rawBuffer = stb_vorbis_decode_filename(filename, channelsBuffer, sampleRateBuffer);
+        ShortBuffer rawBuffer = stb_vorbis_decode_filename(commander.config.getResourcePath() + filename, channelsBuffer, sampleRateBuffer);
         int channels = channelsBuffer.get();
         int sampleRate = sampleRateBuffer.get();
         stackPop();
@@ -105,12 +174,24 @@ public class USpeaker implements UAnimator {
         return source;
     }
 
+    /**
+     * Ask the BGM DJ to fade into a new music track.
+     */
     public void playBGM(String filename) {
-        IntBuffer bgmBuffer = makePlayBuffer(filename);
-        IntBuffer bgmSource = makePlaySource(commander.config.getVolumeMusic());
-        alSourcei(bgmSource.get(0), AL_BUFFER, bgmBuffer.get(0));
-        alSourcePlay(bgmSource.get(0));
+        if (BGMdeck1.track != null)
+            if (BGMdeck1.track.equals(filename) && (BGMdeck2.track == null)) return;
+        if (BGMdeck2.track != null)
+            if (BGMdeck2.track.equals(filename) && (BGMdeck1.track == null)) return;
+        if (BGMdeck1.track == null)
+            BGMdeck1.fadeIn(filename);
+        else if (BGMdeck2.track == null)
+            BGMdeck2.fadeIn(filename);
+        else
+            BGMqueued = filename;
     }
+
+    public String getBGMqueued() { return BGMqueued; }
+    public void clearBGMqueued() { BGMqueued = null; }
 
     /**
      * Play a sound with no particular source position.
@@ -136,7 +217,8 @@ public class USpeaker implements UAnimator {
      * We use the animation ticks to crossfade etc.
      */
     public void animationTick() {
-
+        BGMdeck1.animationTick();
+        BGMdeck2.animationTick();
     }
 
 }

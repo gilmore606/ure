@@ -89,6 +89,8 @@ public class UConfig {
     private float volumeAmbient = 1f;
     private float volumeWorld = 1f;
     private float volumeUI = 1f;
+    private float musicFadeTime = 2f;                   // seconds to crossfade background music
+    private String titleMusic = "sounds/ultima_dungeon.ogg";
 
     // Game functionality
 
@@ -510,4 +512,8 @@ public class UConfig {
     public float getVolumeAmbient() { return volumeAmbient; }
     public float getVolumeWorld() { return volumeWorld; }
     public float getVolumeUI() { return volumeUI; }
+    public float getMusicFadeTime() { return musicFadeTime; }
+    public void setMusicFadeTime(float f) { musicFadeTime = f; }
+    public String getTitleMusic() { return titleMusic; }
+    public void setTitleMusic(String s) { titleMusic = s; }
 }
