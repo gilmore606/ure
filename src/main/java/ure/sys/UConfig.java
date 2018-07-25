@@ -58,9 +58,9 @@ public class UConfig {
     private boolean outlineActors = true;                           // draw a black outline around Actor glyphs?
     private boolean outlineThings = false;                          // draw a black outline around Thing glyphs?
 
-    private int moveAnimFrames = 8;                     // how many frames to animate actor movement?
+    private int moveAnimFrames = 4;                     // how many frames to animate actor movement?
     private int moveAnimPlayerFrames = 0;               // how many frames to animate player movement?
-    private float actorBounceSpeed = 0.8f;                // how fast to make actors animate-bounce?
+    private float actorBounceSpeed = 1.6f;                // how fast to make actors animate-bounce?
     private float actorBounceAmount = 0.8f;               // how much to make actors animate-bounce?
 
     private int cameraPinStyle = UCamera.PINSTYLE_SOFT; // default pinstyle for player camera
@@ -85,10 +85,10 @@ public class UConfig {
     // Audio
 
     private float volumeMaster = 1f;
-    private float volumeMusic = 0.1f;
+    private float volumeMusic = 0.2f;
     private float volumeAmbient = 1f;
     private float volumeWorld = 1f;
-    private float volumeUI = 1f;
+    private float volumeUI = 0.5f;
     private float musicFadeTime = 2f;                   // seconds to crossfade background music
 
     private int volumeFalloffDistance = 25;             // cells away for a sound to attenuate to -infDB
