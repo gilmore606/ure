@@ -61,6 +61,8 @@ public class UArea implements UTimeListener, Serializable {
     protected HashMap<Integer,String> sunCycleMessages = new HashMap<>();
     protected int sunCycleLastAnnounceMarker;
 
+    String backgroundMusic;
+
     @JsonIgnore
     public boolean closed = false;
     @JsonIgnore
@@ -547,5 +549,8 @@ public class UArea implements UTimeListener, Serializable {
     public void setSunCycleLastAnnounceMarker(int sunCycleLastAnnounceMarker) {
         this.sunCycleLastAnnounceMarker = sunCycleLastAnnounceMarker;
     }
+
+    public void setBackgroundMusic(String b) { backgroundMusic = b; }
+    public String getBackgroundMusic() { return backgroundMusic; }
 
 }

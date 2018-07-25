@@ -1,10 +1,14 @@
 package ure.ui;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.*;
 import org.lwjgl.stb.STBVorbisInfo;
 import org.lwjgl.stb.STBVorbis.*;
 import org.lwjgl.system.MemoryStack;
+import ure.events.PlayerChangedAreaEvent;
 import ure.sys.Injector;
 import ure.sys.UAnimator;
 import ure.sys.UCommander;
@@ -30,6 +34,9 @@ public class USpeaker implements UAnimator {
 
     @Inject
     UCommander commander;
+    @Inject
+    @JsonIgnore
+    EventBus bus;
 
     boolean initialized = false;
 
@@ -124,6 +131,7 @@ public class USpeaker implements UAnimator {
 
     public USpeaker() {
         Injector.getAppComponent().inject(this);
+        bus.register(this);
 
         BGMdeck1 = new Deck(this, "1");
         BGMdeck2 = new Deck(this, "2");
@@ -194,6 +202,7 @@ public class USpeaker implements UAnimator {
      * Ask the BGM DJ to fade into a new music track.
      */
     public void playBGM(String filename) {
+        if (filename == null) return;
         if (BGMdeck1.track != null)
             if (BGMdeck1.track.equals(filename) && (BGMdeck2.track == null)) return;
         if (BGMdeck2.track != null)
@@ -208,6 +217,11 @@ public class USpeaker implements UAnimator {
 
     public String getBGMqueued() { return BGMqueued; }
     public void clearBGMqueued() { BGMqueued = null; }
+
+    @Subscribe
+    public void playerChangedArea(PlayerChangedAreaEvent event) {
+        playBGM(event.destArea.getBackgroundMusic());
+    }
 
     /**
      * We use the animation ticks to crossfade, and to clean up completed oneshot sounds.

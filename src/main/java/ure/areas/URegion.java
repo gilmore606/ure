@@ -39,6 +39,7 @@ public class URegion {
     protected int maxlevel;
     protected String inwardExitType;
     protected String outwardExitType;
+    protected String defaultBGM;
 
     protected Random random = new Random();
 
@@ -63,7 +64,7 @@ public class URegion {
     }
 
     public URegion(String _id, String _name, ULandscaper[] _landscapers, String[] _tags, int _xsize, int _ysize,
-                   int _maxlevel, String _inwardExitType, String _outwardExitType) {
+                   int _maxlevel, String _inwardExitType, String _outwardExitType, String _defaultBGM) {
         this();
         setId(_id);
         setName(_name);
@@ -74,6 +75,7 @@ public class URegion {
         setMaxlevel(_maxlevel);
         setInwardExitType(_inwardExitType);
         setOutwardExitType(_outwardExitType);
+        setDefaultBGM(_defaultBGM);
         setLinks(new ArrayList<>());
     }
 
@@ -99,8 +101,12 @@ public class URegion {
             stairs.put(getId() + " " + Integer.toString(level+1), getInwardExitType());
         }
         makeStairs(area, scaper, stairs);
-
+        area.setBackgroundMusic(getBGM(level));
         return area;
+    }
+
+    public String getBGM(int level) {
+        return defaultBGM;
     }
 
     public ULandscaper getLandscaperForLevel(int level) {
@@ -198,5 +204,8 @@ public class URegion {
     public void setLinks(ArrayList<Link> links) {
         this.links = links;
     }
+
+    public void setDefaultBGM(String b) { defaultBGM = b; }
+    public String getDefaultBGM() { return defaultBGM; }
 
 }

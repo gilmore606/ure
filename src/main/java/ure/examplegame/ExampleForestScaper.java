@@ -50,7 +50,7 @@ public class ExampleForestScaper extends ULandscaper {
                     String id = "cavern-" + Integer.toString(doorcell.x*1000+doorcell.y);
                     URegion region = new URegion(id, name,
                             new ULandscaper[]{new ExampleCaveScaper()}, new String[]{"cave"}, 90, 90,
-                            rand(5)+3, "cave entrance", "cave exit");
+                            rand(5)+3, "cave entrance", "cave exit", "sounds/ultima_dungeon.ogg");
                     linkRegionAt(area, doorcell.x, doorcell.y, "cave entrance", region, 1, "cave exit");
                 }
             }
@@ -70,7 +70,7 @@ public class ExampleForestScaper extends ULandscaper {
                 if (doorcell != null) {
                     String id = "dungeon-" + Integer.toString(doorcell.x*1000+doorcell.y);
                     URegion region = new URegion(id, "Basement", new ULandscaper[]{new ExampleDungeonScaper()},
-                            new String[]{"basement"}, 60, 60, rand(4)+2, "trapdoor", "ladder");
+                            new String[]{"basement"}, 60, 60, rand(4)+2, "trapdoor", "ladder", "sounds/ultima_dungeon.ogg");
                     linkRegionAt(area, doorcell.x, doorcell.y, "trapdoor", region, 1, "ladder");
                 }
                 scatterActorsByTags(area, ruinloc.x,ruinloc.y,ruinloc.x+ruinw,ruinloc.y+ruinh,
