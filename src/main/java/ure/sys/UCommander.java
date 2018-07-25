@@ -13,6 +13,7 @@ import ure.actions.ActionWalk;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
+import ure.areas.UArea;
 import ure.areas.UCartographer;
 import ure.commands.UCommand;
 import ure.events.PlayerChangedAreaEvent;
@@ -480,6 +481,15 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Post a PlayerChangedAreaEvent after a player level-teleports somehow (anything but a Stairs move).  Normally
+     * the Stairs would post this event.
+     */
+    public void postPlayerLevelportEvent(UArea sourceArea) {
+        if (player.area() != sourceArea)
+            bus.post(new PlayerChangedAreaEvent(player, null, sourceArea, player.area()));
     }
 
     public UPlayer loadPlayer() {

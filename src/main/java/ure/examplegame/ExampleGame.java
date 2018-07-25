@@ -184,9 +184,8 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
         commander.config.setVisibilityEnable(true);
         player.attachCamera(camera, commander.config.getCameraPinStyle());
         player.moveToCell(area, player.getSaveAreaX(), player.getSaveAreaY());
+        commander.postPlayerLevelportEvent(null);
         player.startActing();
-
-        commander.speaker.playBGM("sounds/ultima_wanderer.ogg");
     }
 
     public UPlayer makeNewPlayer(String playername) {
