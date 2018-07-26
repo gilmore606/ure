@@ -1,12 +1,15 @@
 package ure.actors.behaviors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ure.actions.ActionWalk;
 import ure.actors.UActor;
+import ure.math.UPath;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actions.UAction;
 import ure.actors.UNPC;
+import ure.things.UThing;
 
 import javax.inject.Inject;
 
@@ -55,17 +58,64 @@ public abstract class UBehavior {
     /**
      * Do we care about perceiving this entity?
      */
-    public boolean caresAbout(UActor actor, Entity entity) {
+    public boolean caresAbout(UNPC actor, Entity entity) {
         return false;
     }
 
     /**
      * React to an event we saw.
      */
-    public void hearEvent(UActor actor, UAction action) {
+    public void hearEvent(UNPC actor, UAction action) {
 
     }
 
+    /**
+     * The following utility methods are for use in custom Behavior.action() as shortcuts to certain common
+     * responses to situations.
+     *
+     */
+
+    /**
+     * Step toward it.
+     */
+    public UAction Approach(UNPC actor, Entity entity) {
+        int[] step = UPath.nextStep(actor.area(), actor.areaX(), actor.areaY(),
+                entity.areaX(), entity.areaY(), actor, 25);
+        if (step != null)
+            return new ActionWalk(actor, step[0] - actor.areaX(), step[1] - actor.areaY());
+        return null;
+    }
+
+    /**
+     * Go and get it.
+     */
+    public UAction Get(UNPC actor, UThing thing) {
+        return null;
+    }
+
+    /**
+     * Go and kill it.
+     */
+    public UAction Attack(UNPC actor, UActor target) {
+        if (UPath.mdist(actor.areaX(),actor.areaY(),target.areaX(),target.areaY()) > 2)
+            return Approach(actor, target);
+        actor.emote(actor + " flails ineffectually.");
+        return null;
+    }
+
+    /**
+     * Get away from it.
+     */
+    public UAction Avoid(UNPC actor, Entity entity) {
+        return null;
+    }
+
+    /**
+     * Respond to threat from it (by fight or flight).
+     */
+    public UAction ForF(UNPC actor, UActor threat) {
+        return null;
+    }
 
     public float getRelativeUrgency() { return relativeUrgency; }
     public void setRelativeUrgency(float urg) { relativeUrgency = urg; }

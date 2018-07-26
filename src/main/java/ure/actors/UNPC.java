@@ -62,16 +62,31 @@ public class UNPC extends UActor {
     public void act() {
         // Keep acting until we don't have any action time left.
         // You shouldn't override this.  You probably want nextAction().
+        System.out.println(this.getName() + " is acting...");
         while (getActionTime() > 0f) {
             UAction action = nextAction();
             if (action == null) {
                 this.setActionTime(0f);
-                return;
+                break;
             }
-            if (area().closed) return;
+            if (area().closed) break;
             doAction(action);
         }
+        sleepCheck();
     }
+
+    /**
+     * Should we go to sleep?  Probably if the player's far away.
+     */
+    public void sleepCheck() {
+        if (commander.player() == null || commander.player().area() != area()) {
+            if (area().getLabel() != "TITLE")
+                stopActing();
+        } else {
+            wakeCheck(commander.player().areaX(), commander.player().areaY());
+        }
+    }
+
 
     @Override
     public void hearEvent(UAction action) {

@@ -54,6 +54,7 @@
     "description": "A foul smelling giant humanoid.",
     "color": [110, 50, 40],
     "tags": [ "rock", "forest" ],
+    "behaviors": [ "monster" ],
     "spawnterrain": [ "grass", "sapling", "dirt" ],
     "spawnlevels": [ 2, 5 ],
     "actionspeed": 0.8,
@@ -91,6 +92,7 @@
     "description": "A huge ill-tempered cave lizard.",
     "color": [0,210,30],
     "tags": [ "cave" ],
+    "behaviors": [ "monster" ],
     "spawnlevels": [1, 4],
     "ambients": [ "The tuatara hisses threateningly." ]
   }

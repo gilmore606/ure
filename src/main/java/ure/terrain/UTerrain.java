@@ -398,4 +398,19 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
 
     public long getID() { return ID; }
     public void setID(long newID) { ID = newID; }
+
+    public UArea area() {
+        if (cell != null)
+            return cell.area();
+        else
+            return null;
+    }
+    public int areaX() {
+        if (cell != null) return cell.areaX();
+        return 0;
+    }
+    public int areaY() {
+        if (cell != null) return cell.areaY();
+        return 0;
+    }
 }

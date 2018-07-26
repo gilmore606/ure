@@ -24,9 +24,9 @@ import ure.ui.UCamera;
 public class UActor extends UThing implements Interactable {
 
     protected boolean awake = false;
-    protected int wakerange = 20;
-    protected int sleeprange = 30;
-    protected int sightrange = 15;
+    protected int wakerange = 12;
+    protected int sleeprange = 25;
+    protected int sightrange = 9;
     protected float actionspeed = 1f;
     protected float movespeed = 1f;
 
