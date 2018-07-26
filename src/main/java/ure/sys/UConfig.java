@@ -95,8 +95,8 @@ public class UConfig {
     private String titleMusic = "sounds/ultima_towns.ogg";
 
     public String soundUImodalOpen = "sounds/echo_alert_rev.ogg";
-    public String soundUIcursorUp = "sounds/mouse_over3.ogg";
-    public String soundUIcursorDown = "sounds/mouse_over3.ogg";
+    public String soundUIcursorUp = "sounds/mouse_over3.wav";
+    public String soundUIcursorDown = "sounds/mouse_over3.wav";
     public String soundUIselectClose = "sounds/melodic2_click.ogg";
     public String soundUIcancelClose = "sounds/echo_alert.ogg";
     public String soundUIkeystroke = "sounds/mouse_over3.ogg";

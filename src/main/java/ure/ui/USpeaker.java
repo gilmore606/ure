@@ -3,6 +3,7 @@ package ure.ui;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import org.apache.commons.io.IOUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.*;
 import ure.sys.events.PlayerChangedAreaEvent;
@@ -11,6 +12,12 @@ import ure.sys.UAnimator;
 import ure.sys.UCommander;
 
 import javax.inject.Inject;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
@@ -188,7 +195,37 @@ public class USpeaker implements UAnimator {
             free(rawBuffer);
             return buffer;
         } else if (filename.endsWith(".wav")) {
-            System.out.println("SPEAKER: wav playback not yet supported");
+            AudioInputStream stream = null;
+            try {
+                stream = AudioSystem.getAudioInputStream(new File(commander.config.getResourcePath() + filename));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            AudioFormat format = stream.getFormat();
+            if (format.isBigEndian()) System.out.println("SPEAKER: ***ERROR*** file '" + filename + "' : big-endian wav format not yet supported :(");
+            int openALFormat = -1;
+            switch(format.getChannels()) {
+                case 1:
+                    switch(format.getSampleSizeInBits()) {
+                        case 8: openALFormat = AL_FORMAT_MONO8; break;
+                        case 16: openALFormat = AL_FORMAT_MONO16; break;
+                    } break;
+                case 2:
+                    switch(format.getSampleSizeInBits()) {
+                        case 8: openALFormat = AL_FORMAT_STEREO8; break;
+                        case 16: openALFormat = AL_FORMAT_STEREO16; break;
+                    } break;
+            }
+            byte[] b = null;
+            try {
+                b = IOUtils.toByteArray(stream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            ByteBuffer data = BufferUtils.createByteBuffer(b.length).put(b);
+            data.flip();
+            alBufferData(buffer.get(0), openALFormat, data, (int)format.getSampleRate());
+            return buffer;
         }
         return null;
     }
