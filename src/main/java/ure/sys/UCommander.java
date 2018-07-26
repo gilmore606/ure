@@ -398,7 +398,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             }
 
             if (!waitingForInput) {
-                tickActors();
+                if (modal == null)
+                    tickActors();
                 waitingForInput = true;
             }
             // if it's the player's turn, do a command if we have one
@@ -421,7 +422,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     }
                     renderer.render();
                     if (player != null) {
-                        if (player.actionTime() <= 0f) {
+                        if (modal == null && player.actionTime() <= 0f) {
                             tickTime();
                         }
                         waitingForInput = false;
