@@ -16,7 +16,7 @@ import ure.actors.UPlayer;
 import ure.areas.UArea;
 import ure.areas.UCartographer;
 import ure.commands.UCommand;
-import ure.events.PlayerChangedAreaEvent;
+import ure.sys.events.PlayerChangedAreaEvent;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.things.UThing;

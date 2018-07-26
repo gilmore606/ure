@@ -5,10 +5,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ure.behaviors.BehaviorDeserializer;
-import ure.behaviors.UBehavior;
+import ure.actors.behaviors.BehaviorDeserializer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 

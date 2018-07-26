@@ -5,10 +5,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.*;
-import org.lwjgl.stb.STBVorbisInfo;
-import org.lwjgl.stb.STBVorbis.*;
-import org.lwjgl.system.MemoryStack;
-import ure.events.PlayerChangedAreaEvent;
+import ure.sys.events.PlayerChangedAreaEvent;
 import ure.sys.Injector;
 import ure.sys.UAnimator;
 import ure.sys.UCommander;
@@ -162,6 +159,13 @@ public class USpeaker implements UAnimator {
         initialized = true;
     }
 
+    /**
+     * TODO: read WAV files!
+     * TODO: buffer and stream long ogg BGMs, this is simply terrible
+     *
+     * @param filename
+     * @return
+     */
     IntBuffer makePlayBuffer(String filename) {
         IntBuffer buffer = BufferUtils.createIntBuffer(1);
         alGenBuffers(buffer);

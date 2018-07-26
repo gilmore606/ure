@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import org.apache.commons.io.FileUtils;
-import ure.events.PlayerChangedAreaEvent;
+import ure.sys.events.PlayerChangedAreaEvent;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actors.UActorCzar;
@@ -38,7 +38,6 @@ import java.util.zip.GZIPOutputStream;
  * are provided to facilitate this convention.
  *
  */
-// TODO: split custom stuff into ExampleCartographer and make generic
 
 public class UCartographer implements Runnable {
 

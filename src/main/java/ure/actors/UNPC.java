@@ -1,21 +1,14 @@
 package ure.actors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.lang.StringUtils;
 import ure.actions.ActionEmote;
 import ure.actions.UAction;
-import ure.actions.ActionGet;
-import ure.actions.ActionWalk;
-import ure.areas.UArea;
-import ure.behaviors.UBehavior;
-import ure.math.UPath;
+import ure.actors.behaviors.UBehavior;
 import ure.sys.Entity;
-import ure.things.UContainer;
 import ure.ui.modals.UModal;
 import ure.ui.modals.UModalNotify;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * UNPC implements a non-player Actor with behaviors which initiate actions.

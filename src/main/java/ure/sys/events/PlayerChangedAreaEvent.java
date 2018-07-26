@@ -1,4 +1,4 @@
-package ure.events;
+package ure.sys.events;
 
 import ure.actors.UPlayer;
 import ure.areas.UArea;

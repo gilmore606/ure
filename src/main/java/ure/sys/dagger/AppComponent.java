@@ -6,7 +6,7 @@ import ure.render.URendererOGL;
 import ure.sys.UCommander;
 import ure.actions.UAction;
 import ure.actors.UActorCzar;
-import ure.behaviors.UBehavior;
+import ure.actors.behaviors.UBehavior;
 import ure.commands.UCommand;
 import ure.examplegame.ExampleGame;
 import ure.terrain.Stairs;

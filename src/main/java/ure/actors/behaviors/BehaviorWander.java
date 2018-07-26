@@ -1,4 +1,4 @@
-package ure.behaviors;
+package ure.actors.behaviors;
 
 import ure.actions.ActionWalk;
 import ure.actions.UAction;

@@ -2,7 +2,6 @@ package ure.actors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.areas.UCell;
-import ure.events.PlayerChangedAreaEvent;
 import ure.math.UColor;
 import ure.areas.UArea;
 import ure.ui.ULight;
