@@ -86,4 +86,9 @@ public class VaultedArea extends UArea {
         }
         vault.setTerrain(tlines);
     }
+
+    @Override
+    public boolean canBePersisted() {
+        return false;
+    }
 }

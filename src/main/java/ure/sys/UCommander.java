@@ -252,6 +252,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void consumeKeyFromBuffer() {
         if (!keyBuffer.isEmpty()) {
             GLKey k = keyBuffer.remove();
+            if (k.k == 0)
+                return;
             UCommand command = null;
             for (GLKey bindkey : keyBindings.keySet()) {
                 if (bindkey.sameKeyAs(k))
@@ -452,6 +454,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public void persistPlayer() {
+        if (player.area().getLabel().equals("vaulted"))
+            return;
         System.out.println("Persisting player " + player.getName() + "...");
         player.saveStateData();
         String path = savePath();

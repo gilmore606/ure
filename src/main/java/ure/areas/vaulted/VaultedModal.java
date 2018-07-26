@@ -1,7 +1,9 @@
 package ure.areas.vaulted;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ure.actors.UPlayer;
 import ure.areas.UVaultSet;
+import ure.commands.CommandQuit;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
@@ -100,7 +102,7 @@ public class VaultedModal extends UModal implements HearModalGetString {
             else if (command.id.equals("PASS"))
                 stampTerrain();
         }
-        if (k.k == GLFW_KEY_Q) {
+        if (k.k == GLFW_KEY_Q && !k.shift) {
             currentTerrain++;
             if (currentTerrain >= terrains.length) currentTerrain = 0;
         } else if (k.k == GLFW_KEY_A) {
@@ -115,6 +117,8 @@ public class VaultedModal extends UModal implements HearModalGetString {
             wipeAll();
         else if (k.k == GLFW_KEY_S && k.shift)
             writeFile();
+        else if (k.k == GLFW_KEY_Q && k.shift)
+            quitOut();
         else if (k.k == GLFW_KEY_PAGE_UP)
             switchVault(-1);
         else if (k.k == GLFW_KEY_PAGE_DOWN)
@@ -189,6 +193,14 @@ public class VaultedModal extends UModal implements HearModalGetString {
     void renameVault() {
         UModalGetString nmodal = new UModalGetString("Vault name:", 30, true, null, this, "rename");
         commander.showModal(nmodal);
+    }
+
+    void quitOut() {
+        UCommand quit = new CommandQuit();
+        quit.execute((UPlayer)commander.player());
+        if (dismissed) {
+            commander.config.setLightEnable(true);
+        }
     }
 
     public void hearModalGetString(String context, String input) {

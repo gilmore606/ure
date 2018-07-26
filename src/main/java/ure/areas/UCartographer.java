@@ -313,7 +313,8 @@ public class UCartographer implements Runnable {
         }
         area.freezeForPersist();
         removeActiveArea(area);
-        persist(area, area.getLabel() + ".area");
+        if (area.canBePersisted())
+            persist(area, area.getLabel() + ".area");
         addCloseableArea(area);
         area.requestCloseOut();
     }

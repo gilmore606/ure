@@ -113,6 +113,10 @@ public class UArea implements Serializable {
         lines.close();
     }
 
+    public boolean canBePersisted() {
+        return true;
+    }
+
     public void requestCloseOut() {
         closeRequested = true;
         closeRequestedTime = System.nanoTime();
