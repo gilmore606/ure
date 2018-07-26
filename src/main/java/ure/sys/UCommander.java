@@ -19,6 +19,7 @@ import ure.commands.UCommand;
 import ure.sys.events.PlayerChangedAreaEvent;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.events.TimeTickEvent;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
@@ -59,7 +60,6 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public Random random;
     public USpeaker speaker;
 
-    private HashSet<UTimeListener> timeListeners;
     private HashSet<UAnimator> animators;
     private ArrayList<UActor> actors;
 
@@ -105,7 +105,6 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void registerComponents(UREGame _game, UPlayer theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
         game = _game;
         renderer = theRenderer;
-        timeListeners = new HashSet<UTimeListener>();
         animators = new HashSet<UAnimator>();
         actors = new ArrayList<UActor>();
         thingCzar = thingczar;
@@ -134,18 +133,6 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public boolean isQuitGame() { return quitGame; }
-
-    /**
-     * Any object which implements UTimeListener can register with this method to have its hearTimeTick() called
-     * on every game tick.
-     *
-     */
-    public void registerTimeListener(UTimeListener listener) {
-        timeListeners.add(listener);
-    }
-    public void unregisterTimeListener(UTimeListener listener) {
-        timeListeners.remove(listener);
-    }
 
     /**
      * Newly spawned actors must register with the commander to get action time and thereby...act.
@@ -516,10 +503,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         for (UActor actor : actors) {
             actor.addActionTime(1f);
         }
-        Iterator<UTimeListener> timeI = timeListeners.iterator();
-        while (timeI.hasNext()) {
-            timeI.next().hearTimeTick(this);
-        }
+        bus.post(new TimeTickEvent(turnCounter));
         turnCounter++;
         System.out.println("time:tick " + Integer.toString(turnCounter));
         renderer.render();

@@ -1,12 +1,14 @@
 package ure.areas;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import ure.actors.UPlayer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actions.UAction;
+import ure.sys.events.TimeTickEvent;
 import ure.ui.ULight;
-import ure.sys.UTimeListener;
 import ure.actors.UActor;
 import ure.math.UColor;
 import ure.terrain.Stairs;
@@ -30,7 +32,7 @@ import java.util.stream.Stream;
  *
  */
 
-public class UArea implements UTimeListener, Serializable {
+public class UArea implements Serializable {
 
     @Inject
     @JsonIgnore
@@ -39,6 +41,10 @@ public class UArea implements UTimeListener, Serializable {
     @Inject
     @JsonIgnore
     public UTerrainCzar terrainCzar;
+
+    @Inject
+    @JsonIgnore
+    public EventBus bus;
 
     protected String label;
 
@@ -75,6 +81,7 @@ public class UArea implements UTimeListener, Serializable {
 
     public UArea() {
         Injector.getAppComponent().inject(this);
+        bus.register(this);
         commander.config.addDefaultSunCycle(this);
     }
     public UArea(int thexsize, int theysize, String defaultTerrain) {
@@ -401,9 +408,14 @@ public class UArea implements UTimeListener, Serializable {
     }
     public ArrayList<Stairs> stairsLinks() { return stairsLinks; }
 
-    public void hearTimeTick(UCommander cmdr) {
-        System.out.println("AREA: " + getLabel() + " tick");
-        adjustSunColor(commander.daytimeMinutes());
+    @Subscribe
+    public void hearTimeTick(TimeTickEvent event) {
+        if (this.closeRequested || this.closed)
+            bus.unregister(this);
+        else {
+            System.out.println("AREA: " + getLabel() + " tick");
+            adjustSunColor(commander.daytimeMinutes());
+        }
     }
 
     /**
@@ -463,7 +475,6 @@ public class UArea implements UTimeListener, Serializable {
             //System.out.println("AREA " + label + ": sleeping " + actor.getName() + " for freeze");
             commander.unregisterActor(actor);
         }
-        commander.unregisterTimeListener(this);
     }
 
     public String getLabel() {

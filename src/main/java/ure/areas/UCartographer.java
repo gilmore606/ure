@@ -306,7 +306,6 @@ public class UCartographer implements Runnable {
         } else if (area.closed) {
             System.out.println("CARTO LOADER: WARNING - tried to freeze " + area.label + " which is already frozen");
             removeActiveArea(area);
-            commander.unregisterTimeListener(area);
             return;
         } else if (!activeAreas.contains(area)) {
             System.out.println("ERROR: attempted to freeze an area not in activeAreas!  Where'd that come from?");
@@ -314,7 +313,6 @@ public class UCartographer implements Runnable {
         }
         area.freezeForPersist();
         removeActiveArea(area);
-        commander.unregisterTimeListener(area);
         persist(area, area.getLabel() + ".area");
         addCloseableArea(area);
         area.requestCloseOut();
@@ -477,7 +475,6 @@ public class UCartographer implements Runnable {
                     }
                 }
                 addActiveArea(area);
-                commander.registerTimeListener(area);
                 loadingArea = null;
             }
             while (!saveQueue.isEmpty()) {
