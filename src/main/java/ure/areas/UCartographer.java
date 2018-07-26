@@ -358,7 +358,7 @@ public class UCartographer implements Runnable {
     public void playerChangedArea(PlayerChangedAreaEvent event) {
         if (!commander.config.isRunNeighborAreas() && event.sourceArea != null)
             freezeArea(event.sourceArea);
-        if (commander.config.isLoadAreasAhead()) {
+        if (commander.config.isLoadAreasAhead() && event.destArea.stairsLinks() != null) {
             for (Stairs stair : event.destArea.stairsLinks()) {
                 String nextArea = stair.getLabel();
                 addAreaToLoadQueue(nextArea);

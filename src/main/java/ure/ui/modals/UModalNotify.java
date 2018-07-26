@@ -6,14 +6,17 @@ import ure.render.URenderer;
 public class UModalNotify extends UModal {
 
     String text;
+    String[] textlines;
     int xpad,ypad;
 
     public UModalNotify(String text, UColor bgColor, int xpad, int ypad) {
         super(null, "", bgColor);
         this.text = text;
+        textlines = splitLines(text);
         this.xpad = xpad;
         this.ypad = ypad;
-        setDimensions(text.length() + xpad, ypad + 1);
+        int width = longestLine(textlines);
+        setDimensions(width + xpad*2, ypad*2 + textlines.length);
         if (bgColor == null)
             bgColor = commander.config.getModalBgColor();
         setBgColor(bgColor);
@@ -21,6 +24,6 @@ public class UModalNotify extends UModal {
 
     @Override
     public void drawContent(URenderer renderer) {
-        renderer.drawString(relx(xpad/2), rely(ypad/2), commander.config.getTextColor(), text);
+        drawStrings(renderer, textlines, xpad, ypad);
     }
 }

@@ -27,8 +27,8 @@ import ure.ui.modals.*;
 import ure.ui.panels.UScrollPanel;
 import ure.ui.panels.UStatusPanel;
 import ure.ui.USpeaker;
-import ure.vaulted.VaultedArea;
-import ure.vaulted.VaultedModal;
+import ure.areas.vaulted.VaultedArea;
+import ure.areas.vaulted.VaultedModal;
 
 import javax.inject.Inject;
 import java.io.*;
@@ -588,7 +588,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             return config.getSavePath() + world + "/";
     }
 
-    void launchVaulted() {
+    public void launchVaulted() {
         File dirfile = new File(config.getResourcePath() + "vaults/");
         ArrayList<String> filelist = new ArrayList<>();
         for (String filename : dirfile.list()) {
@@ -614,9 +614,17 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
     }
     void doLaunchVaulted(String filename) {
+        UArea oldarea = null;
+        if (player == null)
+            player = new UPlayer("Vault Editor Guy", '@', UColor.COLOR_WHITE, true, null, 0, 0);
+        else
+            oldarea = player.area();
         VaultedArea edarea = new VaultedArea(30,30);
+        player.attachCamera(modalCamera, UCamera.PINSTYLE_SOFT);
         player.moveToCell(edarea, 2, 2);
+        postPlayerLevelportEvent(oldarea);
         UModal edmodal = new VaultedModal(edarea, filename);
+        wipeModals();
         showModal(edmodal);
     }
     public void hearModalGetString(String context, String input) {

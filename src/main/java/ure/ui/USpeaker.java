@@ -230,6 +230,10 @@ public class USpeaker implements UAnimator {
         return null;
     }
 
+    IntBuffer makeStreamBuffer(String filename) {
+        return null;
+    }
+
     IntBuffer makePlaySource(float gain) {
         IntBuffer source = BufferUtils.createIntBuffer(1);
         alGenSources(source);

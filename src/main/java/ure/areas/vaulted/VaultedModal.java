@@ -1,8 +1,6 @@
-package ure.vaulted;
+package ure.areas.vaulted;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ure.areas.UArea;
-import ure.areas.UVault;
 import ure.areas.UVaultSet;
 import ure.commands.UCommand;
 import ure.math.UColor;
@@ -14,7 +12,6 @@ import ure.ui.modals.UModalGetString;
 
 import static org.lwjgl.glfw.GLFW.*;
 import javax.inject.Inject;
-import java.io.PrintWriter;
 import java.util.Set;
 
 public class VaultedModal extends UModal implements HearModalGetString {

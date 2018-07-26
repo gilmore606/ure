@@ -1,4 +1,4 @@
-package ure.vaulted;
+package ure.areas.vaulted;
 
 import ure.actions.UAction;
 import ure.actors.UPlayer;
@@ -6,7 +6,6 @@ import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.areas.UVault;
 import ure.math.UColor;
-import ure.sys.UCommander;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
 

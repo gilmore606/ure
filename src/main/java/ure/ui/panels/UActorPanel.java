@@ -6,6 +6,7 @@ import ure.actors.UPlayer;
 import ure.math.UColor;
 import ure.math.UPath;
 import ure.render.URenderer;
+import ure.sys.events.PlayerChangedAreaEvent;
 import ure.sys.events.TimeTickEvent;
 
 import java.util.ArrayList;
@@ -66,6 +67,11 @@ public class UActorPanel extends UPanel {
             actor.getIcon().draw(renderer, padX, padY + (pos * entryHeight));
         renderer.drawString(padX + commander.config.getGlyphWidth() * 2, padY + (pos * entryHeight), fgColor, actor.getName());
         renderer.drawString(padX + commander.config.getGlyphWidth() * 2, padY + (pos * entryHeight) + commander.config.getTextHeight(), actor.UIstatusColor(), actor.UIstatus());
+    }
+
+    @Subscribe
+    public void hearPlayerChangedArea(PlayerChangedAreaEvent event) {
+        updateActors((UPlayer)commander.player());
     }
 
     @Subscribe

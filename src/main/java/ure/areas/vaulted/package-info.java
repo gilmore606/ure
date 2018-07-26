@@ -3,4 +3,4 @@
  *
  */
 
-package ure.vaulted;
+package ure.areas.vaulted;
