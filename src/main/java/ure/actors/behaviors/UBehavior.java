@@ -3,6 +3,7 @@ package ure.actors.behaviors;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actions.ActionWalk;
 import ure.actors.UActor;
+import ure.math.UColor;
 import ure.math.UPath;
 import ure.sys.Entity;
 import ure.sys.Injector;
@@ -34,11 +35,13 @@ public abstract class UBehavior {
     float relativeUrgency;      // how urgent are we vs our NPC's other behaviors?
     float currentUrgency;       // urgency of our last action request
     String currentStatus;       // english status for UI, based on last action
+    UColor currentStatusColor;
 
     public UBehavior() {
         Injector.getAppComponent().inject(this);
         currentUrgency = 0f;
         currentStatus = "";
+        currentStatusColor = UColor.COLOR_GRAY;
     }
     public UBehavior(String type) {
         this();
@@ -123,6 +126,8 @@ public abstract class UBehavior {
     public void setCurrentUrgency(float urg) { currentUrgency = urg; }
     public String getCurrentStatus() { return currentStatus; }
     public void setCurrentStatus(String status) { currentStatus = status; }
+    public UColor getCurrentStatusColor() { return currentStatusColor; }
+    public void setCurrentStatusColor(UColor c) { currentStatusColor = c; }
     public UActor getActor() { return actor; }
     public void setActor(UActor _actor) { actor = _actor; }
     public String getTYPE() { return TYPE; }

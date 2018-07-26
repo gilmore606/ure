@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actions.ActionEmote;
 import ure.actions.UAction;
 import ure.actors.behaviors.UBehavior;
+import ure.math.UColor;
 import ure.sys.Entity;
 import ure.ui.modals.UModal;
 import ure.ui.modals.UModalNotify;
@@ -80,7 +81,7 @@ public class UNPC extends UActor {
      */
     public void sleepCheck() {
         if (commander.player() == null || commander.player().area() != area()) {
-            if (area().getLabel() != "TITLE")
+            if (!area().getLabel().equals("TITLE"))
                 stopActing();
         } else {
             wakeCheck(commander.player().areaX(), commander.player().areaY());
@@ -161,6 +162,13 @@ public class UNPC extends UActor {
             return behavior.getCurrentStatus();
         }
         return super.UIstatus();
+    }
+    public UColor UIstatusColor() {
+        UBehavior behavior = controllingBehavior();
+        if (behavior != null) {
+            return behavior.getCurrentStatusColor();
+        }
+        return super.UIstatusColor();
     }
 
     UAction Ambient() {

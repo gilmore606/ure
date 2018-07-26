@@ -4,6 +4,7 @@ import ure.actions.UAction;
 import ure.actors.UActor;
 import ure.actors.UNPC;
 import ure.actors.UPlayer;
+import ure.math.UColor;
 import ure.sys.Entity;
 
 /**
@@ -22,6 +23,7 @@ public class BehaviorMonster extends UBehavior {
             if (entity instanceof UPlayer) {
                 currentUrgency = 1f;
                 currentStatus = "hostile";
+                currentStatusColor = UColor.COLOR_RED;
                 return Attack(actor, (UPlayer)entity);
             }
         }
