@@ -34,7 +34,6 @@ public class BehaviorMonster extends UBehavior {
     @Override
     public boolean caresAbout(UNPC actor, Entity entity) {
         if (entity instanceof UPlayer) {
-            System.out.println(actor.getName() + " noticed " + entity.getName() + "...!");
             return true;
         }
         return false;
