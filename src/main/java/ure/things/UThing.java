@@ -88,6 +88,8 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public void initializeAsCloneFrom(UThing template) {
         stats = (HashMap)template.stats.clone();
         contents = template.contents.clone();
+        contents.reconnect(null, this);
+        location = null;
     }
 
     public long getID() { return ID; }
