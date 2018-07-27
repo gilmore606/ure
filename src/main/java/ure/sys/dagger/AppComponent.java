@@ -20,6 +20,7 @@ import ure.ui.panels.ULensPanel;
 import ure.ui.panels.UPanel;
 import ure.ui.panels.UStatusPanel;
 import ure.ui.modals.UModal;
+import ure.ui.particles.UParticle;
 
 import javax.inject.Singleton;
 
@@ -62,4 +63,5 @@ public interface AppComponent {
     void inject(UPanel pan);
     void inject(USpeaker speak);
     void inject(Stairs stairs);
+    void inject(UParticle parti);
 }

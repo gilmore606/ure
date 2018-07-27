@@ -3,10 +3,17 @@ package ure.ui.particles;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.Injector;
 import ure.sys.UAnimator;
 import ure.areas.UArea;
+import ure.sys.UCommander;
+
+import javax.inject.Inject;
 
 public class UParticle implements UAnimator {
+
+    @Inject
+    UCommander commander;
 
      int ticksLeft;
      int ticksInitial;
@@ -24,6 +31,7 @@ public class UParticle implements UAnimator {
     String glyphFrames;
 
     public UParticle(int thex, int they, int lifeticks, UColor _fgColor, float startalpha, boolean _receiveLight) {
+        Injector.getAppComponent().inject(this);
         x = thex;
         y = they;
         ticksLeft = lifeticks;

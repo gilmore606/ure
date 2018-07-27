@@ -22,7 +22,7 @@ import javax.inject.Inject;
  * make decisions.
  *
  */
-public abstract class UBehavior {
+public abstract class UBehavior implements Cloneable {
 
     @Inject
     @JsonIgnore
@@ -46,6 +46,14 @@ public abstract class UBehavior {
     public UBehavior(String type) {
         this();
         this.TYPE = type;
+    }
+    public UBehavior makeClone() {
+        try {
+            return (UBehavior)clone();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

@@ -7,6 +7,7 @@ import ure.actors.actions.UAction;
 import ure.actors.behaviors.UBehavior;
 import ure.math.UColor;
 import ure.sys.Entity;
+import ure.things.UThing;
 
 import java.util.ArrayList;
 
@@ -34,6 +35,20 @@ public class UNPC extends UActor implements Interactable {
         initializeBehaviors();
     }
 
+    @Override
+    public void initializeAsCloneFrom(UThing template) {
+        if (template instanceof UNPC) {
+            behaviorObjects = new ArrayList<>();
+            for (UBehavior b : ((UNPC)template).getBehaviorObjects()) {
+                behaviorObjects.add(b.makeClone());
+            }
+        }
+    }
+
+    /**
+     * Create Behaviors from the info read in from the actors.json template.
+     * This only needs to happen when making the initial template actor.
+     */
     public void initializeBehaviors() {
         // TODO : use ObjectMapper to serialize the behavior from a subset of the json
         behaviorObjects = new ArrayList<>();

@@ -32,4 +32,12 @@ public class ParticleHit extends UParticle {
             area.addParticle(new ParticleBlood(x,y,-1,1,bloodColor,intensity));
         }
     }
+
+    @Override
+    public int glyphOffsetX() {
+        return glyphOffsetY();
+    }
+    public int glyphOffsetY() {
+        return commander.random.nextInt(5)-3;
+    }
 }
