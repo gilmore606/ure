@@ -13,6 +13,7 @@ import ure.things.Lightsource;
 import ure.things.UThing;
 import ure.things.UContainer;
 import ure.ui.UCamera;
+import ure.ui.particles.ParticleHit;
 
 /**
  * UActor represents a UThing which can perform actions.  This includes the player and NPCs.
@@ -175,16 +176,23 @@ public class UActor extends UThing implements Interactable {
             return (UCell) getLocation();
         return null;
     }
+
     public void debug() {
         Lightsource torch = (Lightsource)(commander.thingCzar.getThingByName("torch"));
         torch.moveToCell(area(), areaX(), areaY());
         torch.turnOn();
         commander.printScroll("You drop a torch.");
-  }
+    }
 
     public void moveTriggerFrom(UActor actor) {
-        if (actor instanceof UPlayer)
+        if (actor instanceof UPlayer) {
             commander.printScroll("Ow!");
+            area().addParticle(new ParticleHit(areaX(), areaY(), bloodColor(), 0.5f+commander.random.nextFloat()*0.5f));
+        }
+    }
+
+    public UColor bloodColor() {
+        return UColor.COLOR_RED;
     }
 
     // TODO: Parameterize all of these hardcoded strings somewhere

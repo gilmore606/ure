@@ -477,11 +477,14 @@ public class UCamera extends View implements UAnimator {
                 drawCell(renderer, col, row, cellw, cellh);
             }
         }
-        // Render Actors in a second pass.
-        // They may animate and be off their cell; we want them to stay in front of terrain.
         for (int col=0; col<camw; col++) {
             for (int row=0; row<camh; row++) {
                 drawCellActor(renderer, col, row, cellw, cellh);
+            }
+        }
+        for (int col=0; col<camw; col++) {
+            for (int row=0; row<camh; row++) {
+                drawCellParticle(renderer, col, row, cellw, cellh);
             }
         }
         rendering = false;
@@ -526,13 +529,6 @@ public class UCamera extends View implements UAnimator {
                 things.next().render(renderer, col * cellw, row * cellh, light, vis);
             }
         }
-        UCell cell = cellAt(col,row);
-        if (cell != null) {
-            UParticle particle = cellAt(col, row).getParticle();
-            if (particle != null) {
-                particle.render(renderer, col * cellw, row * cellh, light, vis);
-            }
-        }
     }
 
     private void drawCellActor(URenderer renderer, int col, int row, int cellw, int cellh) {
@@ -543,6 +539,18 @@ public class UCamera extends View implements UAnimator {
 
         UColor light = lightAt(col,row);
         actor.render(renderer, col*cellw, row*cellh, light, vis);
+    }
+    private void drawCellParticle(URenderer renderer, int col, int row, int cellw, int cellh) {
+        UCell cell = cellAt(col,row);
+        if (cell != null) {
+            UParticle particle = cellAt(col, row).getParticle();
+            if (particle != null) {
+                UColor light = lightAt(col,row);
+                float vis = visibilityAt(col,row);
+                if (vis < commander.config.getVisibilityThreshold()) return;
+                particle.render(renderer, col * cellw, row * cellh, light, vis);
+            }
+        }
     }
 
     public void animationTick() {

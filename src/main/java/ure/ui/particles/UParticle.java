@@ -12,7 +12,7 @@ public class UParticle implements UAnimator {
      int ticksInitial;
 
     @JsonIgnore
-    private UArea area;
+    UArea area;
 
     public int x, y;
     char glyph;
@@ -21,6 +21,7 @@ public class UParticle implements UAnimator {
     float alpha;
     float alphadecay;
     UColor colorbuffer;
+    String glyphFrames;
 
     public UParticle(int thex, int they, int lifeticks, UColor _fgColor, float startalpha, boolean _receiveLight) {
         x = thex;
@@ -48,7 +49,12 @@ public class UParticle implements UAnimator {
 
     public boolean isFizzled() { return (ticksLeft < 0); }
 
-    public char glyph() { return glyph; }
+    public char glyph() {
+        if (glyphFrames != null) {
+            return glyphFrames.charAt(ticksInitial - ticksLeft);
+        }
+        return glyph;
+    }
     public boolean isReceiveLight() { return receiveLight; }
 
     public void render(URenderer renderer, int px, int py, UColor light, float vis) {

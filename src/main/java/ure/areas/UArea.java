@@ -448,6 +448,7 @@ public class UArea implements Serializable {
     public void addParticle(UParticle particle) {
         if (isValidXY(particle.x, particle.y)) {
             cellAt(particle.x,particle.y).addParticle(particle);
+            particle.reconnect(this);
             particles.add(particle);
         }
     }
@@ -457,14 +458,11 @@ public class UArea implements Serializable {
     }
 
     public void animationTick() {
-        ArrayList<UParticle> fizzles = new ArrayList<>();
-        for (UParticle particle : particles) {
+        HashSet<UParticle> tmp = (HashSet)particles.clone();
+        for (UParticle particle : tmp) {
             particle.animationTick();
             if (particle.isFizzled())
-                fizzles.add(particle);
-        }
-        for (UParticle particle : fizzles) {
-            fizzleParticle(particle);
+                fizzleParticle(particle);
         }
     }
 
