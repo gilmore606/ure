@@ -4,16 +4,18 @@ import dagger.Component;
 import ure.areas.*;
 import ure.render.URendererOGL;
 import ure.sys.UCommander;
-import ure.actions.UAction;
+import ure.actors.actions.UAction;
 import ure.actors.UActorCzar;
-import ure.behaviors.UBehavior;
+import ure.actors.behaviors.UBehavior;
 import ure.commands.UCommand;
 import ure.examplegame.ExampleGame;
+import ure.terrain.Stairs;
 import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
+import ure.ui.USpeaker;
 import ure.ui.panels.ULensPanel;
 import ure.ui.panels.UPanel;
 import ure.ui.panels.UStatusPanel;
@@ -58,4 +60,6 @@ public interface AppComponent {
     void inject(ULandscaper landscape);
     void inject(URegion reg);
     void inject(UPanel pan);
+    void inject(USpeaker speak);
+    void inject(Stairs stairs);
 }

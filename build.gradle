@@ -43,6 +43,7 @@ dependencies {
     compile "org.joml:joml:1.9.9"
     compile "commons-io:commons-io:2.6"
     compile "commons-lang:commons-lang:2.6"
+    compile 'com.google.guava:guava:25.1-jre'
 
     compile "org.lwjgl:lwjgl:${lwjglVersion}"
     compile "org.lwjgl:lwjgl:${lwjglVersion}:natives-linux"

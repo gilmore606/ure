@@ -91,7 +91,7 @@ public class UPath {
         int y = y0;
         while (true) {
             if (x==x1 && y==y1) break;
-            if (area.blocksLight(x,y)) return false;
+            if (!actor.canSeeThrough(area.cellAt(x,y))) return false;
             e2 = 2*err;
             if (e2 > -1 * dy) {
                 err -= dy;

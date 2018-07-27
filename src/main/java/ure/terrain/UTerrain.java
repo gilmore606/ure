@@ -3,12 +3,11 @@ package ure.terrain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UPlayer;
 import ure.areas.UArea;
-import ure.areas.UCartographer;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UAnimator;
 import ure.sys.UCommander;
-import ure.actions.Interactable;
+import ure.actors.actions.Interactable;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.actors.UActor;
@@ -40,6 +39,7 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
     public static final String TYPE = "";
 
     protected String name;
+    protected long ID;
     protected String plural;
     protected String type;
     protected String walkmsg = "";
@@ -393,5 +393,23 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
 
     public void setAnimationFrames(int animationFrames) {
         this.animationFrames = animationFrames;
+    }
+
+    public long getID() { return ID; }
+    public void setID(long newID) { ID = newID; }
+
+    public UArea area() {
+        if (cell != null)
+            return cell.area();
+        else
+            return null;
+    }
+    public int areaX() {
+        if (cell != null) return cell.areaX();
+        return 0;
+    }
+    public int areaY() {
+        if (cell != null) return cell.areaY();
+        return 0;
     }
 }

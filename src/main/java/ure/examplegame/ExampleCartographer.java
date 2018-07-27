@@ -22,7 +22,8 @@ public class ExampleCartographer extends UCartographer {
                             100,
                             1,
                             "",
-                            ""
+                            "",
+                            "sounds/ultima_wanderer.ogg"
                     )
             );
         }

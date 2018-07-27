@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UPlayer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
-import ure.actions.UAction;
+import ure.actors.actions.UAction;
 import ure.things.UCollection;
 import ure.things.UContainer;
 import ure.actors.UActor;

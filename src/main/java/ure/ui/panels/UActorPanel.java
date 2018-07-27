@@ -1,10 +1,13 @@
 package ure.ui.panels;
 
+import com.google.common.eventbus.Subscribe;
 import ure.actors.UActor;
 import ure.actors.UPlayer;
 import ure.math.UColor;
 import ure.math.UPath;
 import ure.render.URenderer;
+import ure.sys.events.PlayerChangedAreaEvent;
+import ure.sys.events.TimeTickEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +18,7 @@ public class UActorPanel extends UPanel {
 
     public UActorPanel(int _pixelw, int _pixelh, int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
         super(_pixelw,_pixelh,_padx,_pady,_fgColor,_bgColor,_borderColor);
+        bus.register(this);
         actors = new ArrayList<>();
     }
 
@@ -57,8 +61,22 @@ public class UActorPanel extends UPanel {
 
     public void drawActor(URenderer renderer, UActor actor, int pos) {
         int entryHeight = commander.config.getGlyphHeight() * 3;
-        actor.getIcon().draw(renderer, padX, padY + (pos * entryHeight));
+        if (actor.getIcon() == null)
+            System.out.println("*** BUG: actor " + actor.getName() + " had null getIcon() at actorpanel");  // this only seems to happen on game reload at first frame when camera is moved into area
+        else
+            actor.getIcon().draw(renderer, padX, padY + (pos * entryHeight));
         renderer.drawString(padX + commander.config.getGlyphWidth() * 2, padY + (pos * entryHeight), fgColor, actor.getName());
         renderer.drawString(padX + commander.config.getGlyphWidth() * 2, padY + (pos * entryHeight) + commander.config.getTextHeight(), actor.UIstatusColor(), actor.UIstatus());
+    }
+
+    @Subscribe
+    public void hearPlayerChangedArea(PlayerChangedAreaEvent event) {
+        updateActors((UPlayer)commander.player());
+    }
+
+    @Subscribe
+    public void hearTimeTick(TimeTickEvent event) {
+        if (commander.player() != null)
+            updateActors((UPlayer)commander.player());
     }
 }

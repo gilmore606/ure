@@ -1,5 +1,6 @@
 package ure.ui.panels;
 
+import com.google.common.eventbus.EventBus;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.sys.Injector;
@@ -17,6 +18,8 @@ public class UPanel extends View {
 
     @Inject
     public UCommander commander;
+    @Inject
+    public EventBus bus;
 
     UColor fgColor, bgColor, borderColor;
     int pixelw, pixelh;

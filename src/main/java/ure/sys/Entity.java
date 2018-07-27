@@ -1,5 +1,6 @@
 package ure.sys;
 
+import ure.areas.UArea;
 import ure.ui.Icon;
 
 import java.util.ArrayList;
@@ -11,10 +12,15 @@ import java.util.ArrayList;
 public interface Entity {
 
     String getName();
+    long getID();
+    void setID(long newID);
     String getPlural();
     Icon getIcon();
     String getCategory();
     ArrayList<String> UIdetails(String context);
     void setStat(String attribute, int value);
     int getStat(String attribute);
+    UArea area();
+    int areaX();
+    int areaY();
 }

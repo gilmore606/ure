@@ -11,7 +11,6 @@ import ure.render.URendererOGL;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.sys.UREGame;
-import ure.sys.UTimeListener;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.things.UThingCzar;
@@ -25,7 +24,7 @@ import ure.ui.panels.UStatusPanel;
 
 import javax.inject.Inject;
 
-public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener {
+public class ExampleGame implements UREGame, HearModalTitleScreen {
 
     static UArea area;
     static UCamera camera;
@@ -109,11 +108,9 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
         cartographer = new ExampleCartographer();
 
         commander.registerComponents(this, player, renderer, thingCzar, actorCzar, cartographer);
-
         makeWindow();
 
         commander.registerScrollPrinter(scrollPanel);
-        commander.registerTimeListener(this);
         commander.addAnimator(camera);
 
         setupTitleScreen();
@@ -126,30 +123,11 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
         lensPanel.hide();
         statusPanel.hide();
         actorPanel.hide();
-        cartographer.setupRegions();
         area = cartographer.getTitleArea();
-        if (player != null) {
-            player.setCameraPinStyle(0);
-            player.moveToCell(area, 50, 50);
-            player = null;
-        }
         camera.moveTo(area, 50, 50);
         commander.config.setVisibilityEnable(false);
-        commander.wipeModals();
-        commander.showModal(new UModalTitleScreen(35, 20, this, "start", UColor.COLOR_BLACK, area));
+        commander.showModal(new UModalTitleScreen(35, 20, this, "start", new UColor(0.07f,0.07f,0.07f), area));
 
-    }
-
-    public void hearTimeTick(UCommander cmdr) {
-        if (statusPanel != null && !statusPanel.isHidden()) {
-            statusPanel.setText("turn", "T " + Integer.toString(commander.getTurn()));
-            statusPanel.setText("time", commander.timeString(true, " "));
-            statusPanel.setText("location", commander.cartographer.describeLabel(commander.player().area().getLabel()));
-            statusPanel.setText("name", commander.player().getName());
-        }
-        if (actorPanel != null && !actorPanel.isHidden() && commander.player() != null) {
-            actorPanel.updateActors((UPlayer)commander.player());
-        }
     }
 
     public void hearModalTitleScreen(String context, String optional) {
@@ -166,33 +144,10 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
     }
 
     public void continueGame(String playername) {
+        area.requestCloseOut();
         player = commander.loadPlayer();
         if (player == null) {
-            System.out.println("Creating the @Player");
-            player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.3f, 0.3f, 0.6f), 3, 4);
-            player.setName(playername);
-            UThing item = thingCzar.getThingByName("rock");
-            item.moveTo(player);
-            item = thingCzar.getThingByName("trucker hat");
-            item.moveTo(player);
-            item = thingCzar.getThingByName("torch");
-            item.moveTo(player);
-            item = thingCzar.getThingByName("apple");
-            item.moveTo(player);
-            item = thingCzar.getThingByName("apple");
-            item.moveTo(player);
-            item = thingCzar.getThingByName("flashlight");
-            item.moveTo(player);
-            item = thingCzar.getThingByName("biscuit");
-            item.moveTo(player);
-            item = thingCzar.getThingByName("lantern");
-            item.moveTo(player);
-            item = thingCzar.getThingByName("butcher knife");
-            item.moveTo(player);
-            item = thingCzar.getThingByName("gold statue");
-            item.moveTo(player);
-            item = thingCzar.getThingByName("skull");
-            item.moveTo(player);
+            player = makeNewPlayer(playername);
             System.out.println("Getting the starting area");
             cartographer.startLoader();
             area = cartographer.makeStartArea();
@@ -214,11 +169,35 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
 
 
         commander.config.setVisibilityEnable(true);
-        player.attachCamera(camera, UCamera.PINSTYLE_SOFT);
+        player.attachCamera(camera, commander.config.getCameraPinStyle());
         player.moveToCell(area, player.getSaveAreaX(), player.getSaveAreaY());
+        commander.postPlayerLevelportEvent(null);
         player.startActing();
-        //cartographer.playerLeftArea(player, null);
+    }
 
+    public UPlayer makeNewPlayer(String playername) {
+        System.out.println("Creating a brand new @Player");
+        player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.1f, 0.1f, 0.4f), 2, 3);
+        player.setName(playername);
+        player.setID(commander.generateNewID(player));
 
+        UThing item = thingCzar.getThingByName("rock");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("trucker hat");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("apple");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("apple");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("flashlight");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("biscuit");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("lantern");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("butcher knife");
+        item.moveTo(player);
+
+        return player;
     }
 }

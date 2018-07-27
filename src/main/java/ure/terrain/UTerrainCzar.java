@@ -1,12 +1,16 @@
 package ure.terrain;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ure.sys.Injector;
+import ure.sys.UCommander;
 
 import javax.inject.Inject;
 
@@ -25,10 +29,12 @@ public class UTerrainCzar {
 
     @Inject
     ObjectMapper objectMapper;
+    @Inject
+    UCommander commander;
 
     public UTerrainCzar(String jsonfilename) {
         this();
-        loadTerrains(jsonfilename);
+        loadTerrains();
     }
 
     public UTerrainCzar() {
@@ -41,19 +47,27 @@ public class UTerrainCzar {
      * This is done on creation, but you can rerun it to load a new terrain set.
      *
      */
-    public void loadTerrains(String resourceName) {
+    public void loadTerrains() {
         terrains = new HashMap<>();
         terrainsByName = new HashMap<>();
-        try {
-            InputStream inputStream = getClass().getResourceAsStream(resourceName);
-            UTerrain[] terrainObjs = objectMapper.readValue(inputStream, UTerrain[].class);
-            for (UTerrain terrain : terrainObjs) {
-                terrain.initialize();
-                terrains.put(terrain.getFilechar(), terrain);
-                terrainsByName.put(terrain.getName(), terrain);
+        File jsonDir = new File(commander.config.getResourcePath() + "terrain/");
+        ArrayList<File> files = new ArrayList<File>(Arrays.asList(jsonDir.listFiles()));
+        for (File resourceFile : files) {
+            String resourceName = resourceFile.getName();
+            if (resourceName.endsWith(".json")) {
+                System.out.println("TERRAINCZAR: loading " + resourceName);
+                try {
+                    InputStream inputStream = getClass().getResourceAsStream("/terrain/" + resourceName);
+                    UTerrain[] terrainObjs = objectMapper.readValue(inputStream, UTerrain[].class);
+                    for (UTerrain terrain : terrainObjs) {
+                        terrain.initialize();
+                        terrains.put(terrain.getFilechar(), terrain);
+                        terrainsByName.put(terrain.getName(), terrain);
+                    }
+                } catch (IOException io) {
+                    io.printStackTrace();
+                }
             }
-        } catch (IOException io) {
-            io.printStackTrace();
         }
     }
 
@@ -65,6 +79,7 @@ public class UTerrainCzar {
      */
     public UTerrain getTerrainForFilechar(char thechar) {
         UTerrain terrain = terrains.get(thechar).makeClone();
+        terrain.setID(commander.generateNewID(terrain));
         return terrain;
     }
 

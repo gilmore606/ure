@@ -1,38 +1,70 @@
 package ure.actors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.lang.StringUtils;
-import ure.actions.ActionEmote;
-import ure.actions.UAction;
-import ure.actions.ActionGet;
-import ure.actions.ActionWalk;
-import ure.behaviors.UBehavior;
-import ure.math.UPath;
-import ure.ui.modals.UModal;
-import ure.ui.modals.UModalNotify;
+import ure.actors.actions.ActionEmote;
+import ure.actors.actions.Interactable;
+import ure.actors.actions.UAction;
+import ure.actors.behaviors.UBehavior;
+import ure.math.UColor;
+import ure.sys.Entity;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * UNPC implements a non-player Actor with behaviors which initiate actions.
  *
  */
-public class UNPC extends UActor {
+public class UNPC extends UActor implements Interactable {
 
     protected int visionRange = 12;
     protected String[] ambients;
     protected String[] behaviors;
 
-    protected ArrayList<UBehavior> behaviorObjects = new ArrayList<>();
+    protected ArrayList<UBehavior> behaviorObjects;
 
     @JsonIgnore
-    public Random random = new Random();
+    protected String[] defaultBehaviors;
+
+    @JsonIgnore
+    public ArrayList<Entity> seenEntities;
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        initializeBehaviors();
+    }
+
+    public void initializeBehaviors() {
+        behaviorObjects = new ArrayList<>();
+        if (defaultBehaviors != null) {
+            for (String bname : defaultBehaviors) {
+                UBehavior b = getBehaviorByType(bname);
+                behaviorObjects.add(b);
+            }
+        }
+        if (behaviors != null) {
+            for (String bname : behaviors) {
+                UBehavior b = getBehaviorByType(bname);
+                behaviorObjects.add(b);
+            }
+        }
+    }
+    public UBehavior getBehaviorByType(String behaviorType) {
+        Class<? extends UBehavior> type = commander.actorCzar.behaviorDeserializer.classForType(behaviorType);
+        try {
+            return type.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @Override
     public void act() {
         // Keep acting until we don't have any action time left.
         // You shouldn't override this.  You probably want nextAction().
+        sleepCheck();
+        if (!isAwake()) return;
         while (getActionTime() > 0f) {
             UAction action = nextAction();
             if (action == null) {
@@ -44,69 +76,134 @@ public class UNPC extends UActor {
         }
     }
 
+    /**
+     * Should we go to sleep?  Probably if the player's far away.
+     */
+    public void sleepCheck() {
+        if (commander.player() == null || commander.player().area() != area()) {
+            if (!area().getLabel().equals("TITLE"))
+                stopActing();
+        } else {
+            wakeCheck(commander.player().areaX(), commander.player().areaY());
+        }
+    }
+
+
     @Override
     public void hearEvent(UAction action) {
-        if (action.actor != this) {
-            if (action instanceof ActionGet) {
-                emote(StringUtils.capitalize(getDname()) + " says, \"Hey that's mine!\"");
-            }
+        for (UBehavior behavior : behaviorObjects) {
+            behavior.hearEvent(this, action);
         }
     }
 
     UAction nextAction() {
         // What should we do next?  Override this for custom AI.
+        //
+        updateSeenEntities();
+        UAction bestAction = null;
+        float bestUrgency = 0f;
+        int bc=0;
         for (UBehavior behavior : getBehaviorObjects()) {
+            bc++;
             UAction action = behavior.action(this);
-            if (action != null) return action;
+            if (action != null) {
+                if (bestAction == null) {
+                    bestAction = action;
+                    bestUrgency = behavior.getCurrentUrgency();
+                } else if (behavior.getCurrentUrgency() > bestUrgency) {
+                    bestAction = action;
+                    bestUrgency = behavior.getCurrentUrgency();
+                }
+            }
+        }
+        return bestAction;
+    }
+    UBehavior controllingBehavior() {
+        float bestUrgency = 0f;
+        UBehavior b = null;
+        for (UBehavior behavior : getBehaviorObjects()) {
+            if (behavior.getCurrentUrgency() > bestUrgency) {
+                b = behavior;
+                bestUrgency = behavior.getCurrentUrgency();
+            }
+        }
+        return b;
+    }
+
+    void updateSeenEntities() {
+        if (seenEntities == null)
+            seenEntities = new ArrayList<>();
+        else
+            seenEntities.clear();
+        for (int x=areaX()-getVisionRange();x<areaX()+getVisionRange();x++) {
+            for (int y=areaY()-getVisionRange();y<areaY()+getVisionRange();y++) {
+                UActor actor = area().actorAt(x,y);
+                if (caresAbout(actor))
+                    if (canSee(actor)) {
+                        seenEntities.add(actor);
+                        System.out.println(this.name + " (" + Long.toString(ID) + ") notices " + actor.getName() + "...");
+                    }
+            }
         }
 
+    }
 
-        float wut = random.nextFloat();
-        if (wut < 0.1f) {
-            if (getAmbients() != null)
-                return Ambient();
-        } else if (wut < 0.5f) {
-            return Wander();
+    boolean caresAbout(Entity entity) {
+        if (entity == this) return false;
+        for (UBehavior behavior : behaviorObjects) {
+            if (behavior.caresAbout(this, entity))
+                return true;
         }
-        return null;
+        return false;
     }
-    UAction Wander() {
-        int dir = random.nextInt(4);
-        int wx,wy;
-        if (dir == 0) {
-            wx = -1; wy = 0;
-        } else if (dir == 1) {
-            wx = 1; wy = 0;
-        } else if (dir == 2) {
-            wx = 0; wy = 1;
-        } else {
-            wx = 0; wy = -1;
+
+    @Override
+    public String UIstatus() {
+        UBehavior behavior = controllingBehavior();
+        if (behavior != null) {
+            return behavior.getCurrentStatus();
         }
-        return new ActionWalk(this,wx,wy);
+        return super.UIstatus();
     }
-    UAction HuntPlayer() {
-        System.out.println(this.getName() + " hunting from " + Integer.toString(areaX()) + "," + Integer.toString(areaY()));
-        int[] step = UPath.nextStep(area(), areaX(), areaY(), commander.player().areaX(), commander.player().areaY(), this, 25);
-        if (step != null) {
-            return new ActionWalk(this,step[0] - areaX(), step[1] - areaY());
+    public UColor UIstatusColor() {
+        UBehavior behavior = controllingBehavior();
+        if (behavior != null) {
+            return behavior.getCurrentStatusColor();
         }
-        return null;
+        return super.UIstatusColor();
     }
 
     UAction Ambient() {
-        return new ActionEmote(this, getAmbients()[random.nextInt(getAmbients().length)]);
+        return new ActionEmote(this, getAmbients()[commander.random.nextInt(getAmbients().length)]);
     }
 
 
     @Override
     public boolean isInteractable(UActor actor) {
-        return !isHostileTo(actor);
+        if (isHostileTo(actor))
+            return false;
+        for (UBehavior b : behaviorObjects) {
+            if (b.willInteractWith(this, actor))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isHostileTo(UActor actor) {
+        for (UBehavior b : behaviorObjects) {
+            if (b.isHostileTo(this, actor))
+                return true;
+        }
+        return false;
     }
 
     @Override
     public float interactionFrom(UActor actor) {
-        UModal modal = new UModalNotify("\"Squeeek!\"", null, 2, 2);
-        commander.showModal(modal);
+        for (UBehavior b : behaviorObjects) {
+            if (b.willInteractWith(this, actor))
+                return b.interactionFrom(this, actor);
+        }
         return 0.5f;
     }
 

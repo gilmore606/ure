@@ -133,12 +133,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="../../ure/actions/Interactable.html" title="interface in ure.actions">Interactable</a></code>, <code><a href="../../ure/terrain/UTerrain.html" title="interface in ure.terrain">UTerrain</a></code></dd>
+<dd><code><a href="../../ure/actions/Interactable.html" title="interface in ure.actors.actions">Interactable</a></code>, <code><a href="../../ure/terrain/UTerrain.html" title="interface in ure.terrain">UTerrain</a></code></dd>
 </dl>
 <hr>
 <pre>public class <span class="typeNameLabel">TerrainDeco</span>
 extends java.lang.Object
-implements <a href="../../ure/terrain/UTerrain.html" title="interface in ure.terrain">UTerrain</a>, <a href="../../ure/actions/Interactable.html" title="interface in ure.actions">Interactable</a></pre>
+implements <a href="../../ure/terrain/UTerrain.html" title="interface in ure.terrain">UTerrain</a>, <a href="../../ure/actions/Interactable.html" title="interface in ure.actors.actions">Interactable</a></pre>
 <div class="block">TerrainDeco implements a transparent handoff to its component terrain for all UTerrain methods.
  Extend this class to make a Decorator you can pass to TerrainCzar to intercept base UTerrain behavior.
  You need only override the methods you want to intercept; to pass control back to those methods simply
@@ -644,7 +644,7 @@ implements <a href="../../ure/terrain/UTerrain.html" title="interface in ure.ter
 <div class="block">Can I be interacted with using the Interact command/action?</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../ure/actions/Interactable.html#isInteractable-ure.actors.UActor-">isInteractable</a></code>&nbsp;in interface&nbsp;<code><a href="../../ure/actions/Interactable.html" title="interface in ure.actions">Interactable</a></code></dd>
+<dd><code><a href="../../ure/actions/Interactable.html#isInteractable-ure.actors.UActor-">isInteractable</a></code>&nbsp;in interface&nbsp;<code><a href="../../ure/actions/Interactable.html" title="interface in ure.actors.actions">Interactable</a></code></dd>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../ure/terrain/UTerrain.html#isInteractable-ure.actors.UActor-">isInteractable</a></code>&nbsp;in interface&nbsp;<code><a href="../../ure/terrain/UTerrain.html" title="interface in ure.terrain">UTerrain</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -661,7 +661,7 @@ implements <a href="../../ure/terrain/UTerrain.html" title="interface in ure.ter
 <div class="block">Respond to an Interact command/action from an actor to this terrain.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../ure/actions/Interactable.html#interactionFrom-ure.actors.UActor-">interactionFrom</a></code>&nbsp;in interface&nbsp;<code><a href="../../ure/actions/Interactable.html" title="interface in ure.actions">Interactable</a></code></dd>
+<dd><code><a href="../../ure/actions/Interactable.html#interactionFrom-ure.actors.UActor-">interactionFrom</a></code>&nbsp;in interface&nbsp;<code><a href="../../ure/actions/Interactable.html" title="interface in ure.actors.actions">Interactable</a></code></dd>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../ure/terrain/UTerrain.html#interactionFrom-ure.actors.UActor-">interactionFrom</a></code>&nbsp;in interface&nbsp;<code><a href="../../ure/terrain/UTerrain.html" title="interface in ure.terrain">UTerrain</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>

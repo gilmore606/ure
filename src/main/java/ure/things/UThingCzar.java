@@ -2,11 +2,14 @@ package ure.things;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ure.sys.Injector;
+import ure.sys.UCommander;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class UThingCzar {
@@ -15,23 +18,31 @@ public class UThingCzar {
 
     @Inject
     ObjectMapper objectMapper;
+    @Inject
+    UCommander commander;
 
     public UThingCzar() {
         Injector.getAppComponent().inject(this);
     }
 
-    public void loadThings(String resourceName) {
-        System.out.println("*** thingCzar loading from " + resourceName);
+    public void loadThings() {
         thingsByName = new HashMap<>();
-        try {
-            InputStream inputStream = getClass().getResourceAsStream("/things.json");
-            UThing[] thingObjs = objectMapper.readValue(inputStream, UThing[].class);
-            for (UThing thing: thingObjs) {
-                thing.initialize();
-                thingsByName.put(thing.getName(), thing);
+        File jsonDir = new File(commander.config.getResourcePath() + "things/");
+        ArrayList<File> files = new ArrayList<File>(Arrays.asList(jsonDir.listFiles()));
+        for (File resourceFile : files) {
+            String resourceName = resourceFile.getName();
+            if (resourceName.endsWith(".json")) {
+                try {
+                    InputStream inputStream = getClass().getResourceAsStream("/things/" + resourceName);
+                    UThing[] thingObjs = objectMapper.readValue(inputStream, UThing[].class);
+                    for (UThing thing : thingObjs) {
+                        thing.initialize();
+                        thingsByName.put(thing.getName(), thing);
+                    }
+                } catch (IOException io) {
+                    io.printStackTrace();
+                }
             }
-        } catch (IOException io) {
-            io.printStackTrace();
         }
     }
 
@@ -50,6 +61,7 @@ public class UThingCzar {
                 }
             }
         }
+        clone.setID(commander.generateNewID(clone));
         return clone;
     }
 
