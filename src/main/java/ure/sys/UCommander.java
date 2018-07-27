@@ -278,7 +278,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     showModal(new UModalURESplash());
                 }
             }
-        } else if (moveLatch) {
+        } else if (moveLatch && config.isNethackShiftRun()) {
             player.doAction(new ActionWalk(player, moveLatchX, moveLatchY));
         }
     }

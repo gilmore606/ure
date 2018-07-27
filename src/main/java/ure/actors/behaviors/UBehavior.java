@@ -49,7 +49,8 @@ public abstract class UBehavior implements Cloneable {
     }
     public UBehavior makeClone() {
         try {
-            return (UBehavior)clone();
+            UBehavior clone = (UBehavior)clone();
+            return clone;
         } catch (Exception e) {
             e.printStackTrace();
         }

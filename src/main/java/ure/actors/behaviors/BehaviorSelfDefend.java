@@ -48,6 +48,14 @@ public class BehaviorSelfDefend extends UBehavior {
         return false;
     }
 
+    @Override
+    public UBehavior makeClone() {
+        UBehavior clone = super.makeClone();
+        if (clone != null)
+            ((BehaviorSelfDefend)clone).setAttackers(new ArrayList<>());
+        return clone;
+    }
+
     public ArrayList<Long> getAttackers() { return attackers; }
     public void setAttackers(ArrayList<Long> a) { attackers = a; }
 }
