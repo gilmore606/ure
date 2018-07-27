@@ -1,11 +1,10 @@
 package ure.commands;
 
-import ure.actions.ActionInteract;
-import ure.actions.Interactable;
+import ure.actors.actions.ActionInteract;
+import ure.actors.actions.Interactable;
 import ure.actors.UActor;
 import ure.actors.UPlayer;
 import ure.areas.UArea;
-import ure.terrain.UTerrain;
 import ure.things.UThing;
 import ure.ui.modals.HearModalDirection;
 import ure.ui.modals.UModalDirection;

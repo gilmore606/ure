@@ -1,4 +1,4 @@
-package ure.actions;
+package ure.actors.actions;
 
 import ure.actors.UActor;
 import ure.actors.UPlayer;

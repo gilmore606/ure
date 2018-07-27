@@ -9,7 +9,7 @@ import com.google.common.eventbus.Subscribe;
 import org.apache.commons.io.IOUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
-import ure.actions.ActionWalk;
+import ure.actors.actions.ActionWalk;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
@@ -422,7 +422,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     }
                     renderer.render();
                     if (player != null) {
-                        if (modal == null && player.actionTime() <= 0f) {
+                        if (modal == null && player.actionTime() < 0f) {
                             tickTime();
                         }
                         waitingForInput = false;
@@ -435,6 +435,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void tickActors() {
         // need to use a clone to iterate, since actors might drop out during this loop
         ArrayList<UActor> tmpactors = (ArrayList<UActor>)actors.clone();
+        System.out.println("ticking " + Integer.toString(tmpactors.size()) + " actors");
         for (UActor actor : tmpactors) {
             if (actors.contains(actor))
                 actor.act();

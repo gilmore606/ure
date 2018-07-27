@@ -1,13 +1,12 @@
 package ure.actors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import ure.actions.ActionEmote;
-import ure.actions.UAction;
+import ure.actors.actions.ActionEmote;
+import ure.actors.actions.Interactable;
+import ure.actors.actions.UAction;
 import ure.actors.behaviors.UBehavior;
 import ure.math.UColor;
 import ure.sys.Entity;
-import ure.ui.modals.UModal;
-import ure.ui.modals.UModalNotify;
 
 import java.util.ArrayList;
 
@@ -15,7 +14,7 @@ import java.util.ArrayList;
  * UNPC implements a non-player Actor with behaviors which initiate actions.
  *
  */
-public class UNPC extends UActor {
+public class UNPC extends UActor implements Interactable {
 
     protected int visionRange = 12;
     protected String[] ambients;
@@ -63,17 +62,16 @@ public class UNPC extends UActor {
     public void act() {
         // Keep acting until we don't have any action time left.
         // You shouldn't override this.  You probably want nextAction().
-        System.out.println(this.getName() + " is acting...");
+        sleepCheck();
         while (getActionTime() > 0f) {
             UAction action = nextAction();
             if (action == null) {
                 this.setActionTime(0f);
-                break;
+                return;
             }
-            if (area().closed) break;
+            if (area().closed) return;
             doAction(action);
         }
-        sleepCheck();
     }
 
     /**
@@ -178,13 +176,30 @@ public class UNPC extends UActor {
 
     @Override
     public boolean isInteractable(UActor actor) {
-        return !isHostileTo(actor);
+        if (isHostileTo(actor))
+            return false;
+        for (UBehavior b : behaviorObjects) {
+            if (b.willInteractWith(this, actor))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isHostileTo(UActor actor) {
+        for (UBehavior b : behaviorObjects) {
+            if (b.isHostileTo(this, actor))
+                return true;
+        }
+        return false;
     }
 
     @Override
     public float interactionFrom(UActor actor) {
-        UModal modal = new UModalNotify("\"Squeeek!\"", null, 2, 2);
-        commander.showModal(modal);
+        for (UBehavior b : behaviorObjects) {
+            if (b.willInteractWith(this, actor))
+                return b.interactionFrom(this, actor);
+        }
         return 0.5f;
     }
 

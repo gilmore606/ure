@@ -4,7 +4,7 @@ import dagger.Component;
 import ure.areas.*;
 import ure.render.URendererOGL;
 import ure.sys.UCommander;
-import ure.actions.UAction;
+import ure.actors.actions.UAction;
 import ure.actors.UActorCzar;
 import ure.actors.behaviors.UBehavior;
 import ure.commands.UCommand;

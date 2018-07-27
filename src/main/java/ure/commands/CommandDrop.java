@@ -1,6 +1,6 @@
 package ure.commands;
 
-import ure.actions.ActionDrop;
+import ure.actors.actions.ActionDrop;
 import ure.actors.UPlayer;
 import ure.sys.Entity;
 import ure.things.UThing;

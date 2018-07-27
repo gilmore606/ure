@@ -1,7 +1,6 @@
 package ure.actors.behaviors;
 
-import ure.actions.UAction;
-import ure.actors.UActor;
+import ure.actors.actions.UAction;
 import ure.actors.UNPC;
 import ure.actors.UPlayer;
 import ure.math.UColor;

@@ -5,7 +5,7 @@ import ure.actors.UPlayer;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
-import ure.actions.Interactable;
+import ure.actors.actions.Interactable;
 import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.areas.UCell;

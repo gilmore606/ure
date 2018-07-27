@@ -1,7 +1,7 @@
 package ure.actors.behaviors;
 
-import ure.actions.ActionWalk;
-import ure.actions.UAction;
+import ure.actors.actions.ActionWalk;
+import ure.actors.actions.UAction;
 import ure.actors.UNPC;
 
 /**

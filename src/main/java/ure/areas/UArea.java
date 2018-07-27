@@ -6,7 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import ure.actors.UPlayer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
-import ure.actions.UAction;
+import ure.actors.actions.UAction;
 import ure.sys.events.TimeTickEvent;
 import ure.ui.ULight;
 import ure.actors.UActor;

@@ -1,6 +1,6 @@
 package ure.areas.vaulted;
 
-import ure.actions.UAction;
+import ure.actors.actions.UAction;
 import ure.actors.UPlayer;
 import ure.areas.UArea;
 import ure.areas.UCell;

@@ -1,6 +1,6 @@
 package ure.commands;
 
-import ure.actions.ActionGet;
+import ure.actors.actions.ActionGet;
 import ure.actors.UPlayer;
 
 public class CommandGet extends UCommand {

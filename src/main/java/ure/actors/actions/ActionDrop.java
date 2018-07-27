@@ -1,4 +1,4 @@
-package ure.actions;
+package ure.actors.actions;
 
 import ure.things.UContainer;
 import ure.actors.UActor;

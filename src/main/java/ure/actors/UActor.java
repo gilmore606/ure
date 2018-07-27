@@ -2,8 +2,8 @@ package ure.actors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.StringUtils;
-import ure.actions.Interactable;
-import ure.actions.UAction;
+import ure.actors.actions.Interactable;
+import ure.actors.actions.UAction;
 import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.math.UColor;
@@ -250,6 +250,10 @@ public class UActor extends UThing implements Interactable {
 
     public void act() {
 
+    }
+
+    public void say(String text) {
+        commander.printScrollIfSeen(this,StringUtils.capitalize(getDname()) + " says, \"" + text + "\"");
     }
 
     /**

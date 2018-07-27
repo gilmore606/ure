@@ -113,7 +113,7 @@ public class UConfig {
     private boolean loadAreasAhead = true;          // preemptively load upcoming areas?
 
     private boolean nethackShiftRun = false;        // nethack-style Shift+Move?  false for 'shift = no repeat wait' simpler running
-    private boolean smartInteract = false;           // autodetect targets for interact command?
+    private boolean smartInteract = true;           // autodetect targets for interact command?
     private boolean interactStairs = true;          // interact command can trigger stairs?
 
     private int turnsPerDay = 512;                  // game turns per 24 hour day

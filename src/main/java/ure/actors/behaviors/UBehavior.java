@@ -1,14 +1,14 @@
 package ure.actors.behaviors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import ure.actions.ActionWalk;
+import ure.actors.actions.ActionWalk;
 import ure.actors.UActor;
 import ure.math.UColor;
 import ure.math.UPath;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
-import ure.actions.UAction;
+import ure.actors.actions.UAction;
 import ure.actors.UNPC;
 import ure.things.UThing;
 
@@ -66,10 +66,33 @@ public abstract class UBehavior {
     }
 
     /**
+     * Are we hostile to this entity?
+     *
+     */
+    public boolean isHostileTo(UNPC actor, Entity entity) {
+        return false;
+    }
+
+    /**
      * React to an event we saw.
      */
     public void hearEvent(UNPC actor, UAction action) {
 
+    }
+
+    /**
+     * Will I let actor Interact with me?
+     */
+    public boolean willInteractWith(UNPC actor, UActor interactor) {
+        return false;
+    }
+
+    /**
+     * Receive an Interact from interactor.
+     * Return the actionTime it took.
+     */
+    public float interactionFrom(UNPC actor, UActor interactor) {
+        return 0.5f;
     }
 
     /**

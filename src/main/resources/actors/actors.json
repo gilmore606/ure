@@ -5,13 +5,13 @@
     "description": "A somber monk clad in rough robes.",
     "color": [240,160,70],
     "tags": [ "rock", "title" ],
+    "behaviors": [ "talking" ],
     "spawnlevels": [1,4],
     "ambients": [ "The monk scratches his balls under his robe.",
                   "The monk says, 'Wh...whose skulls are those?'",
                   "The monk eyes you warily.",
                   "The monk mutters a soft chant.",
-                  "The monk hums a discordant melody."],
-    "behaviors": [ "wander" ]
+                  "The monk hums a discordant melody."]
   },
   {
     "name": "rat",
@@ -19,6 +19,7 @@
     "description": "A big wet rat.",
     "color": [120,120,254],
     "tags": [ "cavern", "complex", "title" ],
+    "behaviors": [ "wander" ],
     "spawnlevels": [ 1,5 ]
   },
   {
@@ -67,6 +68,7 @@
     "description": "Some goon.",
     "color": [ 60, 60, 80],
     "tags": [ "complex" ],
+    "behaviors": [ "talking", "wander" ],
     "spawnlevels": [ 1, 5 ]
   },
   {
@@ -75,6 +77,7 @@
     "description": "Some desk jockey.",
     "color": [ 75, 75, 85 ],
     "tags": [ "complex", "title" ],
+    "behaviors": [ "talking" ],
     "spawnterrain": [ "floor", "floormoss" ],
     "spawnlevels": [ 1, 2 ]
   },
