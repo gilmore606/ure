@@ -79,6 +79,13 @@ public class UNPC extends UActor implements Interactable {
         }
     }
 
+    @Override
+    public void aggressionFrom(UActor attacker) {
+        for (UBehavior behavior: behaviors) {
+            behavior.aggressionFrom(this, attacker);
+        }
+    }
+
     UAction nextAction() {
         // What should we do next?  Override this for custom AI.
         //

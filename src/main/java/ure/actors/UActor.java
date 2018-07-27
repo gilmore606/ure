@@ -186,9 +186,13 @@ public class UActor extends UThing implements Interactable {
 
     public void moveTriggerFrom(UActor actor) {
         if (actor instanceof UPlayer) {
-            commander.printScroll("Ow!");
+            aggressionFrom(actor);
             area().addParticle(new ParticleHit(areaX(), areaY(), bloodColor(), 0.5f+commander.random.nextFloat()*0.5f));
         }
+    }
+
+    public void aggressionFrom(UActor actor) {
+
     }
 
     public UColor bloodColor() {

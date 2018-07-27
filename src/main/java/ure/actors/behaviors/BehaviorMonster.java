@@ -33,4 +33,11 @@ public class BehaviorMonster extends UBehavior {
         }
         return false;
     }
+
+    @Override
+    public boolean isHostileTo(UNPC actor, Entity entity) {
+        if (entity instanceof UPlayer)
+            return true;
+        return false;
+    }
 }

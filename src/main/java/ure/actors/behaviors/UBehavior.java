@@ -95,7 +95,12 @@ public abstract class UBehavior implements Cloneable {
     public void hearEvent(UNPC actor, UAction action) {
 
     }
+    /**
+     * Notice and possibly remember aggression from attacker.
+     */
+    public void aggressionFrom(UNPC actor, UActor attacker) {
 
+    }
     /**
      * Will I let actor Interact with me?
      */
