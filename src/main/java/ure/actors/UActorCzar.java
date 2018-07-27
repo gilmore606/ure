@@ -42,7 +42,7 @@ public class UActorCzar {
                     InputStream inputStream = getClass().getResourceAsStream("/actors/" + resourceName);
                     UActor[] actorObjs = objectMapper.readValue(inputStream, UActor[].class);
                     for (UActor actor : actorObjs) {
-                        actor.initialize();
+                        actor.initializeAsTemplate();
                         actorsByName.put(actor.getName(), actor);
                     }
                 } catch (IOException io) {
@@ -53,8 +53,9 @@ public class UActorCzar {
     }
 
     public UActor getActorByName(String name) {
-        UActor clone = (UActor)actorsByName.get(name).makeClone();
-        clone.initialize();
+        UActor template = (UActor)actorsByName.get(name);
+        UActor clone = (UActor)template.makeClone();
+        clone.initializeAsCloneFrom(template);
         clone.setID(commander.generateNewID(clone));
         return clone;
     }

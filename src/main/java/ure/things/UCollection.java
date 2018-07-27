@@ -14,7 +14,7 @@ import java.util.Iterator;
  *
  */
 
-public class UCollection {
+public class UCollection implements Cloneable {
 
     @JsonIgnore
     private UContainer container;
@@ -111,5 +111,15 @@ public class UCollection {
 
     public ArrayList<UActor> getActors() {
         return actors;
+    }
+
+    @Override
+    public UCollection clone() {
+        try {
+            return (UCollection)super.clone();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

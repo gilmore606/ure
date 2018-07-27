@@ -70,13 +70,24 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         Injector.getAppComponent().inject(this);
     }
 
-    public void initialize() {
+    /**
+     * Set up a new template object fresh from resource JSON deserializing, to make it cloneable.
+     */
+    public void initializeAsTemplate() {
         setContents(new UCollection(this, this.name));
         if (getGlyphColor() == null && getColor() != null) {
             SetupColors();
         }
         setIcon(new Icon(getGlyph(), getGlyphColor(), null));
         stats = new HashMap<>();
+    }
+
+    /**
+     * Set up a fresh clone from a template object.
+     */
+    public void initializeAsCloneFrom(UThing template) {
+        stats = (HashMap)template.stats.clone();
+        contents = template.contents.clone();
     }
 
     public long getID() { return ID; }
@@ -198,7 +209,9 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
 
     public UThing makeClone() {
         try {
-            return (UThing) super.clone();
+            UThing clone = (UThing) super.clone();
+
+            return clone;
         } catch (CloneNotSupportedException e) {
             System.out.println(" Cloning not allowed. ");
             return this;

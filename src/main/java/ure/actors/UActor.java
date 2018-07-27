@@ -44,8 +44,8 @@ public class UActor extends UThing implements Interactable {
     protected float actionTime = 0f;
 
     @Override
-    public void initialize() {
-        super.initialize();
+    public void initializeAsTemplate() {
+        super.initializeAsTemplate();
         setGlyphOutline(true);
     }
 

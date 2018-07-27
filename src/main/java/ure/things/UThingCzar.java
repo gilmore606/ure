@@ -36,7 +36,7 @@ public class UThingCzar {
                     InputStream inputStream = getClass().getResourceAsStream("/things/" + resourceName);
                     UThing[] thingObjs = objectMapper.readValue(inputStream, UThing[].class);
                     for (UThing thing : thingObjs) {
-                        thing.initialize();
+                        thing.initializeAsTemplate();
                         thingsByName.put(thing.getName(), thing);
                     }
                 } catch (IOException io) {
@@ -47,20 +47,9 @@ public class UThingCzar {
     }
 
     public UThing getThingByName(String name) {
-        UThing clone = thingsByName.get(name).makeClone();
-        clone.initialize();
-        if (clone.getContents() == null) {
-            System.out.println("*** BUG thingCzar spawned a clone with null contents");
-        }
-        if (clone.getContents().getThings() == null) {
-            System.out.println("+++ BUG thingCzar spawned a clone with contents with null things");
-            if (clone.closed) {
-                System.out.println("IT WAS A CLOSED THING");
-                if (thingsByName.get(name).closed) {
-                    System.out.println("THE SOURCE WAS CLOSED TOO");
-                }
-            }
-        }
+        UThing template = thingsByName.get(name);
+        UThing clone = template.makeClone();
+        clone.initializeAsCloneFrom(template);
         clone.setID(commander.generateNewID(clone));
         return clone;
     }

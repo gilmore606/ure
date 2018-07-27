@@ -78,7 +78,16 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
         Injector.getAppComponent().inject(this);
     }
 
-    public void initialize() {
+    /**
+     * Set up a new template object fresh from resource JSON deserializing, to make it cloneable.
+     */
+    public void initializeAsTemplate() {
+
+    }
+    /**
+     * Set up a fresh clone from a template object.
+     */
+    public void initializeAsCloneFrom(UTerrain template) {
         setFgColor(new UColor(fgcolor[0], fgcolor[1], fgcolor[2]));
         setBgColor(new UColor(bgcolor[0], bgcolor[1], bgcolor[2]));
         setFgColorBuffer(new UColor(0f,0f,0f));
@@ -100,7 +109,6 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
 
     public void becomeReal(UCell c) {
         cell = c;
-        initialize();
         if (getBgvariants() != null) {
             Random r = new Random();
             getBgColor().set(getBgvariants()[r.nextInt(getBgvariants().length - 1)]);

@@ -29,12 +29,13 @@ public class UNPC extends UActor implements Interactable {
     public ArrayList<Entity> seenEntities;
 
     @Override
-    public void initialize() {
-        super.initialize();
+    public void initializeAsTemplate() {
+        super.initializeAsTemplate();
         initializeBehaviors();
     }
 
     public void initializeBehaviors() {
+        // TODO : use ObjectMapper to serialize the behavior from a subset of the json
         behaviorObjects = new ArrayList<>();
         if (defaultBehaviors != null) {
             for (String bname : defaultBehaviors) {
