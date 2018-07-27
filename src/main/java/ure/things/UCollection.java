@@ -86,14 +86,12 @@ public class UCollection implements Cloneable {
     }
 
     public UThing topThing() {
-        if (things.isEmpty())
-            return null;
+        if (things.isEmpty()) return null;
         return things.get(0);
     }
 
     public UActor actor() {
-        if (actors.isEmpty())
-            return null;
+        if (actors.isEmpty()) return null;
         return actors.get(0);
     }
 
@@ -101,6 +99,7 @@ public class UCollection implements Cloneable {
      * Whatever we're in just moved.
      */
     public void notifyMove() {
+        if (things.isEmpty()) return;
         for (UThing thing : things)
             thing.notifyMove();
     }
@@ -116,7 +115,10 @@ public class UCollection implements Cloneable {
     @Override
     public UCollection clone() {
         try {
-            return (UCollection)super.clone();
+            UCollection clone = (UCollection)super.clone();
+            clone.actors = (ArrayList<UActor>)actors.clone();
+            clone.things = (ArrayList<UThing>)things.clone();
+            return clone;
         } catch (Exception e) {
             e.printStackTrace();
         }

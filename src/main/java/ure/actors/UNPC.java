@@ -28,6 +28,7 @@ public class UNPC extends UActor implements Interactable {
     @Override
     public void initializeAsCloneFrom(UThing template) {
         if (template instanceof UNPC) {
+            System.out.println("initializing cloned " + this.name + " from template " + template.getName());
             behaviors = new ArrayList<>();
             ArrayList<UBehavior> templateBehaviors = ((UNPC)template).getBehaviors();
             if (templateBehaviors != null) {

@@ -80,6 +80,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         }
         setIcon(new Icon(getGlyph(), getGlyphColor(), null));
         stats = new HashMap<>();
+        contents = new UCollection();
     }
 
     /**

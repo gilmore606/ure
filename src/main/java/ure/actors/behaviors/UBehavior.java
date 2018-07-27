@@ -28,8 +28,6 @@ public abstract class UBehavior implements Cloneable {
     @JsonIgnore
     UCommander commander;
 
-    public UActor actor;        // the actor we're a part of
-
     protected String TYPE = "";
 
     public float freq = 1f;          // how often should we even consider acting?
@@ -61,8 +59,6 @@ public abstract class UBehavior implements Cloneable {
     /**
      * Override action() to return UActions on demand for the actor to perform.
      *
-     * @param actor
-     * @return
      */
     public UAction action(UNPC actor) { return null; }
 
@@ -175,8 +171,6 @@ public abstract class UBehavior implements Cloneable {
     public void setCurrentStatus(String status) { currentStatus = status; }
     public UColor getCurrentStatusColor() { return currentStatusColor; }
     public void setCurrentStatusColor(UColor c) { currentStatusColor = c; }
-    public UActor getActor() { return actor; }
-    public void setActor(UActor _actor) { actor = _actor; }
     public String getTYPE() { return TYPE; }
     public void setTYPE(String t) { TYPE = t; }
     public float getFreq() { return freq; }

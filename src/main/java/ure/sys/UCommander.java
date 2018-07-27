@@ -249,11 +249,14 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public int mouseX() { return renderer.getMousePosX(); }
     public int mouseY() { return renderer.getMousePosY(); }
 
-    public void consumeKeyFromBuffer() {
+    /**
+     * Return true if player actually did something
+     */
+    public boolean consumeKeyFromBuffer() {
         if (!keyBuffer.isEmpty()) {
             GLKey k = keyBuffer.remove();
             if (k.k == 0)
-                return;
+                return false;
             UCommand command = null;
             for (GLKey bindkey : keyBindings.keySet()) {
                 if (bindkey.sameKeyAs(k))
@@ -273,7 +276,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     showModal(new UModalURESplash());
                 }
             }
+            if (command != null)
+                return true;
+            return false;
         }
+        return false;
     }
 
     void hearCommand(UCommand command, GLKey k) {
@@ -406,27 +413,32 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             if (waitingForInput) {
                 if (player == null) {
                     if (!keyBuffer.isEmpty()) {
-                        consumeKeyFromBuffer();
-                        tickTime();
+                        if (consumeKeyFromBuffer())
+                            tickTime();
                     }
                 } else if (!keyBuffer.isEmpty() || moveLatch) {
+                    boolean shouldTickTime = false;
                     if (moveLatch) {
                         if (breakLatchOnInput && !keyBuffer.isEmpty()) {
                             latchBreak();
-                            consumeKeyFromBuffer();
+                            shouldTickTime = consumeKeyFromBuffer();
                         } else {
                             player.doAction(new ActionWalk(player, moveLatchX, moveLatchY));
                         }
                     } else {
-                        consumeKeyFromBuffer();
+                        shouldTickTime = consumeKeyFromBuffer();
                     }
                     renderer.render();
                     if (player != null) {
                         if (modal == null && player.actionTime() < 0f) {
-                            tickTime();
+                            shouldTickTime = true;
                         }
                         waitingForInput = false;
                     }
+                    if (shouldTickTime)
+                        tickTime();
+                    else
+                        waitingForInput = true;
                 }
             }
         }
