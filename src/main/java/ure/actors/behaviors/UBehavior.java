@@ -32,6 +32,8 @@ public abstract class UBehavior implements Cloneable {
 
     protected String TYPE = "";
 
+    public float freq = 1f;          // how often should we even consider acting?
+
     float relativeUrgency;      // how urgent are we vs our NPC's other behaviors?
     float currentUrgency;       // urgency of our last action request
     String currentStatus;       // english status for UI, based on last action
@@ -62,8 +64,12 @@ public abstract class UBehavior implements Cloneable {
      * @param actor
      * @return
      */
-    public UAction action(UNPC actor) {
-        return null;
+    public UAction action(UNPC actor) { return null; }
+
+    public UAction getAction(UNPC actor) {
+        currentStatus = "";
+        if (commander.random.nextFloat() > freq) return null;
+        return action(actor);
     }
 
     /**
@@ -163,4 +169,6 @@ public abstract class UBehavior implements Cloneable {
     public void setActor(UActor _actor) { actor = _actor; }
     public String getTYPE() { return TYPE; }
     public void setTYPE(String t) { TYPE = t; }
+    public float getFreq() { return freq; }
+    public void setFreq(Float f) { freq = f; }
 }

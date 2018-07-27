@@ -10,7 +10,10 @@
                   "The monk says, 'Wh...whose skulls are those?'",
                   "The monk eyes you warily.",
                   "The monk mutters a soft chant.",
-                  "The monk hums a discordant melody."]
+                  "The monk hums a discordant melody."],
+    "behaviors": [
+      {"type": "talker", "freq": 0.1, "comments": ["Yawn.", "Om mani padme...how did that go?", "Om mani padme humm...", "Hakuna matata...", "Blessed be the Shining One."], "responses": ["To tell you the truth I don't even like monking.", "I don't know what I'm even doing anymore.", "I lost my faith a long time ago."]}
+    ]
   },
   {
     "name": "rat",
@@ -66,7 +69,8 @@
     "movespeed": 0.8,
     "wakerange": 15,
     "behaviors": [
-      {"type": "wander", "freq": 0.4}
+      {"type": "wander", "freq": 0.4},
+      {"type": "monster", "freq": 0.5}
     ]
   },
   {
@@ -77,7 +81,8 @@
     "tags": [ "complex" ],
     "spawnlevels": [ 1, 5 ],
     "behaviors": [
-      {"type": "wander", "freq": 0.4}
+      {"type": "wander", "freq": 0.4},
+      {"type": "monster", "freq": 0.3}
     ]
   },
   {
@@ -112,7 +117,8 @@
     "spawnlevels": [1, 4],
     "ambients": [ "The tuatara hisses threateningly." ],
     "behaviors": [
-      {"type": "wander", "freq": 0.3}
+      {"type": "wander", "freq": 0.3},
+      {"type": "monster" }
     ]
   }
 ]

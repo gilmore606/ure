@@ -12,8 +12,6 @@ public class BehaviorWander extends UBehavior {
 
     public static final String TYPE = "wander";
 
-    public float freq;
-
     public BehaviorWander() { super(TYPE);}
 
     @Override
@@ -35,7 +33,4 @@ public class BehaviorWander extends UBehavior {
         currentStatus = "wandering";
         return act;
     }
-
-    public void setFreq(float f) { freq = f; }
-    public float getFreq() { return freq; }
 }

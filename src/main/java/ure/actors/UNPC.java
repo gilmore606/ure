@@ -88,7 +88,7 @@ public class UNPC extends UActor implements Interactable {
         int bc=0;
         for (UBehavior behavior : behaviors) {
             bc++;
-            UAction action = behavior.action(this);
+            UAction action = behavior.getAction(this);
             if (action != null) {
                 if (bestAction == null) {
                     bestAction = action;
