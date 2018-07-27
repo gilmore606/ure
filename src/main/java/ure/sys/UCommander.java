@@ -119,7 +119,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         speaker.initialize();
         addAnimator(speaker);
         modalStack = new Stack<>();
-        actorCzar.loadActors("/actors.json");
+        actorCzar.loadActors();
     }
 
     public long generateNewID(Entity entity) {

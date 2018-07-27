@@ -118,6 +118,7 @@ public class USpeaker implements UAnimator {
             source = b.get(0);
             b = makePlayBuffer(track);
             buffer = b.get(0);
+            alSourcei(source, AL_LOOPING, AL_TRUE);
             alSourcei(source, AL_BUFFER, buffer);
             alSourcePlay(source);
         }
@@ -230,9 +231,6 @@ public class USpeaker implements UAnimator {
         return null;
     }
 
-    IntBuffer makeStreamBuffer(String filename) {
-        return null;
-    }
 
     IntBuffer makePlaySource(float gain) {
         IntBuffer source = BufferUtils.createIntBuffer(1);

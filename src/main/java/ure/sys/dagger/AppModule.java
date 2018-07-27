@@ -64,7 +64,7 @@ public class AppModule {
     @Singleton
     public UTerrainCzar providesTerrainCzar() {
         UTerrainCzar czar = new UTerrainCzar();
-        czar.loadTerrains("/terrain.json");
+        czar.loadTerrains();
         return czar;
     }
 
@@ -72,7 +72,7 @@ public class AppModule {
     @Singleton
     public UThingCzar providesThingCzar() {
         UThingCzar czar = new UThingCzar();
-        czar.loadThings("/things.json");
+        czar.loadThings();
         return czar;
     }
 
