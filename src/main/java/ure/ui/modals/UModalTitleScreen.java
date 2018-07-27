@@ -100,7 +100,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         if (fakeTickCount > 20) {
             fakeTickCount = 0;
             commander.tickTime();
-            commander.tickActors();
+            commander.letActorsAct();
         }
     }
 }

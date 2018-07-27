@@ -252,11 +252,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     /**
      * Return true if player actually did something
      */
-    public boolean consumeKeyFromBuffer() {
+    public void consumeKeyFromBuffer() {
         if (!keyBuffer.isEmpty()) {
             GLKey k = keyBuffer.remove();
             if (k.k == 0)
-                return false;
+                return;
             UCommand command = null;
             for (GLKey bindkey : keyBindings.keySet()) {
                 if (bindkey.sameKeyAs(k))
@@ -276,15 +276,12 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     showModal(new UModalURESplash());
                 }
             }
-            if (command != null)
-                return true;
-            return false;
         }
-        return false;
     }
 
     void hearCommand(UCommand command, GLKey k) {
-        if (command != null && player != null) System.out.println("actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
+        if (command != null && player != null)
+            System.out.println("PLAYER: actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
         if (modal != null) {
             modal.hearCommand(command, k);
         } else if (command != null) {
@@ -404,47 +401,20 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                 }
             }
 
-            if (!waitingForInput) {
-                if (modal == null)
-                    tickActors();
-                waitingForInput = true;
-            }
-            // if it's the player's turn, do a command if we have one
-            if (waitingForInput) {
-                if (player == null) {
-                    if (!keyBuffer.isEmpty()) {
-                        if (consumeKeyFromBuffer())
-                            tickTime();
-                    }
-                } else if (!keyBuffer.isEmpty() || moveLatch) {
-                    boolean shouldTickTime = false;
-                    if (moveLatch) {
-                        if (breakLatchOnInput && !keyBuffer.isEmpty()) {
-                            latchBreak();
-                            shouldTickTime = consumeKeyFromBuffer();
-                        } else {
-                            player.doAction(new ActionWalk(player, moveLatchX, moveLatchY));
-                        }
-                    } else {
-                        shouldTickTime = consumeKeyFromBuffer();
-                    }
-                    renderer.render();
-                    if (player != null) {
-                        if (modal == null && player.actionTime() < 0f) {
-                            shouldTickTime = true;
-                        }
-                        waitingForInput = false;
-                    }
-                    if (shouldTickTime)
-                        tickTime();
-                    else
-                        waitingForInput = true;
+            if (player != null) {
+                if (player.getActionTime() > 0f) {
+                    consumeKeyFromBuffer();
+                } else {
+                    tickTime();
+                    letActorsAct();
                 }
+            } else {
+                consumeKeyFromBuffer();
             }
         }
     }
 
-    public void tickActors() {
+    public void letActorsAct() {
         // need to use a clone to iterate, since actors might drop out during this loop
         ArrayList<UActor> tmpactors = (ArrayList<UActor>)actors.clone();
         System.out.println("ticking " + Integer.toString(tmpactors.size()) + " actors");
