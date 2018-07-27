@@ -68,6 +68,8 @@ public abstract class UBehavior implements Cloneable {
 
     public UAction getAction(UNPC actor) {
         currentStatus = "";
+        currentUrgency = 0f;
+        currentStatusColor = UColor.COLOR_GRAY;
         if (commander.random.nextFloat() > freq) return null;
         return action(actor);
     }
@@ -137,9 +139,12 @@ public abstract class UBehavior implements Cloneable {
      * Go and kill it.
      */
     public UAction Attack(UNPC actor, UActor target) {
-        if (UPath.mdist(actor.areaX(),actor.areaY(),target.areaX(),target.areaY()) > 2)
+        currentStatus = "hostile";
+        currentStatusColor = UColor.COLOR_RED;
+        currentUrgency = 0.8f;
+        if (UPath.mdist(actor.areaX(),actor.areaY(),target.areaX(),target.areaY()) > 1)
             return Approach(actor, target);
-        actor.emote(actor + " flails ineffectually.");
+        actor.emote(actor.getName() + " flails ineffectually at " + target.getName() + ".");
         return null;
     }
 
@@ -154,7 +159,7 @@ public abstract class UBehavior implements Cloneable {
      * Respond to threat from it (by fight or flight).
      */
     public UAction ForF(UNPC actor, UActor threat) {
-        return null;
+        return Attack(actor, threat);
     }
 
     public float getRelativeUrgency() { return relativeUrgency; }

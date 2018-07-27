@@ -16,7 +16,6 @@ public class BehaviorWander extends UBehavior {
 
     @Override
     public UAction action(UNPC actor) {
-        if (commander.random.nextFloat() > freq) return null;
         int dir = commander.random.nextInt(4);
         int wx,wy;
         if (dir == 0) {
@@ -29,7 +28,7 @@ public class BehaviorWander extends UBehavior {
             wx = 0; wy = -1;
         }
         UAction act = new ActionWalk(actor, wx,wy);
-        currentUrgency = 1f;
+        currentUrgency = 0.5f;
         currentStatus = "wandering";
         return act;
     }
