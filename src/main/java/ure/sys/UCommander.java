@@ -254,6 +254,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      */
     public void consumeKeyFromBuffer() {
         if (!keyBuffer.isEmpty()) {
+            if (moveLatch && breakLatchOnInput)
+                moveLatch = false;
             GLKey k = keyBuffer.remove();
             if (k.k == 0)
                 return;
@@ -276,6 +278,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     showModal(new UModalURESplash());
                 }
             }
+        } else if (moveLatch) {
+            player.doAction(new ActionWalk(player, moveLatchX, moveLatchY));
         }
     }
 
