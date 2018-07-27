@@ -26,7 +26,7 @@ public class UActor extends UThing implements Interactable {
 
     protected boolean awake = false;
     protected int wakerange = 12;
-    protected int sleeprange = 25;
+    protected int sleeprange = 16;
     protected int sightrange = 9;
     protected float actionspeed = 1f;
     protected float movespeed = 1f;
@@ -246,6 +246,7 @@ public class UActor extends UThing implements Interactable {
     public void stopActing() {
         commander.unregisterActor(this);
         setAwake(false);
+        setActionTime(0f);
     }
 
     public void act() {

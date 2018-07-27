@@ -15,6 +15,8 @@ public class BehaviorTalking extends UBehavior {
 
     public static final String TYPE = "talking";
 
+    float babbleChance = 0.1f;
+
     String babbles[];
 
     public BehaviorTalking() {
@@ -25,7 +27,7 @@ public class BehaviorTalking extends UBehavior {
     @Override
     public UAction action(UNPC actor) {
         currentStatus = "";
-        if (commander.random.nextFloat() > 0.1f) {
+        if (commander.random.nextFloat() > babbleChance) {
             return null;
         }
         UAction action = null;

@@ -20,7 +20,7 @@ public class UNPC extends UActor implements Interactable {
     protected String[] ambients;
     protected String[] behaviors;
 
-    protected ArrayList<UBehavior> behaviorObjects = new ArrayList<>();
+    protected ArrayList<UBehavior> behaviorObjects;
 
     @JsonIgnore
     protected String[] defaultBehaviors;
@@ -35,6 +35,7 @@ public class UNPC extends UActor implements Interactable {
     }
 
     public void initializeBehaviors() {
+        behaviorObjects = new ArrayList<>();
         if (defaultBehaviors != null) {
             for (String bname : defaultBehaviors) {
                 UBehavior b = getBehaviorByType(bname);
@@ -63,6 +64,7 @@ public class UNPC extends UActor implements Interactable {
         // Keep acting until we don't have any action time left.
         // You shouldn't override this.  You probably want nextAction().
         sleepCheck();
+        if (!isAwake()) return;
         while (getActionTime() > 0f) {
             UAction action = nextAction();
             if (action == null) {
@@ -100,7 +102,9 @@ public class UNPC extends UActor implements Interactable {
         updateSeenEntities();
         UAction bestAction = null;
         float bestUrgency = 0f;
+        int bc=0;
         for (UBehavior behavior : getBehaviorObjects()) {
+            bc++;
             UAction action = behavior.action(this);
             if (action != null) {
                 if (bestAction == null) {

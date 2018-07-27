@@ -82,6 +82,11 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public long getID() { return ID; }
     public void setID(long newID) { ID = newID; }
 
+    /**
+     * This method is purely for making a unique string ID for debug logging.
+     */
+    public String NN() { return this.name + " (" + Long.toString(ID) + ")"; }
+
     public void reconnect(UArea area, UContainer container) {
         this.location = container;
         contents.reconnect(area, this);
