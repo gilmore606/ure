@@ -24,6 +24,7 @@ public class Water extends UTerrain {
         if (f > mid + 1)
             f =  getAnimationFrames() - f;
         float n = (float)f / (float)(getAnimationFrames() / 2);
+        n = n * 2;
         return (int)(Math.sin((double)n * 6.28) * waves - waves);
     }
 

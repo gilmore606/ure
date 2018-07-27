@@ -1,6 +1,7 @@
 package ure.actors.actions;
 
 import ure.actors.UActor;
+import ure.ui.particles.ParticleTalk;
 
 public class ActionTalk extends UAction {
 
@@ -14,5 +15,8 @@ public class ActionTalk extends UAction {
     }
 
     @Override
-    void doMe() { actor.say(text); }
+    void doMe() {
+        actor.say(text);
+        actor.area().addParticle(new ParticleTalk(actor.areaX(), actor.areaY()));
+    }
 }

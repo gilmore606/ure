@@ -65,4 +65,7 @@ public class UParticle implements UAnimator {
         colorbuffer.setAlpha(alpha * vis);
         renderer.drawGlyph(glyph(), px, py, colorbuffer, 0, 0);
     }
+
+    public int glyphOffsetX() { return 0; }
+    public int glyphOffsetY() { return 0; }
 }

@@ -20,4 +20,9 @@ public class ParticleSpark extends UParticle {
             return ',';
         }
     }
+
+    @Override
+    public int glyphOffsetY() {
+        return -8 - (ticksInitial-ticksLeft);
+    }
 }

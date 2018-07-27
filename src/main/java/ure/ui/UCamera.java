@@ -548,7 +548,7 @@ public class UCamera extends View implements UAnimator {
                 UColor light = lightAt(col,row);
                 float vis = visibilityAt(col,row);
                 if (vis < commander.config.getVisibilityThreshold()) return;
-                particle.render(renderer, col * cellw, row * cellh, light, vis);
+                particle.render(renderer, col * cellw + particle.glyphOffsetX(), row * cellh + particle.glyphOffsetY(), light, vis);
             }
         }
     }
