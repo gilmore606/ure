@@ -19,60 +19,23 @@ public class UNPC extends UActor implements Interactable {
 
     protected int visionRange = 12;
     protected String[] ambients;
-    protected String[] behaviors;
 
-    protected ArrayList<UBehavior> behaviorObjects;
-
-    @JsonIgnore
-    protected String[] defaultBehaviors;
+    protected ArrayList<UBehavior> behaviors;
 
     @JsonIgnore
     public ArrayList<Entity> seenEntities;
 
     @Override
-    public void initializeAsTemplate() {
-        super.initializeAsTemplate();
-        initializeBehaviors();
-    }
-
-    @Override
     public void initializeAsCloneFrom(UThing template) {
         if (template instanceof UNPC) {
-            behaviorObjects = new ArrayList<>();
-            for (UBehavior b : ((UNPC)template).getBehaviorObjects()) {
-                behaviorObjects.add(b.makeClone());
+            behaviors = new ArrayList<>();
+            ArrayList<UBehavior> templateBehaviors = ((UNPC)template).getBehaviors();
+            if (templateBehaviors != null) {
+                for (UBehavior b : templateBehaviors) {
+                    behaviors.add(b.makeClone());
+                }
             }
         }
-    }
-
-    /**
-     * Create Behaviors from the info read in from the actors.json template.
-     * This only needs to happen when making the initial template actor.
-     */
-    public void initializeBehaviors() {
-        // TODO : use ObjectMapper to serialize the behavior from a subset of the json
-        behaviorObjects = new ArrayList<>();
-        if (defaultBehaviors != null) {
-            for (String bname : defaultBehaviors) {
-                UBehavior b = getBehaviorByType(bname);
-                behaviorObjects.add(b);
-            }
-        }
-        if (behaviors != null) {
-            for (String bname : behaviors) {
-                UBehavior b = getBehaviorByType(bname);
-                behaviorObjects.add(b);
-            }
-        }
-    }
-    public UBehavior getBehaviorByType(String behaviorType) {
-        Class<? extends UBehavior> type = commander.actorCzar.behaviorDeserializer.classForType(behaviorType);
-        try {
-            return type.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     @Override
@@ -96,6 +59,10 @@ public class UNPC extends UActor implements Interactable {
      * Should we go to sleep?  Probably if the player's far away.
      */
     public void sleepCheck() {
+        if (area() == null)
+            stopActing();
+        if (area().closed || area().closeRequested)
+            stopActing();
         if (commander.player() == null || commander.player().area() != area()) {
             if (!area().getLabel().equals("TITLE"))
                 stopActing();
@@ -107,7 +74,7 @@ public class UNPC extends UActor implements Interactable {
 
     @Override
     public void hearEvent(UAction action) {
-        for (UBehavior behavior : behaviorObjects) {
+        for (UBehavior behavior : behaviors) {
             behavior.hearEvent(this, action);
         }
     }
@@ -119,7 +86,7 @@ public class UNPC extends UActor implements Interactable {
         UAction bestAction = null;
         float bestUrgency = 0f;
         int bc=0;
-        for (UBehavior behavior : getBehaviorObjects()) {
+        for (UBehavior behavior : behaviors) {
             bc++;
             UAction action = behavior.action(this);
             if (action != null) {
@@ -137,7 +104,7 @@ public class UNPC extends UActor implements Interactable {
     UBehavior controllingBehavior() {
         float bestUrgency = 0f;
         UBehavior b = null;
-        for (UBehavior behavior : getBehaviorObjects()) {
+        for (UBehavior behavior : behaviors) {
             if (behavior.getCurrentUrgency() > bestUrgency) {
                 b = behavior;
                 bestUrgency = behavior.getCurrentUrgency();
@@ -166,7 +133,7 @@ public class UNPC extends UActor implements Interactable {
 
     boolean caresAbout(Entity entity) {
         if (entity == this) return false;
-        for (UBehavior behavior : behaviorObjects) {
+        for (UBehavior behavior : behaviors) {
             if (behavior.caresAbout(this, entity))
                 return true;
         }
@@ -198,7 +165,7 @@ public class UNPC extends UActor implements Interactable {
     public boolean isInteractable(UActor actor) {
         if (isHostileTo(actor))
             return false;
-        for (UBehavior b : behaviorObjects) {
+        for (UBehavior b : behaviors) {
             if (b.willInteractWith(this, actor))
                 return true;
         }
@@ -207,7 +174,7 @@ public class UNPC extends UActor implements Interactable {
 
     @Override
     public boolean isHostileTo(UActor actor) {
-        for (UBehavior b : behaviorObjects) {
+        for (UBehavior b : behaviors) {
             if (b.isHostileTo(this, actor))
                 return true;
         }
@@ -216,7 +183,7 @@ public class UNPC extends UActor implements Interactable {
 
     @Override
     public float interactionFrom(UActor actor) {
-        for (UBehavior b : behaviorObjects) {
+        for (UBehavior b : behaviors) {
             if (b.willInteractWith(this, actor))
                 return b.interactionFrom(this, actor);
         }
@@ -240,19 +207,11 @@ public class UNPC extends UActor implements Interactable {
         this.ambients = ambients;
     }
 
-    public String[] getBehaviors() {
+    public ArrayList<UBehavior> getBehaviors() {
         return behaviors;
     }
 
-    public void setBehaviors(String[] behaviors) {
-        this.behaviors = behaviors;
-    }
-
-    public ArrayList<UBehavior> getBehaviorObjects() {
-        return behaviorObjects;
-    }
-
-    public void setBehaviorObjects(ArrayList<UBehavior> behaviorObjects) {
-        this.behaviorObjects = behaviorObjects;
+    public void setBehaviors(ArrayList<UBehavior> behaviorObjects) {
+        this.behaviors = behaviorObjects;
     }
 }

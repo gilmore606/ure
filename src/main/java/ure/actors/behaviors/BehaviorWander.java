@@ -12,10 +12,13 @@ public class BehaviorWander extends UBehavior {
 
     public static final String TYPE = "wander";
 
+    public float freq;
+
     public BehaviorWander() { super(TYPE);}
 
     @Override
     public UAction action(UNPC actor) {
+        if (commander.random.nextFloat() > freq) return null;
         int dir = commander.random.nextInt(4);
         int wx,wy;
         if (dir == 0) {
@@ -32,4 +35,7 @@ public class BehaviorWander extends UBehavior {
         currentStatus = "wandering";
         return act;
     }
+
+    public void setFreq(float f) { freq = f; }
+    public float getFreq() { return freq; }
 }

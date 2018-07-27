@@ -5,7 +5,6 @@
     "description": "A somber monk clad in rough robes.",
     "color": [240,160,70],
     "tags": [ "rock", "title" ],
-    "behaviors": [ "talking" ],
     "spawnlevels": [1,4],
     "ambients": [ "The monk scratches his balls under his robe.",
                   "The monk says, 'Wh...whose skulls are those?'",
@@ -19,8 +18,10 @@
     "description": "A big wet rat.",
     "color": [120,120,254],
     "tags": [ "cavern", "complex", "title" ],
-    "behaviors": [ "wander" ],
-    "spawnlevels": [ 1,5 ]
+    "spawnlevels": [ 1,5 ],
+    "behaviors": [
+      {"type": "wander", "freq": 0.7}
+    ]
   },
   {
     "name": "rabbit",
@@ -33,7 +34,9 @@
     "actionspeed": 1.1,
     "movespeed": 1.3,
     "wakerange": 35,
-    "behaviors": [ "wander" ]
+    "behaviors": [
+      {"type": "wander", "freq": 0.5}
+    ]
   },
   {
     "name": "deer",
@@ -41,13 +44,15 @@
     "description": "A huge mule deer buck.",
     "color": [170,140,30],
     "tags": [ "forest" ],
+    "behaviors": [
+      {"type": "wander", "freq": 0.3}
+    ],
     "spawnterrain": [ "grass", "sapling" ],
     "spawnlevels": [ 1,3 ],
     "actionspeed": 0.9,
     "movespeed": 1.2,
     "wakerange": 30,
-    "sleeprange": 35,
-    "behaviors": [ "wander" ]
+    "sleeprange": 35
   },
   {
     "name": "sasquatch",
@@ -55,12 +60,14 @@
     "description": "A foul smelling giant humanoid.",
     "color": [110, 50, 40],
     "tags": [ "rock", "forest" ],
-    "behaviors": [ "monster", "wander" ],
     "spawnterrain": [ "grass", "sapling", "dirt" ],
     "spawnlevels": [ 2, 5 ],
     "actionspeed": 0.8,
     "movespeed": 0.8,
-    "wakerange": 15
+    "wakerange": 15,
+    "behaviors": [
+      {"type": "wander", "freq": 0.4}
+    ]
   },
   {
     "name": "soldier",
@@ -68,8 +75,10 @@
     "description": "Some goon.",
     "color": [ 60, 60, 80],
     "tags": [ "complex" ],
-    "behaviors": [ "talking", "wander" ],
-    "spawnlevels": [ 1, 5 ]
+    "spawnlevels": [ 1, 5 ],
+    "behaviors": [
+      {"type": "wander", "freq": 0.4}
+    ]
   },
   {
     "name": "worker",
@@ -77,9 +86,11 @@
     "description": "Some desk jockey.",
     "color": [ 75, 75, 85 ],
     "tags": [ "complex", "title" ],
-    "behaviors": [ "talking" ],
     "spawnterrain": [ "floor", "floormoss" ],
-    "spawnlevels": [ 1, 2 ]
+    "spawnlevels": [ 1, 2 ],
+    "behaviors": [
+      {"type": "wander", "freq": 0.1}
+    ]
   },
   {
     "name": "cave snail",
@@ -87,7 +98,10 @@
     "description": "A dog sized snail with a coral-pattern shell.",
     "color": [ 255,210,140],
     "tags": [ "cave" ],
-    "spawnlevels": [1, 3]
+    "spawnlevels": [1, 3],
+    "behaviors": [
+    {"type": "wander", "freq": 0.1}
+  ]
   },
   {
     "name": "tuatara",
@@ -95,8 +109,10 @@
     "description": "A huge ill-tempered cave lizard.",
     "color": [0,210,30],
     "tags": [ "cave" ],
-    "behaviors": [ "monster" ],
     "spawnlevels": [1, 4],
-    "ambients": [ "The tuatara hisses threateningly." ]
+    "ambients": [ "The tuatara hisses threateningly." ],
+    "behaviors": [
+      {"type": "wander", "freq": 0.3}
+    ]
   }
 ]
