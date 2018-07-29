@@ -32,6 +32,11 @@ public class BehaviorSelfDefend extends UBehavior {
     }
 
     @Override
+    public boolean caresAbout(UNPC actor, Entity entity) {
+        return isHostileTo(actor, entity);
+    }
+
+    @Override
     public void aggressionFrom(UNPC actor, UActor attacker) {
         long attackerID = attacker.getID();
         if (!attackers.contains(attackerID))
