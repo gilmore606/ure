@@ -47,6 +47,10 @@ public abstract class UBehavior implements Cloneable {
         this();
         this.TYPE = type;
     }
+
+    /**
+     * If your Behavior has Object members you'll need to make new instances for those members by overriding this.
+     */
     public UBehavior makeClone() {
         try {
             UBehavior clone = (UBehavior)clone();

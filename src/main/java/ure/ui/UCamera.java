@@ -192,6 +192,7 @@ public class UCamera extends View implements UAnimator {
                 projectLight(light);
             }
         }
+        renderSeen();
     }
 
     void renderSun() {
@@ -249,6 +250,16 @@ public class UCamera extends View implements UAnimator {
 
     }
 
+    void renderSeen() {
+        for (int col = 0; col < columns; col++) {
+            for (int row = 0; row < rows; row++) {
+                float vis = visibilityAt(col, row);
+                if (vis > commander.config.getVisibilityThreshold() && lightAt(col,row).grayscale() > commander.config.getVisibilityThreshold())
+                    area.setSeen(col + leftEdge, row + topEdge);
+            }
+        }
+    }
+
 
     void renderVisibleFor(UActor actor) {
         for (int i=-1;i<2;i++) {
@@ -269,11 +280,11 @@ public class UCamera extends View implements UAnimator {
             return 0f;
         return lightcells[col][row].visibility();
     }
+
     void setVisibilityAt(int col, int row, float vis) {
         if (isValidCell(col, row)) {
             lightcells[col][row].setVisibility(vis);
-            if (vis > commander.config.getVisibilityThreshold() && lightAt(col,row).grayscale() > commander.config.getVisibilityThreshold())
-                area.setSeen(col + leftEdge, row + topEdge);
+
         }
     }
 
@@ -436,6 +447,7 @@ public class UCamera extends View implements UAnimator {
             total = UColor.COLOR_BLACK;
         } else {
             total = lightcells[col][row].light(commander.frameCounter);
+            // TODO : this is a dumb implementation for glow, or at least a dumb place for it
             for (int i = -1;i < 2;i++) {
                 for (int j = -1;j < 2;j++) {
                     UTerrain t = area.terrainAt(col + leftEdge + i, row + topEdge + j);
@@ -501,22 +513,23 @@ public class UCamera extends View implements UAnimator {
                 tOpacity = commander.config.getSeenOpacity();
                 tSaturation = commander.config.getSeenSaturation();
                 if (commander.config.isSeenLightGray())
-                    light = UColor.COLOR_GRAY;
+                    light = UColor.COLOR_LIGHTGRAY;
             }
             UColor terrainLight = light;
-            // TODO: clean up access to terrain obj here, wtf methodcalls
             if (t.isGlow())
                 terrainLight.set(1f,1f,1f);
             // TODO: Use alpha here too?
-            t.getBgColorBuffer().set(t.getBgColor().r, t.getBgColor().g, t.getBgColor().b);
-            t.getBgColorBuffer().illuminateWith(terrainLight, tOpacity);
-            t.getBgColorBuffer().desaturateBy(1f - tSaturation);
-            renderer.drawRect(col * cellw, row * cellh, cellw, cellh, t.getBgColorBuffer());
+            UColor terrainBg = t.getBgColorBuffer();
+            UColor terrainFg = t.getFgColorBuffer();
+            terrainBg.set(t.getBgColor().r, t.getBgColor().g, t.getBgColor().b);
+            terrainBg.illuminateWith(terrainLight, tOpacity);
+            terrainBg.desaturateBy(1f - tSaturation);
+            renderer.drawRect(col * cellw, row * cellh, cellw, cellh, terrainBg);
 
-            t.getFgColorBuffer().set(t.getFgColor().r, t.getFgColor().g, t.getFgColor().b);
-            t.getFgColorBuffer().illuminateWith(terrainLight, tOpacity);
-            t.getFgColorBuffer().desaturateBy(1f - tSaturation);
-            renderer.drawGlyph(t.glyph(col+ leftEdge,row+ topEdge), col * cellw, row * cellh, t.getFgColorBuffer(), t.glyphOffsetX(), t.glyphOffsetY() + 2);
+            terrainFg.set(t.getFgColor().r, t.getFgColor().g, t.getFgColor().b);
+            terrainFg.illuminateWith(terrainLight, tOpacity);
+            terrainFg.desaturateBy(1f - tSaturation);
+            renderer.drawGlyph(t.glyph(col+ leftEdge,row+ topEdge), col * cellw, row * cellh, terrainFg, t.glyphOffsetX(), t.glyphOffsetY() + 2);
         } else {
             renderer.drawRect(col * cellw, row * cellh, cellw, cellh, commander.config.getCameraBgColor());
         }
