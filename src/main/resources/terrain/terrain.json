@@ -172,6 +172,24 @@
       "animationFrames": 250,
       "waves": 2
     },
+  {
+    "name": "deep water",
+    "type": "water",
+    "filechar": "w",
+    "passable": true,
+    "opaque": false,
+    "breaklatch": true,
+    "sunvis": 1.0,
+    "movespeed": 0.3,
+    "glyph": "^",
+    "fgcolor": [40,200,255],
+    "fgvariants": [ [40,200,255],[150,150,255],[95,150,255],[0,180,245]],
+    "bgcolor": [0,45,127],
+    "bgvariants": [ [0,45,127],[0,20,150],[0,30,160],[5,10,100]],
+    "walkmsg": "You swim across the water.",
+    "animationFrames": 250,
+    "waves": 4
+  },
     {
       "name": "wooden bridge",
       "filechar": "B",

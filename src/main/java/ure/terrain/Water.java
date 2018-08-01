@@ -14,6 +14,9 @@ public class Water extends UTerrain {
 
     public static final String TYPE = "water";
 
+    public int shimmerFrames = 80;
+    public int shimmerVariance = 50;
+
     protected int waves;
 
     @Override
@@ -34,6 +37,14 @@ public class Water extends UTerrain {
 
     public void setWaves(int waves) {
         this.waves = waves;
+    }
+
+    @Override
+    public void animationTick() {
+        super.animationTick();
+        if (animationFrame % (shimmerFrames + commander.random.nextInt(shimmerVariance)) == 0) {
+            applyColorVariance();
+        }
     }
 
     @Override

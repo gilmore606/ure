@@ -109,6 +109,10 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
 
     public void becomeReal(UCell c) {
         cell = c;
+        applyColorVariance();
+    }
+
+    public void applyColorVariance() {
         if (getBgvariants() != null) {
             Random r = new Random();
             getBgColor().set(getBgvariants()[r.nextInt(getBgvariants().length - 1)]);
