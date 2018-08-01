@@ -49,6 +49,8 @@ public class URendererOGL implements URenderer {
 
     private KeyListener keyListener;
 
+    private DoubleBuffer xf, yf;
+
     private int frameCount = 0;
     private long lastUpdateTime = System.currentTimeMillis();
 
@@ -56,24 +58,23 @@ public class URendererOGL implements URenderer {
 
     public URendererOGL() {
         Injector.getAppComponent().inject(this);
+        xf = BufferUtils.createDoubleBuffer(1);
+        yf = BufferUtils.createDoubleBuffer(1);
     }
 
     // URenderer methods
 
     @Override
     public int getMousePosX(){
-        DoubleBuffer xf = BufferUtils.createDoubleBuffer(1);
-        DoubleBuffer yf = BufferUtils.createDoubleBuffer(1);
         glfwGetCursorPos(window, xf, yf);
         return (int)xf.get(0);
     }
     @Override
     public int getMousePosY(){
-        DoubleBuffer xf = BufferUtils.createDoubleBuffer(1);
-        DoubleBuffer yf = BufferUtils.createDoubleBuffer(1);
         glfwGetCursorPos(window, xf, yf);
         return (int)yf.get(0);
     }
+
 
     @Override
     public View getRootView() { return rootView; }
