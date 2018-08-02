@@ -8,8 +8,8 @@ import dagger.Provides;
 import ure.areas.LandscaperDeserializer;
 import ure.areas.UCartographer;
 import ure.areas.ULandscaper;
-import ure.behaviors.BehaviorDeserializer;
-import ure.behaviors.UBehavior;
+import ure.actors.behaviors.BehaviorDeserializer;
+import ure.actors.behaviors.UBehavior;
 import ure.sys.UCommander;
 import ure.actors.ActorDeserializer;
 import ure.actors.UActor;
@@ -64,7 +64,7 @@ public class AppModule {
     @Singleton
     public UTerrainCzar providesTerrainCzar() {
         UTerrainCzar czar = new UTerrainCzar();
-        czar.loadTerrains("/terrain.json");
+        czar.loadTerrains();
         return czar;
     }
 
@@ -72,7 +72,7 @@ public class AppModule {
     @Singleton
     public UThingCzar providesThingCzar() {
         UThingCzar czar = new UThingCzar();
-        czar.loadThings("/things.json");
+        czar.loadThings();
         return czar;
     }
 

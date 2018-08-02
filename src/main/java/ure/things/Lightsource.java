@@ -38,9 +38,9 @@ public class Lightsource extends UThing {
     protected ULight light;
 
     @Override
-    public void initialize() {
+    public void initializeAsTemplate() {
         setOn(false);
-        super.initialize();
+        super.initializeAsTemplate();
     }
 
     void makeLight() {

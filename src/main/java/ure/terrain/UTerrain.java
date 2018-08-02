@@ -3,12 +3,11 @@ package ure.terrain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UPlayer;
 import ure.areas.UArea;
-import ure.areas.UCartographer;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UAnimator;
 import ure.sys.UCommander;
-import ure.actions.Interactable;
+import ure.actors.actions.Interactable;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.actors.UActor;
@@ -79,7 +78,16 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
         Injector.getAppComponent().inject(this);
     }
 
-    public void initialize() {
+    /**
+     * Set up a new template object fresh from resource JSON deserializing, to make it cloneable.
+     */
+    public void initializeAsTemplate() {
+
+    }
+    /**
+     * Set up a fresh clone from a template object.
+     */
+    public void initializeAsCloneFrom(UTerrain template) {
         setFgColor(new UColor(fgcolor[0], fgcolor[1], fgcolor[2]));
         setBgColor(new UColor(bgcolor[0], bgcolor[1], bgcolor[2]));
         setFgColorBuffer(new UColor(0f,0f,0f));
@@ -101,7 +109,10 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
 
     public void becomeReal(UCell c) {
         cell = c;
-        initialize();
+        applyColorVariance();
+    }
+
+    public void applyColorVariance() {
         if (getBgvariants() != null) {
             Random r = new Random();
             getBgColor().set(getBgvariants()[r.nextInt(getBgvariants().length - 1)]);
@@ -398,4 +409,19 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
 
     public long getID() { return ID; }
     public void setID(long newID) { ID = newID; }
+
+    public UArea area() {
+        if (cell != null)
+            return cell.area();
+        else
+            return null;
+    }
+    public int areaX() {
+        if (cell != null) return cell.areaX();
+        return 0;
+    }
+    public int areaY() {
+        if (cell != null) return cell.areaY();
+        return 0;
+    }
 }

@@ -2,8 +2,8 @@ package ure.actors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.StringUtils;
-import ure.actions.Interactable;
-import ure.actions.UAction;
+import ure.actors.actions.Interactable;
+import ure.actors.actions.UAction;
 import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.math.UColor;
@@ -13,6 +13,7 @@ import ure.things.Lightsource;
 import ure.things.UThing;
 import ure.things.UContainer;
 import ure.ui.UCamera;
+import ure.ui.particles.ParticleHit;
 
 /**
  * UActor represents a UThing which can perform actions.  This includes the player and NPCs.
@@ -24,9 +25,9 @@ import ure.ui.UCamera;
 public class UActor extends UThing implements Interactable {
 
     protected boolean awake = false;
-    protected int wakerange = 20;
-    protected int sleeprange = 30;
-    protected int sightrange = 15;
+    protected int wakerange = 12;
+    protected int sleeprange = 16;
+    protected int sightrange = 9;
     protected float actionspeed = 1f;
     protected float movespeed = 1f;
 
@@ -43,8 +44,8 @@ public class UActor extends UThing implements Interactable {
     protected float actionTime = 0f;
 
     @Override
-    public void initialize() {
-        super.initialize();
+    public void initializeAsTemplate() {
+        super.initializeAsTemplate();
         setGlyphOutline(true);
     }
 
@@ -175,16 +176,27 @@ public class UActor extends UThing implements Interactable {
             return (UCell) getLocation();
         return null;
     }
+
     public void debug() {
         Lightsource torch = (Lightsource)(commander.thingCzar.getThingByName("torch"));
         torch.moveToCell(area(), areaX(), areaY());
         torch.turnOn();
         commander.printScroll("You drop a torch.");
-  }
+    }
 
     public void moveTriggerFrom(UActor actor) {
-        if (actor instanceof UPlayer)
-            commander.printScroll("Ow!");
+        if (actor instanceof UPlayer) {
+            aggressionFrom(actor);
+            area().addParticle(new ParticleHit(areaX(), areaY(), bloodColor(), 0.5f+commander.random.nextFloat()*0.5f));
+        }
+    }
+
+    public void aggressionFrom(UActor actor) {
+
+    }
+
+    public UColor bloodColor() {
+        return UColor.COLOR_RED;
     }
 
     // TODO: Parameterize all of these hardcoded strings somewhere
@@ -238,10 +250,15 @@ public class UActor extends UThing implements Interactable {
     public void stopActing() {
         commander.unregisterActor(this);
         setAwake(false);
+        setActionTime(0f);
     }
 
     public void act() {
 
+    }
+
+    public void say(String text) {
+        commander.printScrollIfSeen(this,StringUtils.capitalize(getDname()) + " says, \"" + text + "\"");
     }
 
     /**

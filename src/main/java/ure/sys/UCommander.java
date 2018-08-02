@@ -9,15 +9,17 @@ import com.google.common.eventbus.Subscribe;
 import org.apache.commons.io.IOUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
-import ure.actions.ActionWalk;
+import ure.actors.actions.ActionWalk;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
+import ure.areas.UArea;
 import ure.areas.UCartographer;
 import ure.commands.UCommand;
-import ure.events.PlayerChangedAreaEvent;
+import ure.sys.events.PlayerChangedAreaEvent;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.events.TimeTickEvent;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
@@ -25,8 +27,8 @@ import ure.ui.modals.*;
 import ure.ui.panels.UScrollPanel;
 import ure.ui.panels.UStatusPanel;
 import ure.ui.USpeaker;
-import ure.vaulted.VaultedArea;
-import ure.vaulted.VaultedModal;
+import ure.areas.vaulted.VaultedArea;
+import ure.areas.vaulted.VaultedModal;
 
 import javax.inject.Inject;
 import java.io.*;
@@ -58,7 +60,6 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public Random random;
     public USpeaker speaker;
 
-    private HashSet<UTimeListener> timeListeners;
     private HashSet<UAnimator> animators;
     private ArrayList<UActor> actors;
 
@@ -104,7 +105,6 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void registerComponents(UREGame _game, UPlayer theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
         game = _game;
         renderer = theRenderer;
-        timeListeners = new HashSet<UTimeListener>();
         animators = new HashSet<UAnimator>();
         actors = new ArrayList<UActor>();
         thingCzar = thingczar;
@@ -119,7 +119,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         speaker.initialize();
         addAnimator(speaker);
         modalStack = new Stack<>();
-        actorCzar.loadActors("/actors.json");
+        actorCzar.loadActors();
     }
 
     public long generateNewID(Entity entity) {
@@ -133,18 +133,6 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public boolean isQuitGame() { return quitGame; }
-
-    /**
-     * Any object which implements UTimeListener can register with this method to have its hearTimeTick() called
-     * on every game tick.
-     *
-     */
-    public void registerTimeListener(UTimeListener listener) {
-        timeListeners.add(listener);
-    }
-    public void unregisterTimeListener(UTimeListener listener) {
-        timeListeners.remove(listener);
-    }
 
     /**
      * Newly spawned actors must register with the commander to get action time and thereby...act.
@@ -261,9 +249,16 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public int mouseX() { return renderer.getMousePosX(); }
     public int mouseY() { return renderer.getMousePosY(); }
 
+    /**
+     * Return true if player actually did something
+     */
     public void consumeKeyFromBuffer() {
         if (!keyBuffer.isEmpty()) {
+            if (moveLatch && breakLatchOnInput)
+                moveLatch = false;
             GLKey k = keyBuffer.remove();
+            if (k.k == 0)
+                return;
             UCommand command = null;
             for (GLKey bindkey : keyBindings.keySet()) {
                 if (bindkey.sameKeyAs(k))
@@ -283,11 +278,14 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     showModal(new UModalURESplash());
                 }
             }
+        } else if (moveLatch && config.isNethackShiftRun()) {
+            player.doAction(new ActionWalk(player, moveLatchX, moveLatchY));
         }
     }
 
     void hearCommand(UCommand command, GLKey k) {
-        if (command != null && player != null) System.out.println("actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
+        if (command != null && player != null)
+            System.out.println("PLAYER: actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
         if (modal != null) {
             modal.hearCommand(command, k);
         } else if (command != null) {
@@ -318,7 +316,9 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      * @param modal
      */
     public void showModal(UModal modal) {
+        speaker.playUIsound(config.soundUImodalOpen, 1f);
         attachModal(modal);
+        modal.onOpen();
     }
 
     void debug() {
@@ -405,43 +405,23 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                 }
             }
 
-            if (!waitingForInput) {
-                tickActors();
-                waitingForInput = true;
-            }
-            // if it's the player's turn, do a command if we have one
-            if (waitingForInput) {
-                if (player == null) {
-                    if (!keyBuffer.isEmpty()) {
-                        consumeKeyFromBuffer();
-                        tickTime();
-                    }
-                } else if (!keyBuffer.isEmpty() || moveLatch) {
-                    if (moveLatch) {
-                        if (breakLatchOnInput && !keyBuffer.isEmpty()) {
-                            latchBreak();
-                            consumeKeyFromBuffer();
-                        } else {
-                            player.doAction(new ActionWalk(player, moveLatchX, moveLatchY));
-                        }
-                    } else {
-                        consumeKeyFromBuffer();
-                    }
-                    renderer.render();
-                    if (player != null) {
-                        if (player.actionTime() <= 0f) {
-                            tickTime();
-                        }
-                        waitingForInput = false;
-                    }
+            if (player != null) {
+                if (player.getActionTime() > 0f) {
+                    consumeKeyFromBuffer();
+                } else {
+                    tickTime();
+                    letActorsAct();
                 }
+            } else {
+                consumeKeyFromBuffer();
             }
         }
     }
 
-    public void tickActors() {
+    public void letActorsAct() {
         // need to use a clone to iterate, since actors might drop out during this loop
         ArrayList<UActor> tmpactors = (ArrayList<UActor>)actors.clone();
+        System.out.println("ticking " + Integer.toString(tmpactors.size()) + " actors");
         for (UActor actor : tmpactors) {
             if (actors.contains(actor))
                 actor.act();
@@ -462,6 +442,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public void persistPlayer() {
+        if (player.area().getLabel().equals("vaulted"))
+            return;
         System.out.println("Persisting player " + player.getName() + "...");
         player.saveStateData();
         String path = savePath();
@@ -478,6 +460,15 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Post a PlayerChangedAreaEvent after a player level-teleports somehow (anything but a Stairs move).  Normally
+     * the Stairs would post this event.
+     */
+    public void postPlayerLevelportEvent(UArea sourceArea) {
+        if (player.area() != sourceArea)
+            bus.post(new PlayerChangedAreaEvent(player, null, sourceArea, player.area()));
     }
 
     public UPlayer loadPlayer() {
@@ -504,10 +495,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         for (UActor actor : actors) {
             actor.addActionTime(1f);
         }
-        Iterator<UTimeListener> timeI = timeListeners.iterator();
-        while (timeI.hasNext()) {
-            timeI.next().hearTimeTick(this);
-        }
+        bus.post(new TimeTickEvent(turnCounter));
         turnCounter++;
         System.out.println("time:tick " + Integer.toString(turnCounter));
         renderer.render();
@@ -592,7 +580,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             return config.getSavePath() + world + "/";
     }
 
-    void launchVaulted() {
+    public void launchVaulted() {
         File dirfile = new File(config.getResourcePath() + "vaults/");
         ArrayList<String> filelist = new ArrayList<>();
         for (String filename : dirfile.list()) {
@@ -618,9 +606,17 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
     }
     void doLaunchVaulted(String filename) {
+        UArea oldarea = null;
+        if (player == null)
+            player = new UPlayer("Vault Editor Guy", '@', UColor.COLOR_WHITE, true, null, 0, 0);
+        else
+            oldarea = player.area();
         VaultedArea edarea = new VaultedArea(30,30);
+        player.attachCamera(modalCamera, UCamera.PINSTYLE_SOFT);
         player.moveToCell(edarea, 2, 2);
+        postPlayerLevelportEvent(oldarea);
         UModal edmodal = new VaultedModal(edarea, filename);
+        wipeModals();
         showModal(edmodal);
     }
     public void hearModalGetString(String context, String input) {

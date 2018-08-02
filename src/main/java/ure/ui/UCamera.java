@@ -192,6 +192,7 @@ public class UCamera extends View implements UAnimator {
                 projectLight(light);
             }
         }
+        renderSeen();
     }
 
     void renderSun() {
@@ -249,6 +250,16 @@ public class UCamera extends View implements UAnimator {
 
     }
 
+    void renderSeen() {
+        for (int col = 0; col < columns; col++) {
+            for (int row = 0; row < rows; row++) {
+                float vis = visibilityAt(col, row);
+                if (vis > commander.config.getVisibilityThreshold() && lightAt(col,row).grayscale() > commander.config.getVisibilityThreshold())
+                    area.setSeen(col + leftEdge, row + topEdge);
+            }
+        }
+    }
+
 
     void renderVisibleFor(UActor actor) {
         for (int i=-1;i<2;i++) {
@@ -269,11 +280,11 @@ public class UCamera extends View implements UAnimator {
             return 0f;
         return lightcells[col][row].visibility();
     }
+
     void setVisibilityAt(int col, int row, float vis) {
         if (isValidCell(col, row)) {
             lightcells[col][row].setVisibility(vis);
-            if (vis > commander.config.getVisibilityThreshold() && lightAt(col,row).grayscale() > commander.config.getVisibilityThreshold())
-                area.setSeen(col + leftEdge, row + topEdge);
+
         }
     }
 
@@ -436,6 +447,7 @@ public class UCamera extends View implements UAnimator {
             total = UColor.COLOR_BLACK;
         } else {
             total = lightcells[col][row].light(commander.frameCounter);
+            // TODO : this is a dumb implementation for glow, or at least a dumb place for it
             for (int i = -1;i < 2;i++) {
                 for (int j = -1;j < 2;j++) {
                     UTerrain t = area.terrainAt(col + leftEdge + i, row + topEdge + j);
@@ -477,11 +489,14 @@ public class UCamera extends View implements UAnimator {
                 drawCell(renderer, col, row, cellw, cellh);
             }
         }
-        // Render Actors in a second pass.
-        // They may animate and be off their cell; we want them to stay in front of terrain.
         for (int col=0; col<camw; col++) {
             for (int row=0; row<camh; row++) {
                 drawCellActor(renderer, col, row, cellw, cellh);
+            }
+        }
+        for (int col=0; col<camw; col++) {
+            for (int row=0; row<camh; row++) {
+                drawCellParticle(renderer, col, row, cellw, cellh);
             }
         }
         rendering = false;
@@ -498,23 +513,22 @@ public class UCamera extends View implements UAnimator {
                 tOpacity = commander.config.getSeenOpacity();
                 tSaturation = commander.config.getSeenSaturation();
                 if (commander.config.isSeenLightGray())
-                    light = UColor.COLOR_GRAY;
+                    light = UColor.COLOR_LIGHTGRAY;
             }
             UColor terrainLight = light;
-            // TODO: clean up access to terrain obj here, wtf methodcalls
             if (t.isGlow())
                 terrainLight.set(1f,1f,1f);
             // TODO: Use alpha here too?
-            t.getBgColorBuffer().set(t.getBgColor().r, t.getBgColor().g, t.getBgColor().b);
-            t.getBgColorBuffer().illuminateWith(terrainLight, tOpacity);
-            t.getBgColorBuffer().desaturateBy(1f - tSaturation);
-            renderer.drawRect(col * cellw, row * cellh, cellw, cellh, t.getBgColorBuffer());
+            UColor terrainBg = t.getBgColorBuffer();
+            UColor terrainFg = t.getFgColorBuffer();
+            terrainBg.set(t.getBgColor().r, t.getBgColor().g, t.getBgColor().b);
+            terrainBg.illuminateWith(terrainLight, tOpacity);
+            terrainBg.desaturateBy(1f - tSaturation);
+            renderer.drawRect(col * cellw, row * cellh, cellw, cellh, terrainBg);
 
-            t.getFgColorBuffer().set(t.getFgColor().r, t.getFgColor().g, t.getFgColor().b);
-            t.getFgColorBuffer().illuminateWith(terrainLight, tOpacity);
-            t.getFgColorBuffer().desaturateBy(1f - tSaturation);
-
-            // TODO: Do we need terrain glyph offsets, since we're now centering them in the cell?
+            terrainFg.set(t.getFgColor().r, t.getFgColor().g, t.getFgColor().b);
+            terrainFg.illuminateWith(terrainLight, tOpacity);
+            terrainFg.desaturateBy(1f - tSaturation);
             renderer.drawGlyph(t.glyph(col+ leftEdge,row+ topEdge), col * cellw + t.glyphOffsetX(), row * cellh  + t.glyphOffsetY(), renderer.glyphWidth(), renderer.glyphHeight(), t.getFgColorBuffer());
         } else {
             renderer.drawRect(col * cellw, row * cellh, cellw, cellh, commander.config.getCameraBgColor());
@@ -528,13 +542,6 @@ public class UCamera extends View implements UAnimator {
                 things.next().render(renderer, col * cellw, row * cellh, light, vis);
             }
         }
-        UCell cell = cellAt(col,row);
-        if (cell != null) {
-            UParticle particle = cellAt(col, row).getParticle();
-            if (particle != null) {
-                particle.render(renderer, col * cellw, row * cellh, light, vis);
-            }
-        }
     }
 
     private void drawCellActor(URenderer renderer, int col, int row, int cellw, int cellh) {
@@ -545,6 +552,18 @@ public class UCamera extends View implements UAnimator {
 
         UColor light = lightAt(col,row);
         actor.render(renderer, col*cellw, row*cellh, light, vis);
+    }
+    private void drawCellParticle(URenderer renderer, int col, int row, int cellw, int cellh) {
+        UCell cell = cellAt(col,row);
+        if (cell != null) {
+            UParticle particle = cellAt(col, row).getParticle();
+            if (particle != null) {
+                UColor light = lightAt(col,row);
+                float vis = visibilityAt(col,row);
+                if (vis < commander.config.getVisibilityThreshold()) return;
+                particle.render(renderer, col * cellw + particle.glyphOffsetX(), row * cellh + particle.glyphOffsetY(), light, vis);
+            }
+        }
     }
 
     public void animationTick() {

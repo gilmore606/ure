@@ -1,6 +1,6 @@
 package ure.commands;
 
-import ure.actions.ActionPass;
+import ure.actors.actions.ActionPass;
 import ure.actors.UPlayer;
 
 public class CommandPass extends UCommand {

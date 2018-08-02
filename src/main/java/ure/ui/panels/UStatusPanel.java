@@ -1,7 +1,9 @@
 package ure.ui.panels;
 
+import com.google.common.eventbus.Subscribe;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.events.TimeTickEvent;
 
 import java.util.HashMap;
 
@@ -13,6 +15,7 @@ public class UStatusPanel extends UPanel {
 
     public UStatusPanel(int pixelw, int pixelh, int padx, int pady, UColor fg, UColor bg, UColor borderc) {
         super(pixelw,pixelh,padx,pady,fg,bg,borderc);
+        bus.register(this);
         texts = new HashMap<String,TextFrag>();
         textRows = (pixelw-padx) / commander.config.getTextWidth();
         textColumns = (pixelh-pady) / commander.config.getTextHeight();
@@ -43,6 +46,16 @@ public class UStatusPanel extends UPanel {
                 TextFrag frag = texts.get(textName);
                 renderer.drawString(frag.row * charWidth + padX, (frag.col + 1) * charHeight + padY, frag.color, frag.text);
             }
+        }
+    }
+
+    @Subscribe
+    public void hearTimeTick(TimeTickEvent event) {
+        if (commander.player() != null) {
+            setText("turn", "turn " + Integer.toString(event.turn));
+            setText("time", commander.timeString(true, " "));
+            setText("location", commander.cartographer.describeLabel(commander.player().area().getLabel()));
+            setText("name", commander.player().getName());
         }
     }
 

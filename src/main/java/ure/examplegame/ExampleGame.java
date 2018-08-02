@@ -11,7 +11,6 @@ import ure.render.URendererOGL;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.sys.UREGame;
-import ure.sys.UTimeListener;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.things.UThingCzar;
@@ -25,7 +24,7 @@ import ure.ui.panels.UStatusPanel;
 
 import javax.inject.Inject;
 
-public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener {
+public class ExampleGame implements UREGame, HearModalTitleScreen {
 
     static UArea area;
     static UCamera camera;
@@ -112,7 +111,6 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
         makeWindow();
 
         commander.registerScrollPrinter(scrollPanel);
-        commander.registerTimeListener(this);
         commander.addAnimator(camera);
 
         setupTitleScreen();
@@ -132,18 +130,6 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
 
     }
 
-    public void hearTimeTick(UCommander cmdr) {
-        if (statusPanel != null && !statusPanel.isHidden()) {
-            statusPanel.setText("turn", "T " + Integer.toString(commander.getTurn()));
-            statusPanel.setText("time", commander.timeString(true, " "));
-            statusPanel.setText("location", commander.cartographer.describeLabel(commander.player().area().getLabel()));
-            statusPanel.setText("name", commander.player().getName());
-        }
-        if (actorPanel != null && !actorPanel.isHidden() && commander.player() != null) {
-            actorPanel.updateActors((UPlayer)commander.player());
-        }
-    }
-
     public void hearModalTitleScreen(String context, String optional) {
         if (context.equals("Credits") || context.equals("Quit")) {
             commander.quitGame();
@@ -158,6 +144,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
     }
 
     public void continueGame(String playername) {
+        area.requestCloseOut();
         player = commander.loadPlayer();
         if (player == null) {
             player = makeNewPlayer(playername);
@@ -184,9 +171,8 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, UTimeListener
         commander.config.setVisibilityEnable(true);
         player.attachCamera(camera, commander.config.getCameraPinStyle());
         player.moveToCell(area, player.getSaveAreaX(), player.getSaveAreaY());
+        commander.postPlayerLevelportEvent(null);
         player.startActing();
-
-        commander.speaker.playBGM("src/main/resources/sounds/ultima_wanderer.ogg");
     }
 
     public UPlayer makeNewPlayer(String playername) {

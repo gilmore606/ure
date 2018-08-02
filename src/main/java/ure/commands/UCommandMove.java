@@ -1,6 +1,6 @@
 package ure.commands;
 
-import ure.actions.ActionWalk;
+import ure.actors.actions.ActionWalk;
 import ure.actors.UPlayer;
 
 public abstract class UCommandMove extends UCommand {

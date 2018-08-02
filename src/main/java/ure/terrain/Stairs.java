@@ -6,7 +6,7 @@ import ure.actors.UPlayer;
 import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.actors.UActor;
-import ure.events.PlayerChangedAreaEvent;
+import ure.sys.events.PlayerChangedAreaEvent;
 import ure.sys.Injector;
 import ure.ui.modals.HearModalChoices;
 import ure.ui.modals.UModalChoices;

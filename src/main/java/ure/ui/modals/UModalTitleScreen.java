@@ -27,12 +27,12 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         alpha = 0f;
         fakeTickCount = 0;
         area = _area;
-        options = new String[]{"Continue", "New World", "Credits", "Quit"};
+        options = new String[]{"Continue", "New World", "VaultEd", "Credits", "Quit"};
         File file = new File(commander.savePath() + "player");
         if (!file.isFile())
             options = new String[]{"New World", "Credits", "Quit"};
         cursor = 0;
-
+        commander.speaker.playBGM(commander.config.getTitleMusic());
     }
 
     @Override
@@ -70,8 +70,13 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
     void pickSelection() {
         if (options[cursor].equals("New World")) {
             UModalGetString smodal = new UModalGetString("Name your character:", 20, true,
-                                    null, this, "name-new-world");
+                    null, this, "name-new-world");
             commander.showModal(smodal);
+        } else if (options[cursor].equals("Credits")) {
+            UModalNotify nmodal = new UModalNotify("URE: the unRoguelike Engine\n \nSpunky - metaprogramming, persistence, rendering\nMoycakes - OpenGL\nKapho - QA, content\nGilmore - misc", null, 1, 1);
+            commander.showModal(nmodal);
+        } else if (options[cursor].equals("VaultEd")) {
+            commander.launchVaulted();
         } else {
             dismiss();
             ((HearModalTitleScreen) callback).hearModalTitleScreen(options[cursor], null);
@@ -95,7 +100,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         if (fakeTickCount > 20) {
             fakeTickCount = 0;
             commander.tickTime();
-            commander.tickActors();
+            commander.letActorsAct();
         }
     }
 }

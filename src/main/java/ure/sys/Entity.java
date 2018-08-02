@@ -1,5 +1,6 @@
 package ure.sys;
 
+import ure.areas.UArea;
 import ure.ui.Icon;
 
 import java.util.ArrayList;
@@ -19,4 +20,7 @@ public interface Entity {
     ArrayList<String> UIdetails(String context);
     void setStat(String attribute, int value);
     int getStat(String attribute);
+    UArea area();
+    int areaX();
+    int areaY();
 }

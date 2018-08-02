@@ -1,14 +1,14 @@
 package ure.actors;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ure.behaviors.BehaviorDeserializer;
-import ure.behaviors.UBehavior;
+import ure.actors.behaviors.BehaviorDeserializer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 
@@ -29,24 +29,33 @@ public class UActorCzar {
         Injector.getAppComponent().inject(this);
     }
 
-    public void loadActors(String resourceName) {
+    public void loadActors() {
         behaviorDeserializer = new BehaviorDeserializer(objectMapper);
         actorsByName = new HashMap<>();
-        try {
-            InputStream inputStream = getClass().getResourceAsStream(resourceName);
-            UActor[] actorObjs = objectMapper.readValue(inputStream, UActor[].class);
-            for (UActor actor: actorObjs) {
-                actor.initialize();
-                actorsByName.put(actor.getName(), actor);
+        File jsonDir = new File(commander.config.getResourcePath() + "actors/");
+        ArrayList<File> files = new ArrayList<File>(Arrays.asList(jsonDir.listFiles()));
+        for (File resourceFile : files) {
+            String resourceName = resourceFile.getName();
+            if (resourceName.endsWith(".json")) {
+                System.out.println("ACTORCZAR: loading " + resourceName);
+                try {
+                    InputStream inputStream = getClass().getResourceAsStream("/actors/" + resourceName);
+                    UActor[] actorObjs = objectMapper.readValue(inputStream, UActor[].class);
+                    for (UActor actor : actorObjs) {
+                        actor.initializeAsTemplate();
+                        actorsByName.put(actor.getName(), actor);
+                    }
+                } catch (IOException io) {
+                    io.printStackTrace();
+                }
             }
-        } catch (IOException io) {
-            io.printStackTrace();
         }
     }
 
     public UActor getActorByName(String name) {
-        UActor clone = (UActor)actorsByName.get(name).makeClone();
-        clone.initialize();
+        UActor template = (UActor)actorsByName.get(name);
+        UActor clone = (UActor)template.makeClone();
+        clone.initializeAsCloneFrom(template);
         clone.setID(commander.generateNewID(clone));
         return clone;
     }

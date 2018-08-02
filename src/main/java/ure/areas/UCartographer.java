@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import org.apache.commons.io.FileUtils;
-import ure.events.PlayerChangedAreaEvent;
+import ure.sys.events.PlayerChangedAreaEvent;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actors.UActorCzar;
@@ -38,7 +38,6 @@ import java.util.zip.GZIPOutputStream;
  * are provided to facilitate this convention.
  *
  */
-// TODO: split custom stuff into ExampleCartographer and make generic
 
 public class UCartographer implements Runnable {
 
@@ -307,7 +306,6 @@ public class UCartographer implements Runnable {
         } else if (area.closed) {
             System.out.println("CARTO LOADER: WARNING - tried to freeze " + area.label + " which is already frozen");
             removeActiveArea(area);
-            commander.unregisterTimeListener(area);
             return;
         } else if (!activeAreas.contains(area)) {
             System.out.println("ERROR: attempted to freeze an area not in activeAreas!  Where'd that come from?");
@@ -315,8 +313,8 @@ public class UCartographer implements Runnable {
         }
         area.freezeForPersist();
         removeActiveArea(area);
-        commander.unregisterTimeListener(area);
-        persist(area, area.getLabel() + ".area");
+        if (area.canBePersisted())
+            persist(area, area.getLabel() + ".area");
         addCloseableArea(area);
         area.requestCloseOut();
     }
@@ -361,7 +359,7 @@ public class UCartographer implements Runnable {
     public void playerChangedArea(PlayerChangedAreaEvent event) {
         if (!commander.config.isRunNeighborAreas() && event.sourceArea != null)
             freezeArea(event.sourceArea);
-        if (commander.config.isLoadAreasAhead()) {
+        if (commander.config.isLoadAreasAhead() && event.destArea.stairsLinks() != null) {
             for (Stairs stair : event.destArea.stairsLinks()) {
                 String nextArea = stair.getLabel();
                 addAreaToLoadQueue(nextArea);
@@ -478,7 +476,6 @@ public class UCartographer implements Runnable {
                     }
                 }
                 addActiveArea(area);
-                commander.registerTimeListener(area);
                 loadingArea = null;
             }
             while (!saveQueue.isEmpty()) {

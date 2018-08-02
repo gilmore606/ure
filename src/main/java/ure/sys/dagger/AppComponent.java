@@ -4,9 +4,9 @@ import dagger.Component;
 import ure.areas.*;
 import ure.render.URendererOGL;
 import ure.sys.UCommander;
-import ure.actions.UAction;
+import ure.actors.actions.UAction;
 import ure.actors.UActorCzar;
-import ure.behaviors.UBehavior;
+import ure.actors.behaviors.UBehavior;
 import ure.commands.UCommand;
 import ure.examplegame.ExampleGame;
 import ure.terrain.Stairs;
@@ -20,6 +20,7 @@ import ure.ui.panels.ULensPanel;
 import ure.ui.panels.UPanel;
 import ure.ui.panels.UStatusPanel;
 import ure.ui.modals.UModal;
+import ure.ui.particles.UParticle;
 
 import javax.inject.Singleton;
 
@@ -62,4 +63,6 @@ public interface AppComponent {
     void inject(UPanel pan);
     void inject(USpeaker speak);
     void inject(Stairs stairs);
+    void inject(UParticle parti);
+    void inject(Shapemask shape);
 }

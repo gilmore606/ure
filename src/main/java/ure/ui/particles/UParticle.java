@@ -3,16 +3,23 @@ package ure.ui.particles;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.Injector;
 import ure.sys.UAnimator;
 import ure.areas.UArea;
+import ure.sys.UCommander;
+
+import javax.inject.Inject;
 
 public class UParticle implements UAnimator {
+
+    @Inject
+    UCommander commander;
 
      int ticksLeft;
      int ticksInitial;
 
     @JsonIgnore
-    private UArea area;
+    UArea area;
 
     public int x, y;
     char glyph;
@@ -21,8 +28,10 @@ public class UParticle implements UAnimator {
     float alpha;
     float alphadecay;
     UColor colorbuffer;
+    String glyphFrames;
 
     public UParticle(int thex, int they, int lifeticks, UColor _fgColor, float startalpha, boolean _receiveLight) {
+        Injector.getAppComponent().inject(this);
         x = thex;
         y = they;
         ticksLeft = lifeticks;
@@ -48,7 +57,12 @@ public class UParticle implements UAnimator {
 
     public boolean isFizzled() { return (ticksLeft < 0); }
 
-    public char glyph() { return glyph; }
+    public char glyph() {
+        if (glyphFrames != null) {
+            return glyphFrames.charAt(ticksInitial - ticksLeft);
+        }
+        return glyph;
+    }
     public boolean isReceiveLight() { return receiveLight; }
 
     public void render(URenderer renderer, int px, int py, UColor light, float vis) {
@@ -59,4 +73,7 @@ public class UParticle implements UAnimator {
         colorbuffer.setAlpha(alpha * vis);
         renderer.drawGlyph(glyph(), px, py, colorbuffer);
     }
+
+    public int glyphOffsetX() { return 0; }
+    public int glyphOffsetY() { return 0; }
 }

@@ -58,9 +58,9 @@ public class UConfig {
     private boolean outlineActors = true;                           // draw a black outline around Actor glyphs?
     private boolean outlineThings = false;                          // draw a black outline around Thing glyphs?
 
-    private int moveAnimFrames = 8;                     // how many frames to animate actor movement?
+    private int moveAnimFrames = 4;                     // how many frames to animate actor movement?
     private int moveAnimPlayerFrames = 0;               // how many frames to animate player movement?
-    private float actorBounceSpeed = 0.8f;                // how fast to make actors animate-bounce?
+    private float actorBounceSpeed = 1.6f;                // how fast to make actors animate-bounce?
     private float actorBounceAmount = 0.8f;               // how much to make actors animate-bounce?
 
     private int cameraPinStyle = UCamera.PINSTYLE_SOFT; // default pinstyle for player camera
@@ -69,7 +69,7 @@ public class UConfig {
     private boolean lightBloom = true;                  // TODO: lights adding to >fullbright bloom to white
     private boolean smoothLightCones = true;            // dither edges of light cones
 
-    private float visibilityThreshold = 0.3f;           // how 'visible' is a cell before we consider it seen? (ucamera 512, 537)
+    private float visibilityThreshold = 0.2f;           // how 'visible' is a cell before we consider it seen? (ucamera 512, 537)
     private float seenOpacity = 0.55f;                  // how bright to draw seen-but-not-visible terrain
     private float seenSaturation = 0.07f;               // how much color to leave in seen-but-not-visible terrain
     private boolean seenLightGray = true;               // ignore light in seen-but-not-visible and use gray
@@ -85,10 +85,22 @@ public class UConfig {
     // Audio
 
     private float volumeMaster = 1f;
-    private float volumeMusic = 0.1f;
+    private float volumeMusic = 0.2f;
     private float volumeAmbient = 1f;
     private float volumeWorld = 1f;
-    private float volumeUI = 1f;
+    private float volumeUI = 0.5f;
+    private float musicFadeTime = 2f;                   // seconds to crossfade background music
+
+    private int volumeFalloffDistance = 25;             // cells away for a sound to attenuate to -infDB
+    private String titleMusic = "sounds/ultima_towns.ogg";
+
+    public String soundUImodalOpen = "sounds/echo_alert_rev.ogg";
+    public String soundUIcursorUp = "sounds/mouse_over3.wav";
+    public String soundUIcursorDown = "sounds/mouse_over3.wav";
+    public String soundUIselectClose = "sounds/melodic2_click.ogg";
+    public String soundUIcancelClose = "sounds/echo_alert.ogg";
+    public String soundUIkeystroke = "sounds/mouse_over3.ogg";
+    public String soundUIbumpLimit = "sounds/melodic1_click.ogg";
 
     // Game functionality
 
@@ -100,7 +112,8 @@ public class UConfig {
     private boolean runNeighborAreas = true;        // keep areas we just left awake?
     private boolean loadAreasAhead = true;          // preemptively load upcoming areas?
 
-    private boolean smartInteract = false;           // autodetect targets for interact command?
+    private boolean nethackShiftRun = false;        // nethack-style Shift+Move?  false for 'shift = no repeat wait' simpler running
+    private boolean smartInteract = true;           // autodetect targets for interact command?
     private boolean interactStairs = true;          // interact command can trigger stairs?
 
     private int turnsPerDay = 512;                  // game turns per 24 hour day
@@ -484,6 +497,9 @@ public class UConfig {
         this.smartInteract = smartInteract;
     }
 
+    public boolean isNethackShiftRun() { return nethackShiftRun; }
+    public void setNethackShiftRun(boolean b) { nethackShiftRun = b; }
+
     public boolean isInteractStairs() {
         return interactStairs;
     }
@@ -510,4 +526,10 @@ public class UConfig {
     public float getVolumeAmbient() { return volumeAmbient; }
     public float getVolumeWorld() { return volumeWorld; }
     public float getVolumeUI() { return volumeUI; }
+    public float getMusicFadeTime() { return musicFadeTime; }
+    public void setMusicFadeTime(float f) { musicFadeTime = f; }
+    public String getTitleMusic() { return titleMusic; }
+    public void setTitleMusic(String s) { titleMusic = s; }
+    public void setVolumeFalloffDistance(int d) { volumeFalloffDistance = d; }
+    public int getVolumeFalloffDistance() { return volumeFalloffDistance; }
 }

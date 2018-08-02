@@ -5,7 +5,7 @@ import ure.actors.UPlayer;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
-import ure.actions.Interactable;
+import ure.actors.actions.Interactable;
 import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.areas.UCell;
@@ -70,17 +70,36 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         Injector.getAppComponent().inject(this);
     }
 
-    public void initialize() {
+    /**
+     * Set up a new template object fresh from resource JSON deserializing, to make it cloneable.
+     */
+    public void initializeAsTemplate() {
         setContents(new UCollection(this, this.name));
         if (getGlyphColor() == null && getColor() != null) {
             SetupColors();
         }
         setIcon(new Icon(getGlyph(), getGlyphColor(), null));
         stats = new HashMap<>();
+        contents = new UCollection();
+    }
+
+    /**
+     * Set up a fresh clone from a template object.
+     */
+    public void initializeAsCloneFrom(UThing template) {
+        stats = (HashMap)template.stats.clone();
+        contents = template.contents.clone();
+        contents.reconnect(null, this);
+        location = null;
     }
 
     public long getID() { return ID; }
     public void setID(long newID) { ID = newID; }
+
+    /**
+     * This method is purely for making a unique string ID for debug logging.
+     */
+    public String NN() { return this.name + " (" + Long.toString(ID) + ")"; }
 
     public void reconnect(UArea area, UContainer container) {
         this.location = container;
@@ -193,7 +212,9 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
 
     public UThing makeClone() {
         try {
-            return (UThing) super.clone();
+            UThing clone = (UThing) super.clone();
+
+            return clone;
         } catch (CloneNotSupportedException e) {
             System.out.println(" Cloning not allowed. ");
             return this;
