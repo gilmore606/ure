@@ -61,8 +61,41 @@ public interface URenderer {
 
     // Drawing primitives that the renderer will abstract
     void drawString(int x, int y, UColor col, String str);
-    void drawGlyph(char glyph, int destx, int desty, UColor tint, int offX, int offY);
-    void drawGlyphOutline(char glyph, int destx, int desty, UColor tint, int offX, int offY);
+
+    /**
+     * Draw a glyph a the given x,y coordinates.
+     * @param glyph
+     * @param destx
+     * @param desty
+     * @param tint
+     */
+    void drawGlyph(char glyph, int destx, int desty, UColor tint);
+
+    /**
+     * Draw a glyph in the center of the box with its origin at destx,desty that is cellWidth pixels wide and
+     * cellHeight pixels tall.  This is intended for use when drawing glyphs within a cell, so that the cell
+     * size can be independent of the font size.
+     * @param glyph
+     * @param destx
+     * @param desty
+     * @param cellWidth
+     * @param cellHeight
+     * @param tint
+     */
+    void drawGlyph(char glyph, int destx, int desty, int cellWidth, int cellHeight, UColor tint);
+
+    /**
+     * Draw an outline for a particular glyph so that it stands out from its background.  This is intended for use
+     * when drawing in cells, so it also takes the cellWidth and cellHeight into account to match the cell version
+     * of {link #drawGlyph(char, int, int, int, int, UColor)}.
+     * @param glyph
+     * @param destx
+     * @param desty
+     * @param cellWidth
+     * @param cellHeight
+     * @param tint
+     */
+    void drawGlyphOutline(char glyph, int destx, int desty, int cellWidth, int cellHeight, UColor tint);
     void drawRect(int x, int y, int w, int h, UColor col);
     void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor);
     int getMousePosX();

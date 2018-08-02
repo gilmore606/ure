@@ -513,7 +513,9 @@ public class UCamera extends View implements UAnimator {
             t.getFgColorBuffer().set(t.getFgColor().r, t.getFgColor().g, t.getFgColor().b);
             t.getFgColorBuffer().illuminateWith(terrainLight, tOpacity);
             t.getFgColorBuffer().desaturateBy(1f - tSaturation);
-            renderer.drawGlyph(t.glyph(col+ leftEdge,row+ topEdge), col * cellw, row * cellh, t.getFgColorBuffer(), t.glyphOffsetX(), t.glyphOffsetY() + 2);
+
+            // TODO: Do we need terrain glyph offsets, since we're now centering them in the cell?
+            renderer.drawGlyph(t.glyph(col+ leftEdge,row+ topEdge), col * cellw + t.glyphOffsetX(), row * cellh  + t.glyphOffsetY(), renderer.glyphWidth(), renderer.glyphHeight(), t.getFgColorBuffer());
         } else {
             renderer.drawRect(col * cellw, row * cellh, cellw, cellh, commander.config.getCameraBgColor());
         }

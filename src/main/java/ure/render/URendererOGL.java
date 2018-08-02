@@ -4,6 +4,7 @@ import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
+import org.lwjgl.stb.STBTTAlignedQuad;
 import ure.math.UColor;
 import ure.sys.GLKey;
 import ure.sys.Injector;
@@ -45,7 +46,7 @@ public class URendererOGL implements URenderer {
     private float[] verts_col = new float[3 * maxTris * 4];
     private float[] verts_uv  = new float[3 * maxTris * 3];
 
-    private int textureAtlas = -1;
+    private FontTexture fontTexture;
 
     private KeyListener keyListener;
 
@@ -188,8 +189,8 @@ public class URendererOGL implements URenderer {
         //Flush a blank image to the screen quickly.
         glfwSwapBuffers(window);
 
-        FontTexture fontTexture = new FontTexture();
-        textureAtlas = fontTexture.loadTexture("/font.png");
+        fontTexture = new FontTexture();
+        fontTexture.loadFromTTF("/fonts/FreeMonoBold.ttf", 16);
     }
 
     @Override
@@ -209,34 +210,49 @@ public class URendererOGL implements URenderer {
     }
 
     @Override
-    public void drawString(int x, int y, UColor col, String str){
+    public void drawString(int x, int y, UColor color, String str) {
         if (str == null) return;
-        //TODO: HANDLE FONT CHANGES
         x += context.absoluteX();
         y += context.absoluteY();
-        for(int i = 0; i < str.length(); i++){
-            // TODO: pass in the size
-            addQuad(x, y, glyphWidth(), glyphHeight(), col, str.charAt(i));
-            x += 8;
+        for (int i = 0; i < str.length(); i++) {
+            drawGlyph(str.charAt(i), x, y, color);
+            x += Math.ceil(fontTexture.glyphWidth[0]);
         }
     }
 
     @Override
-    public void drawGlyph(char glyph, int destx, int desty, UColor tint, int offX, int offY) {
-        // Seems odd that we are taking a position and an offset here... maybe this could be simplified?
-        destx += context.absoluteX();
-        desty += context.absoluteY();
-        addQuad(destx + offX, desty + offY, glyphWidth(), glyphHeight(), tint, glyph);
+    public void drawGlyph(char glyph, int x, int y, UColor tint) {
+        x += context.absoluteX();
+        y += context.absoluteY();
+        STBTTAlignedQuad quad = fontTexture.glyphInfo(glyph);
+        // Adjust the y value so that we move the character down enough to align its baseline
+        y += fontTexture.ascent + quad.y0();
+        addQuad(x, y, quad, tint);
     }
 
     @Override
-    public void drawGlyphOutline(char glyph, int destx, int desty, UColor tint, int offX, int offY) {
-        destx += context.absoluteX();
-        desty += context.absoluteY();
-        for(int y = -1; y < 2; y += 1)
-            for(int x = -1; x < 2; x += 1)
-                if(x != 0 && y != 0)
-                    addQuad(destx + offX + x, desty + offY + y, glyphWidth(), glyphHeight(), tint, glyph);
+    public void drawGlyph(char glyph, int x, int y, int w, int h, UColor tint) {
+        x += context.absoluteX();
+        y += context.absoluteY();
+        STBTTAlignedQuad quad = fontTexture.glyphInfo(glyph);
+        // Center the glyph in the given bounding box.  The call to addQuad will take
+        // the baseline into account, so we only need to worry about where to place the
+        // origin.
+        float charWidth = quad.x1() - quad.x0();
+        float charHeight = quad.y1() - quad.y0();
+        x += (w / 2) - (charWidth / 2);
+        y += (h / 2) - (charHeight / 2) - ((fontTexture.ascent + quad.y0()) / 2); // subtract half the ascent to compensate for centering
+        // Adjust the y value so that we move the character down enough to align its baseline
+        y += fontTexture.ascent + quad.y0();
+        addQuad(x, y, quad, tint);
+    }
+
+    @Override
+    public void drawGlyphOutline(char glyph, int destx, int desty, int cellWidth, int cellHeight, UColor tint) {
+        for (int y = -1; y < 2; y += 1)
+            for (int x = -1; x < 2; x += 1)
+                if (x != 0 && y != 0)
+                    drawGlyph(glyph, destx + x, desty + y, cellWidth, cellHeight, tint);
     }
 
     @Override
@@ -281,7 +297,7 @@ public class URendererOGL implements URenderer {
         glMatrixMode(GL_MODELVIEW);
         glLoadMatrixf(dummyMatrix.get(fb));
 
-        glBindTexture(GL_TEXTURE_2D, textureAtlas);
+        glBindTexture(GL_TEXTURE_2D, fontTexture.texId);
 
         FloatBuffer v = BufferUtils.createFloatBuffer(tris * 3 * 3);
         FloatBuffer c = BufferUtils.createFloatBuffer(tris * 3 * 4);
@@ -333,18 +349,17 @@ public class URendererOGL implements URenderer {
     }
 
 
-    private void addQuad(int x, int y, int w, int h, UColor col){
-        addQuad(x, y, w, h, col, 0.0f, 0.0f, 32.f / 1024.f, 32.f / 1024.f);
+    private void addQuad(int x, int y, int w, int h, UColor color) {
+        FontTexture.SolidColorData d = fontTexture.solidColorData;
+        addQuad(x, y, w, h, color, d.u, d.v, d.uw, d.vh);
     }
 
-    private void addQuad(int x, int y, int w, int h, UColor col, char glyph){
-        float u = (float)(glyph % 16) / 32.0f + 0.00390625f;
-        float v = (float)(glyph / 16) / 32.0f + 0.0078125f;
-        addQuad(x, y, w, h, col, u, v, glyphWidth() / 1024.f, glyphHeight() / 1024.f);
+    private void addQuad(int x, int y, STBTTAlignedQuad quad, UColor color) {
+        addQuad(x, y , quad.x1() - quad.x0(), quad.y1() - quad.y0(), color, quad.s0(), quad.t0(), quad.s1() - quad.s0(), quad.t1() - quad.t0());
     }
 
     // I don't think we'll have any triangle data for awhile/ever, so I'm just gonna do quads.
-    private void addQuad(int x, int y, int w, int h, UColor col, float u, float v, float uw, float vh){
+    private void addQuad(float x, float y, float w, float h, UColor color, float u, float v, float uw, float vh) {
         //   1---2
         //   | / |
         //   3---4
@@ -386,10 +401,10 @@ public class URendererOGL implements URenderer {
         //cols;
         int i;
         for(i = 0; i < 3 * 2; i++){
-            verts_col[ic++] = col.r;
-            verts_col[ic++] = col.g;
-            verts_col[ic++] = col.b;
-            verts_col[ic++] = col.a;
+            verts_col[ic++] = color.r;
+            verts_col[ic++] = color.g;
+            verts_col[ic++] = color.b;
+            verts_col[ic++] = color.a;
         }
 
         //UVs, tri 0
@@ -412,7 +427,6 @@ public class URendererOGL implements URenderer {
         //v3
         verts_uv[iu++] = u;
         verts_uv[iu++] = v + vh;
-
 
         tris += 2;
     }

@@ -232,17 +232,14 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public void setCategory(String _category) { category = _category; }
 
     //The camera class will call this, and tell where in screen coords to draw it.
-    // TODO: Things should probably not be tied directly to the rendering system.  Ideally they would just be part of the data layer, not the presentation layer
     public void render(URenderer renderer, int x, int y, UColor light, float vis){
-        int xoff = glyphOffsetX();
-        int yoff = glyphOffsetY();
         char icon = getGlyph();
         UColor color = new UColor(this.getGlyphColor());
         if (this.drawGlyphOutline()) {
-            renderer.drawGlyphOutline(icon, x, y, UColor.COLOR_BLACK, xoff, yoff);
+            renderer.drawGlyphOutline(icon, x + glyphOffsetX(), y + glyphOffsetY(), renderer.glyphWidth(), renderer.glyphHeight(), UColor.COLOR_BLACK);
         }
         color.illuminateWith(light, vis);
-        renderer.drawGlyph(icon, x, y, color, xoff, yoff);
+        renderer.drawGlyph(icon, x + glyphOffsetX(), y + glyphOffsetY(), renderer.glyphWidth(), renderer.glyphHeight(), color);
     }
 
     public void emote(String text) {

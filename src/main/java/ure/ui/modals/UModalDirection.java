@@ -63,10 +63,10 @@ public class UModalDirection extends UModal {
         commander.printScroll(prompt);
         int gw = commander.config.getGlyphWidth();
         int gh = commander.config.getGlyphHeight();
-        renderer.drawGlyph(glyphs.charAt(0), xpos + gw, ypos, glyphColor, 0, 0);
-        renderer.drawGlyph(glyphs.charAt(2), xpos + gw, ypos + gh*2, glyphColor, 0, 0);
-        renderer.drawGlyph(glyphs.charAt(1), xpos + gw * 2, ypos + gh, glyphColor, 0, 0);
-        renderer.drawGlyph(glyphs.charAt(3), xpos, ypos + gh, glyphColor, 0, 0);
+        renderer.drawGlyph(glyphs.charAt(0), xpos + gw, ypos, glyphColor);
+        renderer.drawGlyph(glyphs.charAt(2), xpos + gw, ypos + gh*2, glyphColor);
+        renderer.drawGlyph(glyphs.charAt(1), xpos + gw * 2, ypos + gh, glyphColor);
+        renderer.drawGlyph(glyphs.charAt(3), xpos, ypos + gh, glyphColor);
     }
 
     @Override

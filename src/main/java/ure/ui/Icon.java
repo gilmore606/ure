@@ -26,7 +26,7 @@ public class Icon {
             renderer.drawRect(x,y,renderer.glyphWidth(),renderer.glyphHeight(),bgColor);
         }
         if (fgColor != null) {
-            renderer.drawGlyph(glyph, x, y, fgColor, 0, 0);
+            renderer.drawGlyph(glyph, x, y, fgColor);
         }
     }
 }

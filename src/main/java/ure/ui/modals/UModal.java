@@ -138,17 +138,17 @@ public class UModal extends View implements UAnimator {
         String frames = commander.config.getUiFrameGlyphs();
 
         if (frames != null) {
-            renderer.drawGlyph(frames.charAt(0), relx(-1), rely(-1), color, 0, 0);
-            renderer.drawGlyph(frames.charAt(2), relx(cellw), rely(-1), color, 0, 0);
-            renderer.drawGlyph(frames.charAt(4), relx(cellw), rely(cellh), color, 0, 0);
-            renderer.drawGlyph(frames.charAt(6), relx(-1), rely(cellh), color, 0, 0);
+            renderer.drawGlyph(frames.charAt(0), relx(-1), rely(-1), gw(), gh(), color);
+            renderer.drawGlyph(frames.charAt(2), relx(cellw), rely(-1), gw(), gh(), color);
+            renderer.drawGlyph(frames.charAt(4), relx(cellw), rely(cellh), gw(), gh(), color);
+            renderer.drawGlyph(frames.charAt(6), relx(-1), rely(cellh), gw(), gh(), color);
             for (int x = 0;x < cellw;x++) {
-                renderer.drawGlyph(frames.charAt(1), relx(x), rely(-1), color, 0, 0);
-                renderer.drawGlyph(frames.charAt(5), relx(x), rely(cellh), color, 0, 0);
+                renderer.drawGlyph(frames.charAt(1), relx(x), rely(-1), gw(), gh(), color);
+                renderer.drawGlyph(frames.charAt(5), relx(x), rely(cellh), gw(), gh(), color);
             }
             for (int y = 0;y < cellh;y++) {
-                renderer.drawGlyph(frames.charAt(3), relx(-1), rely(y), color, 0, 0);
-                renderer.drawGlyph(frames.charAt(7), relx(cellw), rely(y), color, 0, 0);
+                renderer.drawGlyph(frames.charAt(3), relx(-1), rely(y), gw(), gh(), color);
+                renderer.drawGlyph(frames.charAt(7), relx(cellw), rely(y), gw(), gh(), color);
             }
         }
 

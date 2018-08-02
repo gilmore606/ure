@@ -111,7 +111,7 @@ public class RexFile extends View {
 
                         UColor fgColor = layer.fgColors[x][y];
                         fgColor.setAlpha(alpha);
-                        renderer.drawGlyph((char) layer.glyphs[x][y], xpos + x * gw, ypos + y * gh, fgColor, 0, 0);
+                        renderer.drawGlyph((char) layer.glyphs[x][y], xpos + x * gw, ypos + y * gh, gw, gh, fgColor);
                     }
                 }
             }
