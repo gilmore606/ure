@@ -21,23 +21,30 @@ public class ExampleForestScaper extends ULandscaper {
         grass.grow(1, 3);
         grass.writeTerrain(area, "grass", 1, 1);
 
+        Shapemask treeholes = grass.copy();
+        treeholes.invert();
+        treeholes.edges();
+        treeholes.noiseThin(0.5f);
+        treeholes.writeTerrain(area, "sapling", 1 ,1);
+
         Shapemask trees = grass.copy();
-        trees.noiseThin(0.02f);
+        trees.noiseThin(0.04f);
         trees.writeTerrain(area, "tree", 1 ,1);
 
         // Fringe it with saplings.
         Shapemask saplings = grass.copy();
         saplings.edgesThick();
-        saplings.noiseThin(0.7f);
+        saplings.grow(1, 3);
+        saplings.noiseThin(0.6f);
         saplings.writeTerrain(area, "sapling", 1, 1);
 
         saplings = grass.copy();
-        saplings.noiseThin(0.02f);
+        saplings.noiseThin(0.06f);
         saplings.writeTerrain(area, "sapling", 1, 1);
 
         Shapemask roadmask = new Shapemask(area.xsize-1,area.ysize-1);
         for (int i=0;i<3;i++) {
-            Shapemask road = shapeRoad(area.xsize - 1, area.ysize - 1, 3, 1.2f, 1.3f);
+            Shapemask road = shapeRoad(area.xsize - 1, area.ysize - 1, 2, 1.2f, 1.3f);
             road.writeTerrain(area, "dirt", 1, 1);
             roadmask.maskWith(road, Shapemask.MASKTYPE_OR);
             road.grow(1, 2);
@@ -54,9 +61,16 @@ public class ExampleForestScaper extends ULandscaper {
             river.writeTerrain(area, "water", 1, 1);
             rivermask.maskWith(river, Shapemask.MASKTYPE_OR);
             Shapemask deep = river.copy();
-            deep.shrink(2, 6);
+            deep.shrink(3, 6);
             deep.writeTerrain(area, "deep water", 1, 1);
         }
+
+        Shapemask banks = rivermask.copy();
+        banks.grow(1,3);
+        banks.edges();
+        banks.writeTerrain(area, "sand", 1, 1);
+        banks.noiseThin(0.1f);
+        banks.writeTerrain(area, "grass", 1, 1);
 
         rivermask.maskWith(roadmask, Shapemask.MASKTYPE_AND);
         rivermask.writeTerrain(area, "wooden bridge", 1 ,1);

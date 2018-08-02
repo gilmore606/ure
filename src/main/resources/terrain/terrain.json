@@ -208,9 +208,9 @@
       "opaque": false,
       "sunvis": 1.0,
       "movespeed": 0.7,
-      "glyph": "~",
-      "fgcolor": [255,215,0],
-      "bgcolor": [255,235,127],
+      "glyph": ".",
+      "fgcolor": [155,115,15],
+      "bgcolor": [145,105,50],
       "walkmsg": "Damp sand.  Trudge, trudge."
     },
     {

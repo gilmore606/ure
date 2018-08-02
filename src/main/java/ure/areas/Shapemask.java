@@ -103,9 +103,9 @@ public class Shapemask {
                 cells[x][y] = true;
     }
     public void fillRect(int x1, int y1, int x2, int y2) {
-        for (;x1<=x2;x1++)
-            for (;y1<=y2;y1++)
-                set(x1,y1);
+        for (int x=x1;x<=x2;x++)
+            for (int y=y1;y<=y2;y++)
+                set(x,y);
     }
     public void clearBuffer() {
         for (int x=0;x<xsize;x++)
