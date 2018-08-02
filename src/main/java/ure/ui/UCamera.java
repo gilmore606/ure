@@ -513,7 +513,7 @@ public class UCamera extends View implements UAnimator {
                 tOpacity = commander.config.getSeenOpacity();
                 tSaturation = commander.config.getSeenSaturation();
                 if (commander.config.isSeenLightGray())
-                    light = UColor.COLOR_LIGHTGRAY;
+                    light = UColor.COLOR_GRAY;
             }
             UColor terrainLight = light;
             if (t.isGlow())

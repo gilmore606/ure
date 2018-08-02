@@ -21,6 +21,10 @@ public class ExampleForestScaper extends ULandscaper {
         grass.grow(1, 3);
         grass.writeTerrain(area, "grass", 1, 1);
 
+        Shapemask trees = grass.copy();
+        trees.noiseThin(0.02f);
+        trees.writeTerrain(area, "tree", 1 ,1);
+
         // Fringe it with saplings.
         Shapemask saplings = grass.copy();
         saplings.edgesThick();
@@ -31,8 +35,31 @@ public class ExampleForestScaper extends ULandscaper {
         saplings.noiseThin(0.02f);
         saplings.writeTerrain(area, "sapling", 1, 1);
 
-        Shapemask road = shapeRoad(area.xsize-1,area.ysize-1,3, 1.3f, 1.3f);
-        road.writeTerrain(area, "dirt", 1, 1);
+        Shapemask roadmask = new Shapemask(area.xsize-1,area.ysize-1);
+        for (int i=0;i<3;i++) {
+            Shapemask road = shapeRoad(area.xsize - 1, area.ysize - 1, 3, 1.2f, 1.3f);
+            road.writeTerrain(area, "dirt", 1, 1);
+            roadmask.maskWith(road, Shapemask.MASKTYPE_OR);
+            road.grow(1, 2);
+            road.edges();
+            road.noiseThin(0.7f);
+            road.writeTerrain(area, "grass", 1, 1);
+            road.sparsen(22, 36);
+            road.writeThings(area, "lamppost", 1, 1);
+        }
+
+        Shapemask rivermask = new Shapemask(area.xsize-1, area.ysize-1);
+        for (int i=0;i<2;i++) {
+            Shapemask river = shapeRoad(area.xsize-1, area.ysize-1, 5, 1.4f, 1.6f);
+            river.writeTerrain(area, "water", 1, 1);
+            rivermask.maskWith(river, Shapemask.MASKTYPE_OR);
+            Shapemask deep = river.copy();
+            deep.shrink(2, 6);
+            deep.writeTerrain(area, "deep water", 1, 1);
+        }
+
+        rivermask.maskWith(roadmask, Shapemask.MASKTYPE_AND);
+        rivermask.writeTerrain(area, "wooden bridge", 1 ,1);
     }
 
 
