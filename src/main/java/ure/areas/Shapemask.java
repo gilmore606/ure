@@ -2,6 +2,7 @@ package ure.areas;
 
 import ure.sys.Injector;
 import ure.sys.UCommander;
+import ure.things.UThing;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -91,24 +92,57 @@ public class Shapemask {
             return buffer[x][y];
         return false;
     }
+    public void clear() {
+        for (int x=0;x<xsize;x++)
+            for (int y=0;y<ysize;y++)
+                cells[x][y] = false;
+    }
+    public void fill() {
+        for (int x=0;x<xsize;x++)
+            for (int y=0;y<ysize;y++)
+                cells[x][y] = true;
+    }
+    public void fillRect(int x1, int y1, int x2, int y2) {
+        for (;x1<=x2;x1++)
+            for (;y1<=y2;y1++)
+                set(x1,y1);
+    }
     public void clearBuffer() {
         for (int x=0;x<xsize;x++)
             for (int y=0;y<ysize;y++)
                 buffer[x][y] = false;
     }
+    public void fillBuffer() {
+        for (int x=0;x<xsize;x++)
+            for (int y=0;y<ysize;y++)
+                buffer[x][y] = true;
+    }
+    public void noiseWipe(float density) {
+        for (int x=0;x<xsize;x++)
+            for (int y=0;y<ysize;y++)
+                if (commander.random.nextFloat() < density) write(x,y,true);
+                else write(x,y,false);
+    }
 
     /**
-     * neighbor count at x,y
+     * neighbor count at x,y -- not including the point itself
      */
-    public int neighbors(int x, int y) {
-        if (!isValidXY(x,y))
-            return 0;
+    public int neighbors(int x, int y) { return neighbors(x,y,1); }
+
+    /**
+     * neighbor count at x,y at manhattan-distance d
+     */
+    public int neighbors(int x, int y, int d) {
+        if (!isValidXY(x,y)) return 0;
         int n = 0;
-        for (int dx=-1;dx<2;dx++)
-            for (int dy=-1;dy<2;dy++)
-                if (dx != 0 && dy != 0)
-                    if (value(x+dx,y+dy))
+        for (int dx=-d;dx<=d;dx++) {
+            for (int dy = -d;dy <= d;dy++) {
+                if (dx != 0 || dy != 0) {
+                    if (value(x + dx, y + dy))
                         n++;
+                }
+            }
+        }
         return n;
     }
 
@@ -149,13 +183,12 @@ public class Shapemask {
     }
 
     /**
-     * Write the internal scratch buffer into the actual cells, and clear buffer for new use
+     * Write the internal scratch buffer into the actual cells
      */
     public void printBuffer() {
         for (int x=0;x<xsize;x++) {
             for (int y=0;y<ysize;y++) {
                 cells[x][y] = buffer[x][y];
-                buffer[x][y] = false;
             }
         }
     }
@@ -175,9 +208,21 @@ public class Shapemask {
     public void writeTerrain(UArea area, String terrain, int xoffset, int yoffset) {
         for (int x=0;x<xsize;x++)
             for (int y=0;y<ysize;y++)
-                area.setTerrain(x+xoffset,y+yoffset,terrain);
+                if (value(x,y))
+                    area.setTerrain(x+xoffset,y+yoffset,terrain);
     }
 
+    /**
+     * Write a thing into every true cell of this mask in the area
+     */
+    public void writeThings(UArea area, String thing, int xoffset, int yoffset) {
+        for (int x=0;x<xsize;x++)
+            for (int y=0;y<ysize;y++)
+                if (value(x,y)) {
+                    UThing t = commander.thingCzar.getThingByName(thing);
+                    t.moveToCell(area,x+xoffset,y+yoffset);
+                }
+    }
     /**
      * Read a terrain type from a real area as a mask
      */
@@ -239,6 +284,17 @@ public class Shapemask {
     }
 
     /**
+     * Randomly thin out true cells to false.
+     */
+    public void noiseThin(float density) {
+        for (int x=0;x<xsize;x++)
+            for (int y=0;y<ysize;y++)
+                if (value(x,y))
+                    if (commander.random.nextFloat() > density)
+                        clear(x,y);
+    }
+
+    /**
      * Keep only cells N spaces apart from other true cells
      */
     public void sparsen(int minspace, int maxspace) {
@@ -259,6 +315,7 @@ public class Shapemask {
      * Select only edge cells
      */
     public void edges() {
+        clearBuffer();
         for (int x=0;x<xsize;x++)
             for (int y=0;y<ysize;y++)
                 if (value(x,y) && neighborsPrime(x,y) < 4)
@@ -270,6 +327,7 @@ public class Shapemask {
      * Select only edge cells, including diagonal corners
      */
     public void edgesThick() {
+        clearBuffer();
         for (int x=0;x<xsize;x++)
             for (int y=0;y<ysize;y++)
                 if (value(x,y) && neighbors(x,y) < 8)
@@ -278,15 +336,61 @@ public class Shapemask {
     }
 
     /**
-     * Pick N random true cells
+     * 'Jumble' cells with a CA-type method
      */
-    public int[] randomCell() { return randomCells(1)[1]; }
-    public int[][] randomCells(int n) {
+    public void jumble(int nearDensity, int farDensity, int passes) {
+        clearBuffer();
+        for (int i=0;i<passes;i++) {
+            for (int x = 0;x < xsize;x++) {
+                for (int y = 0;y < ysize;y++) {
+                    int near = neighbors(x, y);
+                    int far = neighbors(x, y, 2);
+                    if (value(x, y)) {
+                        near++;
+                        far++;
+                    }
+                    if (near >= nearDensity || far <= farDensity)
+                        writeBuffer(x, y, true);
+                    else
+                        writeBuffer(x, y, false);
+                }
+            }
+            printBuffer();
+        }
+    }
+
+    /**
+     * Smooth out noise and leave continuous shapes
+     */
+    public void smooth(int density, int passes) {
+        clearBuffer();
+        for (int i=0;i<passes;i++) {
+            for (int x=0;x<xsize;x++) {
+                for (int y=0;y<ysize;y++) {
+                    int n = neighbors(x,y);
+                    if (value(x,y)) {
+                        n++;
+                    }
+                    if (n >= density)
+                        writeBuffer(x,y,true);
+                    else
+                        writeBuffer(x,y,false);
+                }
+            }
+            printBuffer();
+        }
+    }
+
+    /**
+     * Pick N random cells of a certain value
+     */
+    public int[] randomCell(boolean val) { return randomCells(val,1)[0]; }
+    public int[][] randomCells(boolean val, int n) {
         int[][] results = new int[n][2];
         ArrayList<int[]> cells = new ArrayList<>();
         for (int x=0;x<xsize;x++)
             for (int y=0;y<ysize;y++)
-                if (value(x,y))
+                if (value(x,y) == val)
                     cells.add(new int[]{x,y});
         while (n > 0 && cells.size() > 0) {
             n--;
@@ -358,5 +462,30 @@ public class Shapemask {
                 if (value(i,n[1]+1) != val) q.push(new int[]{i,n[1]+1});
             }
         }
+    }
+
+    /**
+     * Count how many cells a flood at x,y would fill -- the size of the contiguous space
+     */
+    public int floodCount(int x, int y, boolean val) {
+        int c = 0;
+        if (value(x,y) == val) return 0;
+        backupToBuffer();
+        LinkedList<int[]> q = new LinkedList<>();
+        q.push(new int[]{x,y});
+        while (!q.isEmpty()) {
+            int[] n = q.pop();
+            int wx = n[0];
+            int ex = n[0];
+            while (valueBuffer(wx,n[1]) != val) { wx--; }
+            while (valueBuffer(ex,n[1]) != val) { ex++; }
+            for (int i=wx+1;i<ex;i++) {
+                writeBuffer(i,n[1],val);
+                c++;
+                if (valueBuffer(i,n[1]-1) != val) q.push(new int[]{i,n[1]-1});
+                if (valueBuffer(i,n[1]+1) != val) q.push(new int[]{i,n[1]+1});
+            }
+        }
+        return c;
     }
 }

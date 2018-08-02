@@ -551,6 +551,76 @@ public abstract class ULandscaper {
         }
     }
 
+
+    public Shapemask shapeCaves(int xsize, int ysize, float initialDensity, int jumblePasses, int jumbleDensity, int smoothPasses) {
+        Shapemask mask = new Shapemask(xsize, ysize);
+        float fillratio = -1f;
+        int tries = 0;
+        while ((fillratio < 0f) && (tries < 8)) {
+            System.out.println("SCAPER: shapeCaves attempt " + Integer.toString(tries));
+            tries++;
+
+            // Fill with initial noise, minus a horizontal gap (to promote connectedness later)
+            mask.noiseWipe(initialDensity);
+            int gapY = rand(ysize/2) + ysize/3;
+            for (int x=0;x<xsize;x++) { mask.clear(x,gapY); mask.clear(x,gapY+1); mask.clear(x,gapY-1); }
+
+            // Jumble a few times
+            mask.jumble(5, jumbleDensity, jumblePasses);
+
+            // Smooth the jumbles
+            mask.smooth(5, smoothPasses);
+
+            // Check if we made enough space
+            int[] point = mask.randomCell(false);
+            int spacecount = mask.floodCount(point[0],point[1],false);
+            fillratio = (float)spacecount / (float)(xsize*ysize);
+        }
+        mask.invert();
+        return mask;
+    }
+
+    public Shapemask shapeRoad(int xsize, int ysize, float width, float twist, float twistmax) {
+        Shapemask mask = new Shapemask(xsize, ysize);
+        int edge = random.nextInt(4);
+        float startx, starty, dx, dy, ctwist;
+        if (edge == 0) {
+            starty = 0f;  startx = (float)(random.nextInt(xsize));
+            dx = 0f ; dy = 1f;
+        } else if (edge == 1) {
+            starty = (float)ysize; startx = (float)(random.nextInt(xsize));
+            dx = 0f; dy = -1f;
+        } else if (edge == 2) {
+            startx = 0f; starty = (float)(random.nextInt(ysize));
+            dx = 1f; dy = 0f;
+        } else {
+            startx = (float)xsize; starty = (float)(random.nextInt(ysize));
+            dx = -1f; dy = 0f;
+        }
+        ctwist = 0f;
+        boolean hitedge = false;
+        while (!hitedge) {
+            mask.fillRect((int)startx, (int)starty, (int)(startx+width), (int)(starty+width));
+            startx += dx;
+            starty += dy;
+            if (random.nextFloat() < twist) {
+                if (dx == 0) {
+                    startx += ctwist;
+                }
+                if (dy == 0) {
+                    starty += ctwist;
+                }
+            }
+            if (startx >= xsize || startx < 0 || starty >= ysize || starty < 0) {
+                hitedge = true;
+            }
+            ctwist = ctwist + random.nextFloat() * twist - (twist/2f);
+            if (ctwist > twistmax) ctwist = twistmax;
+            if (ctwist < -twistmax) ctwist = -twistmax;
+        }
+        return mask;
+    }
+
     public void digCaves(UArea area, String t, int x1, int y1, int x2, int y2) {
         digCaves(area,t,x1,y1,x2,y2,0.42f,6,4,3);
     }

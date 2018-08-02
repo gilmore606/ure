@@ -12,6 +12,38 @@ public class ExampleForestScaper extends ULandscaper {
 
     @Override
     public void buildArea(UArea area, int level, String[] tags) {
+
+        // Start completely filled in with trees.
+        fillRect(area, "tree", 0, 0, area.xsize-1, area.ysize-1);
+
+        // Dig a network of big grass spaces.
+        Shapemask grass = shapeCaves(area.xsize-4, area.ysize-4, 0.35f, 4, 2, 3);
+        grass.grow(1, 3);
+        grass.writeTerrain(area, "grass", 1, 1);
+
+        // Fringe it with saplings.
+        Shapemask saplings = grass.copy();
+        saplings.edgesThick();
+        saplings.noiseThin(0.7f);
+        saplings.writeTerrain(area, "sapling", 1, 1);
+
+        saplings = grass.copy();
+        saplings.noiseThin(0.02f);
+        saplings.writeTerrain(area, "sapling", 1, 1);
+
+        Shapemask road = shapeRoad(area.xsize-1,area.ysize-1,3, 1.3f, 1.3f);
+        road.writeTerrain(area, "dirt", 1, 1);
+    }
+
+
+
+
+
+
+
+
+
+    public void oldBuildArea(UArea area, int level, String[] tags) {
         fillRect(area, "grass", 0,0,area.xsize-1,area.ysize-1);
         simplexScatterTerrain(area, "tree", new String[]{"grass"}, 0.4f, 0.7f, new float[]{2f,7f,13f});
         digCaves(area, "grass", 0,0,area.xsize-1,area.ysize-1, 0.41f, 5, 3, 1);
