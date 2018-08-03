@@ -10,7 +10,7 @@ will have to get it from Commander.
 
 In your drawing methods you'll call a few low level drawing primitives on Renderer to put images on screen.  These methods all
 use pixel coordinates relative to the upper left corner of the view context; usually this maps to 0,0 of your Camera view.  To
-position correctly to draw in a particular glyph row/column position, you'll need to ask Renderer for glyphWidth() and glyphHeight()
+position correctly to draw in a particular glyph row/column position, you'll need to ask Renderer for tileWidth() and tileHeight()
 and multiply by these to find your pixel coordinates.
 
 You should only do this kind of low level drawing in a context called during screen updates, for instance a Modal.draw().  Outside

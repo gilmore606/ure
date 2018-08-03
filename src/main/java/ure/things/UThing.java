@@ -257,10 +257,10 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         char icon = getGlyph();
         UColor color = new UColor(this.getGlyphColor());
         if (this.drawGlyphOutline()) {
-            renderer.drawGlyphOutline(icon, x + glyphOffsetX(), y + glyphOffsetY(), renderer.glyphWidth(), renderer.glyphHeight(), UColor.COLOR_BLACK);
+            renderer.drawTileOutline(icon, x + glyphOffsetX(), y + glyphOffsetY(), UColor.COLOR_BLACK);
         }
         color.illuminateWith(light, vis);
-        renderer.drawGlyph(icon, x + glyphOffsetX(), y + glyphOffsetY(), renderer.glyphWidth(), renderer.glyphHeight(), color);
+        renderer.drawTile(icon, x + glyphOffsetX(), y + glyphOffsetY(), color);
     }
 
     public void emote(String text) {

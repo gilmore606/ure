@@ -232,7 +232,7 @@ public class URendererOGL implements URenderer {
     }
 
     @Override
-    public void drawGlyph(char glyph, int x, int y, int w, int h, UColor tint) {
+    public void drawTile(char glyph, int x, int y, UColor tint) {
         x += context.absoluteX();
         y += context.absoluteY();
         STBTTAlignedQuad quad = fontTexture.glyphInfo(glyph);
@@ -241,19 +241,19 @@ public class URendererOGL implements URenderer {
         // origin.
         float charWidth = quad.x1() - quad.x0();
         float charHeight = quad.y1() - quad.y0();
-        x += (w / 2) - (charWidth / 2);
-        y += (h / 2) - (charHeight / 2) - ((fontTexture.ascent + quad.y0()) / 2); // subtract half the ascent to compensate for centering
+        x += (commander.config.getTileWidth() / 2) - (charWidth / 2);
+        y += (commander.config.getTileHeight() / 2) - (charHeight / 2) - ((fontTexture.ascent + quad.y0()) / 2); // subtract half the ascent to compensate for centering
         // Adjust the y value so that we move the character down enough to align its baseline
         y += fontTexture.ascent + quad.y0();
         addQuad(x, y, quad, tint);
     }
 
     @Override
-    public void drawGlyphOutline(char glyph, int destx, int desty, int cellWidth, int cellHeight, UColor tint) {
+    public void drawTileOutline(char glyph, int destx, int desty, UColor tint) {
         for (int y = -1; y < 2; y += 1)
             for (int x = -1; x < 2; x += 1)
                 if (x != 0 && y != 0)
-                    drawGlyph(glyph, destx + x, desty + y, cellWidth, cellHeight, tint);
+                    drawTile(glyph, destx + x, desty + y, tint);
     }
 
     @Override
@@ -273,12 +273,12 @@ public class URendererOGL implements URenderer {
 
     @Override
     public int glyphWidth() {
-        return commander.config.getGlyphWidth();
+        return commander.config.getTileWidth();
     }
 
     @Override
     public int glyphHeight() {
-        return commander.config.getGlyphHeight();
+        return commander.config.getTileHeight();
     }
 
     // internals

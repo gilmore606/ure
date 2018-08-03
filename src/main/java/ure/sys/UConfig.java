@@ -35,8 +35,8 @@ public class UConfig {
     private int screenHeight = 1000;                            // window height in pixels
     private String glyphFont = "Deferral-Square.ttf";               // irrelevant for non-ascii renderer
     private String textFont = "Px437_Phoenix_BIOS-2y.ttf";
-    private int glyphWidth = 16;
-    private int glyphHeight = 17;
+    private int tileWidth = 16;
+    private int tileHeight = 17;
     private int textWidth = 9;
     private int textHeight = 17;
 
@@ -225,20 +225,20 @@ public class UConfig {
         this.textFont = textFont;
     }
 
-    public int getGlyphWidth() {
-        return glyphWidth;
+    public int getTileWidth() {
+        return tileWidth;
     }
 
-    public void setGlyphWidth(int glyphWidth) {
-        this.glyphWidth = glyphWidth;
+    public void setTileWidth(int tileWidth) {
+        this.tileWidth = tileWidth;
     }
 
-    public int getGlyphHeight() {
-        return glyphHeight;
+    public int getTileHeight() {
+        return tileHeight;
     }
 
-    public void setGlyphHeight(int glyphHeight) {
-        this.glyphHeight = glyphHeight;
+    public void setTileHeight(int tileHeight) {
+        this.tileHeight = tileHeight;
     }
 
     public int getTextWidth() {

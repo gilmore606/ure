@@ -63,7 +63,8 @@ public interface URenderer {
     void drawString(int x, int y, UColor col, String str);
 
     /**
-     * Draw a glyph a the given x,y coordinates.
+     * Draw a glyph a the given x,y coordinates.  This will take the glyph font's baseline into account
+     * such that glyphs drawn at the same y position will line up properly.
      * @param glyph
      * @param destx
      * @param desty
@@ -78,24 +79,19 @@ public interface URenderer {
      * @param glyph
      * @param destx
      * @param desty
-     * @param cellWidth
-     * @param cellHeight
      * @param tint
      */
-    void drawGlyph(char glyph, int destx, int desty, int cellWidth, int cellHeight, UColor tint);
+    void drawTile(char glyph, int destx, int desty, UColor tint);
 
     /**
-     * Draw an outline for a particular glyph so that it stands out from its background.  This is intended for use
-     * when drawing in cells, so it also takes the cellWidth and cellHeight into account to match the cell version
-     * of {link #drawGlyph(char, int, int, int, int, UColor)}.
+     * Draw an outline for a particular tile glyph so that it stands out from its background.  This is intended for use
+     * when drawing in cells.
      * @param glyph
      * @param destx
      * @param desty
-     * @param cellWidth
-     * @param cellHeight
      * @param tint
      */
-    void drawGlyphOutline(char glyph, int destx, int desty, int cellWidth, int cellHeight, UColor tint);
+    void drawTileOutline(char glyph, int destx, int desty, UColor tint);
     void drawRect(int x, int y, int w, int h, UColor col);
     void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor);
     int getMousePosX();

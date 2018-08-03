@@ -6,7 +6,6 @@ import ure.math.UColor;
 import ure.render.URenderer;
 import ure.terrain.UTerrainCzar;
 import ure.ui.Icon;
-import ure.ui.UCamera;
 import ure.ui.View;
 
 import javax.inject.Inject;
@@ -67,8 +66,8 @@ public class UModal extends View implements UAnimator {
 
     }
 
-    public int gw() { return commander.config.getGlyphWidth(); }
-    public int gh() { return commander.config.getGlyphHeight(); }
+    public int gw() { return commander.config.getTileWidth(); }
+    public int gh() { return commander.config.getTileHeight(); }
 
     public void setBgColor(UColor color) {
         bgColor = color;
@@ -142,17 +141,17 @@ public class UModal extends View implements UAnimator {
         String frames = commander.config.getUiFrameGlyphs();
 
         if (frames != null) {
-            renderer.drawGlyph(frames.charAt(0), relx(-1), rely(-1), gw(), gh(), color);
-            renderer.drawGlyph(frames.charAt(2), relx(cellw), rely(-1), gw(), gh(), color);
-            renderer.drawGlyph(frames.charAt(4), relx(cellw), rely(cellh), gw(), gh(), color);
-            renderer.drawGlyph(frames.charAt(6), relx(-1), rely(cellh), gw(), gh(), color);
+            renderer.drawTile(frames.charAt(0), relx(-1), rely(-1), color);
+            renderer.drawTile(frames.charAt(2), relx(cellw), rely(-1), color);
+            renderer.drawTile(frames.charAt(4), relx(cellw), rely(cellh), color);
+            renderer.drawTile(frames.charAt(6), relx(-1), rely(cellh), color);
             for (int x = 0;x < cellw;x++) {
-                renderer.drawGlyph(frames.charAt(1), relx(x), rely(-1), gw(), gh(), color);
-                renderer.drawGlyph(frames.charAt(5), relx(x), rely(cellh), gw(), gh(), color);
+                renderer.drawTile(frames.charAt(1), relx(x), rely(-1), color);
+                renderer.drawTile(frames.charAt(5), relx(x), rely(cellh), color);
             }
             for (int y = 0;y < cellh;y++) {
-                renderer.drawGlyph(frames.charAt(3), relx(-1), rely(y), gw(), gh(), color);
-                renderer.drawGlyph(frames.charAt(7), relx(cellw), rely(y), gw(), gh(), color);
+                renderer.drawTile(frames.charAt(3), relx(-1), rely(y), color);
+                renderer.drawTile(frames.charAt(7), relx(cellw), rely(y), color);
             }
         }
 
@@ -161,8 +160,8 @@ public class UModal extends View implements UAnimator {
     /**
      * Convert a modal-relative cell position to an absolute screen position.
      */
-    public int relx(int x)  { return (x * commander.config.getGlyphWidth()) + xpos; }
-    public int rely(int y)  { return (y * commander.config.getGlyphHeight()) + ypos; }
+    public int relx(int x)  { return (x * commander.config.getTileWidth()) + xpos; }
+    public int rely(int y)  { return (y * commander.config.getTileHeight()) + ypos; }
 
     public void hearCommand(UCommand command, GLKey k) {
         dismiss();

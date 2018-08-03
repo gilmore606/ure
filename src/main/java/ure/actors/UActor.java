@@ -162,8 +162,8 @@ public class UActor extends UThing implements Interactable {
         int moveFrames = commander.config.getMoveAnimFrames();
         if (this instanceof UPlayer) moveFrames = commander.config.getMoveAnimPlayerFrames();
         if (oldx >=0 && oldarea == thearea && moveFrames > 0) {
-            setMoveAnimX((oldx-destX)*commander.config.getGlyphWidth());
-            setMoveAnimY((oldy-destY)*commander.config.getGlyphHeight());
+            setMoveAnimX((oldx-destX)*commander.config.getTileWidth());
+            setMoveAnimY((oldy-destY)*commander.config.getTileHeight());
             setMoveAnimDX(-(getMoveAnimX() / moveFrames));
             setMoveAnimDY(-(getMoveAnimY() / moveFrames));
         }
