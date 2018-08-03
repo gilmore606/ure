@@ -103,22 +103,7 @@ public abstract class ULandscaper {
             }
             return neighbors;
         }
-        public int flood_deprecated(int x, int y) {
-            // recursive, blows out the stack
-            int total = 0;
-            if (x<0 || x>=width || y<0 || y>= height)
-                return 0;
-            if (cells[x][y])
-                return 0;
-            cells[x][y] = true;
-            total++;
-            total += flood(x+1,y);
-            total += flood(x-1,y);
-            total += flood(x,y+1);
-            total += flood(x,y-1);
-            System.out.println("GEN : flood_deprecated found " + Integer.toString(total) + " cells");
-            return total;
-        }
+
         public int flood(int x, int y) {
             ArrayList<int[]> q = new ArrayList<int[]>();
             if (cells[x][y]) return 0;
@@ -190,12 +175,6 @@ public abstract class ULandscaper {
     /**
      * Fill a rectangle from x1,y1 to x2,y2 with the given terrain.
      *
-     * @param area
-     * @param t
-     * @param x1
-     * @param y1
-     * @param x2
-     * @param y2
      */
     public void fillRect(UArea area, String t, int x1, int y1, int x2, int y2) { drawRect(area, t, x1, y1, x2, y2, true); }
     public void drawRect(UArea area, String t, int x1, int y1, int x2, int y2) { drawRect(area, t, x1, y1, x2, y2, false); }
@@ -247,10 +226,6 @@ public abstract class ULandscaper {
     /**
      * Spawn a new thing by name into the area.
      *
-     * @param area
-     * @param x
-     * @param y
-     * @param thing
      */
     public void spawnThingAt(UArea area, int x, int y, String thing) {
         UThing thingobj = thingCzar.getThingByName(thing);
@@ -260,12 +235,6 @@ public abstract class ULandscaper {
     /**
      * Spawn an abstract light directly into the area.
      *
-     * @param area
-     * @param x
-     * @param y
-     * @param color
-     * @param falloff
-     * @param range
      */
     public void spawnLightAt(UArea area, int x, int y, UColor color, int falloff, int range) {
         ULight light = new ULight(color, range, falloff);
@@ -274,11 +243,6 @@ public abstract class ULandscaper {
 
     /**
      * Does cell have any of these terrain names?
-     *
-     * @param area
-     * @param cell
-     * @param terrains
-     * @return
      */
     boolean cellHasTerrain(UArea area, UCell cell, String[] terrains) {
         if (cell == null) return false;
@@ -292,10 +256,6 @@ public abstract class ULandscaper {
 
     /**
      * Which of cell's neighbors (and cell) have these terrain names?
-     *
-     * @param area
-     * @param cell
-     * @param terrains
      * @return A 2D grid of cell's immediate surroundings, true if that cell has one
      * of the given terrain names.
      */
@@ -310,11 +270,6 @@ public abstract class ULandscaper {
     }
     /**
      * How many of cell's neighbors (and cell) have these terrain names?
-     *
-     * @param area
-     * @param cell
-     * @param terrains
-     * @return
      */
     int numNeighborsHaveTerrain(UArea area, UCell cell, String[] terrains) {
         boolean[][] neighbors = neighborsHaveTerrain(area, cell, terrains);
@@ -330,10 +285,6 @@ public abstract class ULandscaper {
 
     /**
      * Pick a random cell having one of these terrains.
-     *
-     * @param area
-     * @param terrains
-     * @return
      */
     public UCell randomCell(UArea area, String[] terrains) {
         UCell cell = null;
@@ -359,9 +310,6 @@ public abstract class ULandscaper {
     /**
      * Pick a random cell that can accept this thing.
      *
-     * @param area
-     * @param thing
-     * @return
      */
     public UCell randomOpenCell(UArea area, UThing thing) {
         UCell cell = null;
@@ -580,6 +528,12 @@ public abstract class ULandscaper {
         return mask;
     }
 
+    public Shapemask shapeBlob(int xsize, int ysize) {
+        Shapemask mask = new Shapemask(xsize, ysize);
+        return mask;
+    }
+
+    // TODO: variable width
     public Shapemask shapeRoad(int xsize, int ysize, float width, float twist, float twistmax) {
         Shapemask mask = new Shapemask(xsize, ysize);
         int edge = random.nextInt(4);
@@ -721,21 +675,6 @@ public abstract class ULandscaper {
         UTerrain t = area.terrainAt(cell.x,cell.y);
         if (t instanceof Stairs)
             ((Stairs)t).setLabel(label);
-    }
-
-    /**
-     * Set the label for a Stairs (in the given area) to its proper outgoing area.
-     *
-     * This should be called by any ULandscaper.makeArea() before returning.
-     *
-     * @param area
-     * @param x
-     * @param y
-     * @param t
-     */
-    public void SetStairsLabel(UArea area, UCartographer carto, int x, int y, Stairs t) {
-        // TODO: Should this be setting area.label() ?
-        t.setLabel("");
     }
 
     public void buildRoom(UArea area, int x, int y, int w, int h, String floort, String wallt) {
@@ -890,7 +829,7 @@ public abstract class ULandscaper {
         int w = room[2];
         int h = room[3];
         if (randf() < 0.2f) {
-            fillRect(area, "carvings", x1+1,y1+1,x1+w-3,y1+h-3);
+            fillRect(area, "carvings", x1+2,y1+2,x1+w-3,y1+h-3);
         }
     }
 
