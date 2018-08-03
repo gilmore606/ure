@@ -283,7 +283,7 @@
     "opaque": false,
     "sunvis": 0.0,
     "glyph": "X",
-    "fgcolor": [70,70,70],
+    "fgcolor": [255,255,255],
     "bgcolor": [30,30,30],
     "breaklatch": true,
     "walkmsg": "A trapdoor in the floor leads to a lower level."
@@ -296,7 +296,7 @@
     "opaque": false,
     "sunvis": 0.0,
     "glyph": "H",
-    "fgcolor": [70,70,70],
+    "fgcolor": [255,255,255],
     "bgcolor": [30,30,30],
     "breaklatch": true,
     "walkmsg": "A ladder leads up to a trapdoor in the ceiling."
