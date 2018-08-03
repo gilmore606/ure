@@ -57,86 +57,7 @@ public abstract class ULandscaper {
      */
     protected String type = "";
 
-    /**
-     * Grid implements a 2D boolean grid useful for proxy calculations about terrain.
-     *
-     */
-    class Grid {
-        boolean cells[][];
-        int width;
-        int height;
-        public Grid(int w, int h) {
-            cells = new boolean[w][h];
-            width = w;
-            height = h;
-        }
-        public void set(int[] c, boolean val) {
-            set(c[0],c[1],val);
-        }
-        public void set(int x, int y, boolean val) {
-            if (x>=0 && x<width && y>=0 && y<height)
-                cells[x][y] = val;
-        }
-        public boolean get(int[] c) {
-            return get(c[0],c[1]);
-        }
-        public boolean get(int x, int y) {
-            if (x>=0 && x<width && y>=0 && y<height)
-                return cells[x][y];
-            return true;
-        }
-        public void copyFrom(Grid src) {
-            for (int x=0;x<width;x++) {
-                for (int y=0;y<height;y++) {
-                    cells[x][y] = src.get(x,y);
-                }
-            }
-        }
-        public int neighborsAt(int x, int y) { return neighborsAt(x, y, 1); }
-        public int neighborsAt(int x, int y, int dist) {
-            int neighbors = 0;
-            for (int ox=-dist;ox<=dist;ox++) {
-                for (int oy=-dist;oy<=dist;oy++) {
-                    if (get(x+ox,y+oy))
-                        neighbors++;
-                }
-            }
-            return neighbors;
-        }
 
-        public int flood(int x, int y) {
-            ArrayList<int[]> q = new ArrayList<int[]>();
-            if (cells[x][y]) return 0;
-            int total = 0;
-            q.add(new int[]{x,y});
-            int[] n = new int[]{0,0};
-            ArrayList<int[]> noobs = new ArrayList<int[]>();
-            while (!q.isEmpty()) {
-                noobs.clear();
-                for (int[] N : q) {
-                    int[] w = new int[]{N[0],N[1]};
-                    int[] e = new int[]{N[0],N[1]};
-                    while (!get(w[0] - 1, w[1]))
-                        w[0] = w[0] - 1;
-                    while (!get(e[0] + 1, e[1]))
-                        e[0] = e[0] + 1;
-                    for (int i = w[0];i <= e[0];i++) {
-                        n[0] = i;
-                        n[1] = w[1];
-                        set(n, true); total++;
-                        if (!get(n[0], n[1] - 1)) noobs.add(new int[]{n[0], n[1] - 1});
-                        if (!get(n[0], n[1] + 1)) noobs.add(new int[]{n[0], n[1] + 1});
-                    }
-                }
-                q.clear();
-                for (int[] noob : noobs) {
-                    q.add(noob);
-                }
-            }
-            System.out.println("GEN : flood found " + Integer.toString(total) + " cells");
-            return total;
-        }
-    }
 
     /**
      * This constructor is necessary for deserialization, but generally you'll want your subclass
@@ -459,46 +380,6 @@ public abstract class ULandscaper {
         return "";
     }
 
-    public void digRiver(UArea area, String t, int x1, int y1, int x2, int y2, float riverWidth, float twist, float twistmax) {
-        int width = x2-x1; int height = y2-y1;
-        int edge = random.nextInt(4);
-        float startx, starty, dx, dy, ctwist;
-        if (edge == 0) {
-            starty = (float)y1;  startx = (float)(random.nextInt(width) + x1);
-            dx = 0f ; dy = 1f;
-        } else if (edge == 1) {
-            starty = (float)height; startx = (float)(random.nextInt(width) + x1);
-            dx = 0f; dy = -1f;
-        } else if (edge == 2) {
-            startx = (float)x1; starty = (float)(random.nextInt(height) + y1);
-            dx = 1f; dy = 0f;
-        } else {
-            startx = (float)width; starty = (float)(random.nextInt(height) + y1);
-            dx = -1f; dy = 0f;
-        }
-        ctwist = 0f;
-        boolean hitedge = false;
-        while (!hitedge) {
-            fillRect(area, t, (int)startx, (int)starty, (int)(startx+riverWidth), (int)(starty+riverWidth));
-            startx += dx;
-            starty += dy;
-            if (random.nextFloat() < twist) {
-                if (dx == 0) {
-                    startx += ctwist;
-                }
-                if (dy == 0) {
-                    starty += ctwist;
-                }
-            }
-            if (startx > x2 || startx < x1 || starty > y2 || starty < y1) {
-                hitedge = true;
-            }
-            ctwist = ctwist + random.nextFloat() * twist - (twist/2f);
-            if (ctwist > twistmax) ctwist = twistmax;
-            if (ctwist < -twistmax) ctwist = -twistmax;
-        }
-    }
-
     public Shapemask shapeCaves(int xsize, int ysize) { return shapeCaves(xsize,ysize,0.45f,5,2,3); }
     public Shapemask shapeCaves(int xsize, int ysize, float initialDensity, int jumblePasses, int jumbleDensity, int smoothPasses) {
         Shapemask mask = new Shapemask(xsize, ysize);
@@ -621,73 +502,6 @@ public abstract class ULandscaper {
             if (ctwist < -twistmax) ctwist = -twistmax;
         }
         return mask;
-    }
-
-    public void digCaves(UArea area, String t, int x1, int y1, int x2, int y2) {
-        digCaves(area,t,x1,y1,x2,y2,0.42f,6,4,3);
-    }
-    public void digCaves(UArea area, String t, int x1, int y1, int x2, int y2, float initialDensity, int jumblePasses, int jumbleDensity, int smoothPasses) {
-        int width = x2-x1; int height = y2-y1;
-        Grid map = new Grid(width,height);
-        Grid scratchmap = new Grid(width,height);
-        float fillratio = 0f;
-        int tries = 0;
-        while ((fillratio < 0.25f) && (tries < 8)) {
-            tries++;
-            int gapY = random.nextInt(height / 2) + height / 3;
-            for (int x = 0;x < width;x++) {
-                for (int y = 0;y < height;y++) {
-                    if ((y < gapY || y > gapY + 1) && random.nextFloat() < initialDensity)
-                        map.set(x, y, true);
-                    else
-                        map.set(x, y, false);
-                }
-            }
-            for (int i = 0;i < jumblePasses;i++) {
-                System.out.println("  jumble " + Integer.toString(i));
-                for (int x = 0;x < width;x++) {
-                    for (int y = 0;y < height;y++) {
-                        if (map.neighborsAt(x, y) >= 5 || map.neighborsAt(x, y, 2) <= jumbleDensity) {
-                            scratchmap.set(x, y, true);
-                        } else {
-                            scratchmap.set(x, y, false);
-                        }
-                    }
-                }
-                map.copyFrom(scratchmap);
-            }
-            for (int i = 0;i < smoothPasses;i++) {
-                System.out.println("  smooth " + Integer.toString(i));
-                for (int x = 0;x < width;x++) {
-                    for (int y = 0;y < height;y++) {
-                        if (map.neighborsAt(x, y) >= 5) {
-                            scratchmap.set(x, y, true);
-                        } else {
-                            scratchmap.set(x, y, false);
-                        }
-                    }
-                }
-                map.copyFrom(scratchmap);
-            }
-            scratchmap.copyFrom(map);
-            int x = width / 2;
-            int y = height / 2;
-            int rantries = 0;
-            while (scratchmap.get(x, y) && rantries < 500) {
-                rantries++;
-                x = random.nextInt(width - 2) + 2;
-                y = random.nextInt(height - 2) + 2;
-            }
-            int spacecount = scratchmap.flood(x, y);
-            fillratio = (float) spacecount / (float) (width * height);
-        }
-        System.out.println("printing cave dig into area");
-        for (int x=0;x<width;x++) {
-            for (int y=0;y<height;y++) {
-                if (!map.get(x,y) && scratchmap.get(x,y))
-                    area.setTerrain(x+x1, y+y1, t);
-            }
-        }
     }
 
     boolean canFitBoxAt(UArea area, int x, int y, int width, int height, String[] floorTerrains) {
@@ -928,6 +742,12 @@ public abstract class ULandscaper {
         }
     }
 
+    /**
+     * Link a new region to a spot in this area.
+     * @param exittype Stairs to place in the area.
+     * @param destlevel Level the stairs go to in the new region.
+     * @param backexittype Exit type the region should make going back to us.
+     */
     public void linkRegionAt(UArea area, int x, int y, String exittype, URegion region, int destlevel, String backexittype) {
         region.addLink(destlevel, backexittype, area.label);
         commander.cartographer.addRegion(region);
