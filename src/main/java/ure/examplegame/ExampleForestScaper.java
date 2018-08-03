@@ -29,12 +29,18 @@ public class ExampleForestScaper extends ULandscaper {
         int lakes = rand(10)+4;
         Shapemask lakemask = new Shapemask(area.xsize+4, area.ysize+4);
         for (int i=0;i<lakes;i++) {
-            Shapemask lake = shapeBlob(7+rand(25),7+rand(25));
+            int lakew = 7+rand(25); int lakeh = 7+rand(25);
+            Shapemask lake = shapeBlob(lakew,lakeh);
             int x = rand(area.xsize);
             int y = rand(area.ysize);
             lake.writeTerrain(area, "water", x, y);
             lakemask.maskWith(lake, Shapemask.MASKTYPE_OR, x, y);
-            lake.shrink(1).smooth(7,2).writeTerrain(area, "deep water", x, y);
+            if (randf() < 0.5f) {
+                Shapemask mud = lake.copy().grow(1 + rand(4)).erode(0.6f, 1 + rand(3)).maskWith(lake, Shapemask.MASKTYPE_NOT);
+                mud.writeTerrain(area, "mud", x, y, 0.9f);
+            }
+            lake.shrink(rand(3)).smooth(7,1+rand(3)).writeTerrain(area, "deep water", x, y);
+            scatterActorsByTags(area, x-1,y-1,x+lakew,y+lakeh, new String[]{"forest"}, 4, 2);
         }
 
         // Run some roads through the map.  Save them all in one mask for later.
@@ -62,6 +68,25 @@ public class ExampleForestScaper extends ULandscaper {
         banks.writeTerrain(area, "sand", -2, -2);
         banks.writeTerrain(area, "grass", -2, -2, 0.1f);
 
+        // Rock formations and caves
+        int caves = rand(3)+3;
+        int rocks = rand(15)+5;
+        for (int i=0;i<rocks;i++) {
+            Shapemask rock = shapeOddBlob(10+rand(25),10+rand(25),3, 0.3f);
+            int x = rand(area.xsize - 10) + 5;
+            int y = rand(area.ysize - 10) + 5;
+            rock.writeTerrain(area, "rock", x, y, 1f);
+            if (i < caves) {
+                UCell caveCell = findAnextToB(area, "rock", "grass", x,y,x+rock.xsize,y+rock.ysize);
+                if (caveCell != null) {
+                    URegion caveRegion = makeCaveRegion();
+                    linkRegionAt(area, caveCell.x, caveCell.y, "cave entrance", caveRegion, 1, "cave exit");
+                }
+                scatterActorsByTags(area, x-3, y-3,x+rock.xsize+3, y+rock.ysize+3, new String[]{"rock"}, 1, 1+rand(3));
+                scatterThingsByTags(area, x-3, y-3,x+rock.xsize+3, y+rock.ysize+3, new String[]{"rock"}, 1, 1+rand(3));
+            }
+        }
+
         // Draw the roads now, after their edges are drawn, so we go over those
         roadmask.writeTerrain(area, "dirt", -2, -2);
 
@@ -69,10 +94,21 @@ public class ExampleForestScaper extends ULandscaper {
         rivermask.maskWith(roadmask, Shapemask.MASKTYPE_AND);
         rivermask.writeTerrain(area, "wooden bridge", -2 ,-2, 0.97f);
 
+
+
         scatterThingsByTags(area, 0, 0, area.xsize-1, area.ysize-1, new String[]{"forest"}, 1, 50);
         scatterActorsByTags(area, 0, 0, area.xsize-1, area.ysize-1, new String[]{"forest"}, 1, 30);
     }
 
+    public URegion makeCaveRegion() {
+        String[] names = new String[]{"Caverns of pain", "Terror cave", "Mystery cave", "Caverns of Night", "Horror cave"};
+        String name = names[rand(names.length)];
+        String id = "cavern-" + Integer.toString(rand(100000));
+        URegion region = new URegion(id, name, new ULandscaper[]{new ExampleCaveScaper()},
+                        new String[]{"cave"}, 90, 90, rand(5)+3,
+                        "cave entrance", "cave exit", "sounds/ultima_dungeon.ogg");
+        return region;
+    }
 
 
 

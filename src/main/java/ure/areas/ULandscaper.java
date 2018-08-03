@@ -558,6 +558,28 @@ public abstract class ULandscaper {
         return mask;
     }
 
+    public Shapemask shapeOddBlob(int xsize, int ysize, int parts, float twist) {
+        Shapemask mask = new Shapemask(xsize,ysize);
+        for (int i=0;i<parts;i++) {
+            float xprop = 0.3f + commander.random.nextFloat()*0.7f - twist;
+            float yprop = 0.3f + commander.random.nextFloat()*0.7f - twist;
+            if (commander.random.nextFloat() > 0.5f) {
+                float tmp = xprop;
+                xprop = yprop;
+                yprop = tmp;
+            }
+            Shapemask oval = shapeOval((int)(xsize * xprop), (int)(ysize * yprop));
+            int xvar = (int)(xsize*(1f-xprop))+1;
+            int yvar = (int)(ysize*(1f-yprop))+1;
+            int xoff = commander.random.nextInt(xvar) - (xvar/2);
+            int yoff = commander.random.nextInt(yvar) - (yvar/2);
+            mask.maskWith(oval, Shapemask.MASKTYPE_OR, xoff, yoff);
+        }
+        mask.smooth(5, 2);
+        mask.erode(0.5f, 2);
+        return mask;
+    }
+
     // TODO: variable width
     public Shapemask shapeRoad(int xsize, int ysize, float width, float twist, float twistmax) {
         Shapemask mask = new Shapemask(xsize, ysize);
@@ -859,7 +881,7 @@ public abstract class ULandscaper {
     }
 
 
-    public void scatterActorsByTags(UArea area, int x1, int x2, int y1, int y2, String[] tags, int level, int amount) {
+    public void scatterActorsByTags(UArea area, int x1, int y1, int x2, int y2, String[] tags, int level, int amount) {
         ArrayList<String> names = new ArrayList<>();
         for (String tag : tags) {
             String[] thenames = actorCzar.getActorsByTag(tag,level);
@@ -878,12 +900,12 @@ public abstract class ULandscaper {
             else
                 name = names.get(random.nextInt(names.size()));
             UActor actor = actorCzar.getActorByName(name);
-            UCell dest = getRandomSpawn(area, actor, x1, x2, y1, y2);
+            UCell dest = getRandomSpawn(area, actor, x1, y1, x2, y2);
             actor.moveToCell(area, dest.x, dest.y);
         }
     }
 
-    public void scatterThingsByTags(UArea area, int x1, int x2, int y1, int y2, String[] tags, int level, int amount) {
+    public void scatterThingsByTags(UArea area, int x1, int y1, int x2, int y2, String[] tags, int level, int amount) {
         ArrayList<String> names = new ArrayList<>();
         for (String tag : tags) {
             System.out.println("get names for " + tag);
@@ -900,7 +922,7 @@ public abstract class ULandscaper {
             else
                 name = names.get(random.nextInt(names.size()));
             UThing thing = thingCzar.getThingByName(name);
-            UCell dest = getRandomSpawn(area, thing, x1, x2, y1, y2);
+            UCell dest = getRandomSpawn(area, thing, x1, y1, x2, y2);
             thing.moveToCell(area, dest.x, dest.y);
         }
     }
