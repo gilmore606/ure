@@ -504,7 +504,7 @@ public abstract class ULandscaper {
         Shapemask mask = new Shapemask(xsize, ysize);
         float fillratio = -1f;
         int tries = 0;
-        while ((fillratio < 0f) && (tries < 8)) {
+        while ((fillratio < 0.25f) && (tries < 8)) {
             System.out.println("SCAPER: shapeCaves attempt " + Integer.toString(tries));
             tries++;
 
@@ -513,10 +513,7 @@ public abstract class ULandscaper {
             int gapY = rand(ysize/2) + ysize/3;
             for (int x=0;x<xsize;x++) { mask.clear(x,gapY); mask.clear(x,gapY+1); mask.clear(x,gapY-1); }
 
-            // Jumble a few times
             mask.jumble(5, jumbleDensity, jumblePasses);
-
-            // Smooth the jumbles
             mask.smooth(5, smoothPasses);
 
             // Check if we made enough space
@@ -528,8 +525,36 @@ public abstract class ULandscaper {
         return mask;
     }
 
-    public Shapemask shapeBlob(int xsize, int ysize) {
+    public Shapemask shapeOval(int xsize, int ysize) {
         Shapemask mask = new Shapemask(xsize, ysize);
+        int ox = xsize/2; int oy = ysize/2;
+        int width = ox; int height = oy;
+        int hh = height * height;
+        int ww = width * width;
+        int hhww = hh * ww;
+        int x0 = width;
+        int dx = 0;
+        for (int x=-width;x<=width;x++)
+            mask.set(ox+x,oy);
+        for (int y=1;y<=height;y++) {
+            int x1=x0-(dx-1);
+            for ( ;x1>0;x1--) {
+                if (x1 * x1 * hh + y * y * ww <= hhww)
+                    break;
+            }
+            dx = x0-x1;
+            x0 = x1;
+            for (int x=-x0;x<=x0;x++) {
+                mask.set(ox+x,oy-y);
+                mask.set(ox+x,oy+y);
+            }
+        }
+        return mask;
+    }
+
+    public Shapemask shapeBlob(int xsize, int ysize) {
+        Shapemask mask = shapeOval(xsize, ysize);
+        mask.erode(0.5f, 3);
         return mask;
     }
 

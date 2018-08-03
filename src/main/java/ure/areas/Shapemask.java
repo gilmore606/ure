@@ -28,6 +28,7 @@ public class Shapemask {
     public static final int MASKTYPE_OR = 0;
     public static final int MASKTYPE_AND = 1;
     public static final int MASKTYPE_XOR = 2;
+    public static final int MASKTYPE_NOT = 3;
 
     public Shapemask(int _xsize, int _ysize) {
         Injector.getAppComponent().inject(this);
@@ -190,6 +191,8 @@ public class Shapemask {
                         break;
                     case MASKTYPE_XOR:  dst = (dst || src) && !(dst && src);
                         break;
+                    case MASKTYPE_NOT:  dst = dst && !src;
+                        break;
                 }
                 write(x+xoffset,y+yoffset,dst);
             }
@@ -220,11 +223,13 @@ public class Shapemask {
     /**
      * Write this mask into a real area as terrain
      */
-    public void writeTerrain(UArea area, String terrain, int xoffset, int yoffset) {
+    public void writeTerrain(UArea area, String terrain, int xoffset, int yoffset) { writeTerrain(area,terrain,xoffset,yoffset,1f); }
+    public void writeTerrain(UArea area, String terrain, int xoffset, int yoffset, float density) {
         for (int x=0;x<xsize;x++)
             for (int y=0;y<ysize;y++)
                 if (value(x,y))
-                    area.setTerrain(x+xoffset,y+yoffset,terrain);
+                    if (density >= 1f || commander.random.nextFloat() < density)
+                        area.setTerrain(x+xoffset,y+yoffset,terrain);
     }
 
     /**
@@ -335,6 +340,29 @@ public class Shapemask {
                             if (!valueBuffer(x + dx, y + dy))
                                 write(x + dx, y + dy, false);
                 }
+        }
+        return this;
+    }
+
+    public Shapemask erode(float rot, int passes) {
+        clearBuffer();
+        int threshold = 6;
+        for (int i=0;i<passes;i++) {
+            for (int x=0;x<xsize;x++) {
+                for (int y=0;y<ysize;y++) {
+                    if (value(x,y)) {
+                        int n = neighbors(x,y);
+                        if (n >= threshold) {
+                            writeBuffer(x,y,true);
+                        } else if (commander.random.nextFloat() < (1f - rot)) {
+                            writeBuffer(x,y,true);
+                        } else {
+                            writeBuffer(x,y,false);
+                        }
+                    }
+                }
+            }
+            printBuffer();
         }
         return this;
     }

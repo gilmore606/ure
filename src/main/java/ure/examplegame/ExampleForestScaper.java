@@ -13,63 +13,64 @@ public class ExampleForestScaper extends ULandscaper {
     @Override
     public void buildArea(UArea area, int level, String[] tags) {
 
-        // Start completely filled in with trees.
         fillRect(area, "tree", 0, 0, area.xsize-1, area.ysize-1);
 
         // Dig a network of big grass spaces.
-        Shapemask grass = shapeCaves(area.xsize-4, area.ysize-4, 0.35f, 4, 2, 3);
-        grass.grow(1);
-        grass.writeTerrain(area, "grass", 1, 1);
+        Shapemask grass = shapeCaves(area.xsize-4, area.ysize-4, 0.38f, 4, 2, 3);
+        grass.grow(1).writeTerrain(area, "grass", 1, 1);
 
-        // Add some holes in the tree clumps
-        Shapemask treeholes = grass.copy().invert().edges().noiseThin(0.5f);
-        treeholes.writeTerrain(area, "sapling", 1 ,1);
+        // Add some holes in the tree clumps, some random lone trees and saplings, and a fringe of saplings
+        grass.copy().invert().edges().writeTerrain(area, "sapling", 1 ,1, 0.5f);
+        grass.writeTerrain(area, "tree", 1 ,1, 0.03f);
+        grass.copy().edgesThick().writeTerrain(area, "sapling", 1, 1, 0.6f);
+        grass.writeTerrain(area, "sapling", 1, 1, 0.05f);
 
-        // Add some random lone trees
-        Shapemask trees = grass.copy().noiseThin(0.03f);
-        trees.writeTerrain(area, "tree", 1 ,1);
-
-        // Fringe it with saplings.
-        Shapemask saplings = grass.copy().edgesThick().grow(1).noiseThin(0.6f);
-        saplings.writeTerrain(area, "sapling", 1, 1);
-
-        // Add some random lone saplings
-        saplings = grass.copy().noiseThin(0.05f);
-        saplings.writeTerrain(area, "sapling", 1, 1);
+        // Lakes
+        int lakes = rand(10)+4;
+        Shapemask lakemask = new Shapemask(area.xsize+4, area.ysize+4);
+        for (int i=0;i<lakes;i++) {
+            Shapemask lake = shapeBlob(7+rand(25),7+rand(25));
+            int x = rand(area.xsize);
+            int y = rand(area.ysize);
+            lake.writeTerrain(area, "water", x, y);
+            lakemask.maskWith(lake, Shapemask.MASKTYPE_OR, x, y);
+            lake.shrink(1).smooth(7,2).writeTerrain(area, "deep water", x, y);
+        }
 
         // Run some roads through the map.  Save them all in one mask for later.
+        int roads = rand(2)+2;
         Shapemask roadmask = new Shapemask(area.xsize+4,area.ysize+4);
-        for (int i=0;i<3;i++) {
+        for (int i=0;i<roads;i++) {
             Shapemask road = shapeRoad(area.xsize +4, area.ysize +4, 2, 1.2f, 1.3f);
             roadmask.maskWith(road, Shapemask.MASKTYPE_OR);
-            road.grow(1).edges().noiseThin(0.7f);
-            road.writeTerrain(area, "grass", -2, -2);
-            road.sparsen(22, 36);
-            road.writeThings(area, "lamppost", -2, -2);
+            road.grow(1).edges().writeTerrain(area, "grass", -2, -2, 0.7f);
+            road.sparsen(22, 36).writeThings(area, "lamppost", -2, -2);
         }
 
         // Run some rivers through the map.  Save them all in one mask for later.
+        int rivers = rand(3)+1;
         Shapemask rivermask = new Shapemask(area.xsize+4, area.ysize+4);
-        for (int i=0;i<2;i++) {
+        for (int i=0;i<rivers;i++) {
             Shapemask river = shapeRoad(area.xsize+4, area.ysize+4, 5, 1.4f, 1.6f);
             river.writeTerrain(area, "water", -2, -2);
             rivermask.maskWith(river, Shapemask.MASKTYPE_OR);
-            Shapemask deep = river.copy().shrink(3);
-            deep.writeTerrain(area, "deep water", -2, -2);
+            river.shrink(2).writeTerrain(area, "deep water", -2, -2, 0.8f);
         }
 
         // Add banks on the edges of rivers.
-        Shapemask banks = rivermask.copy().grow(1).edges();
+        Shapemask banks = rivermask.copy().grow(1).edges().maskWith(lakemask, Shapemask.MASKTYPE_NOT);
         banks.writeTerrain(area, "sand", -2, -2);
-        banks.noiseThin(0.1f);
-        banks.writeTerrain(area, "grass", -2, -2);
+        banks.writeTerrain(area, "grass", -2, -2, 0.1f);
 
         // Draw the roads now, after their edges are drawn, so we go over those
         roadmask.writeTerrain(area, "dirt", -2, -2);
 
         // Combine the roads and rivers to get bridges
         rivermask.maskWith(roadmask, Shapemask.MASKTYPE_AND);
-        rivermask.writeTerrain(area, "wooden bridge", -2 ,-2);
+        rivermask.writeTerrain(area, "wooden bridge", -2 ,-2, 0.97f);
+
+        scatterThingsByTags(area, 0, 0, area.xsize-1, area.ysize-1, new String[]{"forest"}, 1, 50);
+        scatterActorsByTags(area, 0, 0, area.xsize-1, area.ysize-1, new String[]{"forest"}, 1, 30);
     }
 
 
