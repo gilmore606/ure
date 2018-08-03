@@ -499,7 +499,7 @@ public abstract class ULandscaper {
         }
     }
 
-
+    public Shapemask shapeCaves(int xsize, int ysize) { return shapeCaves(xsize,ysize,0.45f,5,2,3); }
     public Shapemask shapeCaves(int xsize, int ysize, float initialDensity, int jumblePasses, int jumbleDensity, int smoothPasses) {
         Shapemask mask = new Shapemask(xsize, ysize);
         float fillratio = -1f;
@@ -558,6 +558,7 @@ public abstract class ULandscaper {
         return mask;
     }
 
+    public Shapemask shapeOddBlob(int xsize, int ysize) { return shapeOddBlob(xsize,ysize,3,0.3f); }
     public Shapemask shapeOddBlob(int xsize, int ysize, int parts, float twist) {
         Shapemask mask = new Shapemask(xsize,ysize);
         for (int i=0;i<parts;i++) {
