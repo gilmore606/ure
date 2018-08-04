@@ -25,6 +25,7 @@ public class Icon {
     }
 
     public Icon(char glyph, UColor fgColor, UColor bgColor) {
+        this();
         this.glyph = glyph;
         this.fgColor = fgColor;
         this.bgColor = bgColor;

@@ -73,7 +73,7 @@ public interface URenderer {
      * @param desty
      * @param tint
      */
-    void drawGlyph(char glyph, int destx, int desty, UColor tint);
+    void drawGlyph(int glyph, int destx, int desty, UColor tint);
 
     /**
      * Draw a glyph in the center of the box with its origin at destx,desty that is cellWidth pixels wide and
@@ -84,7 +84,7 @@ public interface URenderer {
      * @param desty
      * @param tint
      */
-    void drawTile(char glyph, int destx, int desty, UColor tint);
+    void drawTile(int glyph, int destx, int desty, UColor tint);
 
     /**
      * Draw an outline for a particular tile glyph so that it stands out from its background.  This is intended for use
@@ -94,7 +94,7 @@ public interface URenderer {
      * @param desty
      * @param tint
      */
-    void drawTileOutline(char glyph, int destx, int desty, UColor tint);
+    void drawTileOutline(int glyph, int destx, int desty, UColor tint);
     void drawRect(int x, int y, int w, int h, UColor col);
     void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor);
     int getMousePosX();

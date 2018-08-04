@@ -221,13 +221,13 @@ public class URendererOGL implements URenderer {
     public void drawString(int x, int y, UColor color, String str) {
         if (str == null) return;
         for (int i = 0; i < str.length(); i++) {
-            drawGlyph(str.charAt(i), x, y, color);
+            drawGlyph(Character.codePointAt(str, i), x, y, color);
             x += Math.ceil(fontTexture.glyphWidth[0]);
         }
     }
 
     @Override
-    public void drawGlyph(char glyph, int x, int y, UColor tint) {
+    public void drawGlyph(int glyph, int x, int y, UColor tint) {
         x += context.absoluteX();
         y += context.absoluteY();
         STBTTAlignedQuad quad = fontTexture.glyphInfo(glyph);
@@ -237,7 +237,7 @@ public class URendererOGL implements URenderer {
     }
 
     @Override
-    public void drawTile(char glyph, int x, int y, UColor tint) {
+    public void drawTile(int glyph, int x, int y, UColor tint) {
         x += context.absoluteX();
         y += context.absoluteY();
         STBTTAlignedQuad quad = fontTexture.glyphInfo(glyph);
@@ -254,7 +254,7 @@ public class URendererOGL implements URenderer {
     }
 
     @Override
-    public void drawTileOutline(char glyph, int destx, int desty, UColor tint) {
+    public void drawTileOutline(int glyph, int destx, int desty, UColor tint) {
         for (int y = -1; y < 2; y += 1)
             for (int x = -1; x < 2; x += 1)
                 if (x != 0 && y != 0)
