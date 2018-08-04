@@ -1,0 +1,31 @@
+[
+  {
+    "name": "blob",
+    "parts": [
+      { "name": "body", "slots": 1 }
+    ]
+  },
+
+  {
+    "name": "animal",
+    "parts": [
+      { "name": "head", "slots": 1 },
+      { "name": "torso", "slots": 1 },
+      { "name": "legs", "slots": 1 }
+    ]
+  },
+
+  {
+    "name": "humanoid",
+    "parts": [
+      { "name": "head", "slots": 1 },
+      { "name": "torso", "slots": 1 },
+      { "name": "arms", "slots": 1 },
+      { "name": "legs", "slots": 1 },
+      { "name": "hands", "slots": 1 },
+      { "name": "feet", "slots": 1 },
+      { "name": "fingers", "slots": 4 },
+      { "name": "equip", "slots": 2 }
+    ]
+  }
+]
