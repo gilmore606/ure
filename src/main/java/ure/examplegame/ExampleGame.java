@@ -81,7 +81,9 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
 
         scrollPanel = new UScrollPanel(1200, 200, 12, 12, commander.config.getTextColor(), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
         scrollPanel.addLineFade(new UColor(1.0f, 1.0f, 1.0f));
+        scrollPanel.addLineFade(new UColor(0.8f, 0.8f, 0.8f));
         scrollPanel.addLineFade(new UColor(0.6f, 0.6f, 0.6f));
+        scrollPanel.addLineFade(new UColor(0.5f, 0.5f, 0.5f));
         scrollPanel.addLineFade(new UColor(0.4f, 0.4f, 0.4f));
         scrollPanel.addLineFade(new UColor(0.3f, 0.3f, 0.3f));
         scrollPanel.setPosition(0,800);

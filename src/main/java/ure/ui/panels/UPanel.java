@@ -84,4 +84,12 @@ public class UPanel extends View {
     public int gw() { return commander.config.getGlyphWidth(); }
     public int gh() { return commander.config.getGlyphHeight(); }
 
+    public boolean isMouseInside() {
+        int mousex = commander.mouseX();
+        int mousey = commander.mouseY();
+        if (mousex >= absoluteX() && mousex < absoluteX()+pixelw && mousey >= absoluteY() && mousey < absoluteY()+pixelh) {
+            return true;
+        }
+        return false;
+    }
 }

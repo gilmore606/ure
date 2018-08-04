@@ -58,14 +58,16 @@ public class UScrollPanel extends UPanel {
         if (!hidden) {
             renderer.drawRectBorder(1, 1, width - 2, height - 2, 1, bgColor, borderColor);
             int i = 0;
+            boolean fade = (isMouseInside() ? false : true);
             while (i < textRows) {
                 if (i < lines.size()) {
-                    UColor color;
-                    //MM FINISH THIS
-                    if (i < lineFades.size())
-                        color = lineFades.get(i);
-                    else
-                        color = lineFades.get(lineFades.size() - 1);
+                    UColor color = colors.get(i);
+                    if (fade) {
+                        if (i < lineFades.size())
+                            color = lineFades.get(i);
+                        else
+                            color = lineFades.get(lineFades.size() - 1);
+                    }
                     int liney = textRows - (i);
                     drawString(renderer, lines.get(i), 2, liney, color);
                     drawIcon(renderer, icons.get(i), 0, liney);
