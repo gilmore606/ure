@@ -109,8 +109,8 @@ public abstract class ULandscaper {
                 int stopDistMin = brush.xsize/2+2;
                 int stopDistMax = willConnect ? brush.xsize/2+2 : brush.xsize+minForkSteps;
                 for (int dist=stopDistMin;dist<=stopDistMax;dist++) {
-                    for (int sweep=-1;sweep<=1;sweep++) {
-                        float sweptAngle = angle + (float)sweep * 0.1f;
+                    for (int sweep=-4;sweep<=4;sweep++) {
+                        float sweptAngle = angle + (float)sweep * 0.03f;
                         if (mask.value((int)Math.rint(x + Math.cos(sweptAngle) * (0.5f+dist)), (int)Math.rint(y + Math.sin(sweptAngle) * (0.5f+dist)))) {
                             if (willConnect)
                                 mask.maskWith(brush, Shape.MASK_OR, (int) x, (int) y);
@@ -586,7 +586,7 @@ public abstract class ULandscaper {
         return mask;
     }
 
-    public Shape shapeMines(int xsize, int ysize, int tunnelWidth, int minForkSteps, int maxForkSteps, int turnStepCount, float turnChance, float connectChance, float narrowChance, float roomChance, int maxRooms, int roomSizeMin, int roomSizeMax) {
+    public Shape shapeMines(int xsize, int ysize, int tunnelWidth, int minForkSteps, int maxForkSteps, int turnStepCount, float turnChance, float connectChance, float narrowChance, float roomChance, float backRoomChance, int maxRooms, int roomSizeMin, int roomSizeMax) {
         Shape mask = new Shape(xsize,ysize);
         ArrayList<Room> spareRooms = new ArrayList<>();
         for (int i=0;i<maxRooms;i++) {
@@ -621,6 +621,17 @@ public abstract class ULandscaper {
                         float roomangle = randf() < 0.5f ? digger.angle - 1.5708f : digger.angle + 1.5708f;
                         if (mask.tryToFitRoom((int)digger.x,(int)digger.y,room.width,room.height,roomangle,digger.brush.xsize/2+1,true)) {
                             spareRooms.remove(room);
+                            if (randf() < backRoomChance) {
+                                Room oldroom = room;
+                                room = spareRooms.get(rand(spareRooms.size()));
+                                int offx = (int)Math.rint(digger.x+(digger.brush.xsize/2+oldroom.height/2+1)*Math.cos(roomangle));
+                                int offy = (int)Math.rint(digger.y+(digger.brush.xsize/2+oldroom.height/2+1)*Math.sin(roomangle));
+                                float backangle = roomangle;
+                                if (mask.tryToFitRoom(offx,offy,room.width,room.height,backangle,oldroom.height/2+1,true)) {
+                                    spareRooms.remove(room);
+                                    mask.set(offx-(int)Math.rint(Math.sin(backangle)),offy-(int)Math.rint(Math.sin(backangle)));
+                                }
+                            }
                         }
                     }
                 }

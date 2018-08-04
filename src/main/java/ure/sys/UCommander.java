@@ -243,7 +243,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public void keyPressed(GLKey k) {
-        keyBuffer.add(k);
+        if (keyBuffer.size() < 2)
+            keyBuffer.add(k);
     }
 
     public int mouseX() { return renderer.getMousePosX(); }
