@@ -13,6 +13,7 @@ import ure.things.UThing;
 import ure.ui.particles.UParticle;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -130,6 +131,19 @@ public class UCell implements UContainer {
      */
     public UThing topThingAt() {
         return getContents().topThing();
+    }
+
+    /**
+     * Get all the things here gettable by this actor.
+     */
+    public ArrayList<UThing> gettableThingsAt(UActor actor) {
+        ArrayList<UThing> gettables = new ArrayList<>();
+        for (UThing thing : contents.getThings()) {
+            if (thing.isMovableBy(actor)) {
+                gettables.add(thing);
+            }
+        }
+        return gettables;
     }
 
     public boolean willAcceptThing(UThing thing) {

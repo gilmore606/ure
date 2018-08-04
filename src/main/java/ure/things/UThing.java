@@ -222,7 +222,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     }
 
     public boolean tryGetBy(UActor actor) {
-        if (!isMovable()) {
+        if (!isMovableBy(actor)) {
             if (actor instanceof UPlayer)
                 commander.printScroll(getGetFailMsg());
             return false;
@@ -302,6 +302,10 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         if (last == 's')
             return getName() + "es";
         return getName() + "s";
+    }
+
+    public boolean isMovableBy(UActor actor) {
+        return isMovable();
     }
 
     public void setPlural(String plural) {
