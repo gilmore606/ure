@@ -112,7 +112,7 @@ public class UConfig {
     private boolean runNeighborAreas = true;        // keep areas we just left awake?
     private boolean loadAreasAhead = true;          // preemptively load upcoming areas?
 
-    private boolean nethackShiftRun = false;        // nethack-style Shift+Move?  false for 'shift = no repeat wait' simpler running
+    private boolean nethackShiftRun = true;        // nethack-style Shift+Move?  false for 'shift = no repeat wait' simpler running
     private boolean smartInteract = true;           // autodetect targets for interact command?
     private boolean interactStairs = true;          // interact command can trigger stairs?
 
