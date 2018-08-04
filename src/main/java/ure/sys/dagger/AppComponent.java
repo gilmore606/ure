@@ -64,5 +64,5 @@ public interface AppComponent {
     void inject(USpeaker speak);
     void inject(Stairs stairs);
     void inject(UParticle parti);
-    void inject(Shapemask shape);
+    void inject(Shape shape);
 }

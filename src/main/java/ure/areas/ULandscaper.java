@@ -57,7 +57,97 @@ public abstract class ULandscaper {
      */
     protected String type = "";
 
+    /**
+     * Room is used by shapers to track and dig rooms.  It represents a room location in a shape.
+     * Walls and doors are outside of this square.
+     */
+    public class Room {
+        int x,y,width,height;
+        public Room(int x, int y, int width, int height) {
+            this.x=x;
+            this.y=y;
+            this.width=width;
+            this.height=height;
+        }
+    }
 
+    /**
+     * Digger is used by shapeMines() to dig tunnels.
+     */
+    public class Digger {
+        Shape brush, mask;
+        float x,y,angle, turnChance;
+        boolean done, turning, willConnect;
+        int forksteps, turnsteps, turnStepCount, turnDir, minForkSteps, maxForkSteps;
+
+        public Digger(Shape mask, int x, int y, float angle, int width, int minForkSteps, int maxForkSteps, float connectChance, int turnStepCount, float turnChance) {
+            brush = new Shape(width,width);  brush.invert();
+            this.mask = mask;
+            this.x = x;
+            this.y = y;
+            this.angle = angle;
+            this.minForkSteps = minForkSteps;
+            this.maxForkSteps = maxForkSteps;
+            if (randf() < connectChance) {
+                this.willConnect = true;
+            } else {
+                this.willConnect = false;
+            }
+            this.turnStepCount = turnStepCount;
+            this.turnChance = turnChance;
+            done = false; turning = false;
+            forksteps = 0; turnsteps = 0;
+        }
+        public boolean run() {
+            if (done) return true;
+            mask.maskWith(brush, Shape.MASK_OR, (int)x, (int)y);
+            x += Math.cos(angle);
+            y += Math.sin(angle);
+            if (x < brush.xsize || y < brush.ysize || x > mask.xsize-brush.xsize || y > mask.ysize-brush.ysize) {
+                terminate();
+            } else {
+                int stopDistMin = brush.xsize/2+2;
+                int stopDistMax = willConnect ? brush.xsize/2+2 : brush.xsize+minForkSteps;
+                for (int dist=stopDistMin;dist<=stopDistMax;dist++) {
+                    for (int sweep=-1;sweep<=1;sweep++) {
+                        float sweptAngle = angle + (float)sweep * 0.1f;
+                        if (mask.value((int)Math.rint(x + Math.cos(sweptAngle) * (0.5f+dist)), (int)Math.rint(y + Math.sin(sweptAngle) * (0.5f+dist)))) {
+                            if (willConnect)
+                                mask.maskWith(brush, Shape.MASK_OR, (int) x, (int) y);
+                            terminate();
+                        }
+                    }
+                }
+            }
+            if (turning) {
+                turnsteps++;
+                angle = angle + (1.5708f / turnStepCount) * turnDir;
+                if (turnsteps >= turnStepCount)
+                    turning = false;
+            } else {
+                forksteps++;
+            }
+            if (!done && !turning && forksteps >= minForkSteps && randf() < turnChance*(float)(forksteps-minForkSteps)/(float)(maxForkSteps-minForkSteps)) {
+                turning = true;
+                turnDir = randf() > 0.5f ? -1 : 1;
+                turnsteps = 0;
+                forksteps = 0;
+            }
+            return done;
+        }
+        void terminate() {
+            done = true;
+        }
+        boolean shouldFork(int minsteps, int maxsteps) {
+            if (forksteps <= minsteps) return false;
+            if (turning) return false;
+            if (randf() < (float)(forksteps-minsteps)/(float)(maxsteps-minsteps)) {
+                forksteps = 0;
+                return true;
+            }
+            return false;
+        }
+    }
 
     /**
      * This constructor is necessary for deserialization, but generally you'll want your subclass
@@ -83,10 +173,6 @@ public abstract class ULandscaper {
      *
      * Override this and add parameters to be passed in by your UCartographer to determine the
      * character of the area you produce.
-     *
-     * You <b>must</b> call SetStairsLabels() at the end of this method before you return the area to ensure that
-     * area links are properly created.
-     *
      * @param area
      */
     public void buildArea(UArea area, int level, String[] tags) {
@@ -111,8 +197,6 @@ public abstract class ULandscaper {
 
     /**
      * Convenience random numbers.
-     * @param max 0-max exclusive.
-     * @return
      */
     public int rand(int max) {
         return random.nextInt(max);
@@ -138,8 +222,6 @@ public abstract class ULandscaper {
             UCell cell = randomCell(area, terrains);
             String name = things[random.nextInt(things.length)];
             UThing thing = thingCzar.getThingByName(name);
-            if (thing.getContents().getThings() == null)
-                System.out.println("*** BUG scatterThings got a thing back with no contents.things bound for area " + area.label);
             thing.moveToCell(area, cell.x, cell.y);
         }
     }
@@ -380,9 +462,9 @@ public abstract class ULandscaper {
         return "";
     }
 
-    public Shapemask shapeCaves(int xsize, int ysize) { return shapeCaves(xsize,ysize,0.45f,5,2,3); }
-    public Shapemask shapeCaves(int xsize, int ysize, float initialDensity, int jumblePasses, int jumbleDensity, int smoothPasses) {
-        Shapemask mask = new Shapemask(xsize, ysize);
+    public Shape shapeCaves(int xsize, int ysize) { return shapeCaves(xsize,ysize,0.45f,5,2,3); }
+    public Shape shapeCaves(int xsize, int ysize, float initialDensity, int jumblePasses, int jumbleDensity, int smoothPasses) {
+        Shape mask = new Shape(xsize, ysize);
         float fillratio = -1f;
         int tries = 0;
         while ((fillratio < 0.25f) && (tries < 8)) {
@@ -406,8 +488,8 @@ public abstract class ULandscaper {
         return mask;
     }
 
-    public Shapemask shapeOval(int xsize, int ysize) {
-        Shapemask mask = new Shapemask(xsize, ysize);
+    public Shape shapeOval(int xsize, int ysize) {
+        Shape mask = new Shape(xsize, ysize);
         int ox = xsize/2; int oy = ysize/2;
         int width = ox; int height = oy;
         int hh = height * height;
@@ -433,15 +515,15 @@ public abstract class ULandscaper {
         return mask;
     }
 
-    public Shapemask shapeBlob(int xsize, int ysize) {
-        Shapemask mask = shapeOval(xsize, ysize);
+    public Shape shapeBlob(int xsize, int ysize) {
+        Shape mask = shapeOval(xsize, ysize);
         mask.erode(0.5f, 3);
         return mask;
     }
 
-    public Shapemask shapeOddBlob(int xsize, int ysize) { return shapeOddBlob(xsize,ysize,3,0.3f); }
-    public Shapemask shapeOddBlob(int xsize, int ysize, int parts, float twist) {
-        Shapemask mask = new Shapemask(xsize,ysize);
+    public Shape shapeOddBlob(int xsize, int ysize) { return shapeOddBlob(xsize,ysize,3,0.3f); }
+    public Shape shapeOddBlob(int xsize, int ysize, int parts, float twist) {
+        Shape mask = new Shape(xsize,ysize);
         for (int i=0;i<parts;i++) {
             float xprop = 0.3f + commander.random.nextFloat()*0.7f - twist;
             float yprop = 0.3f + commander.random.nextFloat()*0.7f - twist;
@@ -450,12 +532,12 @@ public abstract class ULandscaper {
                 xprop = yprop;
                 yprop = tmp;
             }
-            Shapemask oval = shapeOval((int)(xsize * xprop), (int)(ysize * yprop));
+            Shape oval = shapeOval((int)(xsize * xprop), (int)(ysize * yprop));
             int xvar = (int)(xsize*(1f-xprop))+1;
             int yvar = (int)(ysize*(1f-yprop))+1;
             int xoff = commander.random.nextInt(xvar) - (xvar/2);
             int yoff = commander.random.nextInt(yvar) - (yvar/2);
-            mask.maskWith(oval, Shapemask.MASKTYPE_OR, xoff, yoff);
+            mask.maskWith(oval, Shape.MASK_OR, xoff, yoff);
         }
         mask.smooth(5, 2);
         mask.erode(0.5f, 2);
@@ -463,8 +545,8 @@ public abstract class ULandscaper {
     }
 
     // TODO: variable width
-    public Shapemask shapeRoad(int xsize, int ysize, float width, float twist, float twistmax) {
-        Shapemask mask = new Shapemask(xsize, ysize);
+    public Shape shapeRoad(int xsize, int ysize, float width, float twist, float twistmax) {
+        Shape mask = new Shape(xsize, ysize);
         int edge = random.nextInt(4);
         float startx, starty, dx, dy, ctwist;
         if (edge == 0) {
@@ -500,6 +582,49 @@ public abstract class ULandscaper {
             ctwist = ctwist + random.nextFloat() * twist - (twist/2f);
             if (ctwist > twistmax) ctwist = twistmax;
             if (ctwist < -twistmax) ctwist = -twistmax;
+        }
+        return mask;
+    }
+
+    public Shape shapeMines(int xsize, int ysize, int tunnelWidth, int minForkSteps, int maxForkSteps, int turnStepCount, float turnChance, float connectChance, float narrowChance, float roomChance, int maxRooms, int roomSizeMin, int roomSizeMax) {
+        Shape mask = new Shape(xsize,ysize);
+        ArrayList<Room> spareRooms = new ArrayList<>();
+        for (int i=0;i<maxRooms;i++) {
+            spareRooms.add(new Room(0, 0,rand(roomSizeMax-roomSizeMin)+roomSizeMin, rand(roomSizeMax-roomSizeMin)+roomSizeMin));
+        }
+        Digger firstDigger = new Digger(mask,xsize/2,ysize/2,1.5707f,tunnelWidth, minForkSteps, maxForkSteps, connectChance, turnStepCount, turnChance);
+        Digger secondDigger = new Digger(mask,xsize/2,ysize/2,-1.5707f, tunnelWidth, minForkSteps, maxForkSteps, connectChance, turnStepCount, turnChance);
+        ArrayList<Digger> diggers = new ArrayList<>();
+        ArrayList<Digger> tmp;
+        diggers.add(firstDigger);
+        diggers.add(secondDigger);
+        boolean allDone = false;
+        while (!allDone) {
+            allDone = true;
+            tmp = (ArrayList<Digger>)diggers.clone();
+            for (Digger digger : tmp) {
+                if (!digger.run()) {
+                    allDone = false;
+                    if (digger.shouldFork(minForkSteps,maxForkSteps) && diggers.size() < 150) {
+                        float childAngle = digger.angle + (randf() < 0.5f ? -1.5708f : 1.5708f);
+                        int childWidth = digger.brush.xsize;
+                        if (childWidth > 2 && randf() < narrowChance) childWidth--;
+                        Digger child = new Digger(mask,(int)digger.x,(int)digger.y,childAngle,childWidth,minForkSteps,maxForkSteps,connectChance, turnStepCount, turnChance);
+                        diggers.add(child);
+                        if (randf() < 0.5f) {
+                            Digger child2 = new Digger(mask,(int)digger.x,(int)digger.y,childAngle+3.1416f,childWidth,minForkSteps,maxForkSteps,connectChance,turnStepCount,turnChance);
+                            diggers.add(child2);
+                        }
+                    } else if (!digger.turning && randf() < roomChance && !spareRooms.isEmpty()) {
+                        Room room = spareRooms.get(rand(spareRooms.size()));
+                        // is there room.w/h space N units toward angle?
+                        float roomangle = randf() < 0.5f ? digger.angle - 1.5708f : digger.angle + 1.5708f;
+                        if (mask.tryToFitRoom((int)digger.x,(int)digger.y,room.width,room.height,roomangle,digger.brush.xsize/2+1,true)) {
+                            spareRooms.remove(room);
+                        }
+                    }
+                }
+            }
         }
         return mask;
     }

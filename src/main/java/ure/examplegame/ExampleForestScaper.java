@@ -12,11 +12,19 @@ public class ExampleForestScaper extends ULandscaper {
 
     @Override
     public void buildArea(UArea area, int level, String[] tags) {
+        fillRect(area, "rock", 0, 0, 100,100);
+        Shape mask = shapeMines(100,100,3,6, 12,7, 0.4f, 0.02f, 0.6f, 0.6f, 300, 3,12);
+        mask.writeTerrain(area, "floor", 0, 0);
+        mask.edges().sparsen(12, 24).writeThings(area, "lamppost", 0,0);
+        addDoors(area, "door", new String[]{"rock"}, 1f);
+    }
+
+    public void buildArea2(UArea area, int level, String[] tags) {
 
         fillRect(area, "tree", 0, 0, area.xsize-1, area.ysize-1);
 
         // Dig a network of big grass spaces.
-        Shapemask grass = shapeCaves(area.xsize-4, area.ysize-4, 0.38f, 4, 2, 3);
+        Shape grass = shapeCaves(area.xsize-4, area.ysize-4, 0.38f, 4, 2, 3);
         grass.grow(1).writeTerrain(area, "grass", 1, 1);
 
         // Add some holes in the tree clumps, some random lone trees and saplings, and a fringe of saplings
@@ -27,16 +35,16 @@ public class ExampleForestScaper extends ULandscaper {
 
         // Lakes
         int lakes = rand(10)+4;
-        Shapemask lakemask = new Shapemask(area.xsize+4, area.ysize+4);
+        Shape lakemask = new Shape(area.xsize+4, area.ysize+4);
         for (int i=0;i<lakes;i++) {
             int lakew = 7+rand(25); int lakeh = 7+rand(25);
-            Shapemask lake = shapeBlob(lakew,lakeh);
+            Shape lake = shapeBlob(lakew,lakeh);
             int x = rand(area.xsize);
             int y = rand(area.ysize);
             lake.writeTerrain(area, "water", x, y);
-            lakemask.maskWith(lake, Shapemask.MASKTYPE_OR, x, y);
+            lakemask.maskWith(lake, Shape.MASK_OR, x, y);
             if (randf() < 0.5f) {
-                Shapemask mud = lake.copy().grow(1 + rand(4)).erode(0.6f, 1 + rand(3)).maskWith(lake, Shapemask.MASKTYPE_NOT);
+                Shape mud = lake.copy().grow(1 + rand(4)).erode(0.6f, 1 + rand(3)).maskWith(lake, Shape.MASK_NOT);
                 mud.writeTerrain(area, "mud", x, y, 0.9f);
             }
             lake.shrink(rand(3)).smooth(7,1+rand(3)).writeTerrain(area, "deep water", x, y);
@@ -45,26 +53,26 @@ public class ExampleForestScaper extends ULandscaper {
 
         // Run some roads through the map.  Save them all in one mask for later.
         int roads = rand(2)+2;
-        Shapemask roadmask = new Shapemask(area.xsize+4,area.ysize+4);
+        Shape roadmask = new Shape(area.xsize+4,area.ysize+4);
         for (int i=0;i<roads;i++) {
-            Shapemask road = shapeRoad(area.xsize +4, area.ysize +4, 2, 1.2f, 1.3f);
-            roadmask.maskWith(road, Shapemask.MASKTYPE_OR);
+            Shape road = shapeRoad(area.xsize +4, area.ysize +4, 2, 1.2f, 1.3f);
+            roadmask.maskWith(road, Shape.MASK_OR);
             road.grow(1).edges().writeTerrain(area, "grass", -2, -2, 0.7f);
             road.sparsen(22, 36).writeThings(area, "lamppost", -2, -2);
         }
 
         // Run some rivers through the map.  Save them all in one mask for later.
         int rivers = rand(3)+1;
-        Shapemask rivermask = new Shapemask(area.xsize+4, area.ysize+4);
+        Shape rivermask = new Shape(area.xsize+4, area.ysize+4);
         for (int i=0;i<rivers;i++) {
-            Shapemask river = shapeRoad(area.xsize+4, area.ysize+4, 5, 1.4f, 1.6f);
+            Shape river = shapeRoad(area.xsize+4, area.ysize+4, 5, 1.4f, 1.6f);
             river.writeTerrain(area, "water", -2, -2);
-            rivermask.maskWith(river, Shapemask.MASKTYPE_OR);
+            rivermask.maskWith(river, Shape.MASK_OR);
             river.shrink(2).writeTerrain(area, "deep water", -2, -2, 0.8f);
         }
 
         // Add banks on the edges of rivers.
-        Shapemask banks = rivermask.copy().grow(1).edges().maskWith(lakemask, Shapemask.MASKTYPE_NOT);
+        Shape banks = rivermask.copy().grow(1).edges().maskWith(lakemask, Shape.MASK_NOT);
         banks.writeTerrain(area, "sand", -2, -2);
         banks.writeTerrain(area, "grass", -2, -2, 0.1f);
 
@@ -72,7 +80,7 @@ public class ExampleForestScaper extends ULandscaper {
         int caves = rand(3)+3;
         int rocks = rand(15)+5;
         for (int i=0;i<rocks;i++) {
-            Shapemask rock = shapeOddBlob(10+rand(25),10+rand(25),3, 0.3f);
+            Shape rock = shapeOddBlob(10+rand(25),10+rand(25),3, 0.3f);
             int x = rand(area.xsize - 10) + 5;
             int y = rand(area.ysize - 10) + 5;
             rock.writeTerrain(area, "rock", x, y, 1f);
@@ -114,7 +122,7 @@ public class ExampleForestScaper extends ULandscaper {
         roadmask.writeTerrain(area, "dirt", -2, -2);
 
         // Combine the roads and rivers to get bridges
-        rivermask.maskWith(roadmask, Shapemask.MASKTYPE_AND);
+        rivermask.maskWith(roadmask, Shape.MASK_AND);
         rivermask.writeTerrain(area, "wooden bridge", -2 ,-2, 0.97f);
 
         scatterThingsByTags(area, 0, 0, area.xsize-1, area.ysize-1, new String[]{"forest"}, 1, 50);

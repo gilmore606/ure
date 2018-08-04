@@ -135,9 +135,9 @@
       "opaque": true,
       "sunvis": 0.5,
       "glyph": "T",
-      "fgcolor": [0,220,0],
-      "fgvariants": [ [50,220,0],[40,180,0],[0,240,0]],
-      "bgcolor": [0,40,0],
+      "fgcolor": [100,60,0],
+      "fgvariants": [ [100,60,0],[90,40,0],[70,40,0]],
+      "bgcolor": [0,75,0],
       "walkmsg": "Tall pine trees."
     },
   {

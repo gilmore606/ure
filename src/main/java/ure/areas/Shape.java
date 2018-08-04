@@ -7,7 +7,6 @@ import ure.things.UThing;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Queue;
 
 /**
  * A Shapemask is a 1-bit 2D array of cells.  Landscaper methods can generate these to use for stamping terrain into areas.
@@ -16,7 +15,7 @@ import java.util.Queue;
  * methods in your Landscapers to build interesting terrain.
  *
  */
-public class Shapemask {
+public class Shape {
 
     @Inject
     UCommander commander;
@@ -25,12 +24,12 @@ public class Shapemask {
     public boolean[][] cells;
     boolean[][] buffer;
 
-    public static final int MASKTYPE_OR = 0;
-    public static final int MASKTYPE_AND = 1;
-    public static final int MASKTYPE_XOR = 2;
-    public static final int MASKTYPE_NOT = 3;
+    public static final int MASK_OR = 0;
+    public static final int MASK_AND = 1;
+    public static final int MASK_XOR = 2;
+    public static final int MASK_NOT = 3;
 
-    public Shapemask(int _xsize, int _ysize) {
+    public Shape(int _xsize, int _ysize) {
         Injector.getAppComponent().inject(this);
         xsize = _xsize;
         ysize = _ysize;
@@ -93,7 +92,7 @@ public class Shapemask {
             return buffer[x][y];
         return false;
     }
-    public Shapemask clear() {
+    public Shape clear() {
         for (int x=0;x<xsize;x++) {
             for (int y = 0;y < ysize;y++) {
                 cells[x][y] = false;
@@ -101,7 +100,7 @@ public class Shapemask {
         }
         return this;
     }
-    public Shapemask fill() {
+    public Shape fill() {
         for (int x=0;x<xsize;x++) {
             for (int y = 0;y < ysize;y++) {
                 cells[x][y] = true;
@@ -124,7 +123,7 @@ public class Shapemask {
             for (int y=0;y<ysize;y++)
                 buffer[x][y] = true;
     }
-    public Shapemask noiseWipe(float density) {
+    public Shape noiseWipe(float density) {
         for (int x=0;x<xsize;x++) {
             for (int y = 0;y < ysize;y++) {
                 if (commander.random.nextFloat() < density) write(x, y, true);
@@ -134,7 +133,7 @@ public class Shapemask {
         return this;
     }
     // TODO: write simplexWipe
-    public Shapemask simplexWipe() {
+    public Shape simplexWipe() {
 
         return this;
     }
@@ -178,26 +177,48 @@ public class Shapemask {
     /**
      * Combine with another mask using MASKTYPE_X constants (OR, AND, XOR)
      */
-    public Shapemask maskWith(Shapemask mask, int masktype) { return maskWith(mask, masktype, 0, 0); }
-    public Shapemask maskWith(Shapemask mask, int masktype, int xoffset, int yoffset) {
+    public Shape maskWith(Shape mask, int masktype) { return maskWith(mask, masktype, 0, 0); }
+    public Shape maskWith(Shape mask, int masktype, int xoffset, int yoffset) {
         for (int x=0;x<mask.xsize;x++) {
             for (int y=0;y<mask.ysize;y++) {
                 boolean src = mask.value(x,y);
                 boolean dst = value(x+xoffset,y+yoffset);
                 switch (masktype) {
-                    case MASKTYPE_OR:   dst = (dst || src);
+                    case MASK_OR:   dst = (dst || src);
                         break;
-                    case MASKTYPE_AND:  dst = (dst && src);
+                    case MASK_AND:  dst = (dst && src);
                         break;
-                    case MASKTYPE_XOR:  dst = (dst || src) && !(dst && src);
+                    case MASK_XOR:  dst = (dst || src) && !(dst && src);
                         break;
-                    case MASKTYPE_NOT:  dst = dst && !src;
+                    case MASK_NOT:  dst = dst && !src;
                         break;
                 }
                 write(x+xoffset,y+yoffset,dst);
             }
         }
         return this;
+    }
+
+    /**
+     * Does the given mask have any true cells that touch my true cells (at the offset position)?
+     */
+    public boolean touches(Shape mask, int xoffset, int yoffset) {
+        for (int x=0;x<xsize;x++) {
+            for (int y=0;y<ysize;y++) {
+                if (mask.value(x+xoffset,y+yoffset) && value(x,y))
+                    return true;
+            }
+        }
+        return false;
+    }
+    public boolean touches(Shape mask, int xoffset, int yoffset, Shape ignoremask) {
+        for (int x=0;x<xsize;x++) {
+            for (int y=0;y<ysize;y++) {
+                if (mask.value(x+xoffset,y+yoffset) && value(x,y) && !ignoremask.value(x+xoffset,y+yoffset))
+                    return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -246,7 +267,7 @@ public class Shapemask {
     /**
      * Read a terrain type from a real area as a mask
      */
-    public Shapemask readTerrain(UArea area, String terrain, int xoffset, int yoffset) {
+    public Shape readTerrain(UArea area, String terrain, int xoffset, int yoffset) {
         for (int x=0;x<xsize;x++) {
             for (int y = 0;y < ysize;y++) {
                 if (area.terrainAt(x + xoffset, y + yoffset).getName().equals(terrain)) {
@@ -260,8 +281,8 @@ public class Shapemask {
     /**
      * Make and return a copy of this mask
      */
-    public Shapemask copy() {
-        Shapemask copy = new Shapemask(xsize, ysize);
+    public Shape copy() {
+        Shape copy = new Shape(xsize, ysize);
         for (int x=0;x<xsize;x++)
             for (int y=0;y<ysize;y++)
                 copy.cells[x][y] = cells[x][y];
@@ -271,7 +292,7 @@ public class Shapemask {
     /**
      * Flip true-false on all cells of this mask
      */
-    public Shapemask invert() {
+    public Shape invert() {
         for (int x=0;x<xsize;x++) {
             for (int y = 0;y < ysize;y++) {
                 cells[x][y] = !cells[x][y];
@@ -283,7 +304,7 @@ public class Shapemask {
     /**
      * Grow outward from all edges
      */
-    public Shapemask grow(int repeats) {
+    public Shape grow(int repeats) {
         for (int i=0;i<repeats;i++) {
             for (int x=0;x<xsize;x++)
                 for (int y=0;y<ysize;y++)
@@ -299,7 +320,7 @@ public class Shapemask {
     /**
      * Shrink inward from all edges
      */
-    public Shapemask shrink(int repeats) {
+    public Shape shrink(int repeats) {
         for (int i=0;i<repeats;i++) {
             for (int x=0;x<xsize;x++)
                 for (int y=0;y<ysize;y++)
@@ -315,7 +336,7 @@ public class Shapemask {
     /**
      * Randomly thin out true cells to false.
      */
-    public Shapemask noiseThin(float density) {
+    public Shape noiseThin(float density) {
         for (int x=0;x<xsize;x++) {
             for (int y = 0;y < ysize;y++)
                 if (value(x, y))
@@ -328,7 +349,7 @@ public class Shapemask {
     /**
      * Keep only cells N spaces apart from other true cells
      */
-    public Shapemask sparsen(int minspace, int maxspace) {
+    public Shape sparsen(int minspace, int maxspace) {
         clearBuffer();
         for (int x=0;x<xsize;x++) {
             for (int y = 0;y < ysize;y++)
@@ -344,7 +365,7 @@ public class Shapemask {
         return this;
     }
 
-    public Shapemask erode(float rot, int passes) {
+    public Shape erode(float rot, int passes) {
         clearBuffer();
         int threshold = 6;
         for (int i=0;i<passes;i++) {
@@ -370,7 +391,7 @@ public class Shapemask {
     /**
      * Select only edge cells
      */
-    public Shapemask edges() {
+    public Shape edges() {
         clearBuffer();
         for (int x=0;x<xsize;x++)
             for (int y=0;y<ysize;y++)
@@ -383,7 +404,7 @@ public class Shapemask {
     /**
      * Select only edge cells, including diagonal corners
      */
-    public Shapemask edgesThick() {
+    public Shape edgesThick() {
         clearBuffer();
         for (int x=0;x<xsize;x++)
             for (int y=0;y<ysize;y++)
@@ -396,7 +417,7 @@ public class Shapemask {
     /**
      * 'Jumble' cells with a CA-type method
      */
-    public Shapemask jumble(int nearDensity, int farDensity, int passes) {
+    public Shape jumble(int nearDensity, int farDensity, int passes) {
         clearBuffer();
         for (int i=0;i<passes;i++) {
             for (int x = 0;x < xsize;x++) {
@@ -421,7 +442,7 @@ public class Shapemask {
     /**
      * Smooth out noise and leave continuous shapes
      */
-    public Shapemask smooth(int density, int passes) {
+    public Shape smooth(int density, int passes) {
         clearBuffer();
         for (int i=0;i<passes;i++) {
             for (int x=0;x<xsize;x++) {
@@ -485,16 +506,16 @@ public class Shapemask {
     /**
      * Find all contiguous self-contained regions
      */
-    public ArrayList<Shapemask> regions() {
+    public ArrayList<Shape> regions() {
         backupToBuffer();
-        ArrayList<Shapemask> regions = new ArrayList<>();
+        ArrayList<Shape> regions = new ArrayList<>();
         for (int x=0;x<xsize;x++) {
             for (int y=0;y<ysize;y++) {
                 if (value(x,y)) {
-                    Shapemask region = copy();
+                    Shape region = copy();
                     region.flood(x,y,false);
-                    region.maskWith(this, MASKTYPE_XOR);
-                    maskWith(region, MASKTYPE_AND);
+                    region.maskWith(this, MASK_XOR);
+                    maskWith(region, MASK_AND);
                     regions.add(region);
                 }
             }
@@ -506,7 +527,7 @@ public class Shapemask {
     /**
      * Flood-fill at x,y with val
      */
-    public Shapemask flood(int x, int y, boolean val) {
+    public Shape flood(int x, int y, boolean val) {
         if (value(x,y) == val) return this;
         LinkedList<int[]> q = new LinkedList<>();
         q.push(new int[]{x,y});
@@ -548,5 +569,40 @@ public class Shapemask {
             }
         }
         return c;
+    }
+
+    public boolean tryToFitRoom(int x, int y, int width, int height, float angle, int displace, boolean draw) {
+        int dxy = (int)Math.rint(Math.cos(angle));
+        int dyy = (int)Math.rint(Math.sin(angle));
+        int dxx = (int)Math.rint(Math.cos(angle+1.5708f));
+        int dyx = (int)Math.rint(Math.sin(angle+1.5708f));
+        width += 2; height += 2;
+        float x1 = x + displace*dxy;
+        float y1 = y + displace*dyy;
+        x1 -= (dxx * (width/2) + dxy);
+        y1 -= (dyx * (width/2) + dyy);
+        boolean blocked = false;
+        for (int i=0;i<width;i++) {
+            for (int j=0;j<height;j++) {
+                float cx = x1 + dxx*i + dxy*j;
+                float cy = y1 + dyx*i + dyy*j;
+                if (value((int)(cx),(int)cy)) {
+                    blocked = true;
+                }
+            }
+        }
+        if (draw && !blocked ) {
+            x1 += dxx + dyx;
+            y1 += dxy + dyy;
+            for (int i=0;i<width-2;i++) {
+                for (int j=0;j<height-2;j++) {
+                    float cx = x1 + dxx*i + dxy*j;
+                    float cy = y1 + dyx*i + dyy*j;
+                    set((int)cx,(int)cy);
+                }
+            }
+            set(x + dxy,y+dyy);
+        }
+        return !blocked;
     }
 }

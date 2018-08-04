@@ -1,6 +1,6 @@
 package ure.examplegame;
 
-import ure.areas.Shapemask;
+import ure.areas.Shape;
 import ure.areas.UArea;
 import ure.math.UColor;
 import ure.areas.ULandscaper;
@@ -27,7 +27,7 @@ public class ExampleCaveScaper extends ULandscaper {
             lavaFactor = 1f;
         fillRect(area,"rock",x1,y1,x2,y2);
         //digCaves(area, floorTerrain, x1, x2, y1, y2,0.38f + randf(0.14f),4 + rand(3), 3 + rand(3),2 + rand(3));
-        Shapemask caves = shapeCaves(x2-x1,y2-y1);
+        Shape caves = shapeCaves(x2-x1,y2-y1);
         caves.writeTerrain(area, "floor", x1, y1);
 
         if (randf() < 0.7f) {
@@ -35,7 +35,7 @@ public class ExampleCaveScaper extends ULandscaper {
             if (randf() < 0.1) rivers = rivers + rand(4);
             String water = "water";
             if (randf() < lavaFactor) water = "lava";
-            Shapemask river = shapeRoad(x2-x1,y2-y1,2f+randf(4f), 0.4f+randf(2f), 0.6f+randf(2.5f));
+            Shape river = shapeRoad(x2-x1,y2-y1,2f+randf(4f), 0.4f+randf(2f), 0.6f+randf(2.5f));
             river.writeTerrain(area,water,x1,y1);
         }
 
