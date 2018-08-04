@@ -2,6 +2,7 @@ package ure.ui.panels;
 
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.ui.Icon;
 
 import java.util.ArrayList;
 
@@ -19,12 +20,16 @@ public class UScrollPanel extends UPanel {
     boolean suppressDuplicates = true;
     String lastMessage;
     ArrayList<String> lines;
+    ArrayList<Icon> icons;
+    ArrayList<UColor> colors;
     ArrayList<UColor> lineFades;
 
     public UScrollPanel(int _pixelw, int _pixelh, int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
         super(_pixelw,_pixelh,_padx,_pady,_fgColor,_bgColor,_borderColor);
-        lines = new ArrayList<String>();
-        lineFades = new ArrayList<UColor>();
+        lines = new ArrayList<>();
+        icons = new ArrayList<>();
+        colors = new ArrayList<>();
+        lineFades = new ArrayList<>();
         charWidth = commander.config.getTextWidth();
         charHeight = commander.config.getTextHeight() + spacing;
         textRows = (_pixelh - padY) / charHeight;
@@ -35,10 +40,14 @@ public class UScrollPanel extends UPanel {
         lineFades.add(fade);
     }
 
-    public void print(String line) {
+    public void print(String line) { print(null, line, null); }
+    public void print(Icon icon, String line) { print(icon,line,null); }
+    public void print(Icon icon, String line, UColor color) {
         if (line != "") {
-            if (line != lastMessage || !suppressDuplicates) {
+            if (!(line.equals(lastMessage)) || !suppressDuplicates) {
                 lines.add(0, line);
+                icons.add(0, icon);
+                colors.add(0, color == null ? commander.config.getTextColor() : color);
                 lastMessage = line;
             }
         }
@@ -51,13 +60,15 @@ public class UScrollPanel extends UPanel {
             int i = 0;
             while (i < textRows) {
                 if (i < lines.size()) {
-                    UColor col;
+                    UColor color;
                     //MM FINISH THIS
                     if (i < lineFades.size())
-                        col = lineFades.get(i);
+                        color = lineFades.get(i);
                     else
-                        col = lineFades.get(lineFades.size() - 1);
-                    renderer.drawString(padX, (padY + pixelh) - ((i + 2) * charHeight), col, lines.get(i));
+                        color = lineFades.get(lineFades.size() - 1);
+                    int liney = textRows - (i);
+                    drawString(renderer, lines.get(i), 2, liney, color);
+                    drawIcon(renderer, icons.get(i), 0, liney);
                 }
                 i++;
             }

@@ -22,6 +22,7 @@ import ure.render.URenderer;
 import ure.sys.events.TimeTickEvent;
 import ure.things.UThing;
 import ure.things.UThingCzar;
+import ure.ui.Icon;
 import ure.ui.UCamera;
 import ure.ui.modals.*;
 import ure.ui.panels.UScrollPanel;
@@ -342,6 +343,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void printScroll(String text) {
         scrollPrinter.print(text);
     }
+    public void printScroll(Icon icon, String text) { scrollPrinter.print(icon, text); }
+    public void printScroll(Icon icon, String text, UColor color) { scrollPrinter.print(icon, text, color); }
 
     /**
      * Print a message to the scroll printer if the player can see the source.
@@ -349,10 +352,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      * @param source
      * @param text
      */
-    public void printScrollIfSeen(UThing source, String text) {
+    public void printScrollIfSeen(UThing source, String text) { printScrollIfSeen(source,text,null); }
+    public void printScrollIfSeen(UThing source, String text, UColor color) {
         if (player != null)
             if (player.canSee(source))
-                printScroll(text);
+                printScroll(source.getIcon(), text, color);
     }
 
     void animationFrame() {

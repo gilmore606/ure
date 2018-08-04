@@ -135,10 +135,11 @@
       "opaque": true,
       "sunvis": 0.5,
       "glyph": "T",
-      "fgcolor": [100,60,0],
-      "fgvariants": [ [100,60,0],[90,40,0],[70,40,0]],
+      "fgcolor": [180,100,0],
+      "fgvariants": [ [180,100,0],[170,110,0],[190,120,0]],
       "bgcolor": [0,75,0],
-      "walkmsg": "Tall pine trees."
+      "walkmsg": "Tall pine trees.",
+      "bonkmsg": "A towering ancient fir tree."
     },
   {
     "name": "sapling",
@@ -168,7 +169,7 @@
       "bgcolor": [0,75,127],
       "bgvariants": [ [0,75,127],[0,80,135],[0,83,139],[0,72,140] ],
       "bonkmsg": "You can't swim, and that water looks cold anyway.",
-      "walkmsg": "You splash through the cold water.",
+      "walkmsg": "You splash through waist-deep water.",
       "animationFrames": 250,
       "waves": 1
     },

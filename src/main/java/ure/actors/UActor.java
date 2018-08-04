@@ -208,7 +208,7 @@ public class UActor extends UThing implements Interactable {
         if (thing.tryGetBy(this)) {
             thing.moveTo(this);
             if (this instanceof UPlayer)
-                commander.printScroll("You pick up " + thing.getIname() + ".");
+                commander.printScroll(thing.getIcon(), "You pick up " + thing.getIname() + ".");
             else
                 commander.printScrollIfSeen(this, StringUtils.capitalize(this.getDname()) + " picks up " + thing.getIname() + ".");
             thing.gotBy(this);
@@ -225,7 +225,7 @@ public class UActor extends UThing implements Interactable {
         if (dest.willAcceptThing(thing)) {
             thing.moveTo(dest);
             if (this instanceof UPlayer)
-                commander.printScroll("You drop " + thing.getIname() + ".");
+                commander.printScroll(thing.getIcon(), "You drop " + thing.getIname() + ".");
             else
                 commander.printScrollIfSeen(this, StringUtils.capitalize(this.getDname()) + " drops " + thing.getIname() + ".");
             thing.droppedBy(this);
@@ -272,7 +272,7 @@ public class UActor extends UThing implements Interactable {
 
     public void walkFail(UCell cell) {
         if (this instanceof UPlayer) {
-            commander.printScroll(cell.terrain().getBonkmsg());
+            commander.printScroll(cell.terrain().getIcon(), cell.terrain().getBonkmsg());
         }
     }
 

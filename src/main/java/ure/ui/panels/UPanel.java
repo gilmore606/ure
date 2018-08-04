@@ -69,5 +69,19 @@ public class UPanel extends View {
             renderer.drawRectBorder(1, 1, width - 2, height - 2, 1, bgColor, borderColor);
     }
 
+    public void drawString(URenderer renderer, String string, int x, int y, UColor color) {
+        if (string != null) {
+            int linex = padX + (x * gw());
+            int liney = padY + (y * gw());
+            renderer.drawString(linex, liney, color, string);
+        }
+    }
+    public void drawIcon(URenderer renderer, Icon icon, int x, int y) {
+        if (icon != null)
+            icon.draw(renderer, padX + (x*gw()), padY + (y*gw()));
+    }
+
+    public int gw() { return commander.config.getGlyphWidth(); }
+    public int gh() { return commander.config.getGlyphHeight(); }
 
 }
