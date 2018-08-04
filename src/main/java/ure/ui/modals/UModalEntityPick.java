@@ -147,7 +147,7 @@ public class UModalEntityPick extends UModal {
             String n = entity.getName();
             if (categorize)
                 n = (categoryItemNames.get(selectionCategory)).get(y);
-            drawString(renderer, n, 3, y + 2, null, (y == selection) ? tempHiliteColor : null);
+            drawString(renderer, n, 3, y + 2, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
         if (showDetail) {
@@ -191,7 +191,7 @@ public class UModalEntityPick extends UModal {
         }
     }
 
-    public void selectEntity() {
+    void selectEntity() {
         dismiss();
         ((HearModalEntityPick)callback).hearModalEntityPick(callbackContext, shownEntities().get(selection));
     }

@@ -40,7 +40,8 @@ public class UConfig {
     private int textWidth = 9;
     private int textHeight = 17;
 
-    private String uiFrameGlyphs = "+-+|+-+|";                               // corners and sides for UI box frames
+    private String uiCheckGlyph = "*";                          // checkmark for UI selections
+    private String uiFrameGlyphs = "+-+|+-+|";                  // corners and sides for UI box frames
     private int modalFrameLine = 2;                             // thickness of pixel line around modals
     private int modalShadowStyle = UConfig.SHADOW_BLOCK;        // drop shadow style for modal popups
     private int modalPosition = UConfig.POS_CAMERA_CENTER;      // position of modal popups
@@ -257,10 +258,12 @@ public class UConfig {
         this.textHeight = textHeight;
     }
 
+    public String getUiCheckGlyph() { return uiCheckGlyph; }
+    public void setUiCheckGlyph(String s) { uiCheckGlyph = s; }
+
     public String getUiFrameGlyphs() {
         return uiFrameGlyphs;
     }
-
     public void setUiFrameGlyphs(String uiFrameGlyphs) {
         this.uiFrameGlyphs = uiFrameGlyphs;
     }

@@ -127,6 +127,9 @@ public class UModal extends View implements UAnimator {
             color = commander.config.getTextColor();
         renderer.drawString(x*gw()+xpos,y*gh()+ypos,color,string);
     }
+    public void drawGlyph(URenderer renderer, char glyph, int x, int y, UColor color) {
+        renderer.drawGlyph(glyph, x*gw()+xpos,y*gh()+ypos,color,0,0);
+    }
 
     public void drawFrame(URenderer renderer) {
         if (commander.config.getModalShadowStyle() == UConfig.SHADOW_BLOCK) {
