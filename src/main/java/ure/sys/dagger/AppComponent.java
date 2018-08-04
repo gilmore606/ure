@@ -14,6 +14,8 @@ import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.things.UThingCzar;
+import ure.ui.Icon;
+import ure.ui.RexFile;
 import ure.ui.UCamera;
 import ure.ui.USpeaker;
 import ure.ui.panels.ULensPanel;
@@ -65,4 +67,6 @@ public interface AppComponent {
     void inject(Stairs stairs);
     void inject(UParticle parti);
     void inject(Shapemask shape);
+    void inject(Icon icon);
+    void inject(RexFile rexfile);
 }

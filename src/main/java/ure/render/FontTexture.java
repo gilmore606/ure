@@ -24,18 +24,25 @@ import static org.lwjgl.system.MemoryStack.stackPush;
  */
 public class FontTexture {
 
-    // These numbers are somewhat arbitrary and assume a traditional ASCII kinda font.
-    // These may need to be adjusted for the target font, or ideally we would compute
-    // them somehow.
-    public int bitmapWidth = 1024;
+    // These numbers are somewhat arbitrary.  They should work for a 16 point font
+    // with less than 1000 glyphs.  If you are using larger or more populated fonts
+    // you may need to make more room in the bitmap for them.
+    public int bitmapWidth = 512;
     public int bitmapHeight = 512;
-    public int numberOfGlyphs = 96;
+
+    // The number of glyphs is set this high to capture all possible unicode values.
+    // This will use a lot of memory, so if you are constrained you may want to limit
+    // it to the first 128 glyphs.
+    public int numberOfGlyphs = 65536;
+
+    // Vertical stats for the loaded font
     public int ascent;
     public int descent;
     public int lineGap;
+
+    // The size of the loaded font, in pixels
     public float fontSize;
 
-    public STBTTBakedChar.Buffer glyphData = STBTTBakedChar.malloc(numberOfGlyphs);
     public int texId;
 
     // These will be filled with the most recently looked up glyph's width and height, in pixels
@@ -43,6 +50,9 @@ public class FontTexture {
     public float[] glyphHeight = new float[1];
 
     public SolidColorData solidColorData = new SolidColorData();
+
+    // This buffer holds the info for each glyph in the font
+    private STBTTBakedChar.Buffer glyphData = STBTTBakedChar.malloc(numberOfGlyphs);
 
     // This buffer holds the most recently looked up aligned quad.
     private STBTTAlignedQuad.Buffer alignedQuad = STBTTAlignedQuad.malloc(1);
@@ -68,21 +78,15 @@ public class FontTexture {
         ByteBuffer fontBitmap = BufferUtils.createByteBuffer(bitmapWidth * bitmapHeight);
         STBTruetype.stbtt_BakeFontBitmap(ttfData, size, fontBitmap, bitmapWidth, bitmapHeight, 32, glyphData);
         // Add a white pixel at the bottom right corner of our bitmap to use as the texture for drawRect
-        fontBitmap.put(bitmapWidth * bitmapHeight - 4, (byte)0xFF);
-        fontBitmap.put(bitmapWidth * bitmapHeight - 3, (byte)0xFF);
-        fontBitmap.put(bitmapWidth * bitmapHeight - 2, (byte)0xFF);
         fontBitmap.put(bitmapWidth * bitmapHeight - 1, (byte)0xFF);
+
         // can free the ttfData now
         texId = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texId);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, bitmapWidth, bitmapHeight, 0, GL_ALPHA, GL_UNSIGNED_BYTE, fontBitmap);
         // can free fontBitmap now
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        //glEnable(GL_BLEND);
-        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        //glBindTexture(0, GL_TEXTURE_2D);
         System.out.println("*** Loaded font " + resourcePath);
     }
 
@@ -110,11 +114,21 @@ public class FontTexture {
         }
     }
 
-    public STBTTAlignedQuad glyphInfo(char c) {
+    public STBTTAlignedQuad glyphInfo(int c) {
         glyphWidth[0] = 0;
         glyphHeight[0] = 0;
         STBTruetype.stbtt_GetBakedQuad(glyphData, bitmapWidth, bitmapHeight, c - 32, glyphWidth, glyphHeight, alignedQuad.get(0), true);
         return alignedQuad.get(0);
+    }
+
+    public int stringWidth(String string) {
+        int width = 0;
+        for (int x=0; x<string.length(); x++) {
+            int cp = Character.codePointAt(string, x);
+            glyphInfo(cp); // will update glyphWidth
+            width += Math.ceil(glyphWidth[0]);
+        }
+        return width;
     }
 
     public class SolidColorData {

@@ -191,7 +191,7 @@ public class URendererOGL implements URenderer {
         glfwSwapBuffers(window);
 
         fontTexture = new FontTexture();
-        fontTexture.loadFromTTF("/fonts/FreeMonoBold.ttf", 16);
+        fontTexture.loadFromTTF("/fonts/Deferral-Square.ttf", 16);
     }
 
     @Override
@@ -199,6 +199,8 @@ public class URendererOGL implements URenderer {
         if (rootView != null) {
             render(rootView);
         }
+        // Uncomment to draw the font texture over the screen for debugging purposes
+        // addQuad(10, 10, fontTexture.bitmapWidth, fontTexture.bitmapHeight, UColor.COLOR_WHITE, 0, 0, 1, 1);
         paintScreen();
     }
 
@@ -211,10 +213,13 @@ public class URendererOGL implements URenderer {
     }
 
     @Override
+    public int stringWidth(String string) {
+        return fontTexture.stringWidth(string);
+    }
+
+    @Override
     public void drawString(int x, int y, UColor color, String str) {
         if (str == null) return;
-        x += context.absoluteX();
-        y += context.absoluteY();
         for (int i = 0; i < str.length(); i++) {
             drawGlyph(str.charAt(i), x, y, color);
             x += Math.ceil(fontTexture.glyphWidth[0]);
@@ -269,16 +274,6 @@ public class URendererOGL implements URenderer {
         y += context.absoluteY();
         addQuad(x, y, w, h, borderColor);
         addQuad(x + borderThickness, y + borderThickness, w - borderThickness * 2, h - borderThickness * 2, bgColor);
-    }
-
-    @Override
-    public int glyphWidth() {
-        return commander.config.getTileWidth();
-    }
-
-    @Override
-    public int glyphHeight() {
-        return commander.config.getTileHeight();
     }
 
     // internals

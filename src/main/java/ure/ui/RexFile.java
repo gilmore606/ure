@@ -2,7 +2,10 @@ package ure.ui;
 
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.Injector;
+import ure.sys.UConfig;
 
+import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -14,6 +17,9 @@ import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
 public class RexFile extends View {
+
+    @Inject
+    UConfig config;
 
     ArrayList<RexLayer> layers;
     public int width;
@@ -35,6 +41,7 @@ public class RexFile extends View {
     }
 
     public RexFile(String filename) {
+        Injector.getAppComponent().inject(this);
         layers = new ArrayList<>();
         try {
             byte[] compressed = Files.readAllBytes(new File(filename).toPath());
@@ -99,8 +106,8 @@ public class RexFile extends View {
 
     public void draw(URenderer renderer, float alpha) { draw(renderer, alpha, 0, 0); }
     public void draw(URenderer renderer, float alpha, int xpos, int ypos) {
-        int gw = renderer.glyphWidth();
-        int gh = renderer.glyphHeight();
+        int gw = config.getTileWidth();
+        int gh = config.getTileHeight();
         for (RexLayer layer : layers) {
             for (int x = 0;x < width;x++) {
                 for (int y = 0;y < height;y++) {

@@ -55,9 +55,12 @@ public interface URenderer {
      */
     void render();
 
-    // These will go away one we've worked out font rendering, views, etc.
-    int glyphWidth();
-    int glyphHeight();
+    /**
+     * Get the width of a given string using the current font.
+     * @param string
+     * @return the width in pixels
+     */
+    int stringWidth(String string);
 
     // Drawing primitives that the renderer will abstract
     void drawString(int x, int y, UColor col, String str);

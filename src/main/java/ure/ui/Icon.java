@@ -2,6 +2,10 @@ package ure.ui;
 
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.Injector;
+import ure.sys.UConfig;
+
+import javax.inject.Inject;
 
 /**
  * A glyph plus colors defining a static entity representation for UI purposes.
@@ -9,11 +13,16 @@ import ure.render.URenderer;
  */
 public class Icon {
 
+    @Inject
+    UConfig config;
+
     public UColor bgColor;
     public UColor fgColor;
     public char glyph;
 
-    public Icon() {}
+    public Icon() {
+        Injector.getAppComponent().inject(this);
+    }
 
     public Icon(char glyph, UColor fgColor, UColor bgColor) {
         this.glyph = glyph;
@@ -23,7 +32,7 @@ public class Icon {
 
     public void draw(URenderer renderer, int x, int y) {
         if (bgColor != null) {
-            renderer.drawRect(x,y,renderer.glyphWidth(),renderer.glyphHeight(),bgColor);
+            renderer.drawRect(x,y,config.getTileWidth(),config.getTileHeight(),bgColor);
         }
         if (fgColor != null) {
             renderer.drawGlyph(glyph, x, y, fgColor);
