@@ -266,8 +266,10 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         renderer.drawGlyph(icon, x, y, color, xoff, yoff);
     }
 
-    public void emote(String text) {
-        commander.printScrollIfSeen(this, text);
+    public void emote(String text) { emote(text, null); }
+    public void emote(String text, UColor color) {
+
+        commander.printScrollIfSeen(this, text, color);
     }
 
     public String getName() {

@@ -187,6 +187,7 @@ public class UActor extends UThing implements Interactable {
     public void moveTriggerFrom(UActor actor) {
         if (actor instanceof UPlayer) {
             aggressionFrom(actor);
+            commander.printScroll(null, "You attack " + getDname() + "!", UColor.COLOR_LIGHTRED);
             area().addParticle(new ParticleHit(areaX(), areaY(), bloodColor(), 0.5f+commander.random.nextFloat()*0.5f));
         }
     }
