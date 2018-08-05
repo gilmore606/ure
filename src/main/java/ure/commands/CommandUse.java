@@ -33,7 +33,7 @@ public class CommandUse extends UCommand implements HearModalEntityPick {
             return;
         }
         UModalEntityPick modal = new UModalEntityPick(useDialog, null, 0, 0, things,
-                true, true, true, this, "use");
+                true, true, true, false, this, "use");
         commander.showModal(modal);
     }
 

@@ -26,4 +26,5 @@ public class UModalNotify extends UModal {
     public void drawContent(URenderer renderer) {
         drawStrings(renderer, textlines, xpad, ypad);
     }
+
 }

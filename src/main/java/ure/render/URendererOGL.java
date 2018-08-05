@@ -75,6 +75,12 @@ public class URendererOGL implements URenderer {
         glfwGetCursorPos(window, xf, yf);
         return (int)yf.get(0);
     }
+    @Override
+    public boolean getMouseButton() {
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
+            return true;
+        return false;
+    }
 
 
     @Override
@@ -144,6 +150,16 @@ public class URendererOGL implements URenderer {
             public void invoke(long window, int button, int action, int mods) {
                 // button 0 - 7
                 // I assume action is the same as GLFW_RELEASE like above.
+                int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+                if (state == GLFW_PRESS)
+                    commander.mousePressed();
+                else if (state == GLFW_RELEASE)
+                    commander.mouseReleased();
+                state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
+                if (state == GLFW_PRESS)
+                    commander.mouseRightPressed();
+                else if (state == GLFW_RELEASE)
+                    commander.mouseRightReleased();
             }
 
         }));

@@ -1,11 +1,12 @@
 package ure.things;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
+import ure.actors.actions.*;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
-import ure.actors.actions.Interactable;
 import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.areas.UCell;
@@ -33,6 +34,9 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     @Inject
     @JsonIgnore
     public UCommander commander;
+    @Inject
+    @JsonIgnore
+    public UActorCzar actorCzar;
 
     protected String name;
     protected long ID;
@@ -45,6 +49,10 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     protected int weight;
     protected boolean movable = true;
     protected int value;
+    public String[] equipSlots;
+    protected int equipSlotCount = 1;
+    public boolean equipped;
+
     protected int[] color;
     protected int[] colorvariance = new int[]{0,0,0};
     protected String getFailMsg = "You can't pick that up.";
@@ -81,6 +89,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         setIcon(new Icon(getGlyph(), getGlyphColor(), null));
         stats = new HashMap<>();
         contents = new UCollection();
+        equipped = false;
     }
 
     /**
@@ -91,6 +100,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         contents = template.contents.clone();
         contents.reconnect(null, this);
         location = null;
+        equipped = false;
     }
 
     public long getID() { return ID; }
@@ -112,6 +122,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         contents.closeOut();
         contents = null;
         closed = true;
+        equipped = false;
     }
 
     public void SetupColors() {
@@ -176,6 +187,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public void leaveCurrentLocation() {
         if (getLocation() != null) {
             getLocation().removeThing(this);
+            equipped = false;
         }
         this.setLocation(null);
     }
@@ -230,6 +242,31 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         return true;
     }
 
+    public boolean tryEquip(UActor actor) {
+        if (!equipped) {
+            equipped = true;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean tryUnequip(UActor actor) {
+        if (equipped) {
+            equipped = false;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean fitsOnBodypart(String part) {
+        if (equipSlots == null) return false;
+        for (int i=0;i<equipSlots.length;i++) {
+            if (equipSlots[i].equals(part))
+                return true;
+        }
+        return false;
+    }
+
     public void gotBy(UActor actor) {
         if (getMsg(actor) != null)
             commander.printScroll(this.getMsg(actor));
@@ -263,8 +300,10 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         renderer.drawTile(icon, x + glyphOffsetX(), y + glyphOffsetY(), color);
     }
 
-    public void emote(String text) {
-        commander.printScrollIfSeen(this, text);
+    public void emote(String text) { emote(text, null); }
+    public void emote(String text, UColor color) {
+
+        commander.printScrollIfSeen(this, text, color);
     }
 
     public String getName() {
@@ -304,6 +343,12 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         return getName() + "s";
     }
 
+    /**
+     * Override this to add information about my status.
+     */
+    public String description() {
+        return description;
+    }
     public boolean isMovableBy(UActor actor) {
         return isMovable();
     }
@@ -359,6 +404,13 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public void setValue(int value) {
         this.value = value;
     }
+
+    public String[] getEquipSlots() { return equipSlots; }
+    public void setEquipSlots(String[] s) { equipSlots = s; }
+    public int getEquipSlotCount() { return equipSlotCount; }
+    public void setEquipSlotCount(int i) { equipSlotCount = i; }
+    public boolean isEquipped() { return equipped; }
+    public void setEquipped(boolean b) { equipped = b; }
 
     public int[] getColor() {
         return color;
@@ -455,6 +507,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public boolean isUsable(UActor actor) {
         return false;
     }
+    public String useVerb() { return ""; }
 
     public float useFrom(UActor actor) {
         return 0f;
@@ -489,7 +542,36 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         this.spawnterrain = spawnterrain;
     }
 
-    public void animationTick() {
+    public void animationTick() { }
 
+    public HashMap<String, UAction> contextActions(UActor actor) {
+        HashMap<String,UAction> actions = new HashMap<>();
+
+        if (isMovableBy(actor))
+            actions.put("drop", new ActionDrop(actor, this));
+        if (isUsable(actor))
+            actions.put(useVerb(), new ActionUse(actor, this));
+        if (equipSlots != null) {
+            if (equipSlots[0].equals("equip")) {
+                if (equipped)
+                    actions.put("unequip", new ActionUnequip(actor, this));
+                else
+                    actions.put("equip", new ActionEquip(actor, this));
+            } else {
+                if (equipped) {
+                    actions.put("remove from " + equipSlots[0], new ActionUnequip(actor, this));
+                } else {
+                    actions.put("wear on " + equipSlots[0], new ActionEquip(actor, this));
+                }
+            }
+        }
+        return actions;
+    }
+
+    /**
+     * Throw myself away into the void.
+     */
+    public void junk() {
+        leaveCurrentLocation();
     }
 }

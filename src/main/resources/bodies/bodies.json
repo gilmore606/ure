@@ -1,0 +1,40 @@
+[
+  {
+    "name": "blob",
+    "parts": [
+      { "name": "body", "slots": 1, "size": 1.0 }
+    ]
+  },
+
+  {
+    "name": "animal",
+    "parts": [
+      { "name": "head", "slots": 1, "size": 0.2 },
+      { "name": "torso", "slots": 1, "size": 0.6 },
+      { "name": "legs", "slots": 1, "size": 0.2 }
+    ]
+  },
+
+  {
+    "name": "humanoid",
+    "parts": [
+      { "name": "head", "slots": 1, "size": 0.1 },
+      { "name": "torso", "slots": 1, "size": 0.6 },
+      { "name": "arms", "slots": 1, "size": 0.1 },
+      { "name": "legs", "slots": 1, "size": 0.1 },
+      { "name": "hands", "slots": 1, "size": 0.05 },
+      { "name": "feet", "slots": 1, "size": 0.05 },
+      { "name": "fingers", "slots": 4, "size": 0 },
+      { "name": "equip", "slots": 2, "size": 0 }
+    ]
+  },
+
+  {
+    "name": "mollusk",
+    "parts": [
+      { "name": "antennae", "slots": 1, "size": 0.1 },
+      { "name": "shell", "slots": 1, "size": 0.8 },
+      { "name": "pseudopod", "slots": 1, "size": 0.1 }
+    ]
+  }
+]

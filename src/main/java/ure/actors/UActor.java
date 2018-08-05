@@ -15,6 +15,8 @@ import ure.things.UContainer;
 import ure.ui.UCamera;
 import ure.ui.particles.ParticleHit;
 
+import java.util.ArrayList;
+
 /**
  * UActor represents a UThing which can perform actions.  This includes the player and NPCs.
  *
@@ -30,6 +32,8 @@ public class UActor extends UThing implements Interactable {
     protected int sightrange = 9;
     protected float actionspeed = 1f;
     protected float movespeed = 1f;
+    protected String bodytype = "humanoid";
+    protected Body body;
 
     @JsonIgnore
     protected UCamera camera; // TODO: Reconnect after deserialization
@@ -47,6 +51,7 @@ public class UActor extends UThing implements Interactable {
     public void initializeAsTemplate() {
         super.initializeAsTemplate();
         setGlyphOutline(true);
+        body = actorCzar.getNewBody(bodytype);
     }
 
     public float actionTime() {
@@ -187,6 +192,7 @@ public class UActor extends UThing implements Interactable {
     public void moveTriggerFrom(UActor actor) {
         if (actor instanceof UPlayer) {
             aggressionFrom(actor);
+            commander.printScroll(null, "You attack " + getDname() + "!", UColor.COLOR_LIGHTRED);
             area().addParticle(new ParticleHit(areaX(), areaY(), bloodColor(), 0.5f+commander.random.nextFloat()*0.5f));
         }
     }
@@ -208,7 +214,7 @@ public class UActor extends UThing implements Interactable {
         if (thing.tryGetBy(this)) {
             thing.moveTo(this);
             if (this instanceof UPlayer)
-                commander.printScroll("You pick up " + thing.getIname() + ".");
+                commander.printScroll(thing.getIcon(), "You pick up " + thing.getIname() + ".");
             else
                 commander.printScrollIfSeen(this, StringUtils.capitalize(this.getDname()) + " picks up " + thing.getIname() + ".");
             thing.gotBy(this);
@@ -225,13 +231,63 @@ public class UActor extends UThing implements Interactable {
         if (dest.willAcceptThing(thing)) {
             thing.moveTo(dest);
             if (this instanceof UPlayer)
-                commander.printScroll("You drop " + thing.getIname() + ".");
+                commander.printScroll(thing.getIcon(), "You drop " + thing.getIname() + ".");
             else
                 commander.printScrollIfSeen(this, StringUtils.capitalize(this.getDname()) + " drops " + thing.getIname() + ".");
             thing.droppedBy(this);
             return true;
         }
         return false;
+    }
+
+    public boolean tryEquipThing(UThing thing) {
+        return thing.tryEquip(this);
+    }
+
+    public boolean tryUnequip(UThing thing) {
+        return thing.tryUnequip(this);
+    }
+
+    public boolean freeEquipSlot(String slot, int slotcount) {
+        int totalslots = body.slotsForPart(slot);
+        if (totalslots < slotcount) return false;
+        int freeslots = totalslots;
+        ArrayList<UThing> equipped = equippedOn(slot);
+        for (UThing thing : equipped) {
+            freeslots -= thing.getEquipSlotCount();
+        }
+        while (freeslots < slotcount) {
+            UThing unequipped = null;
+            for (UThing thing : equipped) {
+                if (tryUnequip(thing)) {
+                    unequipped = thing;
+                    break;
+                }
+            }
+            equipped.remove(unequipped);
+            freeslots += unequipped.getEquipSlotCount();
+        }
+        return true;
+    }
+
+    public ArrayList<UThing> equippedOn(String slot) {
+        ArrayList<UThing> equipped = new ArrayList<>();
+        for (UThing thing : contents.getThings()) {
+            if (thing.equipped) {
+                for (String s : thing.getEquipSlots())
+                    if (s.equals(slot))
+                        equipped.add(thing);
+            }
+        }
+        return equipped;
+    }
+    public ArrayList<UThing> equipment() {
+        ArrayList<UThing> equipped = new ArrayList<>();
+        for (UThing thing : contents.getThings()) {
+            if (thing.equipped)
+                equipped.add(thing);
+        }
+        return equipped;
     }
 
     public void doAction(UAction action) {
@@ -272,7 +328,7 @@ public class UActor extends UThing implements Interactable {
 
     public void walkFail(UCell cell) {
         if (this instanceof UPlayer) {
-            commander.printScroll(cell.terrain().getBonkmsg());
+            commander.printScroll(cell.terrain().getIcon(), cell.terrain().getBonkmsg());
         }
     }
 
@@ -403,10 +459,13 @@ public class UActor extends UThing implements Interactable {
     public float getActionspeed() {
         return actionspeed;
     }
-
     public float getMovespeed() {
         return movespeed;
     }
+    public void setBodytype(String s) { bodytype = s; }
+    public String getBodytype() { return bodytype; }
+    public Body getBody() { return body; }
+    public void setBody(Body b) { body = b; }
 
     public String UIstatus() {
         return "";

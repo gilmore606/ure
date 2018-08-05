@@ -22,6 +22,7 @@ import ure.render.URenderer;
 import ure.sys.events.TimeTickEvent;
 import ure.things.UThing;
 import ure.things.UThingCzar;
+import ure.ui.Icon;
 import ure.ui.UCamera;
 import ure.ui.modals.*;
 import ure.ui.panels.UScrollPanel;
@@ -154,6 +155,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      */
     public void registerScrollPrinter(UScrollPanel printer) {
         scrollPrinter = printer;
+        addAnimator(printer);
     }
 
     /**
@@ -182,7 +184,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             if (field.getName().startsWith("GLFW_KEY_")) {
                 try {
                     glmap.put(field.getName(), field.getInt(null));
-                    System.out.println("REFLECT: read GLFW keymap pair " + field.getName() + " as " + Integer.toString(field.getInt(null)));
+                    System.out.println("KEYBIND: read GLFW keymap pair " + field.getName() + " as " + Integer.toString(field.getInt(null)));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -202,7 +204,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                 Field idField = commandClass.getField("id");
                 String idValue = (String) idField.get(null);
                 if (idValue != null) {
-                    System.out.println("REFLECT: found command " + idValue);
+                    System.out.println("KEYBIND: found command " + idValue);
                     commandMap.put(idValue, commandClass);
                 }
             }
@@ -249,6 +251,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     public int mouseX() { return renderer.getMousePosX(); }
     public int mouseY() { return renderer.getMousePosY(); }
+    public boolean mouseButton() { return renderer.getMouseButton(); }
 
     /**
      * Return true if player actually did something
@@ -292,6 +295,21 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         } else if (command != null) {
             command.execute((UPlayer)player);
         }
+    }
+
+    public void mousePressed() {
+        if (modal != null)
+            modal.mouseClick();
+    }
+    public void mouseReleased() {
+
+    }
+    public void mouseRightPressed() {
+        if (modal != null)
+            modal.mouseRightClick();
+    }
+    public void mouseRightReleased() {
+
     }
 
     public void setMoveLatch(int xdir, int ydir) {
@@ -342,6 +360,9 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void printScroll(String text) {
         scrollPrinter.print(text);
     }
+    public void printScroll(String text, UColor color) { scrollPrinter.print(null, text, color); }
+    public void printScroll(Icon icon, String text) { scrollPrinter.print(icon, text); }
+    public void printScroll(Icon icon, String text, UColor color) { scrollPrinter.print(icon, text, color); }
 
     /**
      * Print a message to the scroll printer if the player can see the source.
@@ -349,10 +370,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      * @param source
      * @param text
      */
-    public void printScrollIfSeen(UThing source, String text) {
+    public void printScrollIfSeen(UThing source, String text) { printScrollIfSeen(source,text,null); }
+    public void printScrollIfSeen(UThing source, String text, UColor color) {
         if (player != null)
             if (player.canSee(source))
-                printScroll(text);
+                printScroll(source.getIcon(), text, color);
     }
 
     void animationFrame() {

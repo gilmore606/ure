@@ -42,6 +42,8 @@ public class UPlayer extends UActor {
         if (selfLight > 0) {
             light = new ULight(selfLightColor, selfLightFalloff + selfLight, selfLight);
         }
+        bodytype = "humanoid";
+        body = commander.actorCzar.getNewBody(bodytype);
     }
 
     @Override

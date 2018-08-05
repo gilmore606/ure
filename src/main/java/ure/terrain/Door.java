@@ -84,7 +84,7 @@ public class Door extends UTerrain {
      * @param actor Can be null if the door opened by mysterious means.
      */
     public void openedBy(UActor actor, UCell cell) {
-        printScroll(openmsg, cell);
+        commander.printScrollIfSeen(actor, openmsg);
         open = true;
     }
 
@@ -94,7 +94,7 @@ public class Door extends UTerrain {
      * @param cell
      */
     public void closedBy(UActor actor, UCell cell) {
-        printScroll(closemsg, cell);
+        commander.printScrollIfSeen(actor, closemsg);
         open = false;
     }
 

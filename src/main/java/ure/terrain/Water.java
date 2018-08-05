@@ -49,6 +49,7 @@ public class Water extends UTerrain {
 
     @Override
     public void walkedOnBy(UActor actor, UCell cell) {
+        super.walkedOnBy(actor,cell);
         cell.area().addParticle(new ParticleSplash(actor.areaX(), actor.areaY(), UColor.COLOR_WHITE, 75, 0.9f));
         if (commander.random.nextFloat() < 0.5f) {
             cell.area().addParticle(new ParticleSplash(actor.areaX() - 1 + commander.random.nextInt(3),

@@ -37,6 +37,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
 
     @Override
     public void drawContent(URenderer renderer) {
+        cursor = mouseToSelection(options.length, 15, cursor);
         drawTitleSplash(renderer);
         if (alpha >= 1f) {
             drawString(renderer, "Example Quest : Curse of the Feature Creep", 7, 13);
@@ -66,6 +67,10 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
             }
         }
     }
+    @Override
+    public void mouseClick() { pickSelection(); }
+    @Override
+    public void mouseRightClick() { }
 
     void pickSelection() {
         if (options[cursor].equals("New World")) {

@@ -158,7 +158,8 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
 
     public void walkedOnBy(UActor actor, UCell cell) {
         if (actor instanceof UPlayer) {
-            printScroll(getWalkmsg(), cell);
+            if (walkmsg != null)
+                commander.printScroll(this.getIcon(), getWalkmsg());
         }
     }
 
@@ -168,13 +169,6 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
 
     public float interactionFrom(UActor actor) {
         return 0f;
-    }
-
-    // TODO: Why does this method exist?
-    public void printScroll(String msg, UCell cell) {
-        if (getWalkmsg() != null)
-            if (getWalkmsg().length() > 0)
-                commander.printScroll(msg);
     }
 
     public UTerrain makeClone() {

@@ -30,6 +30,7 @@ public class UModal extends View implements UAnimator {
     public int cellh = 0;
     public int xpos = 0;
     public int ypos = 0;
+    public int mousex, mousey;
     public UColor bgColor;
     HashMap<String,TextFrag> texts;
     public boolean dismissed;
@@ -126,6 +127,9 @@ public class UModal extends View implements UAnimator {
             color = commander.config.getTextColor();
         renderer.drawString(x*gw()+xpos,y*gh()+ypos,color,string);
     }
+    public void drawGlyph(URenderer renderer, char glyph, int x, int y, UColor color) {
+        renderer.drawGlyph(glyph, x*gw()+xpos,y*gh()+ypos,color,0,0);
+    }
 
     public void drawFrame(URenderer renderer) {
         if (commander.config.getModalShadowStyle() == UConfig.SHADOW_BLOCK) {
@@ -194,7 +198,32 @@ public class UModal extends View implements UAnimator {
             if (dismissFrames > dismissFrameEnd) {
                 commander.detachModal(this);
             }
+        } else {
+            updateMouse();
         }
+    }
+
+    void updateMouse() {
+        mousex = (commander.mouseX() - xpos) / gw();
+        mousey = (commander.mouseY() - ypos) / gh();
+    }
+
+    int mouseToSelection(int menusize, int yoffset, int selection) { return mouseToSelection(menusize,yoffset,selection,0,1000); }
+    int mouseToSelection(int menusize, int yoffset, int selection, int xmin, int xmax) {
+        int mousesel = mousey - yoffset;
+        if (mousesel < 0)
+            return selection;
+        if (mousesel >= menusize)
+            return selection;
+        if (mousex < xmin || mousey >= xmax)
+            return selection;
+        return mousesel;
+    }
+    public void mouseClick() {
+        dismiss();
+    }
+    public void mouseRightClick() {
+        escape();
     }
 
     public String[] splitLines(String text) {
@@ -232,6 +261,17 @@ public class UModal extends View implements UAnimator {
                 drawString(renderer, line, x, y+i);
                 i++;
             }
+        }
+    }
+
+    public void showDetail(URenderer renderer, Entity entity, int xoff, int yoff) {
+        if (entity == null) return;
+        drawString(renderer, entity.getName(), xoff, yoff);
+        ArrayList<String> details = entity.UIdetails(callbackContext);
+        int linepos = 1;
+        for (String line : details) {
+            drawString(renderer, line, xoff, linepos+yoff, UColor.COLOR_LIGHTGRAY);
+            linepos++;
         }
     }
 

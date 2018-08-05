@@ -107,7 +107,7 @@ public class UCell implements UContainer {
     public void walkedOnBy(UActor actor) {
         if (actor instanceof UPlayer && getContents().hasThings()) {
             UThing thing = getContents().topThing();
-            commander.printScroll(thing.walkMsg(actor));
+            commander.printScroll(thing.getIcon(), thing.walkMsg(actor));
         }
         getTerrain().walkedOnBy(actor, this);
     }

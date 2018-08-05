@@ -118,6 +118,8 @@ public class Lightsource extends UThing {
     public boolean isUsable(UActor actor) {
         return isSwitchable();
     }
+    @Override
+    public String useVerb() { return "switch"; }
 
     @Override
     public float useFrom(UActor actor) {

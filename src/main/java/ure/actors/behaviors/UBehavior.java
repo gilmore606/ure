@@ -150,7 +150,7 @@ public abstract class UBehavior implements Cloneable {
         currentUrgency = 0.8f;
         if (UPath.mdist(actor.areaX(),actor.areaY(),target.areaX(),target.areaY()) > 1)
             return Approach(actor, target);
-        actor.emote(actor.getName() + " flails ineffectually at " + target.getName() + ".");
+        actor.emote(actor.getName() + " flails ineffectually at " + target.getName() + ".", UColor.COLOR_LIGHTRED);
         return null;
     }
 

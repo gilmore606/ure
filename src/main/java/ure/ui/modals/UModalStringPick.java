@@ -32,7 +32,7 @@ public class UModalStringPick extends UModal {
                 width = choice.length();
         }
         textWidth = width;
-        int height = Math.max(6, choices.size() + 2 + ypad);
+        int height = Math.max(4, choices.size() + 2 + ypad);
         setDimensions(width + 2 + xpad, height);
         if (bgColor == null)
             bgColor = commander.config.getModalBgColor();
@@ -45,11 +45,12 @@ public class UModalStringPick extends UModal {
 
     @Override
     public void drawContent(URenderer renderer) {
+        selection = mouseToSelection(choices.size(), 2, selection);
         if (header != null)
             drawString(renderer, header, 0, 0);
         int y = 0;
         for (String choice : choices) {
-            drawString(renderer, choices.get(y), 3, y+2, null, (y == selection) ? tempHiliteColor : null);
+            drawString(renderer, choices.get(y), 3, y+2, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
     }
@@ -67,6 +68,8 @@ public class UModalStringPick extends UModal {
             escape();
         }
     }
+    @Override
+    public void mouseClick() { selectChoice(); }
 
     public void selectChoice() {
         dismiss();
