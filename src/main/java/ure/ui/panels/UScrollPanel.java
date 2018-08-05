@@ -2,6 +2,7 @@ package ure.ui.panels;
 
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.UAnimator;
 import ure.ui.Icon;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
  * TODO: flash line/panel on activity
  * TODO: track message count since last player turn, pause for anykey if > scrollsize
  */
-public class UScrollPanel extends UPanel {
+public class UScrollPanel extends UPanel implements UAnimator {
 
     int textRows, textColumns;
     int spacing = 1;
@@ -24,7 +25,8 @@ public class UScrollPanel extends UPanel {
     ArrayList<UColor> colors,colorBuffers;
     ArrayList<Float> lineFades;
 
-    int flashframes;
+    float flashLevel;
+    float flashDecay = 0.07f;
 
     public UScrollPanel(int _pixelw, int _pixelh, int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
         super(_pixelw,_pixelh,_padx,_pady,_fgColor,_bgColor,_borderColor);
@@ -54,6 +56,7 @@ public class UScrollPanel extends UPanel {
                 colors.add(0, color == null ? commander.config.getTextColor() : color);
                 colorBuffers.add(0, new UColor(colors.get(0)));
                 lastMessage = line;
+                flashLevel = 0.7f;
             }
         }
     }
@@ -74,6 +77,7 @@ public class UScrollPanel extends UPanel {
                         else
                             gray = lineFades.get(lineFades.size() - 1);
                     }
+                    gray = Math.max(gray, flashLevel);
                     int liney = textRows - (i);
                     UColor cbuf = colorBuffers.get(i);
                     cbuf.set(color.fR(), color.fG(), color.fB());
@@ -83,6 +87,17 @@ public class UScrollPanel extends UPanel {
                 }
                 i++;
             }
+        }
+    }
+
+    public void animationTick() {
+        if (isMouseInside()) {
+            flashLevel = 1f;
+            return;
+        }
+        if (flashLevel > 0f) {
+            flashLevel -= flashDecay;
+            if (flashLevel < 0f) flashLevel = 0f;
         }
     }
 }

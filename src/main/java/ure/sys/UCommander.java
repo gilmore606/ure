@@ -155,6 +155,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      */
     public void registerScrollPrinter(UScrollPanel printer) {
         scrollPrinter = printer;
+        addAnimator(printer);
     }
 
     /**
