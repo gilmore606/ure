@@ -92,13 +92,21 @@ public class VaultedModal extends UModal implements HearModalGetString {
     public void hearCommand(UCommand command, GLKey k) {
         if (command != null) {
             if (command.id.equals("MOVE_N"))
-                commander.player().walkDir(0, -1);
-            else if (command.id.equals("MOVE_S"))
-                commander.player().walkDir(0, 1);
+                move(0,-1);
+            else if (command.id.equals("MOVE_NW"))
+                move(-1,-1);
             else if (command.id.equals("MOVE_W"))
-                commander.player().walkDir(-1, 0);
+                move(-1,0);
+            else if (command.id.equals("MOVE_SW"))
+                move(-1,1);
+            else if (command.id.equals("MOVE_S"))
+                move(0,1);
+            else if (command.id.equals("MOVE_SE"))
+                move(1,1);
             else if (command.id.equals("MOVE_E"))
-                commander.player().walkDir(1, 0);
+                move(1,0);
+            else if (command.id.equals("MOVE_NE"))
+                move(1,-1);
             else if (command.id.equals("PASS"))
                 stampTerrain();
         }
@@ -128,6 +136,21 @@ public class VaultedModal extends UModal implements HearModalGetString {
         else if (k.k == GLFW_KEY_N)
             renameVault();
 
+    }
+
+    void move(int dx, int dy) {
+        int x = commander.player().areaX() + dx;
+        int y = commander.player().areaY() + dy;
+        boolean wrap = commander.config.isWrapSelect();
+        if (x < 0)
+            x = wrap ? area.xsize-1 : 0;
+        if (y < 0)
+            y = wrap ? area.ysize-1 : 0;
+        if (x >= area.xsize)
+            x = wrap ? 0 : area.xsize-1;
+        if (y >= area.ysize)
+            y = wrap ? 0 : area.ysize-1;
+        commander.player().moveToCell(x,y);
     }
 
     void stampTerrain() {
