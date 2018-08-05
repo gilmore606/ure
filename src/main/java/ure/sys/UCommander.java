@@ -344,6 +344,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void printScroll(String text) {
         scrollPrinter.print(text);
     }
+    public void printScroll(String text, UColor color) { scrollPrinter.print(null, text, color); }
     public void printScroll(Icon icon, String text) { scrollPrinter.print(icon, text); }
     public void printScroll(Icon icon, String text, UColor color) { scrollPrinter.print(icon, text, color); }
 

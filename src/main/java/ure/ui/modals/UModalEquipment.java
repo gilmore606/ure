@@ -20,6 +20,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
     boolean escapable = true;
     ArrayList<Bodypart> slotsBodyparts;
     ArrayList<UThing> slotsThings;
+    ArrayList<UThing> possible;
 
     int selection;
 
@@ -30,6 +31,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
         height = 0;
         slotsBodyparts = new ArrayList<>();
         slotsThings = new ArrayList<>();
+        possible = new ArrayList<>();
         fillSlots(actor);
         width = 26;
         setDimensions(width+xpad*2,height+ypad*2);
@@ -54,6 +56,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
                 }
             }
         }
+        updatePossible();
     }
 
     @Override
@@ -62,7 +65,10 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
         for (int i=0;i<slotsThings.size();i++) {
             Bodypart part = slotsBodyparts.get(i);
             if (part != lastpart) {
-                drawString(renderer, "on " + part.name + ":", 0+xpad, i+ypad, null, null);
+                String slotname = "on " + part.name + ":";
+                if (part.name.equals("equip"))
+                    slotname = "equipped:";
+                drawString(renderer, slotname, 0+xpad, i+ypad, null, null);
             }
             lastpart = part;
             UThing thing = slotsThings.get(i);
@@ -78,6 +84,15 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
         int detailX = 17;
         UThing thing = slotsThings.get(selection);
         showDetail(renderer, thing, detailX+xpad, ypad);
+        int i=0;
+        for (UThing poss : possible) {
+            if (poss != null) {
+                if (!poss.equipped) {
+                    drawString(renderer, poss.getName(), detailX + xpad, ypad + i + 5, UColor.COLOR_GRAY);
+                    i++;
+                }
+            }
+        }
     }
 
     @Override
@@ -92,11 +107,20 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
             } else if (command.id.equals("ESC") && escapable) {
                 escape();
             }
+            updatePossible();
         }
     }
 
     public void selectSlot() {
-        ArrayList<UThing> possible = new ArrayList<>();
+        updatePossible();
+        if (possible.size() > 0) {
+            UModalEquipPick emodal = new UModalEquipPick(null, 1, 1, possible, slotsThings.get(selection), true, true, this, "equip");
+            commander.showModal(emodal);
+        }
+    }
+
+    void updatePossible() {
+        possible.clear();
         ArrayList<UThing> equipment = commander.player().getContents().getThings();
         for (UThing thing : equipment) {
             if (thing.fitsOnBodypart(slotsBodyparts.get(selection).getName()))
@@ -104,10 +128,6 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
                     possible.add(thing);
         }
         possible.add(null);
-        if (possible.size() > 0) {
-            UModalEquipPick emodal = new UModalEquipPick(null, 1, 1, possible, slotsThings.get(selection), true, true, this, "equip");
-            commander.showModal(emodal);
-        }
     }
 
     public void hearModalEquipPick(String context, UThing pick) {

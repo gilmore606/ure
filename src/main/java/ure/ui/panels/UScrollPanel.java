@@ -78,12 +78,12 @@ public class UScrollPanel extends UPanel implements UAnimator {
                             gray = lineFades.get(lineFades.size() - 1);
                     }
                     gray = Math.max(gray, flashLevel);
-                    int liney = textRows - (i);
+                    int liney = textRows - (i+1);
                     UColor cbuf = colorBuffers.get(i);
                     cbuf.set(color.fR(), color.fG(), color.fB());
                     cbuf.brightenBy(gray);
-                    drawString(renderer, lines.get(i), 2, liney, cbuf);
-                    drawIcon(renderer, icons.get(i), 0, liney);
+                    drawString(renderer, lines.get(i), 3, liney, cbuf);
+                    drawIcon(renderer, icons.get(i), 1, liney);
                 }
                 i++;
             }

@@ -54,7 +54,7 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
         }
         textWidth = width;
         if (showDetail || categorize)
-            width += 9;
+            width += 12;
         int height = 0;
         if (categorize)
             height = Math.max(biggestCategoryLength, categories.size()) + 9 + ypad;

@@ -70,7 +70,8 @@ public class UModalEquipPick extends UModal {
         }
         if (showDetail) {
             showDetail(renderer, equipped, xpad+textWidth, ypad);
-            showDetail(renderer, things.get(selection), xpad+textWidth, ypad+5);
+            if (things.get(selection) != equipped)
+                showDetail(renderer, things.get(selection), xpad+textWidth, ypad+5);
         }
     }
 

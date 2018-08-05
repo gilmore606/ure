@@ -243,7 +243,7 @@ public class UArea implements Serializable {
                 UCell pcell = cellAt(commander.player().areaX(), commander.player().areaY());
                 if (pcell != null)
                     if (pcell.sunBrightness() > 0.1f)
-                        commander.printScroll(msg);
+                        commander.printScroll(msg, getSunColor());
             }
         }
     }
