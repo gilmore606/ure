@@ -1,6 +1,7 @@
 package ure.things;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
 import ure.sys.Entity;
 import ure.sys.Injector;
@@ -33,6 +34,9 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     @Inject
     @JsonIgnore
     public UCommander commander;
+    @Inject
+    @JsonIgnore
+    public UActorCzar actorCzar;
 
     protected String name;
     protected long ID;

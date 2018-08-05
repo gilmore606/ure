@@ -27,5 +27,14 @@
       { "name": "fingers", "slots": 4, "size": 0 },
       { "name": "equip", "slots": 2, "size": 0 }
     ]
+  },
+
+  {
+    "name": "mollusk",
+    "parts": [
+      { "name": "antennae", "slots": 1, "size": 0.1 },
+      { "name": "shell", "slots": 1, "size": 0.8 },
+      { "name": "pseudopod", "slots": 1, "size": 0.1 }
+    ]
   }
 ]

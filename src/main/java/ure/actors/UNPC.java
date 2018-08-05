@@ -37,6 +37,7 @@ public class UNPC extends UActor implements Interactable {
                 }
             }
         }
+        body = actorCzar.getNewBody(bodytype);
     }
 
     @Override

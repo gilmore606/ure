@@ -30,6 +30,8 @@ public class UActor extends UThing implements Interactable {
     protected int sightrange = 9;
     protected float actionspeed = 1f;
     protected float movespeed = 1f;
+    protected String bodytype = "humanoid";
+    protected Body body;
 
     @JsonIgnore
     protected UCamera camera; // TODO: Reconnect after deserialization
@@ -47,6 +49,7 @@ public class UActor extends UThing implements Interactable {
     public void initializeAsTemplate() {
         super.initializeAsTemplate();
         setGlyphOutline(true);
+        body = actorCzar.getNewBody(bodytype);
     }
 
     public float actionTime() {
@@ -404,10 +407,11 @@ public class UActor extends UThing implements Interactable {
     public float getActionspeed() {
         return actionspeed;
     }
-
     public float getMovespeed() {
         return movespeed;
     }
+    public void setBodytype(String s) { bodytype = s; }
+    public String getBodytype() { return bodytype; }
 
     public String UIstatus() {
         return "";
