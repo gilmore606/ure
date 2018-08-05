@@ -32,7 +32,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
         slotsThings = new ArrayList<>();
         fillSlots(actor);
         width = 26;
-        setDimensions(width+xpad,height+ypad);
+        setDimensions(width+xpad*2,height+ypad*2);
     }
 
     void fillSlots(UActor actor) {

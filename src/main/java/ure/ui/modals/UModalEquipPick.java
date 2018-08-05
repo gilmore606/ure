@@ -28,12 +28,12 @@ public class UModalEquipPick extends UModal {
         equipped = _equipped;
         showDetail = _showDetail;
         escapable = _escapable;
-        textWidth = 15;
+        textWidth = 12;
         width = textWidth;
-        int height = Math.max(6, things.size() + 2 + ypad);
+        int height = Math.max(5, things.size() + 2);
         if (showDetail) {
-            width += 10;
-            height += 6;
+            width += 9;
+            height += 5;
         }
         setDimensions(width + 2 + xpad, height);
         if (bgColor == null)
@@ -65,12 +65,12 @@ public class UModalEquipPick extends UModal {
             }
             if (thing == equipped)
                 drawGlyph(renderer, commander.config.getUiCheckGlyph().charAt(0), 2, y+ypad, commander.config.getHiliteColor());
-            drawString(renderer, n, 3, y+ypad, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
+            drawString(renderer, n, 3, y+ypad, (y == selection || thing == equipped )? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
         if (showDetail) {
             showDetail(renderer, equipped, xpad+textWidth, ypad);
-            showDetail(renderer, things.get(selection), xpad+textWidth, ypad+6);
+            showDetail(renderer, things.get(selection), xpad+textWidth, ypad+5);
         }
     }
 
@@ -91,10 +91,24 @@ public class UModalEquipPick extends UModal {
     void selectEquip() {
         dismiss();
         UThing thing = things.get(selection);
+        if (thing == equipped)
+            dismissFrameEnd = 0;
         if (thing != null) {
             ((HearModalEquipPick) callback).hearModalEquipPick(callbackContext, things.get(selection));
         } else {
             ((HearModalEquipPick) callback).hearModalEquipPick("unequip", equipped);
         }
+    }
+
+    @Override
+    public void animationTick() {
+        if (dismissed) {
+            if ((dismissFrames % 2) == 0) {
+                tempHiliteColor = commander.config.getModalBgColor();
+            } else {
+                tempHiliteColor = flashColor;
+            }
+        }
+        super.animationTick();
     }
 }

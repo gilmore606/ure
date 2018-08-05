@@ -20,7 +20,7 @@ public class ActionUnequip extends UAction {
     public void doMe() {
         if (thing.tryUnequip(actor)) {
             if (actor instanceof UPlayer) {
-                commander.printScroll(thing.getIcon(), "You" + (thing.getEquipSlots()[0].equals("equip") ? " unequip " : " take off ") + thing.getIname() + ".");
+                commander.printScroll(thing.getIcon(), "You" + (thing.getEquipSlots()[0].equals("equip") ? " put away your " : " take off your ") + thing.getName() + ".");
             }
         }
     }

@@ -34,7 +34,7 @@ public class ActionEquip extends UAction {
         }
         if (actor.tryEquipThing(thing)) {
             if (actor instanceof UPlayer) {
-                commander.printScroll(thing.getIcon(),"You" + (slots[0].equals("equip") ? " equip " : " wear ") + thing.getIname() + ".");
+                commander.printScroll(thing.getIcon(),"You" + (slots[0].equals("equip") ? " get out your " : " wear your ") + thing.getName() + ".");
             } else {
                 commander.printScrollIfSeen(actor, actor.getDname() + " equips " + thing.getIname() + ".");
             }
