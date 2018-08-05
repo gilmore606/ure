@@ -32,7 +32,7 @@ public class UModalStringPick extends UModal {
                 width = choice.length();
         }
         textWidth = width;
-        int height = Math.max(6, choices.size() + 2 + ypad);
+        int height = Math.max(4, choices.size() + 2 + ypad);
         setDimensions(width + 2 + xpad, height);
         if (bgColor == null)
             bgColor = commander.config.getModalBgColor();

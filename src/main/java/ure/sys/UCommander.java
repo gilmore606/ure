@@ -183,7 +183,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             if (field.getName().startsWith("GLFW_KEY_")) {
                 try {
                     glmap.put(field.getName(), field.getInt(null));
-                    System.out.println("REFLECT: read GLFW keymap pair " + field.getName() + " as " + Integer.toString(field.getInt(null)));
+                    System.out.println("KEYBIND: read GLFW keymap pair " + field.getName() + " as " + Integer.toString(field.getInt(null)));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -203,7 +203,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                 Field idField = commandClass.getField("id");
                 String idValue = (String) idField.get(null);
                 if (idValue != null) {
-                    System.out.println("REFLECT: found command " + idValue);
+                    System.out.println("KEYBIND: found command " + idValue);
                     commandMap.put(idValue, commandClass);
                 }
             }

@@ -3,6 +3,9 @@ package ure.things;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
+import ure.actors.actions.ActionDrop;
+import ure.actors.actions.ActionUse;
+import ure.actors.actions.UAction;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
@@ -464,6 +467,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public boolean isUsable(UActor actor) {
         return false;
     }
+    public String useVerb() { return null; }
 
     public float useFrom(UActor actor) {
         return 0f;
@@ -498,7 +502,16 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         this.spawnterrain = spawnterrain;
     }
 
-    public void animationTick() {
+    public void animationTick() { }
 
+    public HashMap<String, UAction> contextActions(UActor actor) {
+        HashMap<String,UAction> actions = new HashMap<>();
+
+        if (isMovableBy(actor))
+            actions.put("drop", new ActionDrop(actor, this));
+        if (isUsable(actor))
+            actions.put(useVerb(), new ActionUse(actor, this));
+
+        return actions;
     }
 }

@@ -1,14 +1,17 @@
 package ure.ui.modals;
 
+import ure.actors.actions.UAction;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.sys.Entity;
 import ure.sys.GLKey;
+import ure.things.UThing;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class UModalEntityPick extends UModal {
+public class UModalEntityPick extends UModal implements HearModalStringPick {
 
     String header;
     UColor bgColor;
@@ -18,6 +21,7 @@ public class UModalEntityPick extends UModal {
     boolean showDetail;
     boolean escapable;
     boolean categorize;
+    boolean selectForVerbs;
     ArrayList<String> categories;
     ArrayList<ArrayList<Entity>> categoryLists;
     ArrayList<ArrayList<String>> categoryItemNames;
@@ -27,8 +31,10 @@ public class UModalEntityPick extends UModal {
     int selectionCategory = 0;
     UColor tempHiliteColor, flashColor;
 
+    HashMap<String,UAction> contextActions;
+
     public UModalEntityPick(String _header, UColor _bgColor, int _xpad, int _ypad, ArrayList<Entity> _entities,
-                            boolean _showDetail, boolean _escapable, boolean _categorize, HearModalEntityPick _callback, String _callbackContext) {
+                            boolean _showDetail, boolean _escapable, boolean _categorize, boolean _selectForVerbs, HearModalEntityPick _callback, String _callbackContext) {
         super(_callback, _callbackContext, _bgColor);
         header = _header;
         xpad = _xpad;
@@ -38,6 +44,7 @@ public class UModalEntityPick extends UModal {
         showDetail =  _showDetail;
         escapable = _escapable;
         categorize = _categorize;
+        selectForVerbs = _selectForVerbs;
         if (categorize)
             Categorize();
         int width = 0;
@@ -192,8 +199,20 @@ public class UModalEntityPick extends UModal {
     }
 
     void selectEntity() {
-        dismiss();
-        ((HearModalEntityPick)callback).hearModalEntityPick(callbackContext, shownEntities().get(selection));
+        if (selectForVerbs) {
+            UThing thing = (UThing)(shownEntities().get(selection));
+            contextActions = thing.contextActions(commander.player());
+            if (contextActions != null) {
+                ArrayList<String> verbs = new ArrayList<>();
+                for (String v : contextActions.keySet())
+                    verbs.add(v);
+                UModalStringPick smodal = new UModalStringPick(thing.getName() + ":",null,0,0, verbs, true, this, "contextaction");
+                commander.showModal(smodal);
+            }
+        } else {
+            dismiss();
+            ((HearModalEntityPick) callback).hearModalEntityPick(callbackContext, shownEntities().get(selection));
+        }
     }
 
     @Override
@@ -206,5 +225,12 @@ public class UModalEntityPick extends UModal {
             }
         }
         super.animationTick();
+    }
+
+    public void hearModalStringPick(String context, String selection) {
+        dismiss();
+        UAction action = contextActions.get(selection);
+        if (action != null)
+            commander.player().doAction(action);
     }
 }
