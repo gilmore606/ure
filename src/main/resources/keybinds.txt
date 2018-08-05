@@ -32,3 +32,4 @@ d,DROP
 period,TRAVEL
 t,THROW
 u,USE
+shift+e,EAT

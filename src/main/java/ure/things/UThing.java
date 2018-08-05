@@ -473,7 +473,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public boolean isUsable(UActor actor) {
         return false;
     }
-    public String useVerb() { return null; }
+    public String useVerb() { return ""; }
 
     public float useFrom(UActor actor) {
         return 0f;
