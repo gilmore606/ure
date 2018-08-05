@@ -38,6 +38,7 @@
     "category": "gear",
     "glyph": "t",
     "description": "A rusty butcher knife.",
+    "equipSlots": [ "equip" ],
     "tags": [ "complex" ],
     "spawnlevels": [1,50],
     "color": [100,100,240],
@@ -50,9 +51,21 @@
     "category": "gear",
     "glyph": "^",
     "description": "A baseball cap bearing a strange inscription.",
+    "equipSlots": [ "head" ],
     "color": [0,240,0],
     "weight": 3,
     "value": 5
+  },
+  {
+    "name": "hiking boots",
+    "type": "clothing",
+    "category": "gear",
+    "glyph": "b",
+    "description": "Heavy leather hiking boots with spiked tread.",
+    "equipSlots": [ "feet" ],
+    "color": [100,100,100],
+    "weight": 8,
+    "value": 20
   },
   {
     "name": "skull",

@@ -21,7 +21,6 @@ public class CommandInventory extends UCommand implements HearModalEntityPick {
 
     @Override
     public void execute(UPlayer player) {
-        //UModalNotify modal = new UModalNotify("No inventory implemented yet.", null, 2, 2);
         ArrayList<Entity> inventory = new ArrayList<>();
         Iterator<UThing> i = player.iterator();
         while (i.hasNext())

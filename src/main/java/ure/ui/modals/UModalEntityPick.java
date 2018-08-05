@@ -229,6 +229,7 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
 
     public void hearModalStringPick(String context, String selection) {
         dismiss();
+        dismissFrameEnd = 0;
         UAction action = contextActions.get(selection);
         if (action != null)
             commander.player().doAction(action);

@@ -15,6 +15,8 @@ import ure.things.UContainer;
 import ure.ui.UCamera;
 import ure.ui.particles.ParticleHit;
 
+import java.util.ArrayList;
+
 /**
  * UActor represents a UThing which can perform actions.  This includes the player and NPCs.
  *
@@ -238,6 +240,56 @@ public class UActor extends UThing implements Interactable {
         return false;
     }
 
+    public boolean tryEquipThing(UThing thing) {
+        return thing.tryEquip(this);
+    }
+
+    public boolean tryUnequip(UThing thing) {
+        return thing.tryUnequip(this);
+    }
+
+    public boolean freeEquipSlot(String slot, int slotcount) {
+        int totalslots = body.slotsForPart(slot);
+        if (totalslots < slotcount) return false;
+        int freeslots = totalslots;
+        ArrayList<UThing> equipped = equippedOn(slot);
+        for (UThing thing : equipped) {
+            freeslots -= thing.getEquipSlotCount();
+        }
+        while (freeslots < slotcount) {
+            UThing unequipped = null;
+            for (UThing thing : equipped) {
+                if (tryUnequip(thing)) {
+                    unequipped = thing;
+                    break;
+                }
+            }
+            equipped.remove(unequipped);
+            freeslots += unequipped.getEquipSlotCount();
+        }
+        return true;
+    }
+
+    public ArrayList<UThing> equippedOn(String slot) {
+        ArrayList<UThing> equipped = new ArrayList<>();
+        for (UThing thing : contents.getThings()) {
+            if (thing.equipped) {
+                for (String s : thing.getEquipSlots())
+                    if (s.equals(slot))
+                        equipped.add(thing);
+            }
+        }
+        return equipped;
+    }
+    public ArrayList<UThing> equipment() {
+        ArrayList<UThing> equipped = new ArrayList<>();
+        for (UThing thing : contents.getThings()) {
+            if (thing.equipped)
+                equipped.add(thing);
+        }
+        return equipped;
+    }
+
     public void doAction(UAction action) {
         if (action.allowedForActor() && !myCell().preventAction(action)) {
             float timecost = action.doNow();
@@ -412,6 +464,8 @@ public class UActor extends UThing implements Interactable {
     }
     public void setBodytype(String s) { bodytype = s; }
     public String getBodytype() { return bodytype; }
+    public Body getBody() { return body; }
+    public void setBody(Body b) { body = b; }
 
     public String UIstatus() {
         return "";

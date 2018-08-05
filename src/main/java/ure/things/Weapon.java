@@ -8,4 +8,6 @@ public class Weapon extends UThing {
 
     public static final String TYPE = "weapon";
 
+    public String[] equipSlots = new String[]{"equip"};
+
 }

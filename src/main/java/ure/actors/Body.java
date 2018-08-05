@@ -20,6 +20,24 @@ public class Body {
         this.parts = parts;
     }
 
+    public boolean hasPart(String partname) { return hasPart(partname, 1); }
+    public boolean hasPart(String partname, int slotcount) {
+        for (Bodypart part : parts) {
+            if (part.name.equals(partname))
+                if (part.slots <= slotcount)
+                    return true;
+        }
+        return false;
+    }
+
+    public int slotsForPart(String partname) {
+        for (Bodypart part : parts) {
+            if (part.name.equals(partname))
+                return part.slots;
+        }
+        return 0;
+    }
+
     public String getName() { return name; }
     public void setName(String s) { name = s; }
     public ArrayList<Bodypart> getParts() { return parts; }

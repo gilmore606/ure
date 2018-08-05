@@ -33,3 +33,4 @@ period,TRAVEL
 t,THROW
 u,USE
 shift+e,EAT
+backslash,EQUIPMENT
