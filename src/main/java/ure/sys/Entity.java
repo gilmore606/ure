@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public interface Entity {
 
     String getName();
+    String name();
     long getID();
     void setID(long newID);
     String getPlural();

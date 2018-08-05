@@ -49,8 +49,8 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
             Categorize();
         int width = 0;
         for (Entity entity : entities) {
-            if (entity.getName().length() > width)
-                width = entity.getName().length();
+            if (entity.name().length() > width)
+                width = entity.name().length();
         }
         textWidth = width;
         if (showDetail || categorize)
@@ -137,7 +137,7 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
             if (total > 1)
                 displaynames.add(Integer.toString(totals.get(i)) + " " + entity.getPlural());
             else
-                displaynames.add(entity.getName());
+                displaynames.add(entity.name());
             i++;
             writeList.add(entity);
         }
@@ -155,7 +155,7 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
         int y = 0;
         for (Entity entity : shownEntities()) {
             drawIcon(renderer, entity.getIcon(), 1, y + 2);
-            String n = entity.getName();
+            String n = entity.name();
             if (categorize)
                 n = (categoryItemNames.get(selectionCategory)).get(y);
             drawString(renderer, n, 3, y + 2, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);

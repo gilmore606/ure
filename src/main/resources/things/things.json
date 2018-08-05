@@ -274,5 +274,14 @@
     "weight": 1,
     "value": 20,
     "switchable": true
+  },
+  {
+    "name": "gold coins",
+    "type": "pile",
+    "glyph": ".",
+    "description": "Gold coins bearing a menacing profile.",
+    "color": [255,255,40],
+    "weightPer": 0.01,
+    "valuePer": 1
   }
 ]

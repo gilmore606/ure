@@ -150,11 +150,14 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     }
 
     public Icon icon() { return getIcon(); }
+    public String name() { return name; }
+    public int value() { return value; }
+    public int weight() { return weight; }
 
     public ArrayList<String> UIdetails(String context) {
         ArrayList<String> d = new ArrayList<>();
-        d.add("Weight " + Integer.toString(getWeight()));
-        d.add("Value " + Integer.toString(getValue()));
+        d.add("Weight " + Integer.toString(weight()));
+        d.add("Value " + Integer.toString(value()));
         return d;
     }
 
@@ -201,6 +204,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public Iterator<UThing> iterator() {
         return getContents().iterator();
     }
+    public ArrayList<UThing> things() { return getContents().getThings(); }
 
     public int containerType() { return UContainer.TYPE_THING; }
     public boolean willAcceptThing(UThing thing) {
@@ -256,6 +260,11 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
             return true;
         }
         return false;
+    }
+
+    public boolean tryDrop(UContainer dest) {
+        moveTo(dest);
+        return location == dest;
     }
 
     public boolean fitsOnBodypart(String part) {

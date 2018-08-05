@@ -230,13 +230,14 @@ public class UActor extends UThing implements Interactable {
             return false;
         }
         if (dest.willAcceptThing(thing)) {
-            thing.moveTo(dest);
-            if (this instanceof UPlayer)
-                commander.printScroll(thing.getIcon(), "You drop " + thing.getIname() + ".");
-            else
-                commander.printScrollIfSeen(this, StringUtils.capitalize(this.getDname()) + " drops " + thing.getIname() + ".");
-            thing.droppedBy(this);
-            return true;
+            if (thing.tryDrop(dest)) {
+                if (this instanceof UPlayer)
+                    commander.printScroll(thing.getIcon(), "You drop " + thing.getIname() + ".");
+                else
+                    commander.printScrollIfSeen(this, StringUtils.capitalize(this.getDname()) + " drops " + thing.getIname() + ".");
+                thing.droppedBy(this);
+                return true;
+            }
         }
         return false;
     }
