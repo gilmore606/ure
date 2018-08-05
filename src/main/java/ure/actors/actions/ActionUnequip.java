@@ -1,6 +1,8 @@
 package ure.actors.actions;
 
+import org.lwjgl.system.CallbackI;
 import ure.actors.UActor;
+import ure.actors.UPlayer;
 import ure.things.UThing;
 
 public class ActionUnequip extends UAction {
@@ -16,6 +18,10 @@ public class ActionUnequip extends UAction {
 
     @Override
     public void doMe() {
-        thing.tryUnequip(actor);
+        if (thing.tryUnequip(actor)) {
+            if (actor instanceof UPlayer) {
+                commander.printScroll(thing.getIcon(), "You" + (thing.getEquipSlots()[0].equals("equip") ? " unequip " : " take off ") + thing.getIname() + ".");
+            }
+        }
     }
 }

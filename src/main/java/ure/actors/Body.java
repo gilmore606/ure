@@ -24,7 +24,7 @@ public class Body {
     public boolean hasPart(String partname, int slotcount) {
         for (Bodypart part : parts) {
             if (part.name.equals(partname))
-                if (part.slots <= slotcount)
+                if (part.slots >= slotcount)
                     return true;
         }
         return false;

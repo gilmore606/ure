@@ -258,6 +258,15 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         return false;
     }
 
+    public boolean fitsOnBodypart(String part) {
+        if (equipSlots == null) return false;
+        for (int i=0;i<equipSlots.length;i++) {
+            if (equipSlots[i].equals(part))
+                return true;
+        }
+        return false;
+    }
+
     public void gotBy(UActor actor) {
         if (getMsg(actor) != null)
             commander.printScroll(this.getMsg(actor));

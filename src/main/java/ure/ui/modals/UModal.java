@@ -239,6 +239,17 @@ public class UModal extends View implements UAnimator {
         }
     }
 
+    public void showDetail(URenderer renderer, Entity entity, int xoff, int yoff) {
+        if (entity == null) return;
+        drawString(renderer, entity.getName(), xoff, yoff);
+        ArrayList<String> details = entity.UIdetails(callbackContext);
+        int linepos = 1;
+        for (String line : details) {
+            drawString(renderer, line, xoff, linepos+yoff, UColor.COLOR_LIGHTGRAY);
+            linepos++;
+        }
+    }
+
     public int cursorMove(int cursor, int delta, int total) {
         int oldcursor = cursor;
         cursor += delta;

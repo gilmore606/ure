@@ -157,15 +157,7 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
             drawString(renderer, n, 3, y + 2, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
-        if (showDetail) {
-            drawString(renderer, shownEntities().get(selection).getName(), 4+textWidth, 2);
-            ArrayList<String> details = shownEntities().get(selection).UIdetails(callbackContext);
-            int linepos = 4;
-            for (String line : details) {
-                drawString(renderer, line, 4+textWidth, linepos);
-                linepos++;
-            }
-        }
+        if (showDetail) showDetail(renderer, shownEntities().get(selection),4+textWidth,2);
         if (categorize && !dismissed) {
             int caty = 7;
             if (!showDetail) caty = 1;
@@ -187,10 +179,12 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
             selection = cursorMove(selection, 1, shownEntities().size());
         } else if (command.id.equals("MOVE_W")) {
             selection = 0;
-            selectionCategory = cursorMove(selectionCategory, -1, categoryLists.size());
+            if (categoryLists != null)
+                selectionCategory = cursorMove(selectionCategory, -1, categoryLists.size());
         } else if (command.id.equals("MOVE_E")) {
             selection = 0;
-            selectionCategory = cursorMove(selectionCategory, 1, categoryLists.size());
+            if (categoryLists != null)
+                selectionCategory = cursorMove(selectionCategory, 1, categoryLists.size());
         } else if (command.id.equals("PASS")) {
             selectEntity();
         } else if (command.id.equals("ESC") && escapable) {

@@ -20,7 +20,7 @@ public class ActionEquip extends UAction {
         String[] slots = thing.getEquipSlots();
         int slotcount = thing.getEquipSlotCount();
         for (String slot : slots) {
-            if (!actor.getBody().hasPart(slot,slotcount)) {
+            if (!actor.getBody().hasPart(slot)) {
                 if (actor instanceof UPlayer) commander.printScroll("You're short a " + slot + " to equip that on.");
                 return;
             }
@@ -32,6 +32,12 @@ public class ActionEquip extends UAction {
                 return;
             }
         }
-        actor.tryEquipThing(thing);
+        if (actor.tryEquipThing(thing)) {
+            if (actor instanceof UPlayer) {
+                commander.printScroll(thing.getIcon(),"You" + (slots[0].equals("equip") ? " equip " : " wear ") + thing.getIname() + ".");
+            } else {
+                commander.printScrollIfSeen(actor, actor.getDname() + " equips " + thing.getIname() + ".");
+            }
+        }
     }
 }
