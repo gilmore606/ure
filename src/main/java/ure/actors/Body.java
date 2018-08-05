@@ -1,5 +1,6 @@
 package ure.actors;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -8,26 +9,31 @@ import java.util.HashMap;
 public class Body {
 
     public String name;
-    public HashMap<String,Bodypart> parts;
+    public ArrayList<Bodypart> parts;
 
-    public class Bodypart {
+    public static class Bodypart {
         public String name;
         public int slots;
         public float size;
-        public Bodypart(String name, int slots, float size) {
-            this.name = name;
-            this.slots = slots;
-            this.size = size;
-        }
+        public Bodypart() { }
+        public String getName() { return name; }
+        public void setName(String s) { name = s; }
+        public int getSlots() { return slots; }
+        public void setSlots(int i) { slots = i; }
+        public float getSize() { return size; }
+        public void setSize(float f) { size = f; }
     }
 
-    public Body(String name, HashMap<String,Bodypart> parts) {
+    public Body() {
+
+    }
+    public Body(String name, ArrayList<Bodypart> parts) {
         this.name = name;
         this.parts = parts;
     }
 
     public String getName() { return name; }
     public void setName(String s) { name = s; }
-    public HashMap<String,Bodypart> getParts() { return parts; }
-    public void setParts(HashMap<String,Bodypart> p) { parts = p; }
+    public ArrayList<Bodypart> getParts() { return parts; }
+    public void setParts(ArrayList<Bodypart> p) { parts = p; }
 }

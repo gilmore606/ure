@@ -17,6 +17,7 @@ import javax.inject.Inject;
 public class UActorCzar {
 
     private HashMap<String,UActor> actorsByName;
+    private HashMap<String,Body> bodies;
 
     @Inject
     ObjectMapper objectMapper;
@@ -50,6 +51,26 @@ public class UActorCzar {
                 }
             }
         }
+
+        bodies = new HashMap<>();
+        jsonDir = new File(commander.config.getResourcePath() + "bodies/");
+        files = new ArrayList<File>(Arrays.asList(jsonDir.listFiles()));
+        for (File resourceFile : files) {
+            String resourceName = resourceFile.getName();
+            if (resourceName.endsWith(".json")) {
+                System.out.println("ACTORCZAR BODIES: loading " + resourceName);
+                try {
+                    InputStream inputStream = getClass().getResourceAsStream("/bodies/" + resourceName);
+                    Body[] bodyObjs = objectMapper.readValue(inputStream, Body[].class);
+                    for (Body body : bodyObjs) {
+                        bodies.put(body.getName(), body);
+                    }
+                } catch (IOException io) {
+                    io.printStackTrace();
+                }
+            }
+        }
+
     }
 
     public UActor getActorByName(String name) {
