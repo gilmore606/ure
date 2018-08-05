@@ -53,9 +53,12 @@ public class UModalChoices extends UModal {
         int xtab = 0;
         int drawSelection = 0;
         for (String choice : choices) {
+            int oldxtab = xtab;
             drawString(renderer, choice, xtab, cellh-1, (selection == drawSelection) ? null : UColor.COLOR_GRAY, (selection == drawSelection) ? tempHiliteColor : null);
             xtab += choice.length() + 1;
             drawSelection++;
+            if (mousex < xtab && mousex >= oldxtab && mousey > 0 && mousey <= cellh)
+                selection = drawSelection-1;
         }
     }
 
@@ -72,6 +75,10 @@ public class UModalChoices extends UModal {
                 escape();
             }
         }
+    }
+    @Override
+    public void mouseClick() {
+        pickSelection();
     }
 
     public void pickSelection() {
