@@ -2,6 +2,7 @@ package ure.actors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.StringUtils;
+import ure.actors.actions.ActionWalk;
 import ure.actors.actions.Interactable;
 import ure.actors.actions.UAction;
 import ure.areas.UArea;
@@ -315,6 +316,16 @@ public class UActor extends UThing implements Interactable {
 
     public void say(String text) {
         commander.printScrollIfSeen(this,StringUtils.capitalize(getDname()) + " says, \"" + text + "\"");
+    }
+
+    public boolean stepToward(int x, int y) {
+        int[] step = UPath.nextStep(area(), areaX(), areaY(), x, y, this, 100);
+        if (step != null) {
+            ActionWalk action = new ActionWalk(this, step[0] - areaX(), step[1] - areaY());
+            doAction(action);
+            return true;
+        }
+        return false;
     }
 
     /**
