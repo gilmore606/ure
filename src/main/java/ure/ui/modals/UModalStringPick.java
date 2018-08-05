@@ -45,6 +45,7 @@ public class UModalStringPick extends UModal {
 
     @Override
     public void drawContent(URenderer renderer) {
+        selection = mouseToSelection(choices.size(), 2, selection);
         if (header != null)
             drawString(renderer, header, 0, 0);
         int y = 0;
@@ -67,6 +68,8 @@ public class UModalStringPick extends UModal {
             escape();
         }
     }
+    @Override
+    public void mouseClick() { selectChoice(); }
 
     public void selectChoice() {
         dismiss();

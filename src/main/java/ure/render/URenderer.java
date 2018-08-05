@@ -67,4 +67,5 @@ public interface URenderer {
     void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor);
     int getMousePosX();
     int getMousePosY();
+    boolean getMouseButton();
 }

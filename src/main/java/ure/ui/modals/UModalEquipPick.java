@@ -54,6 +54,7 @@ public class UModalEquipPick extends UModal {
 
     @Override
     public void drawContent(URenderer renderer) {
+        selection = mouseToSelection(things.size(), ypad, selection);
         int y = 0;
         for (UThing thing : things) {
             String n;
@@ -88,6 +89,9 @@ public class UModalEquipPick extends UModal {
             escape();
         }
     }
+
+    @Override
+    public void mouseClick() { selectEquip(); }
 
     void selectEquip() {
         dismiss();

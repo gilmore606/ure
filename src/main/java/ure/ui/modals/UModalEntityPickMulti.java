@@ -58,6 +58,7 @@ public class UModalEntityPickMulti extends UModal {
 
     @Override
     public void drawContent(URenderer renderer) {
+        selection = mouseToSelection(entities.size(), prompt.length+1, selection);
         drawStrings(renderer, prompt, 0, 0);
         int y = 0;
         for (Entity entity: entities) {
@@ -101,6 +102,8 @@ public class UModalEntityPickMulti extends UModal {
             selectAll();
         }
     }
+    @Override
+    public void mouseClick() { selectEntity(); }
 
     void selectEntity() {
         selectedEntities.set(selection, !selectedEntities.get(selection));

@@ -61,6 +61,9 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
 
     @Override
     public void drawContent(URenderer renderer) {
+        int oldselection = selection;
+        selection = mouseToSelection(slotsThings.size(), ypad, selection);
+        if (selection != oldselection) updatePossible();
         Bodypart lastpart = null;
         for (int i=0;i<slotsThings.size();i++) {
             Bodypart part = slotsBodyparts.get(i);
@@ -110,6 +113,9 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
             updatePossible();
         }
     }
+
+    @Override
+    public void mouseClick() { selectSlot(); }
 
     public void selectSlot() {
         updatePossible();

@@ -146,6 +146,10 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
 
     @Override
     public void drawContent(URenderer renderer) {
+        selection = mouseToSelection(shownEntities().size(), 2, selection, 0, 12);
+        int oldCategory = selectionCategory;
+        selectionCategory = mouseToSelection(categoryLists.size(), 9, selectionCategory, 3+textWidth, 100);
+        if (selectionCategory != oldCategory) selection = 0;
         if (header != null)
             drawString(renderer, header, 0, 0);
         int y = 0;
@@ -191,6 +195,8 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
             escape();
         }
     }
+    @Override
+    public void mouseClick() { selectEntity(); }
 
     void selectEntity() {
         if (selectForVerbs) {

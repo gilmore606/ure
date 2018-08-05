@@ -251,6 +251,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     public int mouseX() { return renderer.getMousePosX(); }
     public int mouseY() { return renderer.getMousePosY(); }
+    public boolean mouseButton() { return renderer.getMouseButton(); }
 
     /**
      * Return true if player actually did something
@@ -294,6 +295,21 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         } else if (command != null) {
             command.execute((UPlayer)player);
         }
+    }
+
+    public void mousePressed() {
+        if (modal != null)
+            modal.mouseClick();
+    }
+    public void mouseReleased() {
+
+    }
+    public void mouseRightPressed() {
+        if (modal != null)
+            modal.mouseRightClick();
+    }
+    public void mouseRightReleased() {
+
     }
 
     public void setMoveLatch(int xdir, int ydir) {

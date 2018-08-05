@@ -31,6 +31,7 @@ public class UModal extends View implements UAnimator {
     public int cellh = 0;
     public int xpos = 0;
     public int ypos = 0;
+    public int mousex, mousey;
     public UColor bgColor;
     HashMap<String,TextFrag> texts;
     public boolean dismissed;
@@ -198,7 +199,32 @@ public class UModal extends View implements UAnimator {
             if (dismissFrames > dismissFrameEnd) {
                 commander.detachModal(this);
             }
+        } else {
+            updateMouse();
         }
+    }
+
+    void updateMouse() {
+        mousex = (commander.mouseX() - xpos) / gw();
+        mousey = (commander.mouseY() - ypos) / gh();
+    }
+
+    int mouseToSelection(int menusize, int yoffset, int selection) { return mouseToSelection(menusize,yoffset,selection,0,1000); }
+    int mouseToSelection(int menusize, int yoffset, int selection, int xmin, int xmax) {
+        int mousesel = mousey - yoffset;
+        if (mousesel < 0)
+            return selection;
+        if (mousesel >= menusize)
+            return selection;
+        if (mousex < xmin || mousey >= xmax)
+            return selection;
+        return mousesel;
+    }
+    public void mouseClick() {
+        dismiss();
+    }
+    public void mouseRightClick() {
+        escape();
     }
 
     public String[] splitLines(String text) {
