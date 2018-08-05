@@ -139,6 +139,7 @@
   {
     "name": "biscuit",
     "type": "food",
+    "bites": 4,
     "category": "consumables",
     "glyph": ",",
     "description": "A hardtack traveler's biscuit.",

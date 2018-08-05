@@ -49,7 +49,7 @@ public class UModalStringPick extends UModal {
             drawString(renderer, header, 0, 0);
         int y = 0;
         for (String choice : choices) {
-            drawString(renderer, choices.get(y), 3, y+2, null, (y == selection) ? tempHiliteColor : null);
+            drawString(renderer, choices.get(y), 3, y+2, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
     }

@@ -316,6 +316,12 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         return getName() + "s";
     }
 
+    /**
+     * Override this to add information about my status.
+     */
+    public String description() {
+        return description;
+    }
     public boolean isMovableBy(UActor actor) {
         return isMovable();
     }
@@ -513,5 +519,12 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
             actions.put(useVerb(), new ActionUse(actor, this));
 
         return actions;
+    }
+
+    /**
+     * Throw myself away into the void.
+     */
+    public void junk() {
+        leaveCurrentLocation();
     }
 }
