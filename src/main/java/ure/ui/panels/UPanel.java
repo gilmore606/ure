@@ -71,11 +71,9 @@ public class UPanel extends View {
 
     public void drawString(URenderer renderer, String string, int x, int y, UColor color) {
         if (string != null) {
-            renderer.setFont(URenderer.FontType.TEXT_FONT);
             int linex = padX + (x * gw());
             int liney = padY + (y * gw());
             renderer.drawString(linex, liney, color, string);
-            renderer.setFont(URenderer.FontType.TILE_FONT);
         }
     }
     public void drawIcon(URenderer renderer, Icon icon, int x, int y) {

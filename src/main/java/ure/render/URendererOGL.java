@@ -247,10 +247,12 @@ public class URendererOGL implements URenderer {
     @Override
     public void drawString(int x, int y, UColor color, String str) {
         if (str == null) return;
+        setFont(URenderer.FontType.TEXT_FONT);
         for (int i = 0; i < str.length(); i++) {
             drawGlyph(Character.codePointAt(str, i), x, y, color);
             x += Math.ceil(currentFont.glyphWidth[0]);
         }
+        setFont(URenderer.FontType.TILE_FONT);
     }
 
     @Override
@@ -305,9 +307,11 @@ public class URendererOGL implements URenderer {
 
     @Override
     public void setFont(FontType font) {
+        FontTexture newFont = font == FontType.TEXT_FONT ? textFont : tileFont;
+        if (currentFont == newFont) return;
         renderBuffer();
         glBindTexture(GL_TEXTURE_2D, font == FontType.TEXT_FONT ? textFont.texId : tileFont.texId);
-        currentFont = font == FontType.TEXT_FONT ? textFont : tileFont;
+        currentFont = newFont;
     }
 
     // internals
