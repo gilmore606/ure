@@ -7,6 +7,8 @@ import ure.actors.actions.UAction;
 import ure.actors.behaviors.UBehavior;
 import ure.math.UColor;
 import ure.sys.Entity;
+import ure.sys.UCommander;
+import ure.things.SpawnItem;
 import ure.things.UThing;
 
 import java.util.ArrayList;
@@ -21,9 +23,12 @@ public class UNPC extends UActor implements Interactable {
     protected String[] ambients;
 
     protected ArrayList<UBehavior> behaviors;
+    protected SpawnItem[] spawnwith;
 
     @JsonIgnore
     public ArrayList<Entity> seenEntities;
+
+
 
     @Override
     public void initializeAsCloneFrom(UThing template) {
@@ -38,6 +43,18 @@ public class UNPC extends UActor implements Interactable {
             }
         }
         body = actorCzar.getNewBody(bodytype);
+        spawnItems();
+    }
+
+    void spawnItems() {
+        if (spawnwith != null) {
+            for (SpawnItem spawnItem : spawnwith) {
+                UThing spawn = spawnItem.spawn(commander);
+                if (spawn != null) {
+                    spawn.moveTo(this);
+                }
+            }
+        }
     }
 
     @Override
@@ -223,4 +240,7 @@ public class UNPC extends UActor implements Interactable {
     public void setBehaviors(ArrayList<UBehavior> behaviorObjects) {
         this.behaviors = behaviorObjects;
     }
+
+    public SpawnItem[] getSpawnwith() { return spawnwith; }
+    public void setSpawnwith(SpawnItem[] s) { spawnwith = s; }
 }
