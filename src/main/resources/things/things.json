@@ -262,6 +262,15 @@
     "lightflickeroffset": 20
   },
   {
+    "name": "robe",
+    "type": "clothing",
+    "category": "gear",
+    "glyph": "%",
+    "description": "A loose saffron dyed penitent's robe.",
+    "color": [200,120,5],
+    "equipSlots": [ "torso", "arms", "legs" ]
+  },
+  {
     "name": "flashlight",
     "type": "lightsource",
     "category": "tools",
@@ -274,5 +283,14 @@
     "weight": 1,
     "value": 20,
     "switchable": true
+  },
+  {
+    "name": "gold coins",
+    "type": "pile",
+    "glyph": ".",
+    "description": "Gold coins bearing a menacing profile.",
+    "color": [255,255,40],
+    "weightPer": 0.01,
+    "valuePer": 1
   }
 ]

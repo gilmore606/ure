@@ -84,6 +84,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public int frameCounter;
 
     private boolean breakLatchOnInput = true;
+    private int walkDestX = -1;
+    private int walkDestY = -1;
 
     private HashMap<GLKey, UCommand> keyBindings;
     private LinkedBlockingQueue<GLKey> keyBuffer;
@@ -254,13 +256,18 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public int mouseY() { return renderer.getMousePosY(); }
     public boolean mouseButton() { return renderer.getMouseButton(); }
 
+    public void setAutoWalk(int walkDestX, int walkDestY) {
+        this.walkDestX = walkDestX;
+        this.walkDestY = walkDestY;
+    }
+
     /**
      * Return true if player actually did something
      */
     public void consumeKeyFromBuffer() {
         if (!keyBuffer.isEmpty()) {
-            if (moveLatch && breakLatchOnInput)
-                moveLatch = false;
+            if (breakLatchOnInput)
+                latchBreak();
             GLKey k = keyBuffer.remove();
             if (k.k == 0)
                 return;
@@ -285,6 +292,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             }
         } else if (moveLatch && config.isNethackShiftRun()) {
             player.doAction(new ActionWalk(player, moveLatchX, moveLatchY));
+        } else if (walkDestX >= 0 && player != null) {
+            if (!player.stepToward(walkDestX, walkDestY))
+                latchBreak();
+            if (player.areaX() == walkDestX && player.areaY() == walkDestY)
+                latchBreak();
         }
     }
 
@@ -301,6 +313,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void mousePressed() {
         if (modal != null)
             modal.mouseClick();
+        else
+            setAutoWalk(mouseX()/config.getGlyphWidth() + modalCamera.leftEdge, mouseY()/config.getGlyphHeight() + modalCamera.topEdge);
     }
     public void mouseReleased() {
 
@@ -328,6 +342,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         moveLatch = false;
         moveLatchX = 0;
         moveLatchY = 0;
+        walkDestX = -1;
+        walkDestY = -1;
     }
 
     /**

@@ -72,7 +72,7 @@ public class UModalGetString extends UModal {
     public void hearCommand(UCommand command, GLKey k) {
         if (command != null) {
             if (command.id.equals("ESC") && escapable)
-                dismiss();
+                escape();
         }
         if (k.k == GLFW_KEY_BACKSPACE) {
             if (!input.isEmpty()) {

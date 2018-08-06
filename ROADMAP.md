@@ -10,12 +10,12 @@ roguelike.  Here's our intended roadmap of feature additions that will get us to
 - ~~Particle system~~
 - Vault stamping support in Landscaper
 - JSON configuration of main window layout, with resize support
-- better Landscaper generic method tools
-- Guava event bus
+- ~~better Landscaper generic method tools~~
+- ~~Guava event bus~~
 
 ## 0.9
-- Audio : ogg playback, background music loop/crossfade, stereo SFX position, ambient sounds tied to entities
-- improved A* pathing
+- Audio : ~~ogg playback, background music loop/crossfade, stereo SFX position~~, ambient sounds, streaming
+- ~~improved A* pathing~~
 - ~~Main Menu modal with gamesave manager and title screen~~
 - ~~ActorPanel UI display~~
 - Actor AI behavior set

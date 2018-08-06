@@ -22,10 +22,11 @@ roguelike game you can imagine.
 - Realtime lighting and visibility with full color blending and illumination for
 hundreds of lightsources in a scene
 - OpenGL rendering layer with no AWT/swing elements, for cross platform high performance
+- Visual particle system
 - 60fps animation of lights, terrain, and entities
 - Included truetype and pixel CP437-capable monospace fonts, or use any truetype font
 - Complete game loop with action-time system and NPC turn management
-- Full input handling, key buffering, mappable keybindings
+- Full input handling, key buffering, mappable keybindings, mouse support
 - Persist game areas to disk and restore them seamlessly for a persistent world
 - JSON support for defining all types of game entities
 - Many level generator algorithms included as generic methods to mix and match for your
@@ -46,7 +47,7 @@ other visualizations without changing the underlying game
 - Status effects
 - Object materials and composition
 - Environmental effects such as liquid flow, smoke/vapors, and their interactions
-- Visual particle system
+
 
 (see the [Roadmap](ROADMAP.md) for more details on planned features.)
 

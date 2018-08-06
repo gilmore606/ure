@@ -137,7 +137,6 @@ public class UPath {
                 if (step != null) {
                     if (step.x == x2 && step.y == y2) { // FOUND IT
                         while (step.parent != start) {
-                            System.out.println("step " + Integer.toString(step.x - x1) + "," + Integer.toString(step.y - y1));
                             step = step.parent;
                         }
                         System.out.println("found path in " + Integer.toString(stepcount) + " steps");

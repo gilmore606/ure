@@ -94,6 +94,8 @@ public class UCell implements UContainer {
     public Iterator<UThing> iterator() {
         return getContents().iterator();
     }
+    public ArrayList<UThing> things() { return getContents().getThings(); }
+
     public int containerType() { return UContainer.TYPE_CELL; }
 
     public void moveTriggerFrom(UActor actor) {

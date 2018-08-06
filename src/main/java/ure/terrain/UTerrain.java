@@ -208,7 +208,7 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
         getStats().put(stat, value);
     }
 
-
+    public String name() { return name; }
     public void setName(String name) {
         this.name = name;
     }

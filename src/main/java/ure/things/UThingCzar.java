@@ -37,7 +37,8 @@ public class UThingCzar {
                     UThing[] thingObjs = objectMapper.readValue(inputStream, UThing[].class);
                     for (UThing thing : thingObjs) {
                         thing.initializeAsTemplate();
-                        thingsByName.put(thing.getName(), thing);
+                        thingsByName.put(thing.name, thing);
+                        System.out.println("THINGCZAR: loaded " + thing.getName());
                     }
                 } catch (IOException io) {
                     io.printStackTrace();
@@ -69,5 +70,13 @@ public class UThingCzar {
             i++;
         }
         return names;
+    }
+
+    public UThing getPile(String name, int count) {
+        UThing pile = getThingByName(name);
+        if (pile != null) {
+            ((Pile)pile).setCount(count);
+        }
+        return pile;
     }
 }

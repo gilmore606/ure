@@ -70,7 +70,13 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         }
     }
     @Override
-    public void mouseClick() { pickSelection(); }
+    public void mouseClick() {
+        if (alpha < 1f)
+            alpha = 1f;
+        else
+            pickSelection();
+    }
+
     @Override
     public void mouseRightClick() { }
 
