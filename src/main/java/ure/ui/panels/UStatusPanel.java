@@ -42,10 +42,12 @@ public class UStatusPanel extends UPanel {
     public void draw(URenderer renderer) {
         super.draw(renderer);
         if (!hidden) {
+            renderer.setFont(URenderer.FontType.TEXT_FONT);
             for (String textName : texts.keySet()) {
                 TextFrag frag = texts.get(textName);
                 renderer.drawString(frag.row * charWidth + padX, (frag.col + 1) * charHeight + padY, frag.color, frag.text);
             }
+            renderer.setFont(URenderer.FontType.TILE_FONT);
         }
     }
 

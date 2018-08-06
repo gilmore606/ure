@@ -37,8 +37,8 @@ public class UModalDirection extends UModal {
     public void setDimensions(int x, int y) {
         cellw = x;
         cellh = y;
-        xpos = (cellx - 1) * commander.config.getGlyphWidth();
-        ypos = (celly - 1) * commander.config.getGlyphHeight();
+        xpos = (cellx - 1) * commander.config.getTileWidth();
+        ypos = (celly - 1) * commander.config.getTileHeight();
     }
 
     @Override
@@ -61,12 +61,12 @@ public class UModalDirection extends UModal {
     @Override
     public void drawContent(URenderer renderer) {
         commander.printScroll(prompt);
-        int gw = commander.config.getGlyphWidth();
-        int gh = commander.config.getGlyphHeight();
-        renderer.drawGlyph(glyphs.charAt(0), xpos + gw, ypos, glyphColor, 0, 0);
-        renderer.drawGlyph(glyphs.charAt(2), xpos + gw, ypos + gh*2, glyphColor, 0, 0);
-        renderer.drawGlyph(glyphs.charAt(1), xpos + gw * 2, ypos + gh, glyphColor, 0, 0);
-        renderer.drawGlyph(glyphs.charAt(3), xpos, ypos + gh, glyphColor, 0, 0);
+        int gw = commander.config.getTileWidth();
+        int gh = commander.config.getTileHeight();
+        renderer.drawGlyph(glyphs.charAt(0), xpos + gw, ypos, glyphColor);
+        renderer.drawGlyph(glyphs.charAt(2), xpos + gw, ypos + gh*2, glyphColor);
+        renderer.drawGlyph(glyphs.charAt(1), xpos + gw * 2, ypos + gh, glyphColor);
+        renderer.drawGlyph(glyphs.charAt(3), xpos, ypos + gh, glyphColor);
     }
 
     @Override

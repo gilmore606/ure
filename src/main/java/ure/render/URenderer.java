@@ -12,6 +12,12 @@ public interface URenderer {
         void keyPressed(GLKey key);
     }
 
+    enum FontType {
+        TILE_FONT,
+        TEXT_FONT
+    }
+
+
     /**
      * Get the top level view for attaching overlays.
      *
@@ -55,16 +61,49 @@ public interface URenderer {
      */
     void render();
 
-    // These will go away one we've worked out font rendering, views, etc.
-    int glyphWidth();
-    int glyphHeight();
+    /**
+     * Get the width of a given string using the current font.
+     * @param string
+     * @return the width in pixels
+     */
+    int stringWidth(String string);
 
     // Drawing primitives that the renderer will abstract
     void drawString(int x, int y, UColor col, String str);
-    void drawGlyph(char glyph, int destx, int desty, UColor tint, int offX, int offY);
-    void drawGlyphOutline(char glyph, int destx, int desty, UColor tint, int offX, int offY);
+
+    /**
+     * Draw a glyph a the given x,y coordinates.  This will take the glyph font's baseline into account
+     * such that glyphs drawn at the same y position will line up properly.
+     * @param glyph
+     * @param destx
+     * @param desty
+     * @param tint
+     */
+    void drawGlyph(int glyph, int destx, int desty, UColor tint);
+
+    /**
+     * Draw a glyph in the center of the box with its origin at destx,desty that is cellWidth pixels wide and
+     * cellHeight pixels tall.  This is intended for use when drawing glyphs within a cell, so that the cell
+     * size can be independent of the font size.
+     * @param glyph
+     * @param destx
+     * @param desty
+     * @param tint
+     */
+    void drawTile(int glyph, int destx, int desty, UColor tint);
+
+    /**
+     * Draw an outline for a particular tile glyph so that it stands out from its background.  This is intended for use
+     * when drawing in cells.
+     * @param glyph
+     * @param destx
+     * @param desty
+     * @param tint
+     */
+    void drawTileOutline(int glyph, int destx, int desty, UColor tint);
     void drawRect(int x, int y, int w, int h, UColor col);
     void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor);
+    void setFont(FontType font);
     int getMousePosX();
     int getMousePosY();
     boolean getMouseButton();

@@ -71,9 +71,11 @@ public class UPanel extends View {
 
     public void drawString(URenderer renderer, String string, int x, int y, UColor color) {
         if (string != null) {
+            renderer.setFont(URenderer.FontType.TEXT_FONT);
             int linex = padX + (x * gw());
             int liney = padY + (y * gw());
             renderer.drawString(linex, liney, color, string);
+            renderer.setFont(URenderer.FontType.TILE_FONT);
         }
     }
     public void drawIcon(URenderer renderer, Icon icon, int x, int y) {
@@ -81,8 +83,8 @@ public class UPanel extends View {
             icon.draw(renderer, padX + (x*gw()), padY + (y*gw()));
     }
 
-    public int gw() { return commander.config.getGlyphWidth(); }
-    public int gh() { return commander.config.getGlyphHeight(); }
+    public int gw() { return commander.config.getTileWidth(); }
+    public int gh() { return commander.config.getTileHeight(); }
 
     public boolean isMouseInside() {
         int mousex = commander.mouseX();

@@ -11,7 +11,6 @@ import ure.sys.UAnimator;
 import ure.sys.UCommander;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
-import ure.ui.modals.UModal;
 import ure.ui.particles.UParticle;
 
 import javax.inject.Inject;
@@ -37,14 +36,10 @@ public class UCamera extends View implements UAnimator {
     private ULightcell lightcells[][];
     private HashSet<UActor> visibilitySources;
 
-    private UModal modal;
-
     public static int PINSTYLE_NONE = 0;
     public static int PINSTYLE_SOFT = 1;
     public static int PINSTYLE_SCREENS = 2;
     public static int PINSTYLE_HARD = 3;
-
-    public boolean rendering;
 
     private class UShadow {
         float start, end;
@@ -137,14 +132,6 @@ public class UCamera extends View implements UAnimator {
         return centerRow;
     }
 
-    public int cellWidth() {
-        return commander.config.getGlyphWidth();
-    }
-
-    public int cellHeight() {
-        return commander.config.getGlyphHeight();
-    }
-
     public void moveTo(UArea theArea, int thex, int they) {
         boolean areachange = false;
         if (area != null && theArea != area) {
@@ -164,8 +151,8 @@ public class UCamera extends View implements UAnimator {
     }
 
     private void setupGrid() {
-        float cellWidth = (float)cellWidth() * zoom;
-        float cellHeight = (float)cellHeight() * zoom;
+        float cellWidth = (float)commander.config.getTileWidth() * zoom;
+        float cellHeight = (float)commander.config.getTileHeight() * zoom;
         columns = (int)(width / cellWidth) + 2;
         rows = (int)(height / cellHeight) + 2;
         System.out.println("cell: " + cellWidth + "," + cellHeight + "  cols: " + columns + " rows: " + rows);
@@ -473,36 +460,32 @@ public class UCamera extends View implements UAnimator {
     @Override
     public void draw(URenderer renderer) {
 
-        //if (modal != null)
-        //    modal.renderImage();
-        rendering = true;
         renderLights();
 
-        int cellw = cellWidth();
-        int cellh = cellHeight();
         int camw = getWidthInCells();
         int camh = getHeightInCells();
 
         // Render Cells.
         for (int col=0; col<camw; col++) {
             for (int row=0; row<camh; row++) {
-                drawCell(renderer, col, row, cellw, cellh);
+                drawCell(renderer, col, row);
             }
         }
         for (int col=0; col<camw; col++) {
             for (int row=0; row<camh; row++) {
-                drawCellActor(renderer, col, row, cellw, cellh);
+                drawCellActor(renderer, col, row);
             }
         }
         for (int col=0; col<camw; col++) {
             for (int row=0; row<camh; row++) {
-                drawCellParticle(renderer, col, row, cellw, cellh);
+                drawCellParticle(renderer, col, row);
             }
         }
-        rendering = false;
     }
 
-    private void drawCell(URenderer renderer, int col, int row, int cellw, int cellh) {
+    private void drawCell(URenderer renderer, int col, int row) {
+        int cellw = commander.config.getTileWidth();
+        int cellh = commander.config.getTileHeight();
         float vis = visibilityAt(col,row);
         UColor light = lightAt(col,row);
         UTerrain t = terrainAt(col,row);
@@ -529,7 +512,7 @@ public class UCamera extends View implements UAnimator {
             terrainFg.set(t.getFgColor().r, t.getFgColor().g, t.getFgColor().b);
             terrainFg.illuminateWith(terrainLight, tOpacity);
             terrainFg.desaturateBy(1f - tSaturation);
-            renderer.drawGlyph(t.glyph(col+ leftEdge,row+ topEdge), col * cellw, row * cellh, terrainFg, t.glyphOffsetX(), t.glyphOffsetY() + 2);
+            renderer.drawTile(t.glyph(col + leftEdge,row + topEdge), col * cellw + t.glyphOffsetX(), row * cellh  + t.glyphOffsetY(), t.getFgColorBuffer());
         } else {
             renderer.drawRect(col * cellw, row * cellh, cellw, cellh, commander.config.getCameraBgColor());
         }
@@ -544,16 +527,16 @@ public class UCamera extends View implements UAnimator {
         }
     }
 
-    private void drawCellActor(URenderer renderer, int col, int row, int cellw, int cellh) {
+    private void drawCellActor(URenderer renderer, int col, int row) {
         UActor actor = actorAt(col, row);
         if (actor == null) return;
         float vis = visibilityAt(col,row);
         if (vis < commander.config.getVisibilityThreshold()) return;
 
         UColor light = lightAt(col,row);
-        actor.render(renderer, col*cellw, row*cellh, light, vis);
+        actor.render(renderer, col*commander.config.getTileWidth(), row*commander.config.getTileHeight(), light, vis);
     }
-    private void drawCellParticle(URenderer renderer, int col, int row, int cellw, int cellh) {
+    private void drawCellParticle(URenderer renderer, int col, int row) {
         UCell cell = cellAt(col,row);
         if (cell != null) {
             UParticle particle = cellAt(col, row).getParticle();
@@ -561,7 +544,7 @@ public class UCamera extends View implements UAnimator {
                 UColor light = lightAt(col,row);
                 float vis = visibilityAt(col,row);
                 if (vis < commander.config.getVisibilityThreshold()) return;
-                particle.render(renderer, col * cellw + particle.glyphOffsetX(), row * cellh + particle.glyphOffsetY(), light, vis);
+                particle.render(renderer, col * commander.config.getTileWidth() + particle.glyphOffsetX(), row * commander.config.getTileHeight() + particle.glyphOffsetY(), light, vis);
             }
         }
     }

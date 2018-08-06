@@ -57,7 +57,9 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     @Inject
     EventBus bus;
 
+    @Inject
     public UConfig config;
+
     public Random random;
     public USpeaker speaker;
 
@@ -102,7 +104,6 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public UCommander() {
         Injector.getAppComponent().inject(this);
         bus.register(this);
-        config = new UConfig();
         random = new Random();
     }
     public void registerComponents(UREGame _game, UPlayer theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
@@ -313,7 +314,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         if (modal != null)
             modal.mouseClick();
         else
-            setAutoWalk(mouseX()/config.getGlyphWidth() + modalCamera.leftEdge, mouseY()/config.getGlyphHeight() + modalCamera.topEdge);
+            setAutoWalk(mouseX()/config.getTileWidth() + modalCamera.leftEdge, mouseY()/config.getTileHeight() + modalCamera.topEdge);
     }
     public void mouseReleased() {
 

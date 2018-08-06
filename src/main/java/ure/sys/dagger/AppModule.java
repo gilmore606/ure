@@ -14,6 +14,7 @@ import ure.sys.UCommander;
 import ure.actors.ActorDeserializer;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
+import ure.sys.UConfig;
 import ure.terrain.TerrainDeserializer;
 import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
@@ -87,5 +88,11 @@ public class AppModule {
     @Singleton
     public EventBus providesEventBus() {
         return new EventBus();
+    }
+
+    @Provides
+    @Singleton
+    public UConfig providesConfig() {
+        return new UConfig();
     }
 }
