@@ -252,7 +252,6 @@ public class URendererOGL implements URenderer {
             drawGlyph(Character.codePointAt(str, i), x, y, color);
             x += Math.ceil(currentFont.glyphWidth[0]);
         }
-        setFont(URenderer.FontType.TILE_FONT);
     }
 
     @Override
@@ -267,6 +266,7 @@ public class URendererOGL implements URenderer {
 
     @Override
     public void drawTile(int glyph, int x, int y, UColor tint) {
+        setFont(URenderer.FontType.TILE_FONT);
         x += context.absoluteX();
         y += context.absoluteY();
         STBTTAlignedQuad quad = currentFont.glyphInfo(glyph);
