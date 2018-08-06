@@ -35,12 +35,12 @@ public class UConfig {
     private int screenHeight = 1000;                            // window height in pixels
     private String tileFont = "/fonts/FreeMonoBold.ttf";    // irrelevant for non-ascii renderer
     private float tileFontSize = 20;
-    private String textFont = "/fonts/Px437_Phoenix_BIOS-2y.ttf";
-    private float textFontSize = 16;
+    private String textFont = "/fonts/UbuntuMono-R.ttf";
+    private float textFontSize = 18;
     private int tileWidth = 19;
     private int tileHeight = 21;
-    private int textWidth = 9;
-    private int textHeight = 17;
+    private int textWidth = 10;
+    private int textHeight = 18;
 
     private String uiCheckGlyph = "*";                          // checkmark for UI selections
     private String uiFrameGlyphs = "+-+|+-+|";                  // corners and sides for UI box frames
