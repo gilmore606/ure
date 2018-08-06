@@ -39,12 +39,14 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
     public void drawContent(URenderer renderer) {
         cursor = mouseToSelection(options.length, 15, cursor);
         drawTitleSplash(renderer);
+        renderer.setFont(URenderer.FontType.TEXT_FONT);
         if (alpha >= 1f) {
             drawString(renderer, "Example Quest : Curse of the Feature Creep", 7, 13);
             for (int i = 0;i < options.length;i++) {
                 drawString(renderer, options[i], 15, 15 + i, (i == cursor) ? null : UColor.COLOR_GRAY, (i == cursor) ? commander.config.getHiliteColor() : null);
             }
         }
+        renderer.setFont(URenderer.FontType.TILE_FONT);
     }
 
     public void drawTitleSplash(URenderer renderer) {

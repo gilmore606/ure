@@ -120,15 +120,17 @@ public class UModal extends View implements UAnimator {
         drawString(renderer,string,x,y,color, null);
     }
     public void drawString(URenderer renderer, String string, int x, int y, UColor color, UColor highlight) {
-        if (highlight != null)
-            renderer.drawRect(x*gw()+xpos-2, y*gh()+ypos-3,
-                    commander.config.getTextWidth()*string.length()+4, commander.config.getTextHeight()+4, highlight);
+        if (highlight != null) {
+            int stringWidth = renderer.stringWidth(string) + 4;
+            renderer.drawRect(x * gw() + xpos - 2, y * gh() + ypos - 3,
+                    stringWidth, commander.config.getTextHeight() + 4, highlight);
+        }
         if (color == null)
             color = commander.config.getTextColor();
         renderer.drawString(x*gw()+xpos,y*gh()+ypos,color,string);
     }
     public void drawGlyph(URenderer renderer, char glyph, int x, int y, UColor color) {
-        renderer.drawGlyph(glyph, x*gw()+xpos,y*gh()+ypos,color,0,0);
+        renderer.drawTile(glyph, x*gw()+xpos,y*gh()+ypos,color);
     }
 
     public void drawFrame(URenderer renderer) {

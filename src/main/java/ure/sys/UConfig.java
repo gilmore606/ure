@@ -33,8 +33,10 @@ public class UConfig {
     private int animFrameMilliseconds = 33;                     // milliseconds between animation frames
     private int screenWidth = 1400;                             // window width in pixels
     private int screenHeight = 1000;                            // window height in pixels
-    private String glyphFont = "Deferral-Square.ttf";               // irrelevant for non-ascii renderer
-    private String textFont = "Px437_Phoenix_BIOS-2y.ttf";
+    private String tileFont = "/fonts/Deferral-Square.ttf";    // irrelevant for non-ascii renderer
+    private float tileFontSize = 16;
+    private String textFont = "/fonts/Px437_Phoenix_BIOS-2y.ttf";
+    private float textFontSize = 16;
     private int tileWidth = 16;
     private int tileHeight = 17;
     private int textWidth = 9;
@@ -210,12 +212,12 @@ public class UConfig {
         this.animFrameMilliseconds = animFrameMilliseconds;
     }
 
-    public String getGlyphFont() {
-        return glyphFont;
+    public String getTileFont() {
+        return tileFont;
     }
 
-    public void setGlyphFont(String glyphFont) {
-        this.glyphFont = glyphFont;
+    public void setTileFont(String tileFont) {
+        this.tileFont = tileFont;
     }
 
     public String getTextFont() {
@@ -224,6 +226,22 @@ public class UConfig {
 
     public void setTextFont(String textFont) {
         this.textFont = textFont;
+    }
+
+    public float getTileFontSize() {
+        return tileFontSize;
+    }
+
+    public void setTileFontSize(float tileFontSize) {
+        this.tileFontSize = tileFontSize;
+    }
+
+    public float getTextFontSize() {
+        return textFontSize;
+    }
+
+    public void setTextFontSize(float textFontSize) {
+        this.textFontSize = textFontSize;
     }
 
     public int getTileWidth() {

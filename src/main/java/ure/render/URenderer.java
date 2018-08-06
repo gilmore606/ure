@@ -12,6 +12,12 @@ public interface URenderer {
         void keyPressed(GLKey key);
     }
 
+    enum FontType {
+        TILE_FONT,
+        TEXT_FONT
+    }
+
+
     /**
      * Get the top level view for attaching overlays.
      *
@@ -97,6 +103,7 @@ public interface URenderer {
     void drawTileOutline(int glyph, int destx, int desty, UColor tint);
     void drawRect(int x, int y, int w, int h, UColor col);
     void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor);
+    void setFont(FontType font);
     int getMousePosX();
     int getMousePosY();
     boolean getMouseButton();

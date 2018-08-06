@@ -60,13 +60,18 @@ public class ULensPanel extends UPanel {
                 UThing thing = cell.topThingAt();
                 if (thing != null) {
                     thing.getIcon().draw(renderer, xpos + padX, ypos + padY + commander.config.getTileHeight());
+
+                    renderer.setFont(URenderer.FontType.TEXT_FONT);
                     renderer.drawString(xpos + padX + commander.config.getTileWidth() * 2, ypos + padY + commander.config.getTileHeight(), commander.config.getTextColor(), thing.getIname());
+                    renderer.setFont(URenderer.FontType.TILE_FONT);
 
                 }
                 UActor actor = cell.actorAt();
                 if (actor != null) {
                     actor.icon().draw(renderer, xpos + padX, ypos + padY + commander.config.getTileHeight() * 2);
+                    renderer.setFont(URenderer.FontType.TEXT_FONT);
                     renderer.drawString(xpos + padX + commander.config.getTileWidth() * 2, ypos + padY + commander.config.getTileHeight() * 2, commander.config.getTextColor(), actor.getIname());
+                    renderer.setFont(URenderer.FontType.TILE_FONT);
                 }
             }
         }

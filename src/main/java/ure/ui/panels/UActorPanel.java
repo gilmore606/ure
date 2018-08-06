@@ -65,8 +65,10 @@ public class UActorPanel extends UPanel {
             System.out.println("*** BUG: actor " + actor.getName() + " had null getIcon() at actorpanel");  // this only seems to happen on game reload at first frame when camera is moved into area
         else
             actor.getIcon().draw(renderer, padX, padY + (pos * entryHeight));
+        renderer.setFont(URenderer.FontType.TEXT_FONT);
         renderer.drawString(padX + commander.config.getTileWidth() * 2, padY + (pos * entryHeight), fgColor, actor.getName());
         renderer.drawString(padX + commander.config.getTileWidth() * 2, padY + (pos * entryHeight) + commander.config.getTextHeight(), actor.UIstatusColor(), actor.UIstatus());
+        renderer.setFont(URenderer.FontType.TILE_FONT);
     }
 
     @Subscribe

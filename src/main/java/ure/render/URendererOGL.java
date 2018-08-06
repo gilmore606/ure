@@ -9,6 +9,7 @@ import ure.math.UColor;
 import ure.sys.GLKey;
 import ure.sys.Injector;
 import ure.sys.UCommander;
+import ure.sys.UConfig;
 import ure.ui.View;
 
 import javax.inject.Inject;
@@ -23,6 +24,9 @@ public class URendererOGL implements URenderer {
 
     @Inject
     UCommander commander;
+
+    @Inject
+    UConfig config;
 
     private View rootView;
     private View context;
@@ -46,7 +50,9 @@ public class URendererOGL implements URenderer {
     private float[] verts_col = new float[3 * maxTris * 4];
     private float[] verts_uv  = new float[3 * maxTris * 3];
 
-    private FontTexture fontTexture;
+    private FontTexture tileFont;
+    private FontTexture textFont;
+    private FontTexture currentFont;
 
     private KeyListener keyListener;
 
@@ -121,8 +127,8 @@ public class URendererOGL implements URenderer {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-        screenWidth = commander.config.getScreenWidth();
-        screenHeight = commander.config.getScreenHeight();
+        screenWidth = config.getScreenWidth();
+        screenHeight =config.getScreenHeight();
 
         window = glfwCreateWindow(screenWidth, screenHeight, "UREasonable example!", NULL, NULL);
         if ( window == NULL )
@@ -192,7 +198,7 @@ public class URendererOGL implements URenderer {
 
         //Lets quickly blank the screen.
         glViewport(0, 0, screenWidth, screenHeight);
-        UColor windowBgColor = commander.config.getWindowBgColor();
+        UColor windowBgColor = config.getWindowBgColor();
         glClearColor(windowBgColor.fR(), windowBgColor.fG(), windowBgColor.fB(), 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_TEXTURE_2D);
@@ -206,18 +212,23 @@ public class URendererOGL implements URenderer {
         //Flush a blank image to the screen quickly.
         glfwSwapBuffers(window);
 
-        fontTexture = new FontTexture();
-        fontTexture.loadFromTTF("/fonts/Deferral-Square.ttf", 16);
+        tileFont = new FontTexture();
+        tileFont.loadFromTTF(config.getTileFont(), config.getTileFontSize());
+        textFont = new FontTexture();
+        textFont.loadFromTTF(config.getTextFont(), config.getTextFontSize());
+        setFont(FontType.TEXT_FONT);
     }
 
     @Override
     public void render() {
+        beginRendering();
         if (rootView != null) {
             render(rootView);
         }
+        renderBuffer(); // Make sure we draw anything left in the buffer
         // Uncomment to draw the font texture over the screen for debugging purposes
-        // addQuad(10, 10, fontTexture.bitmapWidth, fontTexture.bitmapHeight, UColor.COLOR_WHITE, 0, 0, 1, 1);
-        paintScreen();
+        // addQuad(10, 10, tileFont.bitmapWidth, tileFont.bitmapHeight, UColor.COLOR_WHITE, 0, 0, 1, 1);
+        endRendering();
     }
 
     public void render(View view) {
@@ -230,7 +241,7 @@ public class URendererOGL implements URenderer {
 
     @Override
     public int stringWidth(String string) {
-        return fontTexture.stringWidth(string);
+        return currentFont.stringWidth(string);
     }
 
     @Override
@@ -238,7 +249,7 @@ public class URendererOGL implements URenderer {
         if (str == null) return;
         for (int i = 0; i < str.length(); i++) {
             drawGlyph(Character.codePointAt(str, i), x, y, color);
-            x += Math.ceil(fontTexture.glyphWidth[0]);
+            x += Math.ceil(currentFont.glyphWidth[0]);
         }
     }
 
@@ -246,9 +257,9 @@ public class URendererOGL implements URenderer {
     public void drawGlyph(int glyph, int x, int y, UColor tint) {
         x += context.absoluteX();
         y += context.absoluteY();
-        STBTTAlignedQuad quad = fontTexture.glyphInfo(glyph);
+        STBTTAlignedQuad quad = currentFont.glyphInfo(glyph);
         // Adjust the y value so that we move the character down enough to align its baseline
-        y += fontTexture.ascent + quad.y0();
+        y += currentFont.ascent + quad.y0();
         addQuad(x, y, quad, tint);
     }
 
@@ -256,16 +267,16 @@ public class URendererOGL implements URenderer {
     public void drawTile(int glyph, int x, int y, UColor tint) {
         x += context.absoluteX();
         y += context.absoluteY();
-        STBTTAlignedQuad quad = fontTexture.glyphInfo(glyph);
+        STBTTAlignedQuad quad = currentFont.glyphInfo(glyph);
         // Center the glyph in the given bounding box.  The call to addQuad will take
         // the baseline into account, so we only need to worry about where to place the
         // origin.
         float charWidth = quad.x1() - quad.x0();
         float charHeight = quad.y1() - quad.y0();
-        x += (commander.config.getTileWidth() / 2) - (charWidth / 2);
-        y += (commander.config.getTileHeight() / 2) - (charHeight / 2) - ((fontTexture.ascent + quad.y0()) / 2); // subtract half the ascent to compensate for centering
+        x += (config.getTileWidth() / 2) - (charWidth / 2);
+        y += (config.getTileHeight() / 2) - (charHeight / 2) - ((currentFont.ascent + quad.y0()) / 2); // subtract half the ascent to compensate for centering
         // Adjust the y value so that we move the character down enough to align its baseline
-        y += fontTexture.ascent + quad.y0();
+        y += currentFont.ascent + quad.y0();
         addQuad(x, y, quad, tint);
     }
 
@@ -292,14 +303,19 @@ public class URendererOGL implements URenderer {
         addQuad(x + borderThickness, y + borderThickness, w - borderThickness * 2, h - borderThickness * 2, bgColor);
     }
 
+    @Override
+    public void setFont(FontType font) {
+        renderBuffer();
+        glBindTexture(GL_TEXTURE_2D, font == FontType.TEXT_FONT ? textFont.texId : tileFont.texId);
+        currentFont = font == FontType.TEXT_FONT ? textFont : tileFont;
+    }
+
     // internals
 
-    public void paintScreen() {
+    private void beginRendering() {
 
         glViewport(0, 0, screenWidth, screenHeight);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        if (tris == 0) return; //Nothing to draw
 
         glLoadIdentity();
 
@@ -308,8 +324,10 @@ public class URendererOGL implements URenderer {
 
         glMatrixMode(GL_MODELVIEW);
         glLoadMatrixf(dummyMatrix.get(fb));
+    }
 
-        glBindTexture(GL_TEXTURE_2D, fontTexture.texId);
+    private void renderBuffer() {
+        if (tris == 0) return;
 
         FloatBuffer v = BufferUtils.createFloatBuffer(tris * 3 * 3);
         FloatBuffer c = BufferUtils.createFloatBuffer(tris * 3 * 4);
@@ -333,11 +351,12 @@ public class URendererOGL implements URenderer {
 
 
         GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, tris * 3);
-        glFinish();
-
-        glfwSwapBuffers(window);
-
         tris = 0;
+    }
+
+    private void endRendering() {
+        glFinish();
+        glfwSwapBuffers(window);
 
         frameCount++;
         long now = System.currentTimeMillis();
@@ -362,7 +381,7 @@ public class URendererOGL implements URenderer {
 
 
     private void addQuad(int x, int y, int w, int h, UColor color) {
-        FontTexture.SolidColorData d = fontTexture.solidColorData;
+        FontTexture.SolidColorData d = currentFont.solidColorData;
         addQuad(x, y, w, h, color, d.u, d.v, d.uw, d.vh);
     }
 
@@ -412,7 +431,7 @@ public class URendererOGL implements URenderer {
 
         //cols;
         int i;
-        for(i = 0; i < 3 * 2; i++){
+        for (i = 0; i < 3 * 2; i++) {
             verts_col[ic++] = color.r;
             verts_col[ic++] = color.g;
             verts_col[ic++] = color.b;
