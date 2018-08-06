@@ -216,7 +216,7 @@ public class URendererOGL implements URenderer {
         tileFont.loadFromTTF(config.getTileFont(), config.getTileFontSize());
         textFont = new FontTexture();
         textFont.loadFromTTF(config.getTextFont(), config.getTextFontSize());
-        setFont(FontType.TEXT_FONT);
+        setFont(FontType.TILE_FONT);
     }
 
     @Override
