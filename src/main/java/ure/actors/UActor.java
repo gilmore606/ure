@@ -16,7 +16,9 @@ import ure.things.UContainer;
 import ure.ui.UCamera;
 import ure.ui.particles.ParticleHit;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * UActor represents a UThing which can perform actions.  This includes the player and NPCs.
@@ -37,7 +39,7 @@ public class UActor extends UThing implements Interactable {
     protected Body body;
 
     @JsonIgnore
-    protected UCamera camera; // TODO: Reconnect after deserialization
+    protected UCamera camera;
 
     protected int cameraPinStyle;
 
@@ -185,7 +187,7 @@ public class UActor extends UThing implements Interactable {
 
     public void debug() {
         Lightsource torch = (Lightsource)(commander.thingCzar.getThingByName("torch"));
-        torch.setLightcolor(new int[]{commander.random.nextInt(255),commander.random.nextInt(255),commander.random.nextInt(255)});
+        torch.setLightcolor(new int[]{random.nextInt(255),random.nextInt(255),random.nextInt(255)});
         torch.moveToCell(area(), areaX(), areaY());
         torch.turnOn();
         commander.printScroll("You drop a torch.");
@@ -195,7 +197,7 @@ public class UActor extends UThing implements Interactable {
         if (actor instanceof UPlayer) {
             aggressionFrom(actor);
             commander.printScroll(null, "You attack " + getDname() + "!", UColor.COLOR_LIGHTRED);
-            area().addParticle(new ParticleHit(areaX(), areaY(), bloodColor(), 0.5f+commander.random.nextFloat()*0.5f));
+            area().addParticle(new ParticleHit(areaX(), areaY(), bloodColor(), 0.5f+random.nextFloat()*0.5f));
         }
     }
 

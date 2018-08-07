@@ -4,7 +4,6 @@ import ure.actors.UActor;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.ui.particles.ParticleSplash;
-import ure.ui.particles.UParticle;
 
 /**
  * Water has a pretty animation.  It should probably do something more interesting.
@@ -42,7 +41,7 @@ public class Water extends UTerrain {
     @Override
     public void animationTick() {
         super.animationTick();
-        if (animationFrame % (shimmerFrames + commander.random.nextInt(shimmerVariance)) == 0) {
+        if (animationFrame % (shimmerFrames + random.nextInt(shimmerVariance)) == 0) {
             applyColorVariance();
         }
     }
@@ -51,9 +50,9 @@ public class Water extends UTerrain {
     public void walkedOnBy(UActor actor, UCell cell) {
         super.walkedOnBy(actor,cell);
         cell.area().addParticle(new ParticleSplash(actor.areaX(), actor.areaY(), UColor.COLOR_WHITE, 75, 0.9f));
-        if (commander.random.nextFloat() < 0.5f) {
-            cell.area().addParticle(new ParticleSplash(actor.areaX() - 1 + commander.random.nextInt(3),
-                    actor.areaY() - 1 + commander.random.nextInt(3),
+        if (random.nextFloat() < 0.5f) {
+            cell.area().addParticle(new ParticleSplash(actor.areaX() - 1 + random.nextInt(3),
+                    actor.areaY() - 1 + random.nextInt(3),
                     UColor.COLOR_CYAN, 60, 0.6f));
         }
     }

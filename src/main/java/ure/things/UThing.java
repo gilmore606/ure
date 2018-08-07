@@ -34,9 +34,14 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     @Inject
     @JsonIgnore
     public UCommander commander;
+
     @Inject
     @JsonIgnore
     public UActorCzar actorCzar;
+
+    @Inject
+    @JsonIgnore
+    protected Random random;
 
     protected String name;
     protected long ID;
@@ -126,7 +131,6 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     }
 
     public void SetupColors() {
-        Random random = new Random();
         int[] thecolor = new int[]{color[0], color[1], color[2]};
         for (int i=0;i<3;i++) {
             if (colorvariance[i] > 0)

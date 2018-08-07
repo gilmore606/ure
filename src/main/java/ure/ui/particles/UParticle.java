@@ -9,17 +9,19 @@ import ure.areas.UArea;
 import ure.sys.UCommander;
 
 import javax.inject.Inject;
+import java.util.Random;
 
 public class UParticle implements UAnimator {
-
-    @Inject
-    UCommander commander;
 
      int ticksLeft;
      int ticksInitial;
 
     @JsonIgnore
     UArea area;
+
+    @Inject
+    @JsonIgnore
+    protected Random random;
 
     public int x, y;
     char glyph;

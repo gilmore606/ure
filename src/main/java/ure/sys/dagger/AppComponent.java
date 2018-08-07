@@ -12,6 +12,7 @@ import ure.examplegame.ExampleGame;
 import ure.terrain.Stairs;
 import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
+import ure.things.SpawnItem;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.Icon;
@@ -69,4 +70,5 @@ public interface AppComponent {
     void inject(Icon icon);
     void inject(RexFile rexfile);
     void inject(Shape shape);
+    void inject(SpawnItem item);
 }
