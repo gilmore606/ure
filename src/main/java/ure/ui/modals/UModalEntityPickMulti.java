@@ -35,11 +35,11 @@ public class UModalEntityPickMulti extends UModal {
         for (int i=0;i<entities.size();i++) {
             selectedEntities.add(false);
             String n = entities.get(i).getName();
-            if (n.length() > listWidth)
-                listWidth = n.length();
+            int len = textWidth(n);
+            if (len > listWidth) listWidth = len;
         }
 
-        height = Math.max(entities.size() + 2, (showDetail ? 7 : 2));
+        height = Math.max(entities.size() + prompt.length + 1, (showDetail ? 7 : 2));
         if (prompt != null) {
             height += prompt.length;
             for (String line : prompt) {
@@ -47,7 +47,8 @@ public class UModalEntityPickMulti extends UModal {
                     listWidth = line.length()/2;
             }
         }
-        width = listWidth + 3 + (showDetail ? 9 : 0);
+        width = listWidth + 1 + (showDetail ? 10 : 0);
+        width = Math.max(width, longestLine(prompt));
         setDimensions(width + xpad, height + ypad);
         if (bgColor == null)
             bgColor = commander.config.getModalBgColor();
@@ -58,28 +59,22 @@ public class UModalEntityPickMulti extends UModal {
     @Override
     public void drawContent() {
         selection = mouseToSelection(entities.size(), prompt.length+1, selection);
-        drawStrings(prompt, 0, 0);
+        drawStrings(prompt, xpad, ypad);
         int y = 0;
         for (Entity entity: entities) {
             int liney = y+prompt.length+1;
-            drawIcon(entity.getIcon(), 1, liney);
+            drawIcon(entity.getIcon(), xpad+1, liney+ypad);
             String n = entity.getName();
             UColor textColor = UColor.COLOR_GRAY;
             if (selectedEntities.get(y)) {
                 textColor = null;
-                drawTile(commander.config.getUiCheckGlyph().charAt(0), 2, liney, hiliteColor);
+                drawTile(commander.config.getUiCheckGlyph().charAt(0), xpad+2, liney+ypad, hiliteColor);
             }
-            drawString(n, 3, liney, textColor, (y == selection) ? hiliteColor : null);
+            drawString(n, xpad+3, liney+ypad, textColor, (y == selection) ? hiliteColor : null);
             y++;
         }
         if (showDetail) {
-            drawString(entities.get(selection).getName(), 4+listWidth, 2);
-            ArrayList<String> details = entities.get(selection).UIdetails(callbackContext);
-            int linepos = 4;
-            for (String line : details) {
-                drawString(line, 4+listWidth, linepos);
-                linepos++;
-            }
+            showDetail(entities.get(selection), listWidth+1+xpad, prompt.length+ypad+1);
         }
     }
 

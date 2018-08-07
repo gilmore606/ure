@@ -11,6 +11,12 @@ public class Bodypart {
         this.slots = slots;
         this.size = size;
     }
+    public String equipUIstring() {
+        if (name.equals("equip"))
+            return "equip:";
+        else
+            return "on " + name + ":";
+    }
     public String getName() { return name; }
     public void setName(String s) { name = s; }
     public int getSlots() { return slots; }

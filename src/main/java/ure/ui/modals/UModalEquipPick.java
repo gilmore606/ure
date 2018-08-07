@@ -27,12 +27,18 @@ public class UModalEquipPick extends UModal {
         equipped = _equipped;
         showDetail = _showDetail;
         escapable = _escapable;
-        textWidth = 12;
-        width = textWidth;
-        int height = Math.max(5, things.size() + 2);
+        textWidth = 0;
+        for (UThing thing : things) {
+            if (thing != null) {
+                int len = thing.name().length();
+                if (len > textWidth) textWidth = len;
+            }
+        }
+        width = textWidth + 2;
+        int height = Math.max(3, things.size());
         if (showDetail) {
-            width += 9;
-            height += 5;
+            width += 10;
+            height = Math.max(height, 12);
         }
         setDimensions(width + 2 + xpad, height);
         if (bgColor == null)

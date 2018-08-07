@@ -33,7 +33,24 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
         slotsThings = new ArrayList<>();
         possible = new ArrayList<>();
         fillSlots(actor);
-        width = 26;
+        int longestpart = 0;
+        for (int i=0;i<slotsBodyparts.size();i++) {
+            Bodypart part = slotsBodyparts.get(i);
+            if (part != null) {
+                int len = textWidth(part.equipUIstring());
+                if (len > longestpart) longestpart = len;
+            }
+        }
+        int longestthing = 0;
+        for (int i=0;i<slotsThings.size();i++) {
+            UThing thing = slotsThings.get(i);
+            if (thing != null) {
+                int len = textWidth(thing.name());
+                if (len > longestthing) longestthing = len;
+            }
+        }
+        width = longestpart + 1 + longestthing + 1 + Math.max(longestthing, 12);
+        height = Math.max(slotsThings.size(), 7);
         setDimensions(width+xpad*2,height+ypad*2);
     }
 
@@ -68,10 +85,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
         for (int i=0;i<slotsThings.size();i++) {
             Bodypart part = slotsBodyparts.get(i);
             if (part != lastpart) {
-                String slotname = "on " + part.name + ":";
-                if (part.name.equals("equip"))
-                    slotname = "equipped:";
-                drawString(slotname, 0+xpad, i+ypad, null, null);
+                drawString(part.equipUIstring(), 0+xpad, i+ypad, null, null);
             }
             lastpart = part;
             UThing thing = slotsThings.get(i);

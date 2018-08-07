@@ -49,18 +49,27 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
             Categorize();
         int width = 0;
         for (Entity entity : entities) {
-            if (entity.name().length() > width)
-                width = entity.name().length();
+            int len = textWidth(entity.name());
+            if (len > width) width = len;
         }
         textWidth = width;
         if (showDetail || categorize)
-            width += 12;
+            width += Math.max(12, width+1);
         int height = 0;
+        if (showDetail)
+            height += 8;
         if (categorize)
-            height = Math.max(biggestCategoryLength, categories.size()) + 9 + ypad;
-        else
-            height = Math.max(6, entities.size() + 2 + ypad);
-        setDimensions(width + 2 + xpad, height);
+            height += categories.size();
+        int listsize = entities.size();
+        if (categorize) {
+            listsize = 0;
+            for (ArrayList<Entity> cat : categoryLists) {
+                int len = cat.size();
+                if (len > listsize) listsize = len;
+            }
+        }
+        height = Math.max(height, listsize+1);
+        setDimensions(width + 1 + xpad*2, height + 1 + ypad*2);
         if (bgColor == null)
             bgColor = commander.config.getModalBgColor();
         setBgColor(bgColor);
@@ -146,30 +155,30 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
 
     @Override
     public void drawContent() {
-        selection = mouseToSelection(shownEntities().size(), 2, selection, 0, 12);
+        selection = mouseToSelection(shownEntities().size(), 2+ypad, selection, 0, 12);
         int oldCategory = selectionCategory;
         if (categorize) {
             selectionCategory = mouseToSelection(categoryLists.size(), 9, selectionCategory, 3 + textWidth, 100);
             if (selectionCategory != oldCategory) selection = 0;
         }
         if (header != null)
-            drawString(header, 0, 0);
+            drawString(header, xpad, ypad);
         int y = 0;
         for (Entity entity : shownEntities()) {
-            drawIcon(entity.getIcon(), 1, y + 2);
+            drawIcon(entity.getIcon(), 1+xpad, y + 2+ypad);
             String n = entity.name();
             if (categorize)
                 n = (categoryItemNames.get(selectionCategory)).get(y);
-            drawString(n, 3, y + 2, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
+            drawString(n, 3+xpad, y + 2+ypad, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
-        if (showDetail) showDetail(shownEntities().get(selection),4+textWidth,2);
+        if (showDetail) showDetail(shownEntities().get(selection),4+textWidth+xpad,2+ypad);
         if (categorize && !dismissed) {
             int caty = 7;
             if (!showDetail) caty = 1;
             int i =0;
             for (String cat : categories) {
-                drawString(cat, 4+textWidth, 2+caty+i, (i == selectionCategory) ? null : UColor.COLOR_GRAY,
+                drawString(cat, 4+textWidth+xpad, 2+caty+i+ypad, (i == selectionCategory) ? null : UColor.COLOR_GRAY,
                         (i == selectionCategory) ? tempHiliteColor : null);
                 i++;
             }

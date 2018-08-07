@@ -20,11 +20,11 @@ public class UModalQuantity extends UModal {
         min = _min;
         max = _max;
         count = min;
-        int width = Math.max(longestLine(prompt)/2+1, 10);
+        barwidth = 15;
+        int width = Math.max(longestLine(prompt)+1, barwidth);
         int height = prompt.length + 5;
         setDimensions(width,height);
         numberX = width/2-1;
-        barwidth = width-2;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class UModalQuantity extends UModal {
             count = Math.min(max,count);
         }
         drawStrings(prompt, 0, 0);
-        drawString(Integer.toString(count), numberX, 3);
+        drawString(Integer.toString(count), numberX, 3, commander.config.getTextColor(), commander.config.getHiliteColor());
         for (int i=0;i<barwidth;i++) {
             char glyph = '-';
             int countslice = (max-min)/barwidth;

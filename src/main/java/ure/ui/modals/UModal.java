@@ -244,13 +244,23 @@ public class UModal extends View implements UAnimator {
         return lines;
     }
 
+    /**
+     * Return the length in glyph cells of the longest line of text.
+     */
     public int longestLine(String[] lines) {
         int longest = 0;
         for (String line : lines) {
-            if (line.length() > longest)
-                longest = line.length();
+            int len = renderer.textWidth(line);
+            if (len > longest) longest = len;
         }
-        return longest;
+        return longest / gw() + 1;
+    }
+
+    /**
+     * Return the length in glyph cells of this line of text.
+     */
+    public int textWidth(String line) {
+        return renderer.textWidth(line) / gw() + 1;
     }
 
     public void drawStrings(String[] lines, int x, int y) {

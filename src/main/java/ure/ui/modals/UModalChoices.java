@@ -36,7 +36,7 @@ public class UModalChoices extends UModal {
             height += prompt.length;
         int cwidth = 0;
         for (String choice : choices) {
-            cwidth = (choice.length() + 1);
+            cwidth = (textWidth(choice) + 1);
         }
         if (cwidth > width)
             width = cwidth;
@@ -55,7 +55,7 @@ public class UModalChoices extends UModal {
         for (String choice : choices) {
             int oldxtab = xtab;
             drawString(choice, xtab, cellh-1, (selection == drawSelection) ? null : UColor.COLOR_GRAY, (selection == drawSelection) ? tempHiliteColor : null);
-            xtab += choice.length() + 1;
+            xtab += textWidth(choice) + 1;
             drawSelection++;
             if (mousex < xtab && mousex >= oldxtab && mousey > 0 && mousey <= cellh)
                 selection = drawSelection-1;
