@@ -185,6 +185,7 @@ public class UActor extends UThing implements Interactable {
 
     public void debug() {
         Lightsource torch = (Lightsource)(commander.thingCzar.getThingByName("torch"));
+        torch.setLightcolor(new int[]{commander.random.nextInt(255),commander.random.nextInt(255),commander.random.nextInt(255)});
         torch.moveToCell(area(), areaX(), areaY());
         torch.turnOn();
         commander.printScroll("You drop a torch.");

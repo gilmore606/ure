@@ -158,7 +158,7 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
         selection = mouseToSelection(shownEntities().size(), 2+ypad, selection, 0, 12);
         int oldCategory = selectionCategory;
         if (categorize) {
-            selectionCategory = mouseToSelection(categoryLists.size(), 9, selectionCategory, 3 + textWidth, 100);
+            selectionCategory = mouseToSelection(categoryLists.size(), 9+ypad, selectionCategory, 3 + textWidth, 100);
             if (selectionCategory != oldCategory) selection = 0;
         }
         if (header != null)

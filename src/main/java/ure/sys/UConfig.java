@@ -43,8 +43,8 @@ public class UConfig {
     private int textHeight = 18;
 
     private String uiCheckGlyph = "*";                          // checkmark for UI selections
-    private String uiFrameGlyphs = "+-+|+-+|";                  // corners and sides for UI box frames
-    private int modalFrameLine = 2;                             // thickness of pixel line around modals
+    private String uiFrameGlyphs;                  // corners and sides for UI box frames
+    private int modalFrameLine = 3;                             // thickness of pixel line around modals
     private int modalShadowStyle = UConfig.SHADOW_BLOCK;        // drop shadow style for modal popups
     private int modalPosition = UConfig.POS_CAMERA_CENTER;      // position of modal popups
     private boolean wrapSelect = true;                          // wrap around when scrolling through selections
@@ -55,7 +55,7 @@ public class UConfig {
     private UColor modalBgColor = new UColor(0.1f,0.1f,0f);                         // bgColor of modal popups
     private UColor modalFrameColor = new UColor(0.7f,0.7f,0.1f);     // glyph color for modal popup frame glyphs
     private UColor modalShadowColor = new UColor(0f,0f,0f,0.5f);  // color (and alpha) of modal shadows
-    private UColor textColor = UColor.COLOR_WHITE;                             // color for ui/scroll text
+    private UColor textColor = UColor.COLOR_OFFWHITE;                             // color for ui/scroll text
     private UColor hiliteColor = new UColor(1f,1f,0.2f, 0.3f);            // color for ui selection highlighting
 
     private boolean outlineActors = true;                           // draw a black outline around Actor glyphs?

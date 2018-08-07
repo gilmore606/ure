@@ -101,7 +101,6 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
         commander.setStatusPanel(statusPanel);
         commander.setScrollPanel(scrollPanel);
         commander.registerModalCamera(camera);
-        commander.config.setUiFrameGlyphs(null);
     }
 
     public void startUp()  {

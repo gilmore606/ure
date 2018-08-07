@@ -581,17 +581,23 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     void attachModal(UModal newmodal) {
         if (modal != null) {
             modalStack.push(modal);
-            modal = null;
+            modal.addChild(newmodal);
+            modal = newmodal;
+        } else {
+            renderer.getRootView().addChild(newmodal);
+            modal = newmodal;
         }
-        modal = newmodal;
-        renderer.getRootView().addChild(modal);
     }
 
     public void detachModal() {
-        renderer.getRootView().removeChild(modal);
-        modal = null;
-        if (!modalStack.isEmpty())
-            modal = modalStack.pop();
+        if (!modalStack.isEmpty()) {
+            UModal oldmodal = modalStack.pop();
+            oldmodal.removeChild(modal);
+            modal = oldmodal;
+        } else {
+            renderer.getRootView().removeChild(modal);
+            modal = null;
+        }
     }
 
     public void detachModal(UModal modal) {
