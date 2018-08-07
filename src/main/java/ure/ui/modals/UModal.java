@@ -89,6 +89,10 @@ public class UModal extends View implements UAnimator {
         xpos = (screenw - (cellw * gw())) / 2;
         ypos = (screenh - (cellh * gh())) / 2;
     }
+    public void setChildPosition(int x, int y, UModal parent) {
+        xpos = x*gw() + parent.xpos;
+        ypos = y*gh() + parent.ypos;
+    }
 
     @Override
     public void draw() {

@@ -135,6 +135,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
         updatePossible();
         if (possible.size() > 0) {
             UModalEquipPick emodal = new UModalEquipPick(null, 1, 1, possible, slotsThings.get(selection), true, true, this, "equip");
+            emodal.setChildPosition(6,selection,this);
             commander.showModal(emodal);
         }
     }
