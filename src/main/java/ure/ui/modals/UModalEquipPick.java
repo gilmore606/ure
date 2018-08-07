@@ -2,7 +2,6 @@ package ure.ui.modals;
 
 import ure.commands.UCommand;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.GLKey;
 import ure.things.UThing;
 
@@ -53,7 +52,7 @@ public class UModalEquipPick extends UModal {
     }
 
     @Override
-    public void drawContent(URenderer renderer) {
+    public void drawContent() {
         selection = mouseToSelection(things.size(), ypad, selection);
         int y = 0;
         for (UThing thing : things) {
@@ -61,18 +60,18 @@ public class UModalEquipPick extends UModal {
             if (thing == null) {
                 n = "<nothing>";
             } else {
-                drawIcon(renderer, thing.getIcon(), 1, y + ypad);
+                drawIcon(thing.getIcon(), 1, y + ypad);
                 n = thing.getName();
             }
             if (thing == equipped)
-                drawGlyph(renderer, commander.config.getUiCheckGlyph().charAt(0), 2, y+ypad, commander.config.getHiliteColor());
-            drawString(renderer, n, 3, y+ypad, (y == selection || thing == equipped )? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
+                drawTile(commander.config.getUiCheckGlyph().charAt(0), 2, y+ypad, commander.config.getHiliteColor());
+            drawString(n, 3, y+ypad, (y == selection || thing == equipped )? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
         if (showDetail) {
-            showDetail(renderer, equipped, xpad+textWidth, ypad);
+            showDetail(equipped, xpad+textWidth, ypad);
             if (things.get(selection) != equipped)
-                showDetail(renderer, things.get(selection), xpad+textWidth, ypad+5);
+                showDetail(things.get(selection), xpad+textWidth, ypad+5);
         }
     }
 

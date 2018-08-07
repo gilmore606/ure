@@ -41,7 +41,7 @@ public class ULensPanel extends UPanel {
     }
 
     @Override
-    public void draw(URenderer renderer) {
+    public void draw() {
         if (!hidden) {
             renderer.drawRectBorder(1, 1, width - 2, height - 2, 1, bgColor, borderColor);
             int mousex = commander.mouseX();
@@ -53,25 +53,20 @@ public class ULensPanel extends UPanel {
             UTerrain t = camera.terrainAt(x, y);
             if (t != null) {
                 renderer.drawString(xpos + padX + commander.config.getTileWidth() * 2, ypos + padY, commander.config.getTextColor(), t.getName());
-                t.getIcon().draw(renderer, xpos + padX, ypos + padY);
+                t.getIcon().draw(xpos + padX, ypos + padY);
             }
             UCell cell = camera.area.cellAt(x + camera.leftEdge, y + camera.topEdge);
             if (cell != null) {
                 UThing thing = cell.topThingAt();
                 if (thing != null) {
-                    thing.getIcon().draw(renderer, xpos + padX, ypos + padY + commander.config.getTileHeight());
-
-                    renderer.setFont(URenderer.FontType.TEXT_FONT);
+                    thing.getIcon().draw( xpos + padX, ypos + padY + commander.config.getTileHeight());
                     renderer.drawString(xpos + padX + commander.config.getTileWidth() * 2, ypos + padY + commander.config.getTileHeight(), commander.config.getTextColor(), thing.getIname());
-                    renderer.setFont(URenderer.FontType.TILE_FONT);
 
                 }
                 UActor actor = cell.actorAt();
                 if (actor != null) {
-                    actor.icon().draw(renderer, xpos + padX, ypos + padY + commander.config.getTileHeight() * 2);
-                    renderer.setFont(URenderer.FontType.TEXT_FONT);
+                    actor.icon().draw(xpos + padX, ypos + padY + commander.config.getTileHeight() * 2);
                     renderer.drawString(xpos + padX + commander.config.getTileWidth() * 2, ypos + padY + commander.config.getTileHeight() * 2, commander.config.getTextColor(), actor.getIname());
-                    renderer.setFont(URenderer.FontType.TILE_FONT);
                 }
             }
         }

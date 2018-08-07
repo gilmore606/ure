@@ -28,7 +28,7 @@ public class UModalURESplash extends UModal {
     }
 
     @Override
-    public void draw(URenderer renderer) {
+    public void draw() {
         logo.draw(renderer, alpha);
     }
 

@@ -10,6 +10,8 @@ import ure.areas.UCartographer;
 import ure.areas.ULandscaper;
 import ure.actors.behaviors.BehaviorDeserializer;
 import ure.actors.behaviors.UBehavior;
+import ure.render.URenderer;
+import ure.render.URendererOGL;
 import ure.sys.UCommander;
 import ure.actors.ActorDeserializer;
 import ure.actors.UActor;
@@ -55,9 +57,17 @@ public class AppModule {
 
     @Provides
     @Singleton
+    public URenderer providesRenderer() {
+        URenderer rend = new URendererOGL();
+        rend.initialize();
+        return rend;
+    }
+
+    @Provides
+    @Singleton
     public UActorCzar providesActorCzar() {
         UActorCzar czar = new UActorCzar();
-        //czar.loadActors("/actors.json");
+        //czar.loadActors("/actors.json"); -- can't do this here because it relies on some other things being loaded
         return czar;
     }
 

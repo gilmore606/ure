@@ -233,7 +233,7 @@ public class URendererOGL implements URenderer {
 
     public void render(View view) {
         context = view;
-        view.draw(this);
+        view.draw();
         for (View child : view.children()) {
             render(child);
         }
@@ -243,6 +243,8 @@ public class URendererOGL implements URenderer {
     public int stringWidth(String string) {
         return currentFont.stringWidth(string);
     }
+
+    public int textWidth(String string) { return textFont.stringWidth(string); }
 
     @Override
     public void drawString(int x, int y, UColor color, String str) {

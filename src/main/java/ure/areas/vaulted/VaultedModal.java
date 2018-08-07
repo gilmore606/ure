@@ -63,29 +63,29 @@ public class VaultedModal extends UModal implements HearModalGetString {
     }
 
     @Override
-    public void drawContent(URenderer renderer) {
-        drawString(renderer, "q/a : cycle terrains", 1, 15);
-        drawString(renderer, "1-9 : palette pick", 1, 16);
-        drawString(renderer, "pass: place terrain", 1, 17);
-        drawString(renderer, "C   : crop to corner", 1, 18);
-        drawString(renderer, "W   : wipe!", 1, 19);
-        drawString(renderer, "pgUp/Dn: cycle vaults", 1, 21);
-        drawString(renderer, "ins    : add new vault", 1, 22);
-        drawString(renderer, "n   : name vault", 1, 23);
-        drawString(renderer, "S   : save", 1, 24);
-        drawString(renderer, "vault " + Integer.toString(cursor + 1) + " (of " + Integer.toString(vaultSet.size()) + ")", 1, 27);
-        drawString(renderer, "'" + vaultSet.vaultAt(cursor).getName() + "'", 1, 28);
-        drawString(renderer, filename + ".json", 1, 29);
+    public void drawContent() {
+        drawString("q/a : cycle terrains", 1, 15);
+        drawString("1-9 : palette pick", 1, 16);
+        drawString("pass: place terrain", 1, 17);
+        drawString("C   : crop to corner", 1, 18);
+        drawString("W   : wipe!", 1, 19);
+        drawString("pgUp/Dn: cycle vaults", 1, 21);
+        drawString("ins    : add new vault", 1, 22);
+        drawString("n   : name vault", 1, 23);
+        drawString("S   : save", 1, 24);
+        drawString("vault " + Integer.toString(cursor + 1) + " (of " + Integer.toString(vaultSet.size()) + ")", 1, 27);
+        drawString("'" + vaultSet.vaultAt(cursor).getName() + "'", 1, 28);
+        drawString(filename + ".json", 1, 29);
 
-        drawIcon(renderer, terrainCzar.getTerrainByName(terrains[currentTerrain]).getIcon(), 1, 1);
-        drawString(renderer, terrains[currentTerrain], 3, 1);
+        drawIcon(terrainCzar.getTerrainByName(terrains[currentTerrain]).getIcon(), 1, 1);
+        drawString(terrains[currentTerrain], 3, 1);
         for (int i=0;i<terrainPalette.length;i++) {
-            drawString(renderer, Integer.toString(i+1), 1, 3+i);
-            drawIcon(renderer, terrainCzar.getTerrainByName(terrains[terrainPalette[i]]).getIcon(), 2, 3+i);
-            drawString(renderer, terrains[terrainPalette[i]], 4, 3+i);
+            drawString(Integer.toString(i+1), 1, 3+i);
+            drawIcon(terrainCzar.getTerrainByName(terrains[terrainPalette[i]]).getIcon(), 2, 3+i);
+            drawString(terrains[terrainPalette[i]], 4, 3+i);
         }
 
-        drawString(renderer, Integer.toString(commander.player().areaX()) + "," + Integer.toString(commander.player().areaY()), 6, 0);
+        drawString(Integer.toString(commander.player().areaX()) + "," + Integer.toString(commander.player().areaY()), 6, 0);
     }
 
     @Override

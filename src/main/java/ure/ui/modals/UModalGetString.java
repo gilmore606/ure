@@ -47,11 +47,11 @@ public class UModalGetString extends UModal {
     }
 
     @Override
-    public void drawContent(URenderer renderer) {
+    public void drawContent() {
         renderer.setFont(URenderer.FontType.TEXT_FONT);
-        drawStrings(renderer, prompt, 0, 0);
+        drawStrings(prompt, 0, 0);
         renderer.drawRect(0 + xpos, fieldY * gh() + ypos, maxlength*gw(), gh(), fieldColor);
-        drawString(renderer, input, 0, fieldY);
+        drawString(input, 0, fieldY);
         if (blunk) {
             renderer.drawRect(xpos + renderer.stringWidth(input), fieldY * gh() + ypos + (gh()/2), commander.config.getTextWidth(), gh()/2, cursorColor);
         }

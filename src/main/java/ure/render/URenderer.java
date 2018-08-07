@@ -68,6 +68,13 @@ public interface URenderer {
      */
     int stringWidth(String string);
 
+    /**
+     * Get the width of a given string in the text font.
+     * @param string
+     * @return
+     */
+    int textWidth(String string);
+
     // Drawing primitives that the renderer will abstract
     void drawString(int x, int y, UColor col, String str);
 

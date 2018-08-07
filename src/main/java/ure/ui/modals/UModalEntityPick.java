@@ -145,7 +145,7 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
     }
 
     @Override
-    public void drawContent(URenderer renderer) {
+    public void drawContent() {
         selection = mouseToSelection(shownEntities().size(), 2, selection, 0, 12);
         int oldCategory = selectionCategory;
         if (categorize) {
@@ -153,23 +153,23 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
             if (selectionCategory != oldCategory) selection = 0;
         }
         if (header != null)
-            drawString(renderer, header, 0, 0);
+            drawString(header, 0, 0);
         int y = 0;
         for (Entity entity : shownEntities()) {
-            drawIcon(renderer, entity.getIcon(), 1, y + 2);
+            drawIcon(entity.getIcon(), 1, y + 2);
             String n = entity.name();
             if (categorize)
                 n = (categoryItemNames.get(selectionCategory)).get(y);
-            drawString(renderer, n, 3, y + 2, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
+            drawString(n, 3, y + 2, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
-        if (showDetail) showDetail(renderer, shownEntities().get(selection),4+textWidth,2);
+        if (showDetail) showDetail(shownEntities().get(selection),4+textWidth,2);
         if (categorize && !dismissed) {
             int caty = 7;
             if (!showDetail) caty = 1;
             int i =0;
             for (String cat : categories) {
-                drawString(renderer, cat, 4+textWidth, 2+caty+i, (i == selectionCategory) ? null : UColor.COLOR_GRAY,
+                drawString(cat, 4+textWidth, 2+caty+i, (i == selectionCategory) ? null : UColor.COLOR_GRAY,
                         (i == selectionCategory) ? tempHiliteColor : null);
                 i++;
             }

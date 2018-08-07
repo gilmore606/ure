@@ -39,12 +39,12 @@ public class UModalTarget extends UModal {
     }
 
     @Override
-    public void drawFrame(URenderer renderer) {
+    public void drawFrame() {
 
     }
 
     @Override
-    public void drawContent(URenderer renderer) {
+    public void drawContent() {
         commander.printScroll(prompt);
         int camx = cellx - commander.modalCamera().leftEdge;
         int camy = celly - commander.modalCamera().topEdge;

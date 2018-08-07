@@ -20,7 +20,7 @@ public class UModalLoading extends UModal {
     }
 
     @Override
-    public void drawContent(URenderer renderer) {
+    public void drawContent() {
         renderer.drawString(relx(xpad/2), rely(ypad/2), commander.config.getTextColor(), text);
     }
 

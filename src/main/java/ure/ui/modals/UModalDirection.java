@@ -55,11 +55,11 @@ public class UModalDirection extends UModal {
     }
 
     @Override
-    public void drawFrame(URenderer renderer) {
+    public void drawFrame() {
 
     }
     @Override
-    public void drawContent(URenderer renderer) {
+    public void drawContent() {
         commander.printScroll(prompt);
         int gw = commander.config.getTileWidth();
         int gh = commander.config.getTileHeight();

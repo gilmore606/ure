@@ -44,13 +44,13 @@ public class UModalStringPick extends UModal {
     }
 
     @Override
-    public void drawContent(URenderer renderer) {
+    public void drawContent() {
         selection = mouseToSelection(choices.size(), 2, selection);
         if (header != null)
-            drawString(renderer, header, 0, 0);
+            drawString(header, 0, 0);
         int y = 0;
         for (String choice : choices) {
-            drawString(renderer, choices.get(y), 3, y+2, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
+            drawString(choices.get(y), 3, y+2, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
     }

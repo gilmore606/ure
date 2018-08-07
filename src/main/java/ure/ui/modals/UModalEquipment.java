@@ -60,7 +60,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
     }
 
     @Override
-    public void drawContent(URenderer renderer) {
+    public void drawContent() {
         int oldselection = selection;
         selection = mouseToSelection(slotsThings.size(), ypad, selection);
         if (selection != oldselection) updatePossible();
@@ -71,27 +71,27 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
                 String slotname = "on " + part.name + ":";
                 if (part.name.equals("equip"))
                     slotname = "equipped:";
-                drawString(renderer, slotname, 0+xpad, i+ypad, null, null);
+                drawString(slotname, 0+xpad, i+ypad, null, null);
             }
             lastpart = part;
             UThing thing = slotsThings.get(i);
             if (thing != null) {
-                drawIcon(renderer, thing.getIcon(), 7+xpad, i+ypad);
-                drawString(renderer, thing.getName(), 8+xpad, i+ypad, i == selection ? null : UColor.COLOR_GRAY, i == selection ? commander.config.getHiliteColor() : null);
+                drawIcon(thing.getIcon(), 7+xpad, i+ypad);
+                drawString(thing.getName(), 8+xpad, i+ypad, i == selection ? null : UColor.COLOR_GRAY, i == selection ? commander.config.getHiliteColor() : null);
             } else {
                 if (i == selection) {
-                    drawString(renderer, "        ", 8+xpad, i+ypad, null, commander.config.getHiliteColor());
+                    drawString("        ", 8+xpad, i+ypad, null, commander.config.getHiliteColor());
                 }
             }
         }
         int detailX = 17;
         UThing thing = slotsThings.get(selection);
-        showDetail(renderer, thing, detailX+xpad, ypad);
+        showDetail(thing, detailX+xpad, ypad);
         int i=0;
         for (UThing poss : possible) {
             if (poss != null) {
                 if (!poss.equipped) {
-                    drawString(renderer, poss.getName(), detailX + xpad, ypad + i + 5, UColor.COLOR_GRAY);
+                    drawString(poss.getName(), detailX + xpad, ypad + i + 5, UColor.COLOR_GRAY);
                     i++;
                 }
             }

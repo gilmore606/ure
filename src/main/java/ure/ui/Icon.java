@@ -14,6 +14,8 @@ import javax.inject.Inject;
 public class Icon {
 
     @Inject
+    URenderer renderer;
+    @Inject
     UConfig config;
 
     public UColor bgColor;
@@ -31,7 +33,7 @@ public class Icon {
         this.bgColor = bgColor;
     }
 
-    public void draw(URenderer renderer, int x, int y) {
+    public void draw(int x, int y) {
         if (bgColor != null) {
             renderer.drawRect(x,y,config.getTileWidth(),config.getTileHeight(),bgColor);
         }

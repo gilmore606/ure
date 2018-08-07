@@ -2,7 +2,6 @@ package ure.ui.modals;
 
 import ure.commands.UCommand;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.Entity;
 import ure.sys.GLKey;
 
@@ -57,28 +56,28 @@ public class UModalEntityPickMulti extends UModal {
     }
 
     @Override
-    public void drawContent(URenderer renderer) {
+    public void drawContent() {
         selection = mouseToSelection(entities.size(), prompt.length+1, selection);
-        drawStrings(renderer, prompt, 0, 0);
+        drawStrings(prompt, 0, 0);
         int y = 0;
         for (Entity entity: entities) {
             int liney = y+prompt.length+1;
-            drawIcon(renderer, entity.getIcon(), 1, liney);
+            drawIcon(entity.getIcon(), 1, liney);
             String n = entity.getName();
             UColor textColor = UColor.COLOR_GRAY;
             if (selectedEntities.get(y)) {
                 textColor = null;
-                drawGlyph(renderer, commander.config.getUiCheckGlyph().charAt(0), 2, liney, hiliteColor);
+                drawTile(commander.config.getUiCheckGlyph().charAt(0), 2, liney, hiliteColor);
             }
-            drawString(renderer, n, 3, liney, textColor, (y == selection) ? hiliteColor : null);
+            drawString(n, 3, liney, textColor, (y == selection) ? hiliteColor : null);
             y++;
         }
         if (showDetail) {
-            drawString(renderer, entities.get(selection).getName(), 4+listWidth, 2);
+            drawString(entities.get(selection).getName(), 4+listWidth, 2);
             ArrayList<String> details = entities.get(selection).UIdetails(callbackContext);
             int linepos = 4;
             for (String line : details) {
-                drawString(renderer, line, 4+listWidth, linepos);
+                drawString(line, 4+listWidth, linepos);
                 linepos++;
             }
         }

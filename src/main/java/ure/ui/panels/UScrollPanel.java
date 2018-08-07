@@ -62,7 +62,7 @@ public class UScrollPanel extends UPanel implements UAnimator {
     }
 
     @Override
-    public void draw(URenderer renderer) {
+    public void draw() {
         if (!hidden) {
             renderer.drawRectBorder(1, 1, width - 2, height - 2, 1, bgColor, borderColor);
             int i = 0;
@@ -82,8 +82,8 @@ public class UScrollPanel extends UPanel implements UAnimator {
                     UColor cbuf = colorBuffers.get(i);
                     cbuf.set(color.fR(), color.fG(), color.fB());
                     cbuf.brightenBy(gray);
-                    drawString(renderer, lines.get(i), 3, liney, cbuf);
-                    drawIcon(renderer, icons.get(i), 1, liney);
+                    drawString(lines.get(i), 3, liney, cbuf);
+                    drawIcon(icons.get(i), 1, liney);
                 }
                 i++;
             }

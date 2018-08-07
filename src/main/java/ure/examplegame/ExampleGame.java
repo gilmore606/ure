@@ -33,8 +33,9 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
     static UScrollPanel scrollPanel;
     static ULensPanel lensPanel;
     static UActorPanel actorPanel;
-    static URenderer renderer;
 
+    @Inject
+    URenderer renderer;
     @Inject
     UCommander commander;
     @Inject
@@ -104,8 +105,8 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
     }
 
     public void startUp()  {
-        renderer = new URendererOGL();
-        renderer.initialize();
+        //renderer = new URendererOGL();
+        //renderer.initialize();
 
         cartographer = new ExampleCartographer();
 

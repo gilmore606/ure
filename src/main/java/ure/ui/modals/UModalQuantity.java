@@ -2,7 +2,6 @@ package ure.ui.modals;
 
 import ure.commands.UCommand;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.GLKey;
 
 public class UModalQuantity extends UModal {
@@ -29,21 +28,21 @@ public class UModalQuantity extends UModal {
     }
 
     @Override
-    public void drawContent(URenderer renderer) {
+    public void drawContent() {
         if (mousey == 5 && mousex >0 && mousex <= barwidth) {
             float f = (commander.mouseX() - xpos - gw()) / (float)(barwidth * gw());
             count = (int)(f * (float)(max-min)) + min;
             count = Math.max(min,count);
             count = Math.min(max,count);
         }
-        drawStrings(renderer, prompt, 0, 0);
-        drawString(renderer, Integer.toString(count), numberX, 3);
+        drawStrings(prompt, 0, 0);
+        drawString(Integer.toString(count), numberX, 3);
         for (int i=0;i<barwidth;i++) {
             char glyph = '-';
             int countslice = (max-min)/barwidth;
             if (count > i*countslice)
                 glyph = '#';
-            drawGlyph(renderer, glyph,i+1,5,commander.config.getHiliteColor());
+            drawTile(glyph,i+1,5,commander.config.getHiliteColor());
         }
     }
 

@@ -458,7 +458,7 @@ public class UCamera extends View implements UAnimator {
     public UCell cellAt(int localCol, int localRow) { return area.cellAt(localCol+ leftEdge, localRow+ topEdge); }
 
     @Override
-    public void draw(URenderer renderer) {
+    public void draw() {
 
         renderLights();
 
@@ -561,7 +561,7 @@ public class UCamera extends View implements UAnimator {
                     area.cellAt(col,row).animationTick();
             }
         }
-        draw(renderer);
+        draw();
     }
 
 }

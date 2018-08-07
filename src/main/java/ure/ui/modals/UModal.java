@@ -91,37 +91,30 @@ public class UModal extends View implements UAnimator {
     }
 
     @Override
-    public void draw(URenderer renderer) {
+    public void draw() {
         if (cellw > 0 && cellh > 0) {
-            drawFrame(renderer);
+            drawFrame();
         }
-        drawContent(renderer);
+        drawContent();
     }
 
-    public void drawContent(URenderer renderer) {
+    public void drawContent() {
         commander.printScroll("Hit any key to continue...");
-        //for (String textName : texts.keySet()) {
-            //TextFrag frag = texts.get(textName);
-            // TODO: Fix for new renderer
-            //g.setFont(renderer.font);
-            //g.setColor(frag.color);
-            //g.drawString(frag.text, frag.row * renderer.cellWidth(), ((frag.col + 1) * renderer.cellHeight()) + 0);
-        //}
     }
 
-    public void drawIcon(URenderer renderer, Icon icon, int x, int y) {
-        icon.draw(renderer,x*gw()+xpos,y*gh()+ypos);
+    public void drawIcon(Icon icon, int x, int y) {
+        icon.draw(x*gw()+xpos,y*gh()+ypos);
     }
 
-    public void drawString(URenderer renderer, String string, int x, int y) {
-        drawString(renderer,string,x,y,commander.config.getTextColor(), null);
+    public void drawString(String string, int x, int y) {
+        drawString(string,x,y,commander.config.getTextColor(), null);
     }
-    public void drawString(URenderer renderer, String string, int x, int y, UColor color) {
-        drawString(renderer,string,x,y,color, null);
+    public void drawString(String string, int x, int y, UColor color) {
+        drawString(string,x,y,color, null);
     }
-    public void drawString(URenderer renderer, String string, int x, int y, UColor color, UColor highlight) {
+    public void drawString(String string, int x, int y, UColor color, UColor highlight) {
         if (highlight != null) {
-            int stringWidth = renderer.stringWidth(string) + 4;
+            int stringWidth = renderer.textWidth(string) + 4;
             renderer.drawRect(x * gw() + xpos - 2, y * gh() + ypos - 3,
                     stringWidth, commander.config.getTextHeight() + 4, highlight);
         }
@@ -129,11 +122,11 @@ public class UModal extends View implements UAnimator {
             color = commander.config.getTextColor();
         renderer.drawString(x*gw()+xpos,y*gh()+ypos,color,string);
     }
-    public void drawGlyph(URenderer renderer, char glyph, int x, int y, UColor color) {
+    public void drawTile(char glyph, int x, int y, UColor color) {
         renderer.drawTile(glyph, x*gw()+xpos,y*gh()+ypos,color);
     }
 
-    public void drawFrame(URenderer renderer) {
+    public void drawFrame() {
         if (commander.config.getModalShadowStyle() == UConfig.SHADOW_BLOCK) {
             UColor shadowColor = commander.config.getModalShadowColor();
             renderer.drawRect(xpos, ypos, relx(cellw+2)-xpos, rely(cellh+2)-ypos, shadowColor);
@@ -161,6 +154,10 @@ public class UModal extends View implements UAnimator {
             }
         }
 
+    }
+
+    int textWidthInCells(String string) {
+        return renderer.textWidth(string) / gw() + 1;
     }
 
     /**
@@ -256,23 +253,23 @@ public class UModal extends View implements UAnimator {
         return longest;
     }
 
-    public void drawStrings(URenderer renderer, String[] lines, int x, int y) {
+    public void drawStrings(String[] lines, int x, int y) {
         if (lines != null) {
             int i = 0;
             for (String line: lines) {
-                drawString(renderer, line, x, y+i);
+                drawString(line, x, y+i);
                 i++;
             }
         }
     }
 
-    public void showDetail(URenderer renderer, Entity entity, int xoff, int yoff) {
+    public void showDetail(Entity entity, int xoff, int yoff) {
         if (entity == null) return;
-        drawString(renderer, entity.getName(), xoff, yoff);
+        drawString(entity.getName(), xoff, yoff);
         ArrayList<String> details = entity.UIdetails(callbackContext);
         int linepos = 1;
         for (String line : details) {
-            drawString(renderer, line, xoff, linepos+yoff, UColor.COLOR_LIGHTGRAY);
+            drawString(line, xoff, linepos+yoff, UColor.COLOR_LIGHTGRAY);
             linepos++;
         }
     }
