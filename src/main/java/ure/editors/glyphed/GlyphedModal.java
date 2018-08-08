@@ -7,6 +7,10 @@ import ure.terrain.UTerrain;
 import ure.ui.Icon;
 import ure.ui.modals.UModal;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
@@ -17,7 +21,7 @@ public class GlyphedModal extends UModal {
     int gridspacex = 0;
     int gridspacey = 0;
     int gridposx = 1;
-    int gridposy = 5;
+    int gridposy = 7;
 
     int glyphType = 0;
     static int TERRAIN = 0;
@@ -30,6 +34,7 @@ public class GlyphedModal extends UModal {
 
     int currentAscii = 2;
     int cursorAscii = 0;
+    String[] jsonLines;
 
     UColor bgColor;
     UColor fgColor;
@@ -41,6 +46,7 @@ public class GlyphedModal extends UModal {
         bgColor = new UColor(0f,0f,0f);
         terrains = terrainCzar.getAllTerrainTemplates();
         makeRefIcon();
+        updateJson();
     }
 
     void makeRefIcon() {
@@ -56,6 +62,7 @@ public class GlyphedModal extends UModal {
             if (mousey >= gridposy && mousey < (gridposy + 16)) {
                 updateMouseGrid();
                 currentAscii = cursorAscii;
+                updateJson();
             }
         }
     }
@@ -82,6 +89,10 @@ public class GlyphedModal extends UModal {
         updateMouseGrid();
 
         int u = cp437toUnicode(currentAscii);
+        drawString("CP437 ASCII:", 33, 0, UColor.COLOR_GRAY);
+        drawString(Integer.toString(currentAscii), 33, 1, UColor.COLOR_YELLOW);
+        drawString(Integer.toString(u), 33, 3, UColor.COLOR_YELLOW);
+        drawString("Unicode int:", 33,2,UColor.COLOR_GRAY);
 
         if (glyphType == TERRAIN) {
             renderer.drawRect(1 * gw() + xpos, 1 * gh() + ypos, 3 * gw(), 3 * gh(), UColor.COLOR_BLACK);
@@ -128,6 +139,35 @@ public class GlyphedModal extends UModal {
                 renderer.drawTile(unicode, (gridposx+x)*(gw()+gridspacex)+xpos, (gridposy+y)*(gh() + gridspacey)+ypos, UColor.COLOR_LIGHTRED);
             }
         }
+
+        for (int i=0;i<8;i++) {
+            drawTile(' ', 20, 8+i, fgColor, meter(fgColor.fR(), 8-i, 8) ? UColor.COLOR_RED : UColor.COLOR_DARKGRAY);
+            drawTile(' ', 22, 8+i, fgColor, meter(fgColor.fG(), 8-i, 8) ? UColor.COLOR_GREEN : UColor.COLOR_DARKGRAY);
+            drawTile(' ', 24, 8+i, fgColor, meter(fgColor.fB(), 8-i, 8) ? UColor.COLOR_BLUE : UColor.COLOR_DARKGRAY);
+            drawTile(' ', 28, 8+i, fgColor, meter(bgColor.fR(), 8-i, 8) ? UColor.COLOR_RED : UColor.COLOR_DARKGRAY);
+            drawTile(' ', 30, 8+i, fgColor, meter(bgColor.fG(), 8-i, 8) ? UColor.COLOR_GREEN : UColor.COLOR_DARKGRAY);
+            drawTile(' ', 32, 8+i, fgColor, meter(bgColor.fB(), 8-i, 8) ? UColor.COLOR_BLUE : UColor.COLOR_DARKGRAY);
+        }
+        drawString("fgColor",21,19,null);
+        drawString("bgColor",29,19,null);
+        drawTile(0,19,19,null, fgColor);
+        drawTile(0,27,19,null,bgColor);
+        drawString(Integer.toString(fgColor.iR()), 20, 17, UColor.COLOR_YELLOW);
+        drawString(Integer.toString(fgColor.iG()), 22, 17, UColor.COLOR_YELLOW);
+        drawString(Integer.toString(fgColor.iB()), 24, 17, UColor.COLOR_YELLOW);
+        drawString(Integer.toString(bgColor.iR()), 28, 17, UColor.COLOR_YELLOW);
+        drawString(Integer.toString(bgColor.iG()), 30, 17, UColor.COLOR_YELLOW);
+        drawString(Integer.toString(bgColor.iB()), 32, 17, UColor.COLOR_YELLOW);
+
+        renderer.drawRect((2*gw()+xpos)-gw()/2, (28*gh()+ypos)-gh()/2, gw()*26,gh()*4,UColor.COLOR_LIGHTGRAY);
+        drawStrings(jsonLines, 2, 28, UColor.COLOR_BLACK);
+    }
+
+    boolean meter(float level, int cell, int maxcell) {
+        if (level == 0f) return false;
+        if (level >= ((float)cell/(float)maxcell))
+            return true;
+        return false;
     }
 
     void updateMouseGrid() {
@@ -136,6 +176,18 @@ public class GlyphedModal extends UModal {
                 cursorAscii = (mousex - gridposx) + (mousey - gridposy)*16;
             }
         }
+    }
+
+    void updateJson() {
+        String json = "\"glyph\": \"\\u" + Integer.toString(cp437toUnicode(currentAscii)) + "\"";
+        json = json + "\n ";
+        json = json + "\"fgcolor\": [ " + Integer.toString(fgColor.iR()) + "," + Integer.toString(fgColor.iG()) + "," + Integer.toString(fgColor.iB()) + " ]";
+        json = json + "\n ";
+        json = json + "\"bgcolor\": [ " + Integer.toString(bgColor.iR()) + "," + Integer.toString(bgColor.iG()) + "," + Integer.toString(bgColor.iB()) + " ]";
+        jsonLines = splitLines(json);
+        StringSelection stringSelection = new StringSelection(json);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
     }
 
     public void drawTile(int u, int x, int y, UColor color, UColor bgcolor) {

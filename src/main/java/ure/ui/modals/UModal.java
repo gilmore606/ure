@@ -267,11 +267,12 @@ public class UModal extends View implements UAnimator {
         return renderer.textWidth(line) / gw() + 1;
     }
 
-    public void drawStrings(String[] lines, int x, int y) {
+    public void drawStrings(String[] lines, int x, int y) { drawStrings(lines,x,y,commander.config.getTextColor()); }
+    public void drawStrings(String[] lines, int x, int y, UColor c) {
         if (lines != null) {
             int i = 0;
             for (String line: lines) {
-                drawString(line, x, y+i);
+                drawString(line, x, y+i, c);
                 i++;
             }
         }

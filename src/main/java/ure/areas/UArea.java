@@ -447,6 +447,8 @@ public class UArea implements Serializable {
     }
 
     public void addParticle(UParticle particle) {
+        if (commander.hasModal())
+            return;
         if (isValidXY(particle.x, particle.y)) {
             cellAt(particle.x,particle.y).addParticle(particle);
             particle.reconnect(this);

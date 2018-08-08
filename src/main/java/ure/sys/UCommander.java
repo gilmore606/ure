@@ -616,6 +616,12 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             detachModal();
     }
 
+    public boolean hasModal() {
+        if (modal == null)
+            return false;
+        return true;
+    }
+
     /**
      * Get the filesystem path to the current savestate (the world we're playing now), or the top level save path.
      * @return
