@@ -268,6 +268,7 @@ public class URendererOGL implements URenderer {
 
     @Override
     public void drawTile(int glyph, int x, int y, UColor tint) {
+        if (glyph == 0) return;
         setFont(URenderer.FontType.TILE_FONT);
         x += context.absoluteX();
         y += context.absoluteY();

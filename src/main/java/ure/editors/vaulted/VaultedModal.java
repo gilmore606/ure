@@ -1,4 +1,4 @@
-package ure.areas.vaulted;
+package ure.editors.vaulted;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ure.actors.UPlayer;
@@ -6,7 +6,6 @@ import ure.areas.UVaultSet;
 import ure.commands.CommandQuit;
 import ure.commands.UCommand;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.GLKey;
 import ure.ui.modals.HearModalGetString;
 import ure.ui.modals.UModal;

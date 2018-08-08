@@ -38,7 +38,7 @@ public class Icon {
             renderer.drawRect(x,y,config.getTileWidth(),config.getTileHeight(),bgColor);
         }
         if (fgColor != null) {
-            renderer.drawGlyph(glyph, x, y, fgColor);
+            renderer.drawTile(glyph, x, y, fgColor);
         }
     }
 }

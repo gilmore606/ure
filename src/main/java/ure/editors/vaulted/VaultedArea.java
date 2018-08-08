@@ -1,4 +1,4 @@
-package ure.areas.vaulted;
+package ure.editors.vaulted;
 
 import ure.actors.actions.UAction;
 import ure.actors.UPlayer;

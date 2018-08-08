@@ -28,8 +28,8 @@ import ure.ui.modals.*;
 import ure.ui.panels.UScrollPanel;
 import ure.ui.panels.UStatusPanel;
 import ure.ui.USpeaker;
-import ure.areas.vaulted.VaultedArea;
-import ure.areas.vaulted.VaultedModal;
+import ure.editors.vaulted.VaultedArea;
+import ure.editors.vaulted.VaultedModal;
 
 import javax.inject.Inject;
 import java.io.*;

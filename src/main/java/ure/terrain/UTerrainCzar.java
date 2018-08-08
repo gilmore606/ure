@@ -95,6 +95,13 @@ public class UTerrainCzar {
         return (UTerrain)(getTerrainForFilechar(terrainsByName.get(name).getFilechar()));
     }
 
+    public ArrayList<UTerrain> getAllTerrainTemplates() {
+        ArrayList<UTerrain> terrains = new ArrayList<>();
+        for (String key : terrainsByName.keySet())
+            terrains.add(terrainsByName.get(key));
+        return terrains;
+    }
+
     public Set<String> getAllTerrains() {
         return terrainsByName.keySet();
     }

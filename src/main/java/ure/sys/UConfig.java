@@ -33,12 +33,12 @@ public class UConfig {
     private int animFrameMilliseconds = 33;                     // milliseconds between animation frames
     private int screenWidth = 1400;                             // window width in pixels
     private int screenHeight = 1000;                            // window height in pixels
-    private String tileFont = "/fonts/FreeMonoBold.ttf";    // irrelevant for non-ascii renderer
+    private String tileFont = "/fonts/Deferral-Square.ttf";    // irrelevant for non-ascii renderer
     private float tileFontSize = 20;
     private String textFont = "/fonts/UbuntuMono-R.ttf";
     private float textFontSize = 18;
-    private int tileWidth = 19;
-    private int tileHeight = 21;
+    private int tileWidth = 20;
+    private int tileHeight = 20;
     private int textWidth = 10;
     private int textHeight = 18;
 

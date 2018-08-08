@@ -2,6 +2,7 @@ package ure.ui.modals;
 
 import ure.areas.UArea;
 import ure.commands.UCommand;
+import ure.editors.glyphed.GlyphedModal;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.sys.GLKey;
@@ -28,7 +29,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         alpha = 0f;
         fakeTickCount = 0;
         area = _area;
-        options = new String[]{"Continue", "New World", "VaultEd", "Credits", "Quit"};
+        options = new String[]{"Continue", "New World", "VaultEd", "GlyphEd", "Credits", "Quit"};
         File file = new File(commander.savePath() + "player");
         if (!file.isFile())
             options = new String[]{"New World", "Credits", "Quit"};
@@ -38,19 +39,19 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
 
     @Override
     public void drawContent() {
-        cursor = mouseToSelection(options.length, 15, cursor);
+        cursor = mouseToSelection(options.length, 13, cursor);
         drawTitleSplash();
         if (alpha >= 1f) {
-            drawString(titleMsg, cellw/2 - (textWidthInCells(titleMsg)/2), 13);
+            drawString(titleMsg, cellw/2 - (textWidthInCells(titleMsg)/2), 11);
             for (int i = 0;i < options.length;i++) {
-                drawString(options[i], 15, 15 + i, (i == cursor) ? null : UColor.COLOR_GRAY, (i == cursor) ? commander.config.getHiliteColor() : null);
+                drawString(options[i], 15, 13 + i, (i == cursor) ? null : UColor.COLOR_GRAY, (i == cursor) ? commander.config.getHiliteColor() : null);
             }
         }
     }
 
     public void drawTitleSplash() {
         int xp = (cellw / 2)  - (logoSplash.width / 2);
-        int yp = 0;
+        int yp = -2;
         logoSplash.draw(renderer, alpha, xp * gw() + xpos, yp * gh() + ypos);
     }
 
@@ -89,6 +90,9 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
             commander.showModal(nmodal);
         } else if (options[cursor].equals("VaultEd")) {
             commander.launchVaulted();
+        } else if (options[cursor].equals("GlyphEd")) {
+            GlyphedModal modal = new GlyphedModal();
+            commander.showModal(modal);
         } else {
             dismiss();
             ((HearModalTitleScreen) callback).hearModalTitleScreen(options[cursor], null);
