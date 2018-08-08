@@ -122,6 +122,10 @@ public class UColor {
         BoundsCheck();
     }
 
+    public void setR(float f) { r = f; BoundsCheck(); }
+    public void setG(float f) { g = f; BoundsCheck(); }
+    public void setB(float f) { b = f; BoundsCheck(); }
+
     /**
      * Set the color with float 0f-1f values.
      * @param fr
