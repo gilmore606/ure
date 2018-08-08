@@ -33,6 +33,9 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
     @JsonIgnore
     UCommander commander;
 
+    @Inject
+    Random random;
+
     @JsonIgnore
     protected UCell cell;
 
@@ -114,18 +117,15 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
 
     public void applyColorVariance() {
         if (getBgvariants() != null) {
-            Random r = new Random();
-            getBgColor().set(getBgvariants()[r.nextInt(getBgvariants().length - 1)]);
+            getBgColor().set(getBgvariants()[random.nextInt(getBgvariants().length - 1)]);
         }
         if (getFgvariants() != null) {
-            Random r = new Random();
-            getFgColor().set(getFgvariants()[r.nextInt(getFgvariants().length-1)]);
+            getFgColor().set(getFgvariants()[random.nextInt(getFgvariants().length-1)]);
         }
         if (getBgvariance() != null) {
-            Random r = new Random();
-            getBgColor().set(getBgColor().iR() + r.nextInt(getBgvariance()[0]) - getBgvariance()[0] / 2,
-                    getBgColor().iG() + r.nextInt(getBgvariance()[1]) - getBgvariance()[1] / 2,
-                    getBgColor().iB() + r.nextInt(getBgvariance()[2]) - getBgvariance()[2] / 2);
+            getBgColor().set(getBgColor().iR() + random.nextInt(getBgvariance()[0]) - getBgvariance()[0] / 2,
+                    getBgColor().iG() + random.nextInt(getBgvariance()[1]) - getBgvariance()[1] / 2,
+                    getBgColor().iB() + random.nextInt(getBgvariance()[2]) - getBgvariance()[2] / 2);
         }
     }
 

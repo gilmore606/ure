@@ -49,12 +49,12 @@ public class BehaviorTalker extends UBehavior {
         if (actor.isHostileTo(target)) {
             return("I'm gonna kill you!");
         } else {
-            return comments[commander.random.nextInt(comments.length)];
+            return comments[random.nextInt(comments.length)];
         }
     }
 
     String responseTo(UNPC actor, UActor target) {
-        return responses[commander.random.nextInt(responses.length)];
+        return responses[random.nextInt(responses.length)];
     }
 
     @Override

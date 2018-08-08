@@ -2,17 +2,18 @@ package ure.actors.behaviors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.actions.ActionWalk;
+import ure.actors.actions.UAction;
 import ure.actors.UActor;
+import ure.actors.UNPC;
 import ure.math.UColor;
 import ure.math.UPath;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
-import ure.actors.actions.UAction;
-import ure.actors.UNPC;
 import ure.things.UThing;
 
 import javax.inject.Inject;
+import java.util.Random;
 
 /**
  * UBehavior implements a source of actions for an NPC actor to perform, to emulate a behavior or achieve
@@ -26,7 +27,11 @@ public abstract class UBehavior implements Cloneable {
 
     @Inject
     @JsonIgnore
-    UCommander commander;
+    Random random;
+
+    @Inject
+    @JsonIgnore
+    protected UCommander commander;
 
     protected String TYPE = "";
 
@@ -71,7 +76,7 @@ public abstract class UBehavior implements Cloneable {
         currentStatus = "";
         currentUrgency = 0f;
         currentStatusColor = UColor.COLOR_GRAY;
-        if (commander.random.nextFloat() > freq) return null;
+        if (random.nextFloat() > freq) return null;
         return action(actor);
     }
 

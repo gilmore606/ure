@@ -16,7 +16,7 @@ public class BehaviorWander extends UBehavior {
 
     @Override
     public UAction action(UNPC actor) {
-        int dir = commander.random.nextInt(8);
+        int dir = random.nextInt(8);
         int wx,wy;
         if (dir == 0) {
             wx = -1; wy = 0;

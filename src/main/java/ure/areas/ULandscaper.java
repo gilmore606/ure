@@ -43,8 +43,9 @@ public abstract class ULandscaper {
     @JsonIgnore
     UThingCzar thingCzar;
 
+    @Inject
     @JsonIgnore
-    protected Random random = new Random();
+    protected Random random;
 
     @JsonIgnore
     USimplexNoise simplexNoise = new USimplexNoise();
@@ -525,9 +526,9 @@ public abstract class ULandscaper {
     public Shape shapeOddBlob(int xsize, int ysize, int parts, float twist) {
         Shape mask = new Shape(xsize,ysize);
         for (int i=0;i<parts;i++) {
-            float xprop = 0.3f + commander.random.nextFloat()*0.7f - twist;
-            float yprop = 0.3f + commander.random.nextFloat()*0.7f - twist;
-            if (commander.random.nextFloat() > 0.5f) {
+            float xprop = 0.3f + random.nextFloat()*0.7f - twist;
+            float yprop = 0.3f + random.nextFloat()*0.7f - twist;
+            if (random.nextFloat() > 0.5f) {
                 float tmp = xprop;
                 xprop = yprop;
                 yprop = tmp;
@@ -535,8 +536,8 @@ public abstract class ULandscaper {
             Shape oval = shapeOval((int)(xsize * xprop), (int)(ysize * yprop));
             int xvar = (int)(xsize*(1f-xprop))+1;
             int yvar = (int)(ysize*(1f-yprop))+1;
-            int xoff = commander.random.nextInt(xvar) - (xvar/2);
-            int yoff = commander.random.nextInt(yvar) - (yvar/2);
+            int xoff = random.nextInt(xvar) - (xvar/2);
+            int yoff = random.nextInt(yvar) - (yvar/2);
             mask.maskWith(oval, Shape.MASK_OR, xoff, yoff);
         }
         mask.smooth(5, 2);

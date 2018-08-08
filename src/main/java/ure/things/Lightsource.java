@@ -7,7 +7,6 @@ import ure.ui.ULight;
 import ure.ui.particles.ParticleSpark;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * A thing which can project a Light into the area at its location.
@@ -50,7 +49,6 @@ public class Lightsource extends UThing {
         } else {
             setLight(new ULight(new UColor(lightcolor[0], lightcolor[1], lightcolor[2]), getLightrange(), getLightfalloff()));
         }
-        Random random = new Random();
         if (getLightflicker() > 0)
             getLight().setFlicker(getLightflicker(), getLightflickerspeed(), getLightflickerintensity(), random.nextInt(getLightflickeroffset()));
     }
@@ -255,13 +253,13 @@ public class Lightsource extends UThing {
 
     @Override
     public void animationTick() {
-        if (commander.random.nextFloat() < sparkrate) {
-            if (commander.random.nextFloat() < 0.3f) {
-                area().addParticle(new ParticleSpark(areaX() - 1 + commander.random.nextInt(3),
-                        areaY() - 1 + commander.random.nextInt(3),
-                        UColor.COLOR_YELLOW, 8 + commander.random.nextInt(10), 0.3f + commander.random.nextFloat() * 0.4f));
+        if (random.nextFloat() < sparkrate) {
+            if (random.nextFloat() < 0.3f) {
+                area().addParticle(new ParticleSpark(areaX() - 1 + random.nextInt(3),
+                        areaY() - 1 + random.nextInt(3),
+                        UColor.COLOR_YELLOW, 8 + random.nextInt(10), 0.3f + random.nextFloat() * 0.4f));
             } else {
-                area().addParticle(new ParticleSpark(areaX(), areaY() - (commander.random.nextInt(2)),  UColor.COLOR_YELLOW, 8 + commander.random.nextInt(10), 0.6f));
+                area().addParticle(new ParticleSpark(areaX(), areaY() - (random.nextInt(2)),  UColor.COLOR_YELLOW, 8 + random.nextInt(10), 0.6f));
             }
         }
     }
