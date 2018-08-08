@@ -60,7 +60,9 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     @Inject
     public UConfig config;
 
-    public Random random;
+    @Inject
+    Random random;
+
     public USpeaker speaker;
 
     private HashSet<UAnimator> animators;
@@ -104,8 +106,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public UCommander() {
         Injector.getAppComponent().inject(this);
         bus.register(this);
-        random = new Random();
     }
+
     public void registerComponents(UREGame _game, UPlayer theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
         game = _game;
         renderer = theRenderer;

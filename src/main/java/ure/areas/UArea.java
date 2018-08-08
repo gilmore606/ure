@@ -56,8 +56,9 @@ public class UArea implements Serializable {
     protected HashSet<UParticle> particles = new HashSet<>();
 
 
+    @Inject
     @JsonIgnore
-    private Random random = new Random();
+    Random random;
 
     protected UColor sunColor = new UColor(130,50,25);
     protected float clouds = 0.2f;

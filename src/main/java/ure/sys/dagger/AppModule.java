@@ -25,6 +25,7 @@ import ure.things.UThing;
 import ure.things.UThingCzar;
 
 import javax.inject.Singleton;
+import java.util.Random;
 
 /**
  *
@@ -104,5 +105,11 @@ public class AppModule {
     @Singleton
     public UConfig providesConfig() {
         return new UConfig();
+    }
+
+    @Provides
+    @Singleton
+    public Random providesRandom() {
+        return new Random();
     }
 }

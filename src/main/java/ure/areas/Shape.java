@@ -1,12 +1,13 @@
 package ure.areas;
 
 import ure.sys.Injector;
-import ure.sys.UCommander;
 import ure.things.UThing;
+import ure.things.UThingCzar;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Random;
 
 /**
  * A Shapemask is a 1-bit 2D array of cells.  Landscaper methods can generate these to use for stamping terrain into areas.
@@ -18,7 +19,10 @@ import java.util.LinkedList;
 public class Shape {
 
     @Inject
-    UCommander commander;
+    Random random;
+
+    @Inject
+    UThingCzar thingCzar;
 
     public int xsize, ysize;
     public boolean[][] cells;
@@ -126,7 +130,7 @@ public class Shape {
     public Shape noiseWipe(float density) {
         for (int x=0;x<xsize;x++) {
             for (int y = 0;y < ysize;y++) {
-                if (commander.random.nextFloat() < density) write(x, y, true);
+                if (random.nextFloat() < density) write(x, y, true);
                 else write(x, y, false);
             }
         }
@@ -249,7 +253,7 @@ public class Shape {
         for (int x=0;x<xsize;x++)
             for (int y=0;y<ysize;y++)
                 if (value(x,y))
-                    if (density >= 1f || commander.random.nextFloat() < density)
+                    if (density >= 1f || random.nextFloat() < density)
                         area.setTerrain(x+xoffset,y+yoffset,terrain);
     }
 
@@ -260,7 +264,7 @@ public class Shape {
         for (int x=0;x<xsize;x++)
             for (int y=0;y<ysize;y++)
                 if (value(x,y)) {
-                    UThing t = commander.thingCzar.getThingByName(thing);
+                    UThing t = thingCzar.getThingByName(thing);
                     t.moveToCell(area,x+xoffset,y+yoffset);
                 }
     }
@@ -340,7 +344,7 @@ public class Shape {
         for (int x=0;x<xsize;x++) {
             for (int y = 0;y < ysize;y++)
                 if (value(x, y))
-                    if (commander.random.nextFloat() > density)
+                    if (random.nextFloat() > density)
                         clear(x, y);
         }
         return this;
@@ -355,7 +359,7 @@ public class Shape {
             for (int y = 0;y < ysize;y++)
                 if (value(x, y)) {
                     writeBuffer(x, y, true);
-                    int radius = (minspace + commander.random.nextInt(maxspace - minspace)) / 2;
+                    int radius = (minspace + random.nextInt(maxspace - minspace)) / 2;
                     for (int dx = -radius;dx < radius;dx++)
                         for (int dy = -radius;dy < radius;dy++)
                             if (!valueBuffer(x + dx, y + dy))
@@ -375,7 +379,7 @@ public class Shape {
                         int n = neighbors(x,y);
                         if (n >= threshold) {
                             writeBuffer(x,y,true);
-                        } else if (commander.random.nextFloat() < (1f - rot)) {
+                        } else if (random.nextFloat() < (1f - rot)) {
                             writeBuffer(x,y,true);
                         } else {
                             writeBuffer(x,y,false);
@@ -475,7 +479,7 @@ public class Shape {
                     cells.add(new int[]{x,y});
         while (n > 0 && cells.size() > 0) {
             n--;
-            int i = commander.random.nextInt(cells.size());
+            int i = random.nextInt(cells.size());
             results[n] = cells.get(i);
             cells.remove(i);
         }

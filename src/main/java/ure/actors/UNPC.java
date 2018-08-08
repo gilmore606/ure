@@ -183,7 +183,7 @@ public class UNPC extends UActor implements Interactable {
     }
 
     UAction Ambient() {
-        return new ActionEmote(this, getAmbients()[commander.random.nextInt(getAmbients().length)]);
+        return new ActionEmote(this, getAmbients()[random.nextInt(getAmbients().length)]);
     }
 
 
