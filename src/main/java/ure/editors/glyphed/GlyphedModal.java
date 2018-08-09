@@ -133,6 +133,7 @@ public class GlyphedModal extends UModal {
                 }
             }
         }
+
         if (glyphType == TERRAIN) {
             drawTile(u, 6, 1, fgColor, bgColor);
             drawTile(u, 6, 2, fgColor, bgColor);
