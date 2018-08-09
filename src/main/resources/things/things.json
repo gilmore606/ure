@@ -1,6 +1,6 @@
 [
   {
-    "name": "rock",
+    "name": "small stone",
     "glyph": "o",
     "description": "A chunk of sandstone.",
     "tags": [ "rock", "cavern" ],

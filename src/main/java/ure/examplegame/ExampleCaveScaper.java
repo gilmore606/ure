@@ -77,7 +77,7 @@ public class ExampleCaveScaper extends ULandscaper {
                 randf(0.3f), randf(0.5f),
                 new float[]{5f, 10f, 40f, 120f});
 
-        scatterThings(area, new String[]{"trucker hat", "butcher knife", "apple", "rock", "rock"},
+        scatterThings(area, new String[]{"trucker hat", "butcher knife", "apple", "small stone", "small stone"},
                 new String[]{floorTerrain}, 10 + rand(40));
     }
 }

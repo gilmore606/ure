@@ -25,7 +25,7 @@
 
   "spawnwith": [
     {"name": "robe" },
-    {"oneof": ["butcher knife", "rock", "skull"] },
+    {"oneof": ["butcher knife", "small stone", "skull"] },
     {"name": "confusion helmet", "chance": 0.1 } ]
 
 }]

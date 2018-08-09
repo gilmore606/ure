@@ -28,10 +28,13 @@ public class GlyphedModal extends UModal {
     int meterx = 20;
     int metery = 8;
 
+    String selection;
+    Icon selectedIcon;
     int glyphType = 0;
     static int TERRAIN = 0;
     static int THING = 1;
     static int ACTOR = 2;
+    int pageOffset = 0;
 
     Set<String> thingNames;
     Set<String> actorNames;
@@ -47,20 +50,18 @@ public class GlyphedModal extends UModal {
     int currentAscii = 2;
     int cursorAscii = 0;
 
-    UColor bgColor;
-    UColor fgColor;
+    UColor editColor;
 
     public GlyphedModal() {
         super(null, "", null);
-        setDimensions(42,36);
-        fgColor = new UColor(1f,1f,1f);
-        bgColor = new UColor(0f,0f,0f);
+        setDimensions(44,36);
         terrains = terrainCzar.getAllTerrainTemplates();
         makeRefIcon();
         thingNames = thingCzar.getAllThings();
         actorNames = actorCzar.getAllActors();
         terrainNames = terrainCzar.getAllTerrains();
         fillIconLists();
+        selectIcon(0);
     }
 
     void makeRefIcon() {
@@ -86,6 +87,8 @@ public class GlyphedModal extends UModal {
             if (icon == null) {
                 icon = new Icon("blank");
                 icon.setName(name);
+            } else {
+                System.out.println("GLYPHED: loaded existing icon " + name);
             }
             actorIcons.add(icon);
         }
@@ -97,6 +100,26 @@ public class GlyphedModal extends UModal {
                 icon.setName(name);
             }
             terrainIcons.add(icon);
+        }
+    }
+
+    ArrayList<Icon> currentIconSet() {
+        if (glyphType == TERRAIN)
+            return terrainIcons;
+        else if (glyphType == THING)
+            return thingIcons;
+        else
+            return actorIcons;
+    }
+
+    void selectIcon(int i) {
+        selectedIcon = currentIconSet().get(i);
+        selection = selectedIcon.getName();
+        currentAscii = UnicodeToCp437((int)selectedIcon.getGlyph());
+        editColor = selectedIcon.fgColor;
+        if (editColor == null) {
+            selectedIcon.fgColor = new UColor(1f,1f,1f,1f);
+            editColor = selectedIcon.fgColor;
         }
     }
 
@@ -117,22 +140,21 @@ public class GlyphedModal extends UModal {
                 level = 1f-level;
                 System.out.println(Float.toString(level));
                 if (meteri == 0)
-                    fgColor.setR(level);
+                    editColor.setR(level);
                 else if (meteri == 2)
-                    fgColor.setG(level);
+                    editColor.setG(level);
                 else if (meteri == 4)
-                    fgColor.setB(level);
-                else if (meteri == 8)
-                    bgColor.setR(level);
-                else if (meteri == 10)
-                    bgColor.setG(level);
-                else if (meteri == 12)
-                    bgColor.setB(level);
+                    editColor.setB(level);
             }
         }
         if (mousey >= 1 && mousey <= 3) {
             if (mousex >= 23 && mousex <= 29) {
                 glyphType = mousey - 1;
+            }
+        }
+        if (mousex >= 31 && mousex <= 40) {
+            if (mousey >= 8 && mousey <= 28) {
+                selectIcon(mousey-8);
             }
         }
     }
@@ -165,7 +187,7 @@ public class GlyphedModal extends UModal {
         drawString("Unicode int:", 33,2,UColor.COLOR_GRAY);
 
         renderer.drawRect(1 * gw() + xpos, 1 * gh() + ypos, 3 * gw(), 3 * gh(), UColor.COLOR_BLACK);
-        drawTile(u, 2, 2, fgColor, bgColor);
+        drawIcon(selectedIcon, 2, 2);
         for (int i=0;i<4;i++) {
             for (int x=0;x<3;x++) {
                 for (int y=0;y<3;y++) {
@@ -175,41 +197,41 @@ public class GlyphedModal extends UModal {
         }
 
         if (glyphType == TERRAIN) {
-            drawTile(u, 6, 1, fgColor, bgColor);
-            drawTile(u, 6, 2, fgColor, bgColor);
-            drawTile(u, 6, 3, fgColor, bgColor);
-            drawTile(u, 9, 2, fgColor, bgColor);
-            drawTile(u, 10, 2, fgColor, bgColor);
-            drawTile(u, 11, 2, fgColor, bgColor);
-            drawTile(u, 13, 1, fgColor, bgColor);
-            drawTile(u, 14, 1, fgColor, bgColor);
-            drawTile(u, 15, 1, fgColor, bgColor);
-            drawTile(u, 13, 2, fgColor, bgColor);
-            drawTile(u, 14, 2, fgColor, bgColor);
-            drawTile(u, 15, 2, fgColor, bgColor);
-            drawTile(u, 13, 3, fgColor, bgColor);
-            drawTile(u, 14, 3, fgColor, bgColor);
-            drawTile(u, 15, 3, fgColor, bgColor);
-            drawTile(u, 17, 3, fgColor, bgColor);
-            drawTile(u, 18, 3, fgColor, bgColor);
-            drawTile(u, 19, 3, fgColor, bgColor);
-            drawTile(u, 18, 2, fgColor, bgColor);
-            drawTile(u, 19, 2, fgColor, bgColor);
-            drawTile(u, 19, 1, fgColor, bgColor);
+            drawIcon(selectedIcon, 6,1);
+            drawIcon(selectedIcon,6,2);
+            drawIcon(selectedIcon,6,3);
+            drawIcon(selectedIcon,9,2);
+            drawIcon(selectedIcon,10,2);
+            drawIcon(selectedIcon,11,2);
+            drawIcon(selectedIcon,13,1);
+            drawIcon(selectedIcon,14,1);
+            drawIcon(selectedIcon,15, 1);
+            drawIcon(selectedIcon,13,2);
+            drawIcon(selectedIcon,14,2);
+            drawIcon(selectedIcon,15,2);
+            drawIcon(selectedIcon,13,3);
+            drawIcon(selectedIcon,14,3);
+            drawIcon(selectedIcon,15,3);
+            drawIcon(selectedIcon,17,3);
+            drawIcon(selectedIcon,18,3);
+            drawIcon(selectedIcon,19,3);
+            drawIcon(selectedIcon,18,2);
+            drawIcon(selectedIcon,19,2);
+            drawIcon(selectedIcon,19,1);
         } else {
-            drawTile(u, 6, 2, fgColor, glyphType==ACTOR);
-            drawTile(u, 9,1,fgColor, glyphType==ACTOR);
-            drawTile(u,10,2,fgColor, glyphType==ACTOR);
-            drawTile(u,11,2,fgColor, glyphType==ACTOR);
-            drawTile(u,11,1,fgColor, glyphType==ACTOR);
-            drawTile(u,10,3,fgColor, glyphType==ACTOR);
-            drawTile(u, 13, 1, fgColor, glyphType==ACTOR);
-            drawTile(u,15,3,fgColor, glyphType==ACTOR);
-            drawTile(u,17,1,fgColor, glyphType==ACTOR);
-            drawTile(u,19,1,fgColor, glyphType==ACTOR);
-            drawTile(u,18,2,fgColor, glyphType==ACTOR);
-            drawTile(u,17,3,fgColor, glyphType==ACTOR);
-            drawTile(u,19,3,fgColor, glyphType==ACTOR);
+            drawIcon(selectedIcon,6,2);
+            drawIcon(selectedIcon,9,1);
+            drawIcon(selectedIcon,10,2);
+            drawIcon(selectedIcon,11,2);
+            drawIcon(selectedIcon,11,1);
+            drawIcon(selectedIcon,10,3);
+            drawIcon(selectedIcon,13,1);
+            drawIcon(selectedIcon,15,3);
+            drawIcon(selectedIcon,17,1);
+            drawIcon(selectedIcon,19,1);
+            drawIcon(selectedIcon,18,2);
+            drawIcon(selectedIcon,17,3);
+            drawIcon(selectedIcon,19,3);
         }
 
         drawString("terrain", 23, 1, glyphType == TERRAIN ? null : UColor.COLOR_GRAY);
@@ -229,26 +251,32 @@ public class GlyphedModal extends UModal {
         }
 
         for (int i=0;i<8;i++) {
-            drawTile(' ', meterx, metery+i, fgColor, meter(fgColor.fR(), 8-i, 8) ? UColor.COLOR_RED : UColor.COLOR_DARKGRAY);
-            drawTile(' ', meterx+2, metery+i, fgColor, meter(fgColor.fG(), 8-i, 8) ? UColor.COLOR_GREEN : UColor.COLOR_DARKGRAY);
-            drawTile(' ', meterx+4, metery+i, fgColor, meter(fgColor.fB(), 8-i, 8) ? UColor.COLOR_BLUE : UColor.COLOR_DARKGRAY);
-            if (glyphType == TERRAIN) {
-                drawTile(' ', meterx + 8, metery + i, fgColor, meter(bgColor.fR(), 8 - i, 8) ? UColor.COLOR_RED : UColor.COLOR_DARKGRAY);
-                drawTile(' ', meterx + 10, metery + i, fgColor, meter(bgColor.fG(), 8 - i, 8) ? UColor.COLOR_GREEN : UColor.COLOR_DARKGRAY);
-                drawTile(' ', meterx + 12, metery + i, fgColor, meter(bgColor.fB(), 8 - i, 8) ? UColor.COLOR_BLUE : UColor.COLOR_DARKGRAY);
-            }
+            drawTile('|', meterx, metery+i, editColor, meter(editColor.fR(), 8-i, 8) ? UColor.COLOR_RED : UColor.COLOR_DARKGRAY);
+            drawTile('|', meterx+2, metery+i, editColor, meter(editColor.fG(), 8-i, 8) ? UColor.COLOR_GREEN : UColor.COLOR_DARKGRAY);
+            drawTile('|', meterx+4, metery+i, editColor, meter(editColor.fB(), 8-i, 8) ? UColor.COLOR_BLUE : UColor.COLOR_DARKGRAY);
         }
         drawString("fgColor",21,19,null);
-        drawTile(0,19,19,null, fgColor);
-        drawString(Integer.toString(fgColor.iR()), 20, 17, UColor.COLOR_YELLOW);
-        drawString(Integer.toString(fgColor.iG()), 22, 17, UColor.COLOR_YELLOW);
-        drawString(Integer.toString(fgColor.iB()), 24, 17, UColor.COLOR_YELLOW);
-        if (glyphType == TERRAIN) {
-            drawTile(0,27,19,null,bgColor);
-            drawString("bgColor",29,19,null);
-            drawString(Integer.toString(bgColor.iR()), 28, 17, UColor.COLOR_YELLOW);
-            drawString(Integer.toString(bgColor.iG()), 30, 17, UColor.COLOR_YELLOW);
-            drawString(Integer.toString(bgColor.iB()), 32, 17, UColor.COLOR_YELLOW);
+        drawTile(0,19,19,null, editColor);
+        drawString(Integer.toString(editColor.iR()), 20, 17, UColor.COLOR_YELLOW);
+        drawString(Integer.toString(editColor.iG()), 22, 17, UColor.COLOR_YELLOW);
+        drawString(Integer.toString(editColor.iB()), 24, 17, UColor.COLOR_YELLOW);
+
+        for (int i=0;i<20;i++) {
+            ArrayList<Icon> iconset;
+            if (glyphType == TERRAIN)
+                iconset = terrainIcons;
+            else if (glyphType == THING)
+                iconset = thingIcons;
+            else
+                iconset = actorIcons;
+            if (i+pageOffset < iconset.size()) {
+                Icon icon = iconset.get(i + pageOffset);
+                drawIcon(icon, 31, 8 + i);
+                if (icon.getName().equals(selection))
+                    drawString(icon.getName(), 33, 8+i,UColor.COLOR_YELLOW);
+                else
+                    drawString(icon.getName(), 33, 8 + i, UColor.COLOR_GRAY);
+            }
         }
     }
 
@@ -326,5 +354,13 @@ public class GlyphedModal extends UModal {
         };
         ascii = ascii % 256;
         return lookup[ascii];
+    }
+    public int UnicodeToCp437(int u) {
+        for (int i=0;i<256;i++) {
+            if (cp437toUnicode(i) == u) {
+                return i;
+            }
+        }
+        return 0;
     }
 }
