@@ -22,7 +22,7 @@ import ure.render.URenderer;
 import ure.sys.events.TimeTickEvent;
 import ure.things.UThing;
 import ure.things.UThingCzar;
-import ure.ui.Icon;
+import ure.ui.Icons.Icon;
 import ure.ui.UCamera;
 import ure.ui.modals.*;
 import ure.ui.panels.UScrollPanel;

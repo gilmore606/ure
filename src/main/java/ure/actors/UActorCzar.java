@@ -6,11 +6,13 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ure.actors.behaviors.BehaviorDeserializer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
+import ure.ui.Icons.UIconCzar;
 
 import javax.inject.Inject;
 
@@ -23,6 +25,8 @@ public class UActorCzar {
     ObjectMapper objectMapper;
     @Inject
     UCommander commander;
+    @Inject
+    UIconCzar iconCzar;
 
     public BehaviorDeserializer behaviorDeserializer;
 
@@ -114,4 +118,6 @@ public class UActorCzar {
         body.setParts(parts);
         return body;
     }
+
+    public Set<String> getAllActors() { return actorsByName.keySet(); }
 }

@@ -1,9 +1,8 @@
 package ure.ui.panels;
 
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.UAnimator;
-import ure.ui.Icon;
+import ure.ui.Icons.Icon;
 
 import java.util.ArrayList;
 

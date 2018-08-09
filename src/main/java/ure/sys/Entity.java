@@ -1,7 +1,7 @@
 package ure.sys;
 
 import ure.areas.UArea;
-import ure.ui.Icon;
+import ure.ui.Icons.Icon;
 
 import java.util.ArrayList;
 

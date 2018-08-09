@@ -4,14 +4,16 @@ import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.sys.GLKey;
 import ure.terrain.UTerrain;
-import ure.ui.Icon;
+import ure.ui.Icons.Icon;
+import ure.ui.Icons.UIconCzar;
 import ure.ui.modals.UModal;
 
+import javax.inject.Inject;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
+import java.util.Set;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP;
@@ -31,13 +33,19 @@ public class GlyphedModal extends UModal {
     static int THING = 1;
     static int ACTOR = 2;
 
+    Set<String> thingNames;
+    Set<String> actorNames;
+    Set<String> terrainNames;
+    ArrayList<Icon> thingIcons;
+    ArrayList<Icon> actorIcons;
+    ArrayList<Icon> terrainIcons;
+
     ArrayList<UTerrain> terrains;
     int refTerrain = 0;
     Icon refIcon;
 
     int currentAscii = 2;
     int cursorAscii = 0;
-    String[] jsonLines;
 
     UColor bgColor;
     UColor fgColor;
@@ -49,7 +57,10 @@ public class GlyphedModal extends UModal {
         bgColor = new UColor(0f,0f,0f);
         terrains = terrainCzar.getAllTerrainTemplates();
         makeRefIcon();
-        updateJson();
+        thingNames = thingCzar.getAllThings();
+        actorNames = actorCzar.getAllActors();
+        terrainNames = terrainCzar.getAllTerrains();
+        fillIconLists();
     }
 
     void makeRefIcon() {
@@ -57,6 +68,36 @@ public class GlyphedModal extends UModal {
         UTerrain t2 = t.makeClone();
         t2.initializeAsCloneFrom(t);
         refIcon = t2.getIcon();
+    }
+
+    void fillIconLists() {
+        thingIcons = new ArrayList<>();
+        for (String name : thingNames) {
+            Icon icon = iconCzar.getIconByName(name);
+            if (icon == null) {
+                icon = new Icon("blank");
+                icon.setName(name);
+            }
+            thingIcons.add(icon);
+        }
+        actorIcons = new ArrayList<>();
+        for (String name : actorNames) {
+            Icon icon = iconCzar.getIconByName(name);
+            if (icon == null) {
+                icon = new Icon("blank");
+                icon.setName(name);
+            }
+            actorIcons.add(icon);
+        }
+        terrainIcons = new ArrayList<>();
+        for (String name : terrainNames) {
+            Icon icon = iconCzar.getIconByName(name);
+            if (icon == null) {
+                icon = new Icon("blank");
+                icon.setName(name);
+            }
+            terrainIcons.add(icon);
+        }
     }
 
     @Override
@@ -94,7 +135,6 @@ public class GlyphedModal extends UModal {
                 glyphType = mousey - 1;
             }
         }
-        updateJson();
     }
 
     @Override
@@ -210,9 +250,6 @@ public class GlyphedModal extends UModal {
             drawString(Integer.toString(bgColor.iG()), 30, 17, UColor.COLOR_YELLOW);
             drawString(Integer.toString(bgColor.iB()), 32, 17, UColor.COLOR_YELLOW);
         }
-
-        renderer.drawRect((2*gw()+xpos)-gw()/2, (28*gh()+ypos)-gh()/2, gw()*26,gh()*4,UColor.COLOR_LIGHTGRAY);
-        drawStrings(jsonLines, 2, 28, UColor.COLOR_BLACK);
     }
 
     boolean meter(float level, int cell, int maxcell) {
@@ -228,23 +265,6 @@ public class GlyphedModal extends UModal {
                 cursorAscii = (mousex - gridposx) + (mousey - gridposy)*16;
             }
         }
-    }
-
-    void updateJson() {
-        String hex = Integer.toHexString(cp437toUnicode(currentAscii));
-        if (hex.length() == 2)
-            hex = "00" + hex;
-        String json = "\"glyph\": \"\\u" + hex + "\",";
-        json = json + "\n ";
-        json = json + "\"fgcolor\": [ " + Integer.toString(fgColor.iR()) + "," + Integer.toString(fgColor.iG()) + "," + Integer.toString(fgColor.iB()) + " ]";
-        if (glyphType == TERRAIN) {
-            json = json + ",\n ";
-            json = json + "\"bgcolor\": [ " + Integer.toString(bgColor.iR()) + "," + Integer.toString(bgColor.iG()) + "," + Integer.toString(bgColor.iB()) + " ]";
-        }
-        jsonLines = splitLines(json);
-        StringSelection stringSelection = new StringSelection(json);
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(stringSelection, null);
     }
 
     public void drawTile(int u, int x, int y, UColor color, UColor bgcolor) {

@@ -23,6 +23,9 @@ import ure.terrain.UTerrainCzar;
 import ure.things.ThingDeserializer;
 import ure.things.UThing;
 import ure.things.UThingCzar;
+import ure.ui.Icons.Icon;
+import ure.ui.Icons.IconDeserializer;
+import ure.ui.Icons.UIconCzar;
 
 import javax.inject.Singleton;
 import java.util.Random;
@@ -45,6 +48,7 @@ public class AppModule {
         module.addDeserializer(UActor.class, new ActorDeserializer(objectMapper));
         module.addDeserializer(ULandscaper.class, new LandscaperDeserializer(objectMapper));
         module.addDeserializer(UBehavior.class, new BehaviorDeserializer(objectMapper));
+        module.addDeserializer(Icon.class, new IconDeserializer(objectMapper));
         objectMapper.registerModule(module);
         return objectMapper;
     }
@@ -85,6 +89,14 @@ public class AppModule {
     public UThingCzar providesThingCzar() {
         UThingCzar czar = new UThingCzar();
         czar.loadThings();
+        return czar;
+    }
+
+    @Provides
+    @Singleton
+    public UIconCzar providesIconCzar() {
+        UIconCzar czar = new UIconCzar();
+        czar.loadIcons();
         return czar;
     }
 

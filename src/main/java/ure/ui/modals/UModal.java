@@ -1,11 +1,13 @@
 package ure.ui.modals;
 
+import ure.actors.UActorCzar;
 import ure.sys.*;
 import ure.commands.UCommand;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.terrain.UTerrainCzar;
-import ure.ui.Icon;
+import ure.things.UThingCzar;
+import ure.ui.Icons.Icon;
+import ure.ui.Icons.UIconCzar;
 import ure.ui.View;
 
 import javax.inject.Inject;
@@ -23,6 +25,12 @@ public class UModal extends View implements UAnimator {
     public UCommander commander;
     @Inject
     public UTerrainCzar terrainCzar;
+    @Inject
+    public UThingCzar thingCzar;
+    @Inject
+    public UActorCzar actorCzar;
+    @Inject
+    public UIconCzar iconCzar;
 
     HearModal callback;
     String callbackContext;

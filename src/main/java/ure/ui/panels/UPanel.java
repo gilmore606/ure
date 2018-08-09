@@ -2,10 +2,9 @@ package ure.ui.panels;
 
 import com.google.common.eventbus.EventBus;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
-import ure.ui.Icon;
+import ure.ui.Icons.Icon;
 import ure.ui.View;
 
 import javax.inject.Inject;

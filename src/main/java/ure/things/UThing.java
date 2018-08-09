@@ -12,7 +12,7 @@ import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.render.URenderer;
-import ure.ui.Icon;
+import ure.ui.Icons.Icon;
 import ure.ui.UCamera;
 
 import javax.inject.Inject;

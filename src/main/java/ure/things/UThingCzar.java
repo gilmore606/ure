@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Set;
 
 public class UThingCzar {
 
@@ -79,4 +80,6 @@ public class UThingCzar {
         }
         return pile;
     }
+
+    public Set<String> getAllThings() { return thingsByName.keySet(); }
 }

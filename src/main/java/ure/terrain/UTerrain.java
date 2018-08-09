@@ -11,7 +11,7 @@ import ure.actors.actions.Interactable;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.actors.UActor;
-import ure.ui.Icon;
+import ure.ui.Icons.Icon;
 
 import javax.inject.Inject;
 import java.util.ArrayList;

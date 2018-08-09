@@ -15,7 +15,8 @@ import ure.terrain.UTerrainCzar;
 import ure.things.SpawnItem;
 import ure.things.UThing;
 import ure.things.UThingCzar;
-import ure.ui.Icon;
+import ure.ui.Icons.Icon;
+import ure.ui.Icons.UIconCzar;
 import ure.ui.RexFile;
 import ure.ui.UCamera;
 import ure.ui.USpeaker;
@@ -46,6 +47,7 @@ public interface AppComponent {
     void inject(UTerrainCzar czar);
     void inject(UThingCzar czar);
     void inject(UActorCzar czar);
+    void inject(UIconCzar czar);
     void inject(UCartographer cartographer);
     void inject(UCommander cmdr);
     void inject(ExampleGame game);
