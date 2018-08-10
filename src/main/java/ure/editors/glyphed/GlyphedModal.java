@@ -67,7 +67,7 @@ public class GlyphedModal extends UModal implements HearModalChoices {
 
     public GlyphedModal() {
         super(null, "", null);
-        setDimensions(44,36);
+        setDimensions(46,36);
         terrains = terrainCzar.getAllTerrainTemplates();
         makeRefIcon();
         thingNames = thingCzar.getAllThings();
@@ -140,6 +140,13 @@ public class GlyphedModal extends UModal implements HearModalChoices {
         setupDisplayIcons();
     }
 
+    void selectRefIcon(int i) {
+        if (i+pageOffset >= currentIconSet().size()) return;
+        Icon ic = currentIconSet().get(i+pageOffset);
+        if (ic == null) return;
+        refIcon = ic;
+    }
+
     @Override
     public void mouseClick() {
         updateMouseGrid();
@@ -148,6 +155,7 @@ public class GlyphedModal extends UModal implements HearModalChoices {
         if (mousex >= gridposx && mousex < (gridposx+16)) {
             if (mousey >= gridposy && mousey < (gridposy + 16)) {
                 selectedIcon.setGlyph(cp437toUnicode(cursorAscii));
+                setupDisplayIcons();
             }
         }
 
@@ -216,6 +224,13 @@ public class GlyphedModal extends UModal implements HearModalChoices {
         if (mousex >= 20 && mousex <= 28) {
             if (mousey == 20 || mousey == 22) {
                 deleteSwatch(mousex-20, mousey == 20 ? 0 : 1);
+            }
+        }
+
+        // Reficon select
+        if (mousex >= 31 && mousex <= 40) {
+            if (mousey >= 8 && mousey <= 19) {
+                selectRefIcon(mousey-8);
             }
         }
     }
@@ -389,7 +404,6 @@ public class GlyphedModal extends UModal implements HearModalChoices {
     @Override
     public void drawContent() {
 
-        drawString("pgUp/pgDn: change terrain bg    ", 1, 34, UColor.COLOR_GRAY);
         drawString("Reload", 33,34, UColor.COLOR_YELLOW);
         drawString("Save", 37, 34, UColor.COLOR_YELLOW);
         drawString("Quit", 40, 34, UColor.COLOR_YELLOW);
@@ -431,11 +445,11 @@ public class GlyphedModal extends UModal implements HearModalChoices {
                 renderer.drawTile(unicode, (gridposx+x)*(gw()+gridspacex)+xpos, (gridposy+y)*(gh() + gridspacey)+ypos, UColor.COLOR_GRAY);
             }
         }
-        int u = cp437toUnicode(selectedIcon.getGlyph());
-        drawString("CP437 ASCII:", 1, 17+gridposy, UColor.COLOR_GRAY);
-        drawString(Integer.toString(selectedIcon.getGlyph()), 6, 17+gridposy, UColor.COLOR_YELLOW);
-        drawString(Integer.toString(u), 13, 17+gridposy, UColor.COLOR_YELLOW);
-        drawString("Unicode int:", 8,17+gridposy,UColor.COLOR_GRAY);
+        int u = selectedIcon.getGlyph();
+        drawString("CP437", 1, 17+gridposy, UColor.COLOR_DARKGRAY);
+        drawString(Integer.toString(UnicodeToCp437(u)), 4, 17+gridposy, UColor.COLOR_YELLOW);
+        drawString("Unicode", 7,17+gridposy,UColor.COLOR_DARKGRAY);
+        drawString(Integer.toString(u), 11, 17+gridposy, UColor.COLOR_YELLOW);
 
         // Color sliders
         drawMeter(meterx, metery, 1, 8, editColor.fR(), 1f, editColor);
@@ -449,7 +463,7 @@ public class GlyphedModal extends UModal implements HearModalChoices {
         drawString(Integer.toString(editColor.iB()), 24, 17, UColor.COLOR_YELLOW);
 
         // Coloredit selector
-        drawString("fg",18,20,null);
+        drawString("fg",18,20,UColor.COLOR_DARKGRAY);
         drawSwatch(selectedIcon.fgColor,20,20);
         UColor[] fgvar = selectedIcon.getFgVariants();
         if (fgvar != null) {
@@ -460,8 +474,7 @@ public class GlyphedModal extends UModal implements HearModalChoices {
         } else {
             drawTile(43,21,20,UColor.COLOR_YELLOW);
         }
-
-        drawString("bg", 18, 22, null);
+        drawString("bg", 18, 22, UColor.COLOR_DARKGRAY);
         drawSwatch(selectedIcon.bgColor,20,22);
         UColor[] bgvar = selectedIcon.getBgVariants();
         if (bgvar != null) {
@@ -473,8 +486,24 @@ public class GlyphedModal extends UModal implements HearModalChoices {
             drawTile(43, 21, 22, UColor.COLOR_YELLOW);
         }
 
+        // Glyphedit selector
+        drawString("glyph", 17, 24, UColor.COLOR_DARKGRAY);
+        drawTile(selectedIcon.glyph, 20, 24, UColor.COLOR_WHITE);
+        int[] gvar = selectedIcon.getGlyphVariants();
+        if (gvar != null) {
+            for (int i=0;i<gvar.length;i++) {
+                drawTile(gvar[i], 21+i,24,UColor.COLOR_WHITE);
+            }
+            drawTile(43, 21+gvar.length,24, UColor.COLOR_YELLOW);
+        } else {
+            drawTile(43, 21, 24, UColor.COLOR_YELLOW);
+        }
+        drawString("plus to add variant", 21, 26, UColor.COLOR_DARKGRAY);
+        drawString("rightClick to remove", 21, 27, UColor.COLOR_DARKGRAY);
 
         // Icon scroll list
+        if (glyphType == TERRAIN)
+            drawString("rightClick for background", 33, 6, UColor.COLOR_DARKGRAY);
         ArrayList<Icon> iconset = currentIconSet();
         for (int i=0;i<12;i++) {
             if (i+pageOffset < iconset.size()) {
