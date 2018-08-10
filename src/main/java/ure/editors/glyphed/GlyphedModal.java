@@ -6,7 +6,10 @@ import ure.sys.GLKey;
 import ure.terrain.UTerrain;
 import ure.ui.Icons.Icon;
 import ure.ui.Icons.UIconCzar;
+import ure.ui.modals.HearModalChoices;
 import ure.ui.modals.UModal;
+import ure.ui.modals.UModalChoices;
+import ure.ui.modals.UModalNotify;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -18,7 +21,7 @@ import java.util.Set;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP;
 
-public class GlyphedModal extends UModal {
+public class GlyphedModal extends UModal implements HearModalChoices {
 
     int gridspacex = 0;
     int gridspacey = 0;
@@ -48,7 +51,6 @@ public class GlyphedModal extends UModal {
     int refTerrain = 0;
     Icon refIcon;
 
-    int currentAscii = 2;
     int cursorAscii = 0;
 
     UColor editColor;
@@ -119,7 +121,6 @@ public class GlyphedModal extends UModal {
         if (ic == null) return;
         selectedIcon = ic;
         selection = selectedIcon.getName();
-        currentAscii = UnicodeToCp437((int)selectedIcon.getGlyph());
         editColor = selectedIcon.fgColor;
         if (editColor == null) {
             selectedIcon.fgColor = new UColor(1f,1f,1f,1f);
@@ -134,7 +135,7 @@ public class GlyphedModal extends UModal {
         // Glyph grid
         if (mousex >= gridposx && mousex < (gridposx+16)) {
             if (mousey >= gridposy && mousey < (gridposy + 16)) {
-                currentAscii = cursorAscii;
+                selectedIcon.setGlyph((char)cursorAscii);
             }
         }
 
@@ -186,6 +187,15 @@ public class GlyphedModal extends UModal {
             }
         }
 
+        // Reload / Save / Quit
+        if (mousey == 34) {
+            if (mousex >= 33 && mousex <= 36)
+                doReload();
+            else if (mousex >= 37 && mousex <= 39)
+                doSave();
+            else if (mousex >= 40 && mousex <= 42)
+                doQuit();
+        }
     }
 
     @Override
@@ -317,6 +327,9 @@ public class GlyphedModal extends UModal {
     public void drawContent() {
 
         drawString("pgUp/pgDn: change terrain bg    ", 1, 34, UColor.COLOR_GRAY);
+        drawString("Reload", 33,34, UColor.COLOR_YELLOW);
+        drawString("Save", 37, 34, UColor.COLOR_YELLOW);
+        drawString("Quit", 40, 34, UColor.COLOR_YELLOW);
         updateMouseGrid();
 
 
@@ -371,25 +384,25 @@ public class GlyphedModal extends UModal {
         }
 
         // Type selector
-        drawString("terrain", 23, 1, glyphType == TERRAIN ? null : UColor.COLOR_GRAY);
-        drawString("thing", 23,2, glyphType == THING ? null : UColor.COLOR_GRAY);
-        drawString("actor", 23, 3, glyphType == ACTOR ? null : UColor.COLOR_GRAY);
+        drawString("terrain", 23, 1, glyphType == TERRAIN ? UColor.COLOR_YELLOW : UColor.COLOR_GRAY);
+        drawString("thing", 23,2, glyphType == THING ? UColor.COLOR_YELLOW : UColor.COLOR_GRAY);
+        drawString("actor", 23, 3, glyphType == ACTOR ? UColor.COLOR_YELLOW : UColor.COLOR_GRAY);
 
         // Glyph grid
         for (int x=0;x<16;x++) {
             for (int y=0;y<16;y++) {
                 int ascii = x+y*16;
                 int unicode = cp437toUnicode(ascii);
-                if (ascii == currentAscii)
+                if (ascii == selectedIcon.getGlyph())
                     renderer.drawRect((gridposx+x)*(gw()+gridspacex)+xpos, (gridposy+y)*(gh() + gridspacey)+ypos, gw(), gh(), UColor.COLOR_YELLOW);
                 else if (ascii == cursorAscii)
                     renderer.drawRect((gridposx+x)*(gw()+gridspacex)+xpos, (gridposy+y)*(gh() + gridspacey)+ypos, gw(), gh(), UColor.COLOR_BLUE);
                 renderer.drawTile(unicode, (gridposx+x)*(gw()+gridspacex)+xpos, (gridposy+y)*(gh() + gridspacey)+ypos, UColor.COLOR_GRAY);
             }
         }
-        int u = cp437toUnicode(currentAscii);
+        int u = cp437toUnicode(selectedIcon.getGlyph());
         drawString("CP437 ASCII:", 1, 17+gridposy, UColor.COLOR_GRAY);
-        drawString(Integer.toString(currentAscii), 6, 17+gridposy, UColor.COLOR_YELLOW);
+        drawString(Integer.toString(selectedIcon.getGlyph()), 6, 17+gridposy, UColor.COLOR_YELLOW);
         drawString(Integer.toString(u), 13, 17+gridposy, UColor.COLOR_YELLOW);
         drawString("Unicode int:", 8,17+gridposy,UColor.COLOR_GRAY);
 
@@ -548,5 +561,34 @@ public class GlyphedModal extends UModal {
             }
         }
         return 0;
+    }
+
+    public void doReload() {
+        ArrayList<String> choices = new ArrayList<>();
+        choices.add("Yes"); choices.add("No");
+        UModalChoices m = new UModalChoices("Reload all icons? \nYou will lose any unsaved changes.", choices, 1, 1, true, null, this, "reload");
+        commander.showModal(m);
+    }
+
+    public void doSave() {
+
+        UModalNotify m = new UModalNotify("Saved all changes!", null, 0, 0);
+        commander.showModal(m);
+    }
+
+    public void doQuit() {
+        ArrayList<String> choices = new ArrayList<>();
+        choices.add("Yes"); choices.add("No");
+        UModalChoices m = new UModalChoices("Quit? \nYou will lose any unsaved changes.", choices, 1, 1, true, null, this, "quit");
+        commander.showModal(m);
+    }
+
+    public void hearModalChoices(String context, String choice) {
+        if (context.equals("quit") && choice.equals("Yes")) {
+            dismiss();
+        }
+        if (context.equals("reload") && choice.equals("Yes")) {
+
+        }
     }
 }
