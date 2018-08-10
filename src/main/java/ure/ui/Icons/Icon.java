@@ -7,6 +7,7 @@ import ure.sys.Injector;
 import ure.sys.UConfig;
 
 import javax.inject.Inject;
+import java.util.Random;
 
 /**
  * A glyph plus colors defining a static entity representation for UI purposes.
@@ -20,10 +21,13 @@ public class Icon implements Cloneable {
     @Inject
     @JsonIgnore
     public UConfig config;
+    @Inject
+    @JsonIgnore
+    public Random random;
 
     public UColor bgColor;
     public UColor fgColor;
-    public char glyph;
+    public int glyph;
 
     String name;
     int[] glyphVariants;
@@ -74,15 +78,39 @@ public class Icon implements Cloneable {
      * Pick our variants, etc.
      */
     public void initialize() {
+        initializeFgColor();
+        initializeBgColor();
+        initializeGlyph();
+    }
 
+    public void initializeFgColor() {
+        if (fgVariants != null) {
+            int r = random.nextInt(fgVariants.length+1);
+            if (r > 0)
+                fgColor = fgVariants[r-1];
+        }
+    }
+    public void initializeBgColor() {
+        if (bgVariants != null) {
+            int r = random.nextInt(bgVariants.length+1);
+            if (r > 0)
+                bgColor = bgVariants[r-1];
+        }
+    }
+    public void initializeGlyph() {
+        if (glyphVariants != null) {
+            int r = random.nextInt(glyphVariants.length+1);
+            if (r > 0)
+                glyph = glyphVariants[r-1];
+        }
     }
 
     public UColor getBgColor() { return bgColor; }
     public void setBgColor(UColor bgColor) { this.bgColor = bgColor; }
     public UColor getFgColor() { return fgColor; }
     public void setFgColor(UColor fgColor) { this.fgColor = fgColor; }
-    public char getGlyph() { return glyph; }
-    public void setGlyph(char glyph) { this.glyph = glyph; }
+    public int getGlyph() { return glyph; }
+    public void setGlyph(int glyph) { this.glyph = glyph; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public int[] getGlyphVariants() { return glyphVariants; }

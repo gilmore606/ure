@@ -1,5 +1,6 @@
 package ure.ui.modals;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ure.actors.UActorCzar;
 import ure.sys.*;
 import ure.commands.UCommand;
@@ -31,6 +32,8 @@ public class UModal extends View implements UAnimator {
     public UActorCzar actorCzar;
     @Inject
     public UIconCzar iconCzar;
+    @Inject
+    public ObjectMapper objectMapper;
 
     HearModal callback;
     String callbackContext;

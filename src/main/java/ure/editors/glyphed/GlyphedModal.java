@@ -1,5 +1,9 @@
 package ure.editors.glyphed;
 
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import ure.areas.UCell;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.sys.GLKey;
@@ -15,6 +19,9 @@ import javax.inject.Inject;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -39,6 +46,9 @@ public class GlyphedModal extends UModal implements HearModalChoices {
     static int ACTOR = 2;
     int pageOffset = 0;
     boolean listUpEnabled, listDownEnabled;
+    ArrayList<Icon> displayIcons;
+    ArrayList<Integer> displayXs;
+    ArrayList<Integer> displayYs;
 
     Set<String> thingNames;
     Set<String> actorNames;
@@ -64,6 +74,7 @@ public class GlyphedModal extends UModal implements HearModalChoices {
         actorNames = actorCzar.getAllActors();
         terrainNames = terrainCzar.getAllTerrains();
         fillIconLists();
+        setupDisplayIcons();
         selectIcon(0);
     }
 
@@ -126,6 +137,7 @@ public class GlyphedModal extends UModal implements HearModalChoices {
             selectedIcon.fgColor = new UColor(1f,1f,1f,1f);
             editColor = selectedIcon.fgColor;
         }
+        setupDisplayIcons();
     }
 
     @Override
@@ -135,7 +147,7 @@ public class GlyphedModal extends UModal implements HearModalChoices {
         // Glyph grid
         if (mousex >= gridposx && mousex < (gridposx+16)) {
             if (mousey >= gridposy && mousey < (gridposy + 16)) {
-                selectedIcon.setGlyph((char)cursorAscii);
+                selectedIcon.setGlyph(cp437toUnicode(cursorAscii));
             }
         }
 
@@ -323,6 +335,57 @@ public class GlyphedModal extends UModal implements HearModalChoices {
         }
     }
 
+    void setupDisplayIcons() {
+        displayIcons = new ArrayList<>();
+        displayXs = new ArrayList<>();
+        displayYs = new ArrayList<>();
+        if (glyphType == TERRAIN) {
+            addDisplayIcon(selectedIcon, 6,1);
+            addDisplayIcon(selectedIcon,6,2);
+            addDisplayIcon(selectedIcon,6,3);
+            addDisplayIcon(selectedIcon,9,2);
+            addDisplayIcon(selectedIcon,10,2);
+            addDisplayIcon(selectedIcon,11,2);
+            addDisplayIcon(selectedIcon,13,1);
+            addDisplayIcon(selectedIcon,14,1);
+            addDisplayIcon(selectedIcon,15, 1);
+            addDisplayIcon(selectedIcon,13,2);
+            addDisplayIcon(selectedIcon,14,2);
+            addDisplayIcon(selectedIcon,15,2);
+            addDisplayIcon(selectedIcon,13,3);
+            addDisplayIcon(selectedIcon,14,3);
+            addDisplayIcon(selectedIcon,15,3);
+            addDisplayIcon(selectedIcon,17,3);
+            addDisplayIcon(selectedIcon,18,3);
+            addDisplayIcon(selectedIcon,19,3);
+            addDisplayIcon(selectedIcon,18,2);
+            addDisplayIcon(selectedIcon,19,2);
+            addDisplayIcon(selectedIcon,19,1);
+        } else {
+            addDisplayIcon(selectedIcon,6,2);
+            addDisplayIcon(selectedIcon,9,1);
+            addDisplayIcon(selectedIcon,10,2);
+            addDisplayIcon(selectedIcon,11,2);
+            addDisplayIcon(selectedIcon,11,1);
+            addDisplayIcon(selectedIcon,10,3);
+            addDisplayIcon(selectedIcon,13,1);
+            addDisplayIcon(selectedIcon,15,3);
+            addDisplayIcon(selectedIcon,17,1);
+            addDisplayIcon(selectedIcon,19,1);
+            addDisplayIcon(selectedIcon,18,2);
+            addDisplayIcon(selectedIcon,17,3);
+            addDisplayIcon(selectedIcon,19,3);
+        }
+    }
+    void addDisplayIcon(Icon template, int x, int y) {
+        if (template == null) return;
+        Icon icon = template.makeClone();
+        icon.initialize();
+        displayIcons.add(icon);
+        displayXs.add(x);
+        displayYs.add(y);
+    }
+
     @Override
     public void drawContent() {
 
@@ -344,44 +407,12 @@ public class GlyphedModal extends UModal implements HearModalChoices {
                 }
             }
         }
-
-        if (glyphType == TERRAIN) {
-            drawIcon(selectedIcon, 6,1);
-            drawIcon(selectedIcon,6,2);
-            drawIcon(selectedIcon,6,3);
-            drawIcon(selectedIcon,9,2);
-            drawIcon(selectedIcon,10,2);
-            drawIcon(selectedIcon,11,2);
-            drawIcon(selectedIcon,13,1);
-            drawIcon(selectedIcon,14,1);
-            drawIcon(selectedIcon,15, 1);
-            drawIcon(selectedIcon,13,2);
-            drawIcon(selectedIcon,14,2);
-            drawIcon(selectedIcon,15,2);
-            drawIcon(selectedIcon,13,3);
-            drawIcon(selectedIcon,14,3);
-            drawIcon(selectedIcon,15,3);
-            drawIcon(selectedIcon,17,3);
-            drawIcon(selectedIcon,18,3);
-            drawIcon(selectedIcon,19,3);
-            drawIcon(selectedIcon,18,2);
-            drawIcon(selectedIcon,19,2);
-            drawIcon(selectedIcon,19,1);
-        } else {
-            drawIcon(selectedIcon,6,2);
-            drawIcon(selectedIcon,9,1);
-            drawIcon(selectedIcon,10,2);
-            drawIcon(selectedIcon,11,2);
-            drawIcon(selectedIcon,11,1);
-            drawIcon(selectedIcon,10,3);
-            drawIcon(selectedIcon,13,1);
-            drawIcon(selectedIcon,15,3);
-            drawIcon(selectedIcon,17,1);
-            drawIcon(selectedIcon,19,1);
-            drawIcon(selectedIcon,18,2);
-            drawIcon(selectedIcon,17,3);
-            drawIcon(selectedIcon,19,3);
+        if (displayIcons != null) {
+            for (int i=0;i<displayIcons.size();i++) {
+                drawIcon(displayIcons.get(i),displayXs.get(i),displayYs.get(i));
+            }
         }
+
 
         // Type selector
         drawString("terrain", 23, 1, glyphType == TERRAIN ? UColor.COLOR_YELLOW : UColor.COLOR_GRAY);
@@ -393,7 +424,7 @@ public class GlyphedModal extends UModal implements HearModalChoices {
             for (int y=0;y<16;y++) {
                 int ascii = x+y*16;
                 int unicode = cp437toUnicode(ascii);
-                if (ascii == selectedIcon.getGlyph())
+                if (ascii == UnicodeToCp437(selectedIcon.getGlyph()))
                     renderer.drawRect((gridposx+x)*(gw()+gridspacex)+xpos, (gridposy+y)*(gh() + gridspacey)+ypos, gw(), gh(), UColor.COLOR_YELLOW);
                 else if (ascii == cursorAscii)
                     renderer.drawRect((gridposx+x)*(gw()+gridspacex)+xpos, (gridposy+y)*(gh() + gridspacey)+ypos, gw(), gh(), UColor.COLOR_BLUE);
@@ -563,20 +594,22 @@ public class GlyphedModal extends UModal implements HearModalChoices {
         return 0;
     }
 
-    public void doReload() {
+    void doReload() {
         ArrayList<String> choices = new ArrayList<>();
         choices.add("Yes"); choices.add("No");
         UModalChoices m = new UModalChoices("Reload all icons? \nYou will lose any unsaved changes.", choices, 1, 1, true, null, this, "reload");
         commander.showModal(m);
     }
 
-    public void doSave() {
-
+    void doSave() {
+        writeJson(terrainIcons, "terrain-icons.json");
+        writeJson(thingIcons, "thing-icons.json");
+        writeJson(actorIcons, "actor-icons.json");
         UModalNotify m = new UModalNotify("Saved all changes!", null, 0, 0);
         commander.showModal(m);
     }
 
-    public void doQuit() {
+    void doQuit() {
         ArrayList<String> choices = new ArrayList<>();
         choices.add("Yes"); choices.add("No");
         UModalChoices m = new UModalChoices("Quit? \nYou will lose any unsaved changes.", choices, 1, 1, true, null, this, "quit");
@@ -589,6 +622,20 @@ public class GlyphedModal extends UModal implements HearModalChoices {
         }
         if (context.equals("reload") && choice.equals("Yes")) {
 
+        }
+    }
+
+    void writeJson(ArrayList<Icon> icons, String filename) {
+        System.out.println("GLYPHED: writing " + filename);
+        File file = new File(commander.config.getResourcePath() + "icons/" + filename);
+        try (FileOutputStream stream = new FileOutputStream(file);) {
+            JsonFactory jfactory = new JsonFactory();
+            JsonGenerator jGenerator = jfactory.createGenerator(stream, JsonEncoding.UTF8);
+            jGenerator.setCodec(objectMapper);
+            jGenerator.writeObject(icons);
+            jGenerator.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
