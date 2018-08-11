@@ -16,6 +16,7 @@ public class UModalStringPick extends UModal {
     boolean escapable;
     int textWidth = 0;
     int selection = 0;
+    int headerHeight = 0;
     UColor tempHiliteColor, flashColor;
 
     public UModalStringPick(String _header, UColor _bgColor, int _xpad, int _ypad, ArrayList<String> _choices,
@@ -31,9 +32,13 @@ public class UModalStringPick extends UModal {
             int len = textWidth(choice);
             if (len > width) width = len;
         }
-        width = Math.max(width+1, textWidth(header));
+        headerHeight = 0;
+        if (header != null) {
+            width = Math.max(width + 1, textWidth(header));
+            headerHeight = 2;
+        }
         textWidth = width;
-        int height = Math.max(4, choices.size() + 2);
+        int height = Math.max(3, choices.size() + headerHeight);
         setDimensions(width + xpad*2, height + ypad*2);
         if (bgColor == null)
             bgColor = commander.config.getModalBgColor();
@@ -46,12 +51,13 @@ public class UModalStringPick extends UModal {
 
     @Override
     public void drawContent() {
-        selection = mouseToSelection(choices.size(), 2, selection);
-        if (header != null)
+        selection = mouseToSelection(choices.size(), headerHeight, selection);
+        if (header != null) {
             drawString(header, xpad, ypad);
+        }
         int y = 0;
         for (String choice : choices) {
-            drawString(choices.get(y), 1, y+2, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
+            drawString(choices.get(y), xpad, ypad +headerHeight + y, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
     }

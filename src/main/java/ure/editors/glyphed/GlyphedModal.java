@@ -10,10 +10,7 @@ import ure.sys.GLKey;
 import ure.terrain.UTerrain;
 import ure.ui.Icons.Icon;
 import ure.ui.Icons.UIconCzar;
-import ure.ui.modals.HearModalChoices;
-import ure.ui.modals.UModal;
-import ure.ui.modals.UModalChoices;
-import ure.ui.modals.UModalNotify;
+import ure.ui.modals.*;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -28,7 +25,7 @@ import java.util.Set;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_PAGE_UP;
 
-public class GlyphedModal extends UModal implements HearModalChoices {
+public class GlyphedModal extends UModal implements HearModalChoices,HearModalStringPick {
 
     int gridspacex = 0;
     int gridspacey = 0;
@@ -169,6 +166,13 @@ public class GlyphedModal extends UModal implements HearModalChoices {
             }
         }
 
+        // Type select
+        if (mousex >= 3 && mousex <= 9) {
+            if (mousey == 19+gridposy) {
+                selectType();
+            }
+        }
+
         // Color sliders
         if (mousex >= meterx && mousex <= meterx+13) {
             if (mousey >= metery && mousey <= (metery+8)) {
@@ -258,6 +262,7 @@ public class GlyphedModal extends UModal implements HearModalChoices {
             }
         }
     }
+
 
     void selectSwatch(int i, int type) {
         int fgVarCount, bgVarCount;
@@ -596,6 +601,10 @@ public class GlyphedModal extends UModal implements HearModalChoices {
             renderer.drawTile(118, 34 * gw() + xpos, 20 * gh() + ypos, UColor.COLOR_YELLOW);
             listDownEnabled = true;
         }
+
+        // Type selector
+        drawString("type", 1, 19+gridposy, UColor.COLOR_DARKGRAY);
+        drawString(selectedIcon.getTYPE(), 4, 19+gridposy, UColor.COLOR_YELLOW);
     }
 
     void drawMeter(int x, int y, int width, int height, float val, float maxval, UColor color) {
@@ -740,5 +749,18 @@ public class GlyphedModal extends UModal implements HearModalChoices {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    void selectType() {
+        ArrayList<String> typeNames = new ArrayList<>();
+        typeNames.add("blank"); typeNames.add("waves"); typeNames.add("bubbles");
+        typeNames.add("wall"); typeNames.add("bounce");
+        UModalStringPick modal = new UModalStringPick(null, null, 0, 0, typeNames, true, this, "type");
+        modal.setChildPosition(4,19+gridposy, this);
+        commander.showModal(modal);
+    }
+
+    public void hearModalStringPick(String context, String pick) {
+
     }
 }
