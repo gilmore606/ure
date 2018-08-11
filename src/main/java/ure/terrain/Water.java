@@ -16,17 +16,6 @@ public class Water extends UTerrain {
     public int shimmerFrames = 80;
     public int shimmerVariance = 50;
 
-    public int glyphOffsetY() {
-        //int f = getAnimationFrame();
-        //f = (f + cell.areaX() * 10 + cell.areaY()) % getAnimationFrames();
-        //int mid = getAnimationFrames() /2;
-        //if (f > mid + 1)
-        //    f =  getAnimationFrames() - f;
-        //float n = (float)f / (float)(getAnimationFrames() / 2);
-        //n = n * 2;
-        //return (int)(Math.sin((double)n * 6.28) * waves - waves);
-        return 0;
-    }
 
     public void animationTick() {
         //super.animationTick();

@@ -77,6 +77,8 @@ public class Icon implements Cloneable {
     public void setEntity(Entity e) {
         entity = e;
     }
+    public int getAnimOffset() { return animOffset; }
+    public void setAnimOffset(int i) { animOffset = i; }
 
     public void draw(int x, int y) { draw(x, y, UColor.COLOR_WHITE, 1f, 1f); }
     public void draw(int x, int y, UColor light, float opacity, float saturation) {
