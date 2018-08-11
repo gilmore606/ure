@@ -165,7 +165,7 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
             drawString(header, xpad, ypad);
         int y = 0;
         for (Entity entity : shownEntities()) {
-            drawIcon(entity.getIcon(), 1+xpad, y + 2+ypad);
+            drawIcon(entity.icon(), 1+xpad, y + 2+ypad);
             String n = entity.name();
             if (categorize)
                 n = (categoryItemNames.get(selectionCategory)).get(y);

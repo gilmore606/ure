@@ -183,7 +183,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
         player.setName(playername);
         player.setID(commander.generateNewID(player));
 
-        UThing item = thingCzar.getThingByName("rock");
+        UThing item = thingCzar.getThingByName("small stone");
         item.moveTo(player);
         item = thingCzar.getThingByName("trucker hat");
         item.moveTo(player);

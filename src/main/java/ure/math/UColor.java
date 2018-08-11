@@ -113,6 +113,9 @@ public class UColor {
     /**
      * Set the color with integer 0-255 values.
      */
+    public void set (UColor source) {
+        set(source.fR(),source.fG(),source.fB(),source.fA());
+    }
     public void set (int ir, int ig, int ib) { set(ir,ig,ib,255); }
     public void set(int ir, int ig, int ib, int ia) {
         r = (float)ir / 255f;

@@ -11,6 +11,7 @@ import ure.sys.UAnimator;
 import ure.sys.UCommander;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
+import ure.ui.Icons.Icon;
 import ure.ui.particles.UParticle;
 
 import javax.inject.Inject;
@@ -440,7 +441,7 @@ public class UCamera extends View implements UAnimator {
                     UTerrain t = area.terrainAt(col + leftEdge + i, row + topEdge + j);
                     if (t != null)
                         if (t.isGlow())
-                            total.addLights(t.getBgColor(), 0.5f);
+                            total.addLights(t.icon().getBgColor(), 0.5f);
                 }
             }
         }
@@ -501,18 +502,7 @@ public class UCamera extends View implements UAnimator {
             UColor terrainLight = light;
             if (t.isGlow())
                 terrainLight.set(1f,1f,1f);
-            // TODO: Use alpha here too?
-            UColor terrainBg = t.getBgColorBuffer();
-            UColor terrainFg = t.getFgColorBuffer();
-            terrainBg.set(t.getBgColor().r, t.getBgColor().g, t.getBgColor().b);
-            terrainBg.illuminateWith(terrainLight, tOpacity);
-            terrainBg.desaturateBy(1f - tSaturation);
-            renderer.drawRect(col * cellw, row * cellh, cellw, cellh, terrainBg);
-
-            terrainFg.set(t.getFgColor().r, t.getFgColor().g, t.getFgColor().b);
-            terrainFg.illuminateWith(terrainLight, tOpacity);
-            terrainFg.desaturateBy(1f - tSaturation);
-            renderer.drawTile(t.glyph(col + leftEdge,row + topEdge), col * cellw + t.glyphOffsetX(), row * cellh  + t.glyphOffsetY(), t.getFgColorBuffer());
+            t.icon().draw(col * cellw, row * cellh, terrainLight, tOpacity, tSaturation);
         } else {
             renderer.drawRect(col * cellw, row * cellh, cellw, cellh, commander.config.getCameraBgColor());
         }

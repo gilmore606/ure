@@ -15,8 +15,8 @@ public interface Entity {
     String name();
     long getID();
     void setID(long newID);
+    Icon icon();
     String getPlural();
-    Icon getIcon();
     String getCategory();
     ArrayList<String> UIdetails(String context);
     void setStat(String attribute, int value);

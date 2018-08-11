@@ -39,14 +39,6 @@ public class Door extends UTerrain {
     }
 
     @Override
-    public char getGlyph() {
-        if (isOpen()) {
-            return glyphopen;
-        }
-        return super.getGlyph();
-    }
-
-    @Override
     public void moveTriggerFrom(UActor actor, UCell cell) {
         if (!isOpen() && openOnMove(actor)) {
             openedBy(actor, cell);

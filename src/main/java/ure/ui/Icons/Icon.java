@@ -34,6 +34,9 @@ public class Icon implements Cloneable {
 
     public UColor bgColor;
     public UColor fgColor;
+    @JsonIgnore
+    public UColor bgBuffer,fgBuffer;
+
     public int glyph;
     int[] glyphVariants;
 
@@ -54,6 +57,8 @@ public class Icon implements Cloneable {
 
     public Icon() {
         Injector.getAppComponent().inject(this);
+        bgBuffer = new UColor(0f,0f,0f);
+        fgBuffer = new UColor(0f,0f,0f);
     }
 
     public Icon(String type) {
@@ -73,15 +78,22 @@ public class Icon implements Cloneable {
         entity = e;
     }
 
-    public void draw(int x, int y) {
+    public void draw(int x, int y) { draw(x, y, UColor.COLOR_WHITE, 1f, 1f); }
+    public void draw(int x, int y, UColor light, float opacity, float saturation) {
         if (bgColor != null) {
-            renderer.drawRect(x,y,config.getTileWidth(),config.getTileHeight(),bgColor);
+            bgBuffer.set(bgColor);
+            bgBuffer.illuminateWith(light, opacity);
+            bgBuffer.desaturateBy(1f - saturation);
+            renderer.drawRect(x,y,config.getTileWidth(),config.getTileHeight(),bgBuffer);
         }
         if (fgColor != null) {
             int g = glyph(commander.frameCounter);
             if (isOutline())
                 renderer.drawTileOutline(g, x+glyphX(), y+glyphY(), UColor.COLOR_BLACK);
-            renderer.drawTile(g, x+glyphX(), y+glyphY(), fgColor);
+            fgBuffer.set(fgColor);
+            fgBuffer.illuminateWith(light, opacity);
+            fgBuffer.desaturateBy(1f - saturation);
+            renderer.drawTile(g, x+glyphX(), y+glyphY(), fgBuffer);
         }
     }
 
