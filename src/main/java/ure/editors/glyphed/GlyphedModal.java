@@ -150,11 +150,18 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
         selectedIcon = ic;
         selection = selectedIcon.getName();
         editColor = selectedIcon.fgColor;
+        selectedGlyph = 0;
         if (editColor == null) {
             selectedIcon.fgColor = new UColor(1f,1f,1f,1f);
             editColor = selectedIcon.fgColor;
         }
         setupDisplayIcons();
+    }
+
+    int selectedUnicode() {
+        if (selectedGlyph == 0)
+            return selectedIcon.getGlyph();
+        return selectedIcon.getGlyphVariants()[selectedGlyph-1];
     }
 
     void selectRefIcon(int i) {
@@ -335,7 +342,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
             selectedGlyph = 0;
         } else if (i == varCount+1) {
             addGlyphSwatch();
-        } else {
+        } else if (i <= varCount) {
             selectedGlyph = i;
         }
     }
@@ -417,6 +424,8 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     }
 
     void selectFgSwatch(int i) {
+        if (selectedIcon.getFgVariants() == null)
+            return;
         if (i < selectedIcon.getFgVariants().length)
             editColor = selectedIcon.getFgVariants()[i];
     }
@@ -440,6 +449,8 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     }
 
     void selectBgSwatch(int i) {
+        if (selectedIcon.getBgVariants() == null)
+            return;
         if (i < selectedIcon.getBgVariants().length)
             editColor = selectedIcon.getBgVariants()[i];
     }
@@ -547,7 +558,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
             for (int y=0;y<16;y++) {
                 int ascii = x+y*16;
                 int unicode = cp437toUnicode(ascii);
-                if (ascii == UnicodeToCp437(selectedIcon.getGlyph()))
+                if (unicode == selectedUnicode())
                     renderer.drawRect((gridposx+x)*(gw()+gridspacex)+xpos, (gridposy+y)*(gh() + gridspacey)+ypos, gw(), gh(), UColor.COLOR_YELLOW);
                 else if (ascii == cursorAscii)
                     renderer.drawRect((gridposx+x)*(gw()+gridspacex)+xpos, (gridposy+y)*(gh() + gridspacey)+ypos, gw(), gh(), UColor.COLOR_BLUE);
