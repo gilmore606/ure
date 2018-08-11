@@ -44,8 +44,10 @@ public class Lightsource extends UThing {
 
     void makeLight() {
         if (isLightcolorUseGlyph()) {
-            SetupColors();
-            setLight(new ULight(getGlyphColor(), getLightrange(), getLightfalloff()));
+            if (icon().getFgColor() == null)
+                setLight(new ULight(UColor.COLOR_WHITE, getLightrange(), getLightfalloff()));
+            else
+                setLight(new ULight(icon().getFgColor(), getLightrange(), getLightfalloff()));
         } else {
             setLight(new ULight(new UColor(lightcolor[0], lightcolor[1], lightcolor[2]), getLightrange(), getLightfalloff()));
         }
@@ -138,12 +140,6 @@ public class Lightsource extends UThing {
             return d;
     }
 
-    @Override
-    public char getGlyph() {
-        if (isOn() && onglyph != 0)
-            return onglyph;
-        return super.getGlyph();
-    }
     public int[] getLightcolor() {
         return lightcolor;
     }

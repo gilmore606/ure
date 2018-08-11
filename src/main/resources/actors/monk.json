@@ -2,9 +2,7 @@
 
   "name": "monk",
 
-  "glyph": "M",
   "description": "A somber monk clad in rough robes.",
-  "color": [240,160,70],
   "tags": [ "rock", "title" ],
   "spawnlevels": [1,4],
 

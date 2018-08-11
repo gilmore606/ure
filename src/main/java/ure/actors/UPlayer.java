@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.areas.UArea;
+import ure.ui.Icons.Icon;
 import ure.ui.ULight;
 import ure.things.UThing;
 
@@ -38,12 +39,21 @@ public class UPlayer extends UActor {
         this.selfLight = selfLight;
         this.selfLightFalloff = selfLightFalloff;
         this.selfLightColor = selfLightColor;
-        setDisplayFields(thename, theicon, thecolor, addOutline);
+        setName(thename);
         if (selfLight > 0) {
             light = new ULight(selfLightColor, selfLightFalloff + selfLight, selfLight);
         }
         bodytype = "humanoid";
         body = commander.actorCzar.getNewBody(bodytype);
+    }
+
+    @Override
+    public Icon icon() {
+        if (icon == null) {
+            icon = iconCzar.getIconByName("player");
+            icon.setEntity(this);
+        }
+        return icon;
     }
 
     @Override
@@ -94,11 +104,6 @@ public class UPlayer extends UActor {
     public void walkFail(UCell cell) {
         super.walkFail(cell);
         commander.latchBreak();
-    }
-
-    @Override
-    public int bounceAnimY() {
-        return 0;
     }
 
     @Override

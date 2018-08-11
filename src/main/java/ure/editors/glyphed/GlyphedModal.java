@@ -114,7 +114,9 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
             thingIcons.add(icon);
         }
         actorIcons = new ArrayList<>();
+        boolean foundplayer = false;
         for (String name : actorNames) {
+            if (name.equals("player")) foundplayer = true;
             Icon icon = iconCzar.getIconByName(name);
             if (icon == null) {
                 icon = new Icon("blank");
@@ -124,6 +126,11 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
             }
             icon.setEntity(actorCzar.getActorByName(name));
             actorIcons.add(icon);
+        }
+        if (!foundplayer) {
+            Icon playericon = new Icon("blank");
+            playericon.setName("player");
+            actorIcons.add(playericon);
         }
         terrainIcons = new ArrayList<>();
         for (String name : terrainNames) {

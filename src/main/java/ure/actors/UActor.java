@@ -53,7 +53,6 @@ public class UActor extends UThing implements Interactable {
     @Override
     public void initializeAsTemplate() {
         super.initializeAsTemplate();
-        setGlyphOutline(true);
         body = actorCzar.getNewBody(bodytype);
     }
 
@@ -94,50 +93,6 @@ public class UActor extends UThing implements Interactable {
         if (c != null)
             return c.terrain();
         return null;
-    }
-
-    @Override
-    public boolean drawGlyphOutline() {
-        if (isGlyphOutline())
-            return true;
-        if (commander.config.isOutlineActors())
-            return true;
-        return false;
-    }
-
-    @Override
-    public int glyphOffsetX() {
-        if (getMoveAnimX() != 0)
-            return getMoveAnimX();
-        if (commander.config.getActorBounceAmount() > 0f)
-            return bounceAnimX();
-        return 0;
-    }
-    @Override
-    public int glyphOffsetY() {
-        if (getMoveAnimY() != 0)
-            return getMoveAnimY();
-        if (commander.config.getActorBounceAmount() > 0f)
-            return bounceAnimY();
-        return 0;
-    }
-
-    public int bounceAnimX() {
-        return 0;
-    }
-    public int bounceAnimY() {
-        return -(int)(Math.abs(Math.sin((commander.frameCounter + areaX()*3 + areaY()*4) * commander.config.getActorBounceSpeed() * 0.1f)) * commander.config.getActorBounceAmount() * 5f);
-    }
-
-    public void animationTick() {
-        if (getMoveAnimDX() != 0 || getMoveAnimDY() != 0) {
-            setMoveAnimX(getMoveAnimX() + getMoveAnimDX());
-            setMoveAnimY(getMoveAnimY() + getMoveAnimDY());
-            if (getMoveAnimDX() < 0 && getMoveAnimX() < 0) setMoveAnimX(0);
-            if (getMoveAnimDX() > 0 && getMoveAnimX() > 0) setMoveAnimX(0);
-            if (getMoveAnimDY() < 0 && getMoveAnimY() < 0) setMoveAnimY(0);
-            if (getMoveAnimDY() > 0 && getMoveAnimY() > 0) setMoveAnimY(0);
-        }
     }
 
     @Override
@@ -394,7 +349,6 @@ public class UActor extends UThing implements Interactable {
     public boolean isAwake() {
         return awake;
     }
-
     public void setAwake(boolean awake) {
         this.awake = awake;
     }
@@ -402,7 +356,6 @@ public class UActor extends UThing implements Interactable {
     public int getWakerange() {
         return wakerange;
     }
-
     public void setWakerange(int wakerange) {
         this.wakerange = wakerange;
     }
@@ -410,7 +363,6 @@ public class UActor extends UThing implements Interactable {
     public int getSleeprange() {
         return sleeprange;
     }
-
     public void setSleeprange(int sleeprange) {
         this.sleeprange = sleeprange;
     }
@@ -418,7 +370,6 @@ public class UActor extends UThing implements Interactable {
     public int getSightrange() {
         return sightrange;
     }
-
     public void setSightrange(int sightrange) {
         this.sightrange = sightrange;
     }
@@ -426,47 +377,12 @@ public class UActor extends UThing implements Interactable {
     public int getCameraPinStyle() {
         return cameraPinStyle;
     }
-
     public void setCameraPinStyle(int cameraPinStyle) {
         this.cameraPinStyle = cameraPinStyle;
     }
-
-    public int getMoveAnimX() {
-        return moveAnimX;
-    }
-
-    public void setMoveAnimX(int moveAnimX) {
-        this.moveAnimX = moveAnimX;
-    }
-
-    public int getMoveAnimY() {
-        return moveAnimY;
-    }
-
-    public void setMoveAnimY(int moveAnimY) {
-        this.moveAnimY = moveAnimY;
-    }
-
-    public int getMoveAnimDX() {
-        return moveAnimDX;
-    }
-
-    public void setMoveAnimDX(int moveAnimDX) {
-        this.moveAnimDX = moveAnimDX;
-    }
-
-    public int getMoveAnimDY() {
-        return moveAnimDY;
-    }
-
-    public void setMoveAnimDY(int moveAnimDY) {
-        this.moveAnimDY = moveAnimDY;
-    }
-
     public float getActionTime() {
         return actionTime;
     }
-
     public void setActionTime(float actionTime) {
         this.actionTime = actionTime;
     }
@@ -488,4 +404,24 @@ public class UActor extends UThing implements Interactable {
     public UColor UIstatusColor() {
         return UColor.COLOR_GRAY;
     }
+
+    public int getMoveAnimX() { return moveAnimX; }
+    public void setMoveAnimX(int moveAnimX) { this.moveAnimX = moveAnimX; }
+    public int getMoveAnimY() { return moveAnimY; }
+    public void setMoveAnimY(int moveAnimY) { this.moveAnimY = moveAnimY; }
+    public int getMoveAnimDX() { return moveAnimDX; }
+    public void setMoveAnimDX(int moveAnimDX) { this.moveAnimDX = moveAnimDX; }
+    public int getMoveAnimDY() { return moveAnimDY; }
+    public void setMoveAnimDY(int moveAnimDY) { this.moveAnimDY = moveAnimDY; }
+    public void animationTick() {
+        if (getMoveAnimDX() != 0 || getMoveAnimDY() != 0) {
+            setMoveAnimX(getMoveAnimX() + getMoveAnimDX());
+            setMoveAnimY(getMoveAnimY() + getMoveAnimDY());
+            if (getMoveAnimDX() < 0 && getMoveAnimX() < 0) setMoveAnimX(0);
+            if (getMoveAnimDX() > 0 && getMoveAnimX() > 0) setMoveAnimX(0);
+            if (getMoveAnimDY() < 0 && getMoveAnimY() < 0) setMoveAnimY(0);
+            if (getMoveAnimDY() > 0 && getMoveAnimY() > 0) setMoveAnimY(0);
+        }
+    }
+
 }

@@ -1,11 +1,9 @@
 [
   {
     "name": "small stone",
-    "glyph": "o",
     "description": "A chunk of sandstone.",
     "tags": [ "rock", "cavern" ],
     "spawnlevels": [ 1,50 ],
-    "color": [70,70,120],
     "weight": 10,
     "value": 0
   },
@@ -14,12 +12,10 @@
     "plural": "butcher knives",
     "type": "weapon",
     "category": "gear",
-    "glyph": "t",
     "description": "A rusty butcher knife.",
     "equipSlots": [ "equip" ],
     "tags": [ "complex" ],
     "spawnlevels": [1,50],
-    "color": [100,100,240],
     "weight": 5,
     "value": 10
   },
@@ -27,10 +23,8 @@
     "name": "trucker hat",
     "type": "clothing",
     "category": "gear",
-    "glyph": "^",
     "description": "A baseball cap bearing a strange inscription.",
     "equipSlots": [ "head" ],
-    "color": [0,240,0],
     "weight": 3,
     "value": 5
   },
@@ -38,10 +32,8 @@
     "name": "hiking boots",
     "type": "clothing",
     "category": "gear",
-    "glyph": "b",
     "description": "Heavy leather hiking boots with spiked tread.",
     "equipSlots": [ "feet" ],
-    "color": [100,100,100],
     "weight": 8,
     "value": 20
   },
@@ -49,10 +41,8 @@
     "name": "Adidas-brand running shoes +6",
     "type": "clothing",
     "category": "gear",
-    "glyph": "b",
     "description": "Believe it or not, I'm walkin on air.",
     "equipSlots": [ "feet" ],
-    "color": [50,255,90],
     "weight": 1,
     "value": 30
   },
@@ -60,10 +50,8 @@
     "name": "army helmet",
     "type": "clothing",
     "category": "gear",
-    "glyph": "^",
     "description": "You're a real billy badass.",
     "equipSlots": [ "head" ],
-    "color": [240,240,100],
     "weight": 8,
     "value": 40
   },
@@ -71,10 +59,8 @@
     "name": "confusion helmet",
     "type": "clothing",
     "category": "gear",
-    "glyph": "^",
     "description": "Does this thing even work?",
     "equipSlots": [ "head" ],
-    "color": [190,0,190],
     "weight": 16,
     "value": 2
   },
@@ -82,12 +68,10 @@
     "name": "aluminum bat",
     "type": "weapon",
     "category": "gear",
-    "glyph": "/",
     "description": "A dented aluminum softball bat.",
     "equipSlots": [ "equip" ],
     "tags": [ "complex" ],
     "spawnlevels": [1,50],
-    "color": [140,140,240],
     "weight": 4,
     "value": 35
   },
@@ -95,28 +79,22 @@
     "name": "leather jacket",
     "type": "clothing",
     "category": "gear",
-    "glyph": "%",
     "description": "A black leather jacket.  Cool.",
     "equipSlots": [ "torso", "arms" ],
-    "color": [90,90,90],
     "weight": 7,
     "value": 50
   },
   {
     "name": "skull",
-    "glyph": "o",
     "description": "A broken human(ish) skull.",
     "tags": [ "rock" ],
     "spawnlevels": [ 1,50 ],
-    "color": [250,250,220],
     "weight": 6,
     "value": 2
   },
   {
     "name": "gold statue",
-    "glyph": "Y",
     "description": "A golden statue of a man, arms uplifted.",
-    "color": [250,250,0],
     "weight": 15,
     "value": 500
   },
@@ -125,11 +103,9 @@
     "iname": "an apple",
     "type": "food",
     "category": "consumables",
-    "glyph": "a",
     "description": "A red and yellow streaked apple.",
     "tags": [ "forest", "food" ],
     "spawnlevels": [1,50],
-    "color": [240,240,2],
     "weight": 3,
     "value": 10
   },
@@ -138,11 +114,9 @@
     "name": "morel",
     "type": "food",
     "category": "consumables",
-    "glyph": "m",
     "description": "A delicious mushroom.",
     "tags": [ "forest", "food" ],
     "spawnlevels": [1,50],
-    "color": [70,60,30],
     "weight": 0,
     "value": 3
   },
@@ -151,11 +125,9 @@
     "type": "food",
     "bites": 4,
     "category": "consumables",
-    "glyph": ",",
     "description": "A hardtack traveler's biscuit.",
     "tags":  [ "food", "product" ],
     "spawnlevels": [1,50],
-    "color": [200,250,190],
     "weight": 0,
     "value": 4
   },
@@ -164,18 +136,14 @@
     "name": "robe",
     "type": "clothing",
     "category": "gear",
-    "glyph": "%",
     "description": "A loose saffron dyed penitent's robe.",
-    "color": [200,120,5],
     "equipSlots": [ "torso", "arms", "legs" ]
   },
 
   {
     "name": "gold coins",
     "type": "pile",
-    "glyph": ".",
     "description": "Gold coins bearing a menacing profile.",
-    "color": [255,255,40],
     "weightPer": 0.01,
     "valuePer": 1
   }

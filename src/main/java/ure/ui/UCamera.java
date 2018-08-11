@@ -514,7 +514,7 @@ public class UCamera extends View implements UAnimator {
             return;
         if (thingsAt(col,row) != null) {
             for (UThing thing : thingsAt(col,row)) {
-                thing.render(renderer, col * cellw, row * cellh, light, vis);
+                thing.icon().draw(col*cellw, row*cellh, light, vis, 1f);
             }
         }
     }
@@ -526,7 +526,7 @@ public class UCamera extends View implements UAnimator {
         if (vis < config.getVisibilityThreshold()) return;
 
         UColor light = lightAt(col,row);
-        actor.render(renderer, col*config.getTileWidth(), row*config.getTileHeight(), light, vis);
+        actor.icon().draw(col*config.getTileWidth()+actor.getMoveAnimX(), row*config.getTileHeight()+actor.getMoveAnimY(), light, vis, 1f);
     }
     private void drawCellParticle(int col, int row) {
         UCell cell = cellAt(col,row);
