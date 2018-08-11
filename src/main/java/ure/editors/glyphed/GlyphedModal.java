@@ -3,6 +3,8 @@ package ure.editors.glyphed;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
 import ure.areas.UCell;
 import ure.commands.UCommand;
 import ure.math.UColor;
@@ -54,6 +56,8 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     ArrayList<Icon> thingIcons;
     ArrayList<Icon> actorIcons;
     ArrayList<Icon> terrainIcons;
+    Set<Class<? extends Icon>> iconClasses;
+    ArrayList<String> iconTypes;
 
     ArrayList<UTerrain> terrains;
     int refTerrain = 0;
@@ -71,9 +75,23 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
         thingNames = thingCzar.getAllThings();
         actorNames = actorCzar.getAllActors();
         terrainNames = terrainCzar.getAllTerrains();
+        getAllTypes();
         fillIconLists();
         setupDisplayIcons();
         selectIcon(0);
+    }
+
+    void getAllTypes() {
+        Reflections reflections = new Reflections("ure", new SubTypesScanner());
+        iconClasses = reflections.getSubTypesOf(Icon.class);
+        iconTypes = new ArrayList<>();
+        for (Class<? extends Icon> iclass : iconClasses) {
+            try {
+                iconTypes.add(((Icon)(iclass.newInstance())).getTYPE());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     void makeRefIcon() {
@@ -752,10 +770,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     }
 
     void selectType() {
-        ArrayList<String> typeNames = new ArrayList<>();
-        typeNames.add("blank"); typeNames.add("waves"); typeNames.add("bubbles");
-        typeNames.add("wall"); typeNames.add("bounce");
-        UModalStringPick modal = new UModalStringPick(null, null, 0, 0, typeNames, true, this, "type");
+        UModalStringPick modal = new UModalStringPick(null, null, 0, 0, iconTypes, true, this, "type");
         modal.setChildPosition(4,19+gridposy, this);
         commander.showModal(modal);
     }
