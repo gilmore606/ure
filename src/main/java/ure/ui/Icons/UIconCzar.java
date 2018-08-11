@@ -55,4 +55,8 @@ public class UIconCzar {
         }
         return null;
     }
+
+    public void replaceTemplate(String name, Icon template) {
+        iconsByName.put(name, template);
+    }
 }

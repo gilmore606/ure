@@ -35,7 +35,7 @@ public class IconDeserializer extends JsonDeserializer<Icon> {
         return i;
     }
 
-    private Class<? extends Icon> classForType(String type) {
+    public Class<? extends Icon> classForType(String type) {
         if (type == null || type.equals("")) {
             return Blank.class;
         }

@@ -11,6 +11,7 @@ import ure.math.UColor;
 import ure.sys.GLKey;
 import ure.terrain.UTerrain;
 import ure.ui.Icons.Icon;
+import ure.ui.Icons.IconDeserializer;
 import ure.ui.Icons.UIconCzar;
 import ure.ui.modals.*;
 
@@ -199,7 +200,6 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
                 int mousepy = commander.mouseY() - (ypos+metery*gh());
                 float level = (float)mousepy / ((float)8*gh());
                 level = 1f-level;
-                System.out.println(Float.toString(level));
                 if (meteri == 0)
                     editColor.setR(level);
                 else if (meteri == 2)
@@ -246,6 +246,20 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
             }
         }
 
+        // Type param sliders
+        if (mousex >= 6 && mousex <= 16) {
+            if (mousey >= 21+gridposy && mousey <= 25+gridposy) {
+                int meteri = (mousey-(21+gridposy));
+                int mousepx = commander.mouseX() - (xpos+6*gh());
+                float level = (float)mousepx / ((float)10*gw());
+                if (meteri == 0)
+                    selectedIcon.setAnimAmpX(level);
+                else if (meteri == 2)
+                    selectedIcon.setAnimAmpY(level);
+                else if (meteri == 4)
+                    selectedIcon.setAnimFreq(level);
+            }
+        }
         // Reload / Save / Quit
         if (mousey == 34) {
             if (mousex >= 33 && mousex <= 36)
@@ -623,6 +637,19 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
         // Type selector
         drawString("type", 1, 19+gridposy, UColor.COLOR_DARKGRAY);
         drawString(selectedIcon.getTYPE(), 4, 19+gridposy, UColor.COLOR_YELLOW);
+
+        // Type params
+        drawString("animAmpX", 1, 21+gridposy, UColor.COLOR_GRAY);
+        drawSlider(6,21+gridposy,10,selectedIcon.getAnimAmpX(), UColor.COLOR_YELLOW);
+        drawString("animAmpY", 1, 23+gridposy, UColor.COLOR_GRAY);
+        drawSlider(6,23+gridposy,10,selectedIcon.getAnimAmpY(), UColor.COLOR_YELLOW);
+        drawString("animFreq", 1, 25+gridposy, UColor.COLOR_GRAY);
+        drawSlider(6,25+gridposy,10,selectedIcon.getAnimFreq(), UColor.COLOR_YELLOW);
+    }
+
+    void drawSlider(int x, int y, int length, float val, UColor color) {
+        renderer.drawRectBorder(x*gw()+xpos, y*gw()+ypos, length*gw(),gh(),1,UColor.COLOR_DARKGRAY, color);
+        renderer.drawRect(x*gw()+xpos, y*gw()+ypos, (int)((length*val)*gw()), gh(), color);
     }
 
     void drawMeter(int x, int y, int width, int height, float val, float maxval, UColor color) {
@@ -776,6 +803,30 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     }
 
     public void hearModalStringPick(String context, String pick) {
+        if (context.equals("type"))
+            changeType(pick);
+    }
 
+    void changeType(String type) {
+        IconDeserializer iconDeserializer = new IconDeserializer(objectMapper);
+        Class<? extends Icon> newClass = iconDeserializer.classForType(type);
+        try {
+            Icon newIcon = newClass.newInstance();
+            newIcon.copyFrom(selectedIcon);
+            newIcon.setTYPE(type);
+            iconCzar.replaceTemplate(selectedIcon.getName(), newIcon);
+            ArrayList<Icon> iconset = currentIconSet();
+            for (int i=0;i<iconset.size();i++) {
+                if (iconset.get(i) == selectedIcon) {
+                    iconset.set(i, newIcon);
+                }
+            }
+            selectedIcon = newIcon;
+            selection = selectedIcon.getName();
+            editColor = selectedIcon.fgColor;
+            setupDisplayIcons();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

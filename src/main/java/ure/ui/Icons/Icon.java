@@ -36,12 +36,11 @@ public class Icon implements Cloneable {
     UColor[] bgVariants;
 
     protected String TYPE = "";
+    String editorHelpMsg;
 
     boolean glow;
     float animAmpX, animAmpY, animFreq;
-    float animF1, animF2;
-    int animI1, animI2;
-    String editorHelpMsg;
+
 
     public Icon() {
         Injector.getAppComponent().inject(this);
@@ -109,6 +108,24 @@ public class Icon implements Cloneable {
         }
     }
 
+    /**
+     * This method is unfortunately necessary to copy Icon properties to new subclass instances in GlyphEd.
+     * If you add or modify properties of Icon, you need to ensure those properties are copied in this method.
+     */
+    public void copyFrom(Icon source) {
+        bgColor = source.bgColor;
+        fgColor = source.fgColor;
+        glyph = source.glyph;
+        name = source.name;
+        glyphVariants = source.glyphVariants;
+        fgVariants = source.fgVariants;
+        bgVariants = source.bgVariants;
+        glow = source.glow;
+        animAmpX = source.animAmpX;
+        animAmpY = source.animAmpY;
+        animFreq = source.animFreq;
+    }
+
     public UColor getBgColor() { return bgColor; }
     public void setBgColor(UColor bgColor) { this.bgColor = bgColor; }
     public UColor getFgColor() { return fgColor; }
@@ -127,4 +144,12 @@ public class Icon implements Cloneable {
     public void setTYPE(String TYPE) { this.TYPE = TYPE; }
     public boolean isGlow() { return glow; }
     public void setGlow(boolean glow) { this.glow = glow; }
+    public float getAnimAmpX() { return animAmpX; }
+    public void setAnimAmpX(float f) { animAmpX = f; }
+    public float getAnimAmpY() { return animAmpY; }
+    public void setAnimAmpY(float f) { animAmpY = f; }
+    public float getAnimFreq() { return animFreq; }
+    public void setAnimFreq(float f) { animFreq = f; }
+    public String getEditorHelpMsg() { return editorHelpMsg; }
+    public void setEditorHelpMsg(String s) { editorHelpMsg = s; }
 }
