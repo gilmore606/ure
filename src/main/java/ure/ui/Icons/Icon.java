@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.sys.Injector;
+import ure.sys.UCommander;
 import ure.sys.UConfig;
 
 import javax.inject.Inject;
@@ -15,6 +16,9 @@ import java.util.Random;
  */
 public class Icon implements Cloneable {
 
+    @Inject
+    @JsonIgnore
+    public UCommander commander;
     @Inject
     @JsonIgnore
     public URenderer renderer;
@@ -63,7 +67,7 @@ public class Icon implements Cloneable {
             renderer.drawRect(x,y,config.getTileWidth(),config.getTileHeight(),bgColor);
         }
         if (fgColor != null) {
-            renderer.drawTile(glyph, x, y, fgColor);
+            renderer.drawTile(glyph, x+glyphX(), y+glyphY(), fgColor);
         }
     }
 
@@ -124,6 +128,13 @@ public class Icon implements Cloneable {
         animAmpX = source.animAmpX;
         animAmpY = source.animAmpY;
         animFreq = source.animFreq;
+    }
+
+    public int glyphX() {
+        return 0;
+    }
+    public int glyphY() {
+        return 0;
     }
 
     public UColor getBgColor() { return bgColor; }
