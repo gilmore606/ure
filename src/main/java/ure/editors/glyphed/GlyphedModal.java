@@ -535,7 +535,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
 
         drawString(selectedIcon.getName(), 1, 5, null);
         // Sample displays
-        renderer.drawRect(1 * gw() + xpos, 1 * gh() + ypos, 3 * gw(), 3 * gh(), UColor.COLOR_BLACK);
+        renderer.drawRectBorder(1 * gw() + xpos, 1 * gh() + ypos, 3 * gw(), 3 * gh(), 1, UColor.COLOR_BLACK, UColor.COLOR_GRAY);
         drawIcon(selectedIcon, 2, 2);
         for (int i=0;i<4;i++) {
             for (int x=0;x<3;x++) {
