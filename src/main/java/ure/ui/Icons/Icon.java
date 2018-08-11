@@ -38,6 +38,10 @@ public class Icon implements Cloneable {
     protected String TYPE = "";
 
     boolean glow;
+    float animAmpX, animAmpY, animFreq;
+    float animF1, animF2;
+    int animI1, animI2;
+    String editorHelpMsg;
 
     public Icon() {
         Injector.getAppComponent().inject(this);

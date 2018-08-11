@@ -40,6 +40,7 @@ public class GlyphedModal extends UModal implements HearModalChoices {
 
     String selection;
     Icon selectedIcon;
+    int selectedGlyph;
     int glyphType = 0;
     static int TERRAIN = 0;
     static int THING = 1;
@@ -147,6 +148,16 @@ public class GlyphedModal extends UModal implements HearModalChoices {
         refIcon = ic;
     }
 
+    void changeGlyph(int unicode) {
+        if (selectedGlyph == 0) {
+            selectedIcon.setGlyph(unicode);
+        } else {
+            int[] var = selectedIcon.getGlyphVariants();
+            var[selectedGlyph-1] = unicode;
+        }
+        setupDisplayIcons();
+    }
+
     @Override
     public void mouseClick() {
         updateMouseGrid();
@@ -154,8 +165,7 @@ public class GlyphedModal extends UModal implements HearModalChoices {
         // Glyph grid
         if (mousex >= gridposx && mousex < (gridposx+16)) {
             if (mousey >= gridposy && mousey < (gridposy + 16)) {
-                selectedIcon.setGlyph(cp437toUnicode(cursorAscii));
-                setupDisplayIcons();
+                changeGlyph(cp437toUnicode(cursorAscii));
             }
         }
 
@@ -207,6 +217,13 @@ public class GlyphedModal extends UModal implements HearModalChoices {
             }
         }
 
+        // Glyphedit selector
+        if (mousex >= 20 && mousex <= 28) {
+            if (mousey == 24) {
+                selectGlyphSwatch(mousex-20);
+            }
+        }
+
         // Reload / Save / Quit
         if (mousey == 34) {
             if (mousex >= 33 && mousex <= 36)
@@ -224,6 +241,13 @@ public class GlyphedModal extends UModal implements HearModalChoices {
         if (mousex >= 20 && mousex <= 28) {
             if (mousey == 20 || mousey == 22) {
                 deleteSwatch(mousex-20, mousey == 20 ? 0 : 1);
+            }
+        }
+
+        // Glyphedit selector
+        if (mousex >= 20 && mousex <= 28) {
+            if (mousey == 24) {
+                deleteGlyphSwatch(mousex-20);
             }
         }
 
@@ -264,6 +288,21 @@ public class GlyphedModal extends UModal implements HearModalChoices {
         }
     }
 
+    void selectGlyphSwatch(int i) {
+        int varCount;
+        if (selectedIcon.getGlyphVariants() == null)
+            varCount = 0;
+        else
+            varCount = selectedIcon.getGlyphVariants().length;
+        if (i == 0) {
+            selectedGlyph = 0;
+        } else if (i == varCount+1) {
+            addGlyphSwatch();
+        } else {
+            selectedGlyph = i;
+        }
+    }
+
     void deleteSwatch(int i, int type) {
         if (type == 0 && i == 0)
             return;
@@ -288,6 +327,35 @@ public class GlyphedModal extends UModal implements HearModalChoices {
                 selectedIcon.setFgVariants(nuset);
             else
                 selectedIcon.setBgVariants(nuset);
+        }
+    }
+
+    void deleteGlyphSwatch(int i) {
+        if (i == 0) return;
+        int[] set = selectedIcon.getGlyphVariants();
+        i -= 1;
+        if (i >= set.length) return;
+        if (selectedGlyph == i+1) selectedGlyph -= 1;
+        int[] nuset = new int[set.length-1];
+        for (int j=0;j<i;j++)
+            nuset[j] = set[j];
+        for (int j=i;j<nuset.length;j++)
+            nuset[j] = set[j+1];
+        selectedIcon.setGlyphVariants(nuset);
+    }
+
+    void addGlyphSwatch() {
+        if (selectedIcon.getGlyphVariants() == null) {
+            int[] gv = new int[1];
+            gv[0] = 33;
+            selectedIcon.setGlyphVariants(gv);
+            selectedGlyph = 1;
+        } else {
+            int[] gv = new int[selectedIcon.getGlyphVariants().length+1];
+            for (int i=0;i<selectedIcon.getGlyphVariants().length;i++)
+                gv[i] = selectedIcon.getGlyphVariants()[i];
+            gv[gv.length-1] = 33;
+            selectedIcon.setGlyphVariants(gv);
         }
     }
 
@@ -488,11 +556,11 @@ public class GlyphedModal extends UModal implements HearModalChoices {
 
         // Glyphedit selector
         drawString("glyph", 17, 24, UColor.COLOR_DARKGRAY);
-        drawTile(selectedIcon.glyph, 20, 24, UColor.COLOR_WHITE);
+        drawTileSwatch(selectedIcon.glyph, 20, 24, 0);
         int[] gvar = selectedIcon.getGlyphVariants();
         if (gvar != null) {
             for (int i=0;i<gvar.length;i++) {
-                drawTile(gvar[i], 21+i,24,UColor.COLOR_WHITE);
+                drawTileSwatch(gvar[i], 21+i, 24, i+1);
             }
             drawTile(43, 21+gvar.length,24, UColor.COLOR_YELLOW);
         } else {
@@ -544,7 +612,13 @@ public class GlyphedModal extends UModal implements HearModalChoices {
         }
     }
 
-    public void drawSwatch(UColor color, int x, int y) {
+    void drawTileSwatch(int unicode, int x, int y, int swatchi) {
+        if (swatchi == selectedGlyph)
+            renderer.drawRectBorder(x*gw()+xpos-2,y*gw()+ypos-2, gw()+4,gh()+4,2,UColor.COLOR_BLACK, UColor.COLOR_YELLOW);
+        drawTile(unicode,x,y,UColor.COLOR_WHITE);
+    }
+
+    void drawSwatch(UColor color, int x, int y) {
         UColor fillcolor = color;
         if (color == null) fillcolor = UColor.COLOR_BLACK;
         UColor bordercolor = UColor.COLOR_BLACK;
