@@ -7,15 +7,15 @@ public class Bounce extends Icon  {
     public Bounce() { super(TYPE); }
 
     @Override
-    public int glyphX() {
+    int glyphX() {
         return -(int)(Bounce(commander.frameCounter) * animAmpX);
     }
     @Override
-    public int glyphY() {
+    int glyphY() {
         return -(int)(Bounce(commander.frameCounter) * animAmpY);
     }
 
     float Bounce(int frame) {
-        return (float)(Math.abs(Math.sin(frame * animFreq * 0.3f)) * 8f);
+        return (float)(Math.abs(Math.sin((frame + animOffset) * animFreq * 0.4f)) * 8f);
     }
 }

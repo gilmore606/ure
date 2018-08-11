@@ -352,6 +352,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
         }
         if (i > 0) {
             UColor[] set = (type == 0 ? selectedIcon.getFgVariants() : selectedIcon.getBgVariants());
+            if (set == null) return;
             i -= 1;
             if (i >= set.length) return;
             if (editColor == set[i]) editColor = type == 0 ? selectedIcon.fgColor : selectedIcon.bgColor;
@@ -360,6 +361,8 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
                 nuset[j] = set[j];
             for (int j=i;j<nuset.length;j++)
                 nuset[j] = set[j+1];
+            if (nuset.length == 0)
+                nuset = null;
             if (type == 0)
                 selectedIcon.setFgVariants(nuset);
             else
@@ -370,6 +373,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     void deleteGlyphSwatch(int i) {
         if (i == 0) return;
         int[] set = selectedIcon.getGlyphVariants();
+        if (set == null) return;
         i -= 1;
         if (i >= set.length) return;
         if (selectedGlyph == i+1) selectedGlyph -= 1;

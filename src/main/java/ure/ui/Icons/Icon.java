@@ -3,6 +3,7 @@ package ure.ui.Icons;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.sys.UConfig;
@@ -43,11 +44,13 @@ public class Icon implements Cloneable {
     String editorHelpMsg;
 
     boolean glow;
+    int animOffset;
     float animAmpX, animAmpY, animFreq;
 
 
     public Icon() {
         Injector.getAppComponent().inject(this);
+
     }
 
     public Icon(String type) {
@@ -67,9 +70,10 @@ public class Icon implements Cloneable {
             renderer.drawRect(x,y,config.getTileWidth(),config.getTileHeight(),bgColor);
         }
         if (fgColor != null) {
-            renderer.drawTile(glyph, x+glyphX(), y+glyphY(), fgColor);
+            renderer.drawTile(glyph(), x+glyphX(), y+glyphY(), fgColor);
         }
     }
+
 
     public Icon makeClone() {
         try {
@@ -88,6 +92,7 @@ public class Icon implements Cloneable {
         initializeFgColor();
         initializeBgColor();
         initializeGlyph();
+        animOffset = random.nextInt(config.getFPStarget());
     }
 
     public void initializeFgColor() {
@@ -130,10 +135,16 @@ public class Icon implements Cloneable {
         animFreq = source.animFreq;
     }
 
-    public int glyphX() {
+    public int glyph() {
+        return glyph(0);
+    }
+    int glyph(int frame) {
+        return glyph;
+    }
+    int glyphX() {
         return 0;
     }
-    public int glyphY() {
+    int glyphY() {
         return 0;
     }
 
