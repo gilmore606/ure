@@ -373,9 +373,9 @@ public class UArea implements Serializable {
         getActors().remove(thing);
     }
 
-    public Iterator<UThing> thingsAt(int x, int y) {
+    public ArrayList<UThing> thingsAt(int x, int y) {
         if (isValidXY(x,y)) {
-            return getCells()[x][y].iterator();
+            return getCells()[x][y].things();
         }
         return null;
     }
