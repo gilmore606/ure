@@ -519,7 +519,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
         updateMouseGrid();
 
 
-
+        drawString(selectedIcon.getName(), 1, 5, null);
         // Sample displays
         renderer.drawRect(1 * gw() + xpos, 1 * gh() + ypos, 3 * gw(), 3 * gh(), UColor.COLOR_BLACK);
         drawIcon(selectedIcon, 2, 2);
@@ -666,8 +666,10 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
         if (mousex >= gridposx && mousex < (gridposx+16)) {
             if (mousey >= gridposy && mousey < (gridposy+16)) {
                 cursorAscii = (mousex - gridposx) + (mousey - gridposy)*16;
+                return;
             }
         }
+        cursorAscii = -1;
     }
 
     void drawTileSwatch(int unicode, int x, int y, int swatchi) {
