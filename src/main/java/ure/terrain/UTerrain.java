@@ -41,7 +41,7 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     Random random;
 
     @JsonIgnore
-    protected UCell cell;
+    public UCell cell;
 
     public static final String TYPE = "";
 

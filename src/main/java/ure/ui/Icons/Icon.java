@@ -161,15 +161,21 @@ public class Icon implements Cloneable {
     public int glyph() {
         return glyph(0);
     }
-    int glyph(int frame) {
+    public int glyph(int frame) {
         return glyph;
     }
+
+    public void useVariant(int v) {
+        glyph = glyphVariants[v];
+    }
+
     int glyphX() {
         return 0;
     }
     int glyphY() {
         return 0;
     }
+
     boolean isOutline() {
         if (entity != null) {
             if (config.isOutlineActors() && entity instanceof UActor)
