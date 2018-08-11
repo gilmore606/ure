@@ -70,7 +70,7 @@ public class Icon implements Cloneable {
             renderer.drawRect(x,y,config.getTileWidth(),config.getTileHeight(),bgColor);
         }
         if (fgColor != null) {
-            renderer.drawTile(glyph(), x+glyphX(), y+glyphY(), fgColor);
+            renderer.drawTile(glyph(commander.frameCounter), x+glyphX(), y+glyphY(), fgColor);
         }
     }
 
