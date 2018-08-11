@@ -1,12 +1,14 @@
 package ure.ui.Icons;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ure.actors.UActor;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.sys.UConfig;
+import ure.things.UThing;
 
 import javax.inject.Inject;
 import java.util.Random;
@@ -33,9 +35,9 @@ public class Icon implements Cloneable {
     public UColor bgColor;
     public UColor fgColor;
     public int glyph;
+    int[] glyphVariants;
 
     String name;
-    int[] glyphVariants;
 
     UColor[] fgVariants;
     UColor[] bgVariants;
@@ -47,10 +49,11 @@ public class Icon implements Cloneable {
     int animOffset;
     float animAmpX, animAmpY, animFreq;
 
+    @JsonIgnore
+    Entity entity;
 
     public Icon() {
         Injector.getAppComponent().inject(this);
-
     }
 
     public Icon(String type) {
@@ -65,12 +68,20 @@ public class Icon implements Cloneable {
         this.bgColor = bgColor;
     }
 
+    public Entity getEntity() { return entity; }
+    public void setEntity(Entity e) {
+        entity = e;
+    }
+
     public void draw(int x, int y) {
         if (bgColor != null) {
             renderer.drawRect(x,y,config.getTileWidth(),config.getTileHeight(),bgColor);
         }
         if (fgColor != null) {
-            renderer.drawTile(glyph(commander.frameCounter), x+glyphX(), y+glyphY(), fgColor);
+            int g = glyph(commander.frameCounter);
+            if (isOutline())
+                renderer.drawTileOutline(g, x+glyphX(), y+glyphY(), UColor.COLOR_BLACK);
+            renderer.drawTile(g, x+glyphX(), y+glyphY(), fgColor);
         }
     }
 
@@ -146,6 +157,15 @@ public class Icon implements Cloneable {
     }
     int glyphY() {
         return 0;
+    }
+    boolean isOutline() {
+        if (entity != null) {
+            if (config.isOutlineActors() && entity instanceof UActor)
+                return true;
+            if (config.isOutlineThings() && entity instanceof UThing)
+                return true;
+        }
+        return false;
     }
 
     public UColor getBgColor() { return bgColor; }

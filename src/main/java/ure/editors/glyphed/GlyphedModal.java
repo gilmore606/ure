@@ -110,6 +110,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
                 icon = new Icon("blank");
                 icon.setName(name);
             }
+            icon.setEntity(thingCzar.getThingByName(name));
             thingIcons.add(icon);
         }
         actorIcons = new ArrayList<>();
@@ -121,6 +122,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
             } else {
                 System.out.println("GLYPHED: loaded existing icon " + name);
             }
+            icon.setEntity(actorCzar.getActorByName(name));
             actorIcons.add(icon);
         }
         terrainIcons = new ArrayList<>();
@@ -130,6 +132,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
                 icon = new Icon("blank");
                 icon.setName(name);
             }
+            icon.setEntity(terrainCzar.getTerrainByName(name));
             terrainIcons.add(icon);
         }
     }
