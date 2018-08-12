@@ -373,7 +373,7 @@ public class UActor extends UThing implements Interactable {
         }
         if (things() != null)
             for (UThing thing : (ArrayList<UThing>)things().clone()) {
-                thing.moveTo(corpse);
+                thing.moveTo(location);
             }
         return corpse;
     }
