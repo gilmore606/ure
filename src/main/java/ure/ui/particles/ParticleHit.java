@@ -12,7 +12,7 @@ public class ParticleHit extends UParticle {
     UColor bloodColor;
 
     public ParticleHit(int _x, int _y, UColor bloodColor, float intensity) {
-        super(_x, _y, 8, UColor.YELLOW, intensity, false);
+        super(_x, _y, 8, UColor.YELLOW, intensity, false,0,0,0,0);
         this.intensity = intensity;
         this.bloodColor = bloodColor;
         glyphFrames = "X*X*X*+*+.   ";
@@ -34,10 +34,10 @@ public class ParticleHit extends UParticle {
     }
 
     @Override
-    public int glyphOffsetX() {
-        return glyphOffsetY();
+    public int glyphX() {
+        return glyphY();
     }
-    public int glyphOffsetY() {
+    public int glyphY() {
         return random.nextInt(5)-3;
     }
 }

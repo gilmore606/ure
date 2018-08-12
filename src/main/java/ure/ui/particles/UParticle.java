@@ -7,6 +7,8 @@ import ure.sys.Injector;
 import ure.sys.UAnimator;
 import ure.areas.UArea;
 import ure.sys.UCommander;
+import ure.sys.UConfig;
+import ure.ui.UCamera;
 
 import javax.inject.Inject;
 import java.util.Random;
@@ -21,6 +23,12 @@ public class UParticle implements UAnimator {
 
     @Inject
     @JsonIgnore
+    protected URenderer renderer;
+    @Inject
+    @JsonIgnore
+    protected UConfig config;
+    @Inject
+    @JsonIgnore
     protected Random random;
 
     public int x, y;
@@ -32,20 +40,28 @@ public class UParticle implements UAnimator {
     UColor colorbuffer;
     String glyphFrames;
 
-    public UParticle(int thex, int they, int lifeticks, UColor _fgColor, float startalpha, boolean _receiveLight) {
+    float offx, offy;
+    float vecx, vecy;
+    float gravx, gravy;
+
+    public UParticle(int x, int y, int ticksLeft, UColor fgColor, float alpha, boolean receiveLight, float vecx, float vecy, float gravx, float gravy) {
         Injector.getAppComponent().inject(this);
-        x = thex;
-        y = they;
-        ticksLeft = lifeticks;
-        ticksInitial = lifeticks;
+        this.x = x;
+        this.y = y;
+        this.ticksLeft = ticksLeft;
+        ticksInitial = ticksLeft;
         glyph = '*';
-        receiveLight = _receiveLight;
-        fgR = _fgColor.fR();
-        fgG = _fgColor.fG();
-        fgB = _fgColor.fB();
-        alpha = startalpha;
-        alphadecay = alpha / lifeticks;
+        this.receiveLight = receiveLight;
+        fgR = fgColor.fR();
+        fgG = fgColor.fG();
+        fgB = fgColor.fB();
+        this.alpha = alpha;
+        alphadecay = alpha / ticksLeft;
         colorbuffer = new UColor(fgR,fgG,fgB);
+        this.vecx = vecx;
+        this.vecy = vecy;
+        this.gravx = gravx;
+        this.gravy = gravy;
     }
 
     public void reconnect(UArea area) {
@@ -55,6 +71,10 @@ public class UParticle implements UAnimator {
     public void animationTick() {
         ticksLeft--;
         alpha -= alphadecay;
+        offx += vecx;
+        offy += vecy;
+        vecx += gravx;
+        vecy += gravy;
     }
 
     public boolean isFizzled() { return (ticksLeft < 0); }
@@ -67,15 +87,15 @@ public class UParticle implements UAnimator {
     }
     public boolean isReceiveLight() { return receiveLight; }
 
-    public void render(URenderer renderer, int px, int py, UColor light, float vis) {
+    public void draw(UCamera camera, UColor light, float vis) {
         if (receiveLight)
             colorbuffer.illuminateWith(light, vis);
         else
             colorbuffer.set(fgR,fgG,fgB);
         colorbuffer.setAlpha(alpha * vis);
-        renderer.drawGlyph(glyph(), px, py, colorbuffer);
+        renderer.drawGlyph(glyph(), (x - camera.leftEdge)*config.getTileWidth() + glyphX(), (y - camera.topEdge)*config.getTileHeight() + glyphY(), colorbuffer);
     }
 
-    public int glyphOffsetX() { return 0; }
-    public int glyphOffsetY() { return 0; }
+    public int glyphX() { return (int)offx; }
+    public int glyphY() { return (int)offy; }
 }

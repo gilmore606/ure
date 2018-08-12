@@ -13,7 +13,7 @@ public class ParticleBlood  extends UParticle {
     public static String frames_SW = "''..     ";
     public static String frames_W = "=-~`..    ";
     public ParticleBlood(int _x, int _y, int xdir, int ydir, UColor fgColor, float intensity) {
-        super(_x + xdir,_y + ydir,6,fgColor,intensity,true);
+        super(_x + xdir,_y + ydir,6,fgColor,intensity,true,0,0,0,0);
         if (xdir == -1 && ydir == -1)
             glyphFrames = frames_NW;
         else if (xdir == -1 && ydir == 0)
