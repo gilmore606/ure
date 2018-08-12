@@ -257,13 +257,9 @@ public class Lightsource extends UThing {
     @Override
     public void animationTick() {
         if (random.f() < sparkrate) {
-            if (random.f() < 0.3f) {
-                area().addParticle(new ParticleSpark(areaX() - 1 + random.i(3),
-                        areaY() - 1 + random.i(3),
+                area().addParticle(new ParticleSpark(areaX(), areaY(),
                         UColor.YELLOW, 8 + random.i(10), 0.3f + random.f(0.4f)));
-            } else {
-                area().addParticle(new ParticleSpark(areaX(), areaY() - (random.i(2)),  UColor.YELLOW, 8 + random.i(10), 0.6f));
-            }
+
         }
     }
 
