@@ -2,6 +2,7 @@ package ure.ui.particles;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.math.UColor;
+import ure.math.URandom;
 import ure.render.URenderer;
 import ure.sys.Injector;
 import ure.sys.UAnimator;
@@ -29,7 +30,7 @@ public class UParticle implements UAnimator {
     protected UConfig config;
     @Inject
     @JsonIgnore
-    protected Random random;
+    protected URandom random;
 
     public int x, y;
     char glyph;

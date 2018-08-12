@@ -16,6 +16,7 @@ import ure.actors.UPlayer;
 import ure.areas.UArea;
 import ure.areas.UCartographer;
 import ure.commands.UCommand;
+import ure.math.URandom;
 import ure.sys.events.PlayerChangedAreaEvent;
 import ure.math.UColor;
 import ure.render.URenderer;
@@ -60,7 +61,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     @Inject
     public UConfig config;
     @Inject
-    Random random;
+    URandom random;
 
     private HashSet<UAnimator> animators;
     private ArrayList<UActor> actors;

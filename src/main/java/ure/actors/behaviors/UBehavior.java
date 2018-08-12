@@ -7,6 +7,7 @@ import ure.actors.UActor;
 import ure.actors.UNPC;
 import ure.math.UColor;
 import ure.math.UPath;
+import ure.math.URandom;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
@@ -27,7 +28,7 @@ public abstract class UBehavior implements Cloneable {
 
     @Inject
     @JsonIgnore
-    Random random;
+    URandom random;
 
     @Inject
     @JsonIgnore
@@ -76,7 +77,7 @@ public abstract class UBehavior implements Cloneable {
         currentStatus = "";
         currentUrgency = 0f;
         currentStatusColor = UColor.GRAY;
-        if (random.nextFloat() > freq) return null;
+        if (random.f() > freq) return null;
         return action(actor);
     }
 

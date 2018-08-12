@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import ure.actors.UPlayer;
+import ure.math.URandom;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actors.actions.UAction;
@@ -60,7 +61,7 @@ public class UArea implements Serializable {
 
     @Inject
     @JsonIgnore
-    Random random;
+    URandom random;
 
     protected UColor sunColor = new UColor(130,50,25);
     protected float clouds = 0.2f;
@@ -365,7 +366,7 @@ public class UArea implements Serializable {
         UCell cell = null;
         boolean match = false;
         while (cell == null || !match) {
-            cell = cellAt(random.nextInt(xsize), random.nextInt(ysize));
+            cell = cellAt(random.i(xsize), random.i(ysize));
             match = cell.willAcceptThing(thing);
         }
         return cell;

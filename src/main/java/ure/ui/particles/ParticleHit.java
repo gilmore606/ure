@@ -15,21 +15,20 @@ public class ParticleHit extends UParticle {
         super(_x, _y, 8, UColor.YELLOW, intensity, false,0,0,0,0);
         this.intensity = intensity;
         this.bloodColor = bloodColor;
-        glyphFrames = "X*X*X*+*+.   ";
+        glyphFrames = "X*X*X*+*+... ";
     }
 
     @Override
     public void animationTick() {
         super.animationTick();
         if (ticksInitial-ticksLeft == 1) {
-            area.addParticle(new ParticleBlood(x,y,-1,0,bloodColor,intensity));
-            area.addParticle(new ParticleBlood(x,y,-1,-1,bloodColor,intensity));
-            area.addParticle(new ParticleBlood(x,y,0,-1,bloodColor,intensity));
-            area.addParticle(new ParticleBlood(x,y,1,-1,bloodColor,intensity));
-            area.addParticle(new ParticleBlood(x,y,1,0,bloodColor,intensity));
-            area.addParticle(new ParticleBlood(x,y,1,1,bloodColor,intensity));
-            area.addParticle(new ParticleBlood(x,y,0,1,bloodColor,intensity));
-            area.addParticle(new ParticleBlood(x,y,-1,1,bloodColor,intensity));
+            int angle = 0;
+            for (int i=0;i<12;i++) {
+                angle += random.i(360/6);
+                float px = 2f*(float)Math.cos(Math.toRadians(angle));
+                float py = 2f*(float)Math.sin(Math.toRadians(angle));
+                area.addParticle(new ParticleBlood(x,y,bloodColor,intensity*2f,px,py));
+            }
         }
     }
 
@@ -38,6 +37,6 @@ public class ParticleHit extends UParticle {
         return glyphY();
     }
     public int glyphY() {
-        return random.nextInt(5)-3;
+        return random.i(5)-3;
     }
 }

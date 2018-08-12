@@ -52,7 +52,7 @@ public class Lightsource extends UThing {
             setLight(new ULight(new UColor(lightcolor[0], lightcolor[1], lightcolor[2]), getLightrange(), getLightfalloff()));
         }
         if (getLightflicker() > 0)
-            getLight().setFlicker(getLightflicker(), getLightflickerspeed(), getLightflickerintensity(), random.nextInt(getLightflickeroffset()));
+            getLight().setFlicker(getLightflicker(), getLightflickerspeed(), getLightflickerintensity(), random.i(getLightflickeroffset()));
     }
 
     public boolean on() {
@@ -249,13 +249,13 @@ public class Lightsource extends UThing {
 
     @Override
     public void animationTick() {
-        if (random.nextFloat() < sparkrate) {
-            if (random.nextFloat() < 0.3f) {
-                area().addParticle(new ParticleSpark(areaX() - 1 + random.nextInt(3),
-                        areaY() - 1 + random.nextInt(3),
-                        UColor.YELLOW, 8 + random.nextInt(10), 0.3f + random.nextFloat() * 0.4f));
+        if (random.f() < sparkrate) {
+            if (random.f() < 0.3f) {
+                area().addParticle(new ParticleSpark(areaX() - 1 + random.i(3),
+                        areaY() - 1 + random.i(3),
+                        UColor.YELLOW, 8 + random.i(10), 0.3f + random.f(0.4f)));
             } else {
-                area().addParticle(new ParticleSpark(areaX(), areaY() - (random.nextInt(2)),  UColor.YELLOW, 8 + random.nextInt(10), 0.6f));
+                area().addParticle(new ParticleSpark(areaX(), areaY() - (random.i(2)),  UColor.YELLOW, 8 + random.i(10), 0.6f));
             }
         }
     }

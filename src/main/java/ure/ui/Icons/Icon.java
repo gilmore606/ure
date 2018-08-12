@@ -3,6 +3,7 @@ package ure.ui.Icons;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UActor;
 import ure.math.UColor;
+import ure.math.URandom;
 import ure.render.URenderer;
 import ure.sys.Entity;
 import ure.sys.Injector;
@@ -30,7 +31,7 @@ public class Icon implements Cloneable {
     public UConfig config;
     @Inject
     @JsonIgnore
-    public Random random;
+    public URandom random;
 
     public UColor bgColor;
     public UColor fgColor;
@@ -124,26 +125,26 @@ public class Icon implements Cloneable {
         initializeFgColor();
         initializeBgColor();
         initializeGlyph();
-        animOffset = random.nextInt(config.getFPStarget());
+        animOffset = random.i(config.getFPStarget());
     }
 
     public void initializeFgColor() {
         if (fgVariants != null) {
-            int r = random.nextInt(fgVariants.length+1);
+            int r = random.i(fgVariants.length+1);
             if (r > 0)
                 fgColor = fgVariants[r-1];
         }
     }
     public void initializeBgColor() {
         if (bgVariants != null) {
-            int r = random.nextInt(bgVariants.length+1);
+            int r = random.i(bgVariants.length+1);
             if (r > 0)
                 bgColor = bgVariants[r-1];
         }
     }
     public void initializeGlyph() {
         if (glyphVariants != null) {
-            int r = random.nextInt(glyphVariants.length+1);
+            int r = random.i(glyphVariants.length+1);
             if (r > 0)
                 glyph = glyphVariants[r-1];
         }

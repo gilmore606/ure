@@ -5,6 +5,7 @@ import com.google.common.eventbus.EventBus;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
 import ure.actors.actions.*;
+import ure.math.URandom;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
@@ -48,7 +49,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public UIconCzar iconCzar;
     @Inject
     @JsonIgnore
-    protected Random random;
+    protected URandom random;
     @Inject
     @JsonIgnore
     protected EventBus bus;

@@ -3,6 +3,7 @@ package ure.terrain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UPlayer;
 import ure.areas.UArea;
+import ure.math.URandom;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UAnimator;
@@ -38,7 +39,7 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     UIconCzar iconCzar;
     @Inject
     @JsonIgnore
-    Random random;
+    URandom random;
 
     @JsonIgnore
     public UCell cell;

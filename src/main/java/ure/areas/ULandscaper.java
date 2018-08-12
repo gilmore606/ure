@@ -3,6 +3,7 @@ package ure.areas;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
+import ure.math.URandom;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.ui.ULight;
@@ -45,7 +46,7 @@ public abstract class ULandscaper {
 
     @Inject
     @JsonIgnore
-    protected Random random;
+    protected URandom random;
 
     @JsonIgnore
     USimplexNoise simplexNoise = new USimplexNoise();
@@ -200,13 +201,13 @@ public abstract class ULandscaper {
      * Convenience random numbers.
      */
     public int rand(int max) {
-        return random.nextInt(max);
+        return random.i(max);
     }
     public float randf(float max) {
-        return random.nextFloat() * max;
+        return random.f(max);
     }
     public float randf() {
-        return random.nextFloat();
+        return random.f();
     }
 
     /**
@@ -221,7 +222,7 @@ public abstract class ULandscaper {
         while (numberToScatter > 0) {
             numberToScatter--;
             UCell cell = randomCell(area, terrains);
-            String name = things[random.nextInt(things.length)];
+            String name = things[random.i(things.length)];
             UThing thing = thingCzar.getThingByName(name);
             thing.moveToCell(area, cell.x, cell.y);
         }
@@ -294,7 +295,7 @@ public abstract class ULandscaper {
         UCell cell = null;
         boolean match = false;
         while (cell == null || !match) {
-            cell = area.cellAt(random.nextInt(area.xsize), random.nextInt(area.ysize));
+            cell = area.cellAt(random.i(area.xsize), random.i(area.ysize));
             match = cellHasTerrain(area, cell, terrains);
         }
         return cell;
@@ -319,7 +320,7 @@ public abstract class ULandscaper {
         UCell cell = null;
         boolean match = false;
         while (cell == null || !match) {
-            cell = area.cellAt(random.nextInt(area.xsize), random.nextInt(area.ysize));
+            cell = area.cellAt(random.i(area.xsize), random.i(area.ysize));
             match = cell.willAcceptThing(thing);
         }
         return cell;
@@ -332,7 +333,7 @@ public abstract class ULandscaper {
         UCell cell = null;
         boolean match = false;
         while (cell == null || !match) {
-            cell = area.cellAt(x1+random.nextInt(x2-x1),y1+random.nextInt(y2-y1));
+            cell = area.cellAt(x1+random.i(x2-x1),y1+random.i(y2-y1));
             if (cell != null) {
                 match = cell.willAcceptThing(thing);
                 if (match && !cell.terrain().isSpawnok())
@@ -413,7 +414,7 @@ public abstract class ULandscaper {
                 if (cellHasTerrain(area, area.cellAt(x,y), targets)) {
                     float sample = simplexNoise.multi(x, y, noiseScales);
                     if (sample > threshold) {
-                        if (random.nextFloat() <= scatterChance) {
+                        if (random.f() <= scatterChance) {
                             area.setTerrain(x, y, terrain);
                         }
                     }
@@ -428,7 +429,7 @@ public abstract class ULandscaper {
                 if (cellHasTerrain(area, area.cellAt(x,y), targets)) {
                     float sample = simplexNoise.multi(x, y, noiseScales);
                     if (sample > threshold) {
-                        if (random.nextFloat() <= scatterChance) {
+                        if (random.f() <= scatterChance) {
                             if (!isNearA(area,x,y,thing,separateBy)) {
                                 UThing thingobj = thingCzar.getThingByName(thing);
                                 thingobj.moveToCell(area, x, y);
@@ -526,9 +527,9 @@ public abstract class ULandscaper {
     public Shape shapeOddBlob(int xsize, int ysize, int parts, float twist) {
         Shape mask = new Shape(xsize,ysize);
         for (int i=0;i<parts;i++) {
-            float xprop = 0.3f + random.nextFloat()*0.7f - twist;
-            float yprop = 0.3f + random.nextFloat()*0.7f - twist;
-            if (random.nextFloat() > 0.5f) {
+            float xprop = 0.3f + random.f(0.7f)- twist;
+            float yprop = 0.3f + random.f(0.7f) - twist;
+            if (random.f() > 0.5f) {
                 float tmp = xprop;
                 xprop = yprop;
                 yprop = tmp;
@@ -536,8 +537,8 @@ public abstract class ULandscaper {
             Shape oval = shapeOval((int)(xsize * xprop), (int)(ysize * yprop));
             int xvar = (int)(xsize*(1f-xprop))+1;
             int yvar = (int)(ysize*(1f-yprop))+1;
-            int xoff = random.nextInt(xvar) - (xvar/2);
-            int yoff = random.nextInt(yvar) - (yvar/2);
+            int xoff = random.i(xvar) - (xvar/2);
+            int yoff = random.i(yvar) - (yvar/2);
             mask.maskWith(oval, Shape.MASK_OR, xoff, yoff);
         }
         mask.smooth(5, 2);
@@ -548,19 +549,19 @@ public abstract class ULandscaper {
     // TODO: variable width
     public Shape shapeRoad(int xsize, int ysize, float width, float twist, float twistmax) {
         Shape mask = new Shape(xsize, ysize);
-        int edge = random.nextInt(4);
+        int edge = random.i(4);
         float startx, starty, dx, dy, ctwist;
         if (edge == 0) {
-            starty = 0f;  startx = (float)(random.nextInt(xsize));
+            starty = 0f;  startx = (float)(random.i(xsize));
             dx = 0f ; dy = 1f;
         } else if (edge == 1) {
-            starty = (float)ysize; startx = (float)(random.nextInt(xsize));
+            starty = (float)ysize; startx = (float)(random.i(xsize));
             dx = 0f; dy = -1f;
         } else if (edge == 2) {
-            startx = 0f; starty = (float)(random.nextInt(ysize));
+            startx = 0f; starty = (float)(random.i(ysize));
             dx = 1f; dy = 0f;
         } else {
-            startx = (float)xsize; starty = (float)(random.nextInt(ysize));
+            startx = (float)xsize; starty = (float)(random.i(ysize));
             dx = -1f; dy = 0f;
         }
         ctwist = 0f;
@@ -569,7 +570,7 @@ public abstract class ULandscaper {
             mask.fillRect((int)startx, (int)starty, (int)(startx+width), (int)(starty+width));
             startx += dx;
             starty += dy;
-            if (random.nextFloat() < twist) {
+            if (random.f() < twist) {
                 if (dx == 0) {
                     startx += ctwist;
                 }
@@ -580,7 +581,7 @@ public abstract class ULandscaper {
             if (startx >= xsize || startx < 0 || starty >= ysize || starty < 0) {
                 hitedge = true;
             }
-            ctwist = ctwist + random.nextFloat() * twist - (twist/2f);
+            ctwist = ctwist + random.f(twist) - (twist/2f);
             if (ctwist > twistmax) ctwist = twistmax;
             if (ctwist < -twistmax) ctwist = -twistmax;
         }
@@ -655,8 +656,8 @@ public abstract class ULandscaper {
         int tries = 200;
         while (tries > 0) {
             tries--;
-            int x = random.nextInt(area.xsize);
-            int y = random.nextInt(area.ysize);
+            int x = random.i(area.xsize);
+            int y = random.i(area.ysize);
             if (canFitBoxAt(area, x, y, width, height, floorTerrains)) {
                 System.out.println("found a box");
                 int[] coords = new int[2];
@@ -850,7 +851,7 @@ public abstract class ULandscaper {
             if (names.size() == 1)
                 name = names.get(0);
             else
-                name = names.get(random.nextInt(names.size()));
+                name = names.get(random.i(names.size()));
             UActor actor = actorCzar.getActorByName(name);
             UCell dest = getRandomSpawn(area, actor, x1, y1, x2, y2);
             actor.moveToCell(area, dest.x, dest.y);
@@ -872,7 +873,7 @@ public abstract class ULandscaper {
             if (names.size() == 1)
                 name = names.get(0);
             else
-                name = names.get(random.nextInt(names.size()));
+                name = names.get(random.i(names.size()));
             UThing thing = thingCzar.getThingByName(name);
             UCell dest = getRandomSpawn(area, thing, x1, y1, x2, y2);
             thing.moveToCell(area, dest.x, dest.y);

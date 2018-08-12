@@ -10,6 +10,7 @@ import ure.areas.UCartographer;
 import ure.areas.ULandscaper;
 import ure.actors.behaviors.BehaviorDeserializer;
 import ure.actors.behaviors.UBehavior;
+import ure.math.URandom;
 import ure.render.URenderer;
 import ure.render.URendererOGL;
 import ure.sys.UCommander;
@@ -122,8 +123,8 @@ public class AppModule {
 
     @Provides
     @Singleton
-    public Random providesRandom() {
-        return new Random();
+    public URandom providesRandom() {
+        return new URandom();
     }
 
     @Provides

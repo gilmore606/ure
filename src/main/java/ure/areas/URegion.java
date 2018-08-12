@@ -2,6 +2,7 @@ package ure.areas;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UActorCzar;
+import ure.math.URandom;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.terrain.UTerrainCzar;
@@ -32,7 +33,7 @@ public class URegion {
 
     @Inject
     @JsonIgnore
-    Random random;
+    URandom random;
 
     protected String id;
     protected String name;
@@ -112,7 +113,7 @@ public class URegion {
     }
 
     public ULandscaper getLandscaperForLevel(int level) {
-        ULandscaper scaper = getLandscapers()[random.nextInt(getLandscapers().length)];
+        ULandscaper scaper = getLandscapers()[random.i(getLandscapers().length)];
         return scaper;
     }
 
