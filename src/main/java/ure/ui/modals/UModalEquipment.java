@@ -40,8 +40,8 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
             }
         }
         int longestthing = 0;
-        for (int i=0;i<slotsThings.size();i++) {
-            UThing thing = slotsThings.get(i);
+        for (int i=0;i<actor.things().size();i++) {
+            UThing thing = actor.things().get(i);
             if (thing != null) {
                 int len = textWidth(thing.name());
                 if (len > longestthing) longestthing = len;

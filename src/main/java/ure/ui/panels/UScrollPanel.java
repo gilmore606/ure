@@ -36,8 +36,8 @@ public class UScrollPanel extends UPanel implements UAnimator {
         lineFades = new ArrayList<>();
         charWidth = commander.config.getTextWidth();
         charHeight = commander.config.getTextHeight() + spacing;
-        textRows = (_pixelh - padY) / charHeight;
-        textColumns = (_pixelw - padX) / charWidth;
+        textRows = (_pixelh - _pady) / charHeight - 2;
+        textColumns = (_pixelw - _padx) / charWidth;
     }
 
     public void addLineFade(UColor fade) {
