@@ -396,6 +396,8 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
         for (int j=i;j<nuset.length;j++)
             nuset[j] = set[j+1];
         selectedIcon.setGlyphVariants(nuset);
+        if (selectedGlyph > nuset.length)
+            selectedGlyph = nuset.length;
     }
 
     void addGlyphSwatch() {
