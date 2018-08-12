@@ -5,11 +5,13 @@ import ure.actors.UPlayer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actors.actions.UAction;
+import ure.terrain.Stairs;
 import ure.things.UCollection;
 import ure.things.UContainer;
 import ure.actors.UActor;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
+import ure.ui.Icons.Icon;
 import ure.ui.particles.UParticle;
 
 import javax.inject.Inject;
@@ -202,6 +204,13 @@ public class UCell implements UContainer {
                 thing.animationTick();
             }
         }
+    }
+
+    public Icon mapIcon() {
+        if (!isSeen()) return null;
+        if (terrain instanceof Stairs)
+            return terrain.icon();
+        return null;
     }
 
     public void addParticle(UParticle _particle) {
