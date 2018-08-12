@@ -103,6 +103,7 @@ public class UNPC extends UActor implements Interactable {
         for (UBehavior behavior: behaviors) {
             behavior.aggressionFrom(this, attacker);
         }
+        super.aggressionFrom(attacker);
     }
 
     UAction nextAction() {

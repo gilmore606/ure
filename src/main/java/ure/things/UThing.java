@@ -1,6 +1,7 @@
 package ure.things;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.eventbus.EventBus;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
 import ure.actors.actions.*;
@@ -48,6 +49,9 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     @Inject
     @JsonIgnore
     protected Random random;
+    @Inject
+    @JsonIgnore
+    protected EventBus bus;
 
     protected String name;
     protected long ID;
@@ -125,7 +129,8 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public Icon icon() {
         if (icon == null) {
             icon = iconCzar.getIconByName(name);
-            icon.setEntity(this);
+            if (icon != null)
+                icon.setEntity(this);
         }
         return icon;
     }

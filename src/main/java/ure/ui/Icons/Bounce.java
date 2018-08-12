@@ -1,5 +1,7 @@
 package ure.ui.Icons;
 
+import ure.actors.UActor;
+
 public class Bounce extends Icon  {
 
     public static final String TYPE = "bounce";
@@ -8,11 +10,15 @@ public class Bounce extends Icon  {
 
     @Override
     int glyphX() {
-        return -(int)(Bounce(commander.frameCounter) * animAmpX);
+        if (entity instanceof UActor)
+            return -(int)(Bounce(commander.frameCounter) * animAmpX);
+        return 0;
     }
     @Override
     int glyphY() {
-        return -(int)(Bounce(commander.frameCounter) * animAmpY);
+        if (entity instanceof UActor)
+            return -(int)(Bounce(commander.frameCounter) * animAmpY);
+        return 0;
     }
 
     float Bounce(int frame) {

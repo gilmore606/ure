@@ -9,7 +9,9 @@ import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.math.UPath;
+import ure.sys.events.DeathEvent;
 import ure.terrain.UTerrain;
+import ure.things.Corpse;
 import ure.things.Lightsource;
 import ure.things.UThing;
 import ure.things.UContainer;
@@ -34,6 +36,7 @@ public class UActor extends UThing implements Interactable {
     protected float actionspeed = 1f;
     protected float movespeed = 1f;
     protected String bodytype = "humanoid";
+    protected String customCorpse;
     protected Body body;
 
     @JsonIgnore
@@ -47,6 +50,9 @@ public class UActor extends UThing implements Interactable {
     protected int moveAnimDY = 0;
 
     protected float actionTime = 0f;
+
+    @JsonIgnore
+    public boolean dead;
 
     @Override
     public void initializeAsTemplate() {
@@ -155,7 +161,7 @@ public class UActor extends UThing implements Interactable {
     }
 
     public void aggressionFrom(UActor actor) {
-
+        die();
     }
 
     public UColor bloodColor() {
@@ -343,6 +349,34 @@ public class UActor extends UThing implements Interactable {
         return false;
     }
 
+    public void die() {
+        dead = true;
+    }
+    public void actuallyDie() {
+        stopActing();
+        bus.post(new DeathEvent(name,location,null));
+        UThing corpse = makeCorpse();
+        corpse.moveTo(location);
+        System.out.println("made a  corpse of type " + corpse.TYPE);
+        junk();
+    }
+
+    public UThing makeCorpse() {
+        UThing corpse;
+        if (customCorpse != null)
+            corpse = commander.makeThing(customCorpse);
+        else {
+            corpse = commander.makeThing(config.getDefaultCorpse());
+        }
+        if (corpse instanceof Corpse) {
+            ((Corpse)corpse).become(this);
+        }
+        if (things() != null)
+            for (UThing thing : (ArrayList<UThing>)things().clone()) {
+                thing.moveTo(corpse);
+            }
+        return corpse;
+    }
 
     public boolean isAwake() {
         return awake;
@@ -395,6 +429,8 @@ public class UActor extends UThing implements Interactable {
     public String getBodytype() { return bodytype; }
     public Body getBody() { return body; }
     public void setBody(Body b) { body = b; }
+    public String getCustomCorpse() { return customCorpse; }
+    public void setCustomCorpse(String s) { customCorpse = s; }
 
     public String UIstatus() {
         return "";

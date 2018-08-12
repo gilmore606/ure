@@ -448,6 +448,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                 } else {
                     tickTime();
                     letActorsAct();
+                    killActors();
                 }
             } else {
                 consumeKeyFromBuffer();
@@ -460,10 +461,18 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         ArrayList<UActor> tmpactors = (ArrayList<UActor>)actors.clone();
         System.out.println("ticking " + Integer.toString(tmpactors.size()) + " actors");
         for (UActor actor : tmpactors) {
-            if (actors.contains(actor))
+            if (actors.contains(actor) && !actor.dead)
                 actor.act();
         }
     }
+    void killActors() {
+        ArrayList<UActor> tmpactors = (ArrayList<UActor>)actors.clone();
+        for (UActor actor : tmpactors) {
+            if (actor.dead)
+                actor.actuallyDie();
+        }
+    }
+
     public void quitGame() {
         quitGame = true;
     }
@@ -536,6 +545,10 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         turnCounter++;
         System.out.println("time:tick " + Integer.toString(turnCounter));
         renderer.render();
+    }
+
+    public UThing makeThing(String name) {
+        return thingCzar.getThingByName(name);
     }
 
     public int daytimeMinutes() {

@@ -122,6 +122,8 @@ public class UConfig {
     private int turnsPerDay = 512;                  // game turns per 24 hour day
     private int dayTimeStartOffset = 300;           // game turns to add at game start to get the 'starting daytime'
 
+    private String defaultCorpse = "corpse";        // what thing to spawn for dead actors
+    private float defaultCorpseDesaturation = 0.4f;  // how much desaturation to icons of corpses
 
     public UConfig() {
         clearSunLerps();
@@ -536,6 +538,10 @@ public class UConfig {
     public void setTurnsPerDay(int turnsPerDay) {
         this.turnsPerDay = turnsPerDay;
     }
+    public String getDefaultCorpse() { return defaultCorpse; }
+    public void setDefaultCorpse(String s) { defaultCorpse = s; }
+    public float getDefaultCorpseDesaturation() { return defaultCorpseDesaturation; }
+    public void setDefaultCorpseDesaturation(float f) { defaultCorpseDesaturation = f; }
 
     public void setVolumeMaster(float v) { volumeMaster = v; }
     public void setVolumeMusic(float v) { volumeMusic = v; }
