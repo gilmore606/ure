@@ -572,12 +572,16 @@ public class UCamera extends View implements UAnimator {
     private void drawCellParticle(int col, int row) {
         UCell cell = cellAt(col,row);
         if (cell != null) {
-            UParticle particle = cellAt(col, row).getParticle();
-            if (particle != null) {
-                UColor light = lightAt(col,row);
-                float vis = visibilityAt(col,row);
-                if (vis < config.getVisibilityThreshold()) return;
-                particle.draw(this, light, vis);
+            ArrayList<UParticle> particles = cellAt(col, row).getParticles();
+            if (particles != null) {
+                for (UParticle particle : particles) {
+                    if (particle != null) {
+                        UColor light = lightAt(col, row);
+                        float vis = visibilityAt(col, row);
+                        if (vis < config.getVisibilityThreshold()) return;
+                        particle.draw(this, light, vis);
+                    }
+                }
             }
         }
     }

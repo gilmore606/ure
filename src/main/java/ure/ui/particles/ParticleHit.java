@@ -23,10 +23,11 @@ public class ParticleHit extends UParticle {
         super.animationTick();
         if (ticksInitial-ticksLeft == 1) {
             int angle = 0;
-            for (int i=0;i<12;i++) {
-                angle += random.i(360/6);
-                float px = 2f*(float)Math.cos(Math.toRadians(angle));
-                float py = 2f*(float)Math.sin(Math.toRadians(angle));
+            for (int i=0;i<9;i++) {
+                angle += random.i(360/5);
+                float speed = 4f+random.f(3f);
+                float px = speed*(float)Math.cos(Math.toRadians(angle));
+                float py = speed*(float)Math.sin(Math.toRadians(angle));
                 area.addParticle(new ParticleBlood(x,y,bloodColor,intensity*2f,px,py));
             }
         }

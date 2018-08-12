@@ -35,7 +35,7 @@ public class UCell implements UContainer {
     @JsonIgnore
     UArea area;
     @JsonIgnore
-    UParticle particle;
+    ArrayList<UParticle> particles;
 
     public int x,y;
 
@@ -46,6 +46,7 @@ public class UCell implements UContainer {
 
     public UCell() {
         Injector.getAppComponent().inject(this);
+        particles = new ArrayList<UParticle>();
     }
 
     public UCell(UArea theArea, int thex, int they, UTerrain theTerrain) {
@@ -213,14 +214,11 @@ public class UCell implements UContainer {
         return null;
     }
 
-    public void addParticle(UParticle _particle) {
-        if (particle != null) {
-            area.fizzleParticle(particle);
-        }
-        particle = _particle;
+    public void addParticle(UParticle particle) {
+        particles.add(particle);
     }
-    public void fizzleParticle() {
-        particle = null;
+    public void fizzleParticle(UParticle particle) {
+        particles.remove(particle);
     }
 
     public UTerrain getTerrain() {
@@ -251,5 +249,5 @@ public class UCell implements UContainer {
         this.area = area;
     }
 
-    public UParticle getParticle() { return particle; }
+    public ArrayList<UParticle> getParticles() { return particles; }
 }

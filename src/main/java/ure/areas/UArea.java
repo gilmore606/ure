@@ -459,7 +459,7 @@ public class UArea implements Serializable {
         }
     }
     public void fizzleParticle(UParticle particle) {
-        cellAt(particle.x,particle.y).fizzleParticle();
+        cellAt(particle.x,particle.y).fizzleParticle(particle);
         particles.remove(particle);
     }
 
