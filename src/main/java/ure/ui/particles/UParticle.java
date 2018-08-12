@@ -33,7 +33,7 @@ public class UParticle implements UAnimator {
     protected URandom random;
 
     public int x, y;
-    char glyph;
+    int glyph;
     float fgR,fgG,fgB,bgR,bgG,bgB;
     boolean receiveLight;
     float alpha;
@@ -43,9 +43,11 @@ public class UParticle implements UAnimator {
 
     float offx, offy;
     float vecx, vecy;
+    float vecdecay;
     float gravx, gravy;
+    float gravvecx, gravvecy;
 
-    public UParticle(int x, int y, int ticksLeft, UColor fgColor, float alpha, boolean receiveLight, float vecx, float vecy, float gravx, float gravy) {
+    public UParticle(int x, int y, int ticksLeft, UColor fgColor, float alpha, boolean receiveLight, float vecx, float vecy, float vecdecay, float gravx, float gravy) {
         Injector.getAppComponent().inject(this);
         this.x = x;
         this.y = y;
@@ -61,6 +63,7 @@ public class UParticle implements UAnimator {
         colorbuffer = new UColor(fgR,fgG,fgB);
         this.vecx = vecx;
         this.vecy = vecy;
+        this.vecdecay = vecdecay;
         this.gravx = gravx;
         this.gravy = gravy;
     }
@@ -74,15 +77,17 @@ public class UParticle implements UAnimator {
         alpha -= alphadecay;
         offx += vecx;
         offy += vecy;
-        vecx += gravx;
-        vecy += gravy;
+        vecx *= 1f-vecdecay;
+        vecy *= 1f-vecdecay;
+        gravvecx += gravx;
+        gravvecy += gravy;
     }
 
     public boolean isFizzled() { return (ticksLeft < 0); }
 
-    public char glyph() {
+    public int glyph() {
         if (glyphFrames != null) {
-            return glyphFrames.charAt(ticksInitial - ticksLeft);
+            return (int)glyphFrames.charAt(ticksInitial - ticksLeft);
         }
         return glyph;
     }
@@ -97,6 +102,6 @@ public class UParticle implements UAnimator {
         renderer.drawGlyph(glyph(), (x - camera.leftEdge)*config.getTileWidth() + glyphX(), (y - camera.topEdge)*config.getTileHeight() + glyphY(), colorbuffer);
     }
 
-    public int glyphX() { return (int)offx; }
-    public int glyphY() { return (int)offy; }
+    public int glyphX() { return (int)(offx + gravvecx); }
+    public int glyphY() { return (int)(offy + gravvecy); }
 }
