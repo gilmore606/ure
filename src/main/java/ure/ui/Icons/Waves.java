@@ -1,15 +1,13 @@
 package ure.ui.Icons;
 
+import ure.math.UColor;
+
 public class Waves extends Icon {
 
     public static final String TYPE = "waves";
 
     public Waves() { super(TYPE); }
 
-    @Override
-    public int glyphX() {
-        return (int)(Wave(commander.frameCounter + animOffset) * animAmpX);
-    }
     @Override
     public int glyphY() {
         return (int)(Wave(commander.frameCounter + animOffset) * animAmpY);

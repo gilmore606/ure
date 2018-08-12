@@ -73,6 +73,22 @@ public class UCollection implements Cloneable {
             things.add(thing);
     }
 
+    public int weight() {
+        int w = 0;
+        if (things != null) {
+            for (UThing thing : things)
+                w += thing.weight();
+        }
+        return w;
+    }
+    public int value() {
+        int v = 0;
+        if (things != null) {
+            for (UThing thing : things)
+                v += thing.value();
+        }
+        return v;
+    }
     public Iterator<UThing> iterator() {
         return things.iterator();
     }

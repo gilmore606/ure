@@ -493,9 +493,11 @@ public class UCamera extends View implements UAnimator {
         UColor light = lightAt(col,row);
         UTerrain t = terrainAt(col,row);
         if (t != null) {
+            t.icon().setAnimate(true);
             float tOpacity = vis;
             float tSaturation = 1f;
             if ((vis < config.getVisibilityThreshold()) && area.seenCell(col + leftEdge, row + topEdge)) {
+                t.icon().setAnimate(false);
                 tOpacity = config.getSeenOpacity();
                 tSaturation = config.getSeenSaturation();
                 if (config.isSeenLightGray())
@@ -505,6 +507,7 @@ public class UCamera extends View implements UAnimator {
             if (t.isGlow())
                 terrainLight.set(1f,1f,1f);
             t.icon().draw(col * cellw, row * cellh, terrainLight, tOpacity, tSaturation);
+            t.icon().setAnimate(true);
         } else {
             renderer.drawRect(col * cellw, row * cellh, cellw, cellh, config.getCameraBgColor());
         }

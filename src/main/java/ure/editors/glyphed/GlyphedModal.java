@@ -648,13 +648,13 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
         listUpEnabled = false;
         listDownEnabled = false;
         if (pageOffset > 0) {
-            renderer.drawTile(94, 33 * gw() + xpos, 7 * gh() + ypos, UColor.YELLOW);
-            renderer.drawTile(94, 34 * gw() + xpos, 7 * gh() + ypos, UColor.YELLOW);
+            renderer.drawTile(8593, 33 * gw() + xpos, 7 * gh() + ypos, UColor.YELLOW);
+            renderer.drawTile(8593, 34 * gw() + xpos, 7 * gh() + ypos, UColor.YELLOW);
             listUpEnabled = true;
         }
         if (pageOffset+12 < iconset.size()) {
-            renderer.drawTile(118, 33 * gw() + xpos, 20 * gh() + ypos, UColor.YELLOW);
-            renderer.drawTile(118, 34 * gw() + xpos, 20 * gh() + ypos, UColor.YELLOW);
+            renderer.drawTile(8595, 33 * gw() + xpos, 20 * gh() + ypos, UColor.YELLOW);
+            renderer.drawTile(8595, 34 * gw() + xpos, 20 * gh() + ypos, UColor.YELLOW);
             listDownEnabled = true;
         }
 

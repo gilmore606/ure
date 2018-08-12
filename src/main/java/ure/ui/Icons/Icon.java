@@ -52,6 +52,8 @@ public class Icon implements Cloneable {
     int animOffset;
     float animAmpX, animAmpY, animFreq;
 
+    boolean animate;
+
     @JsonIgnore
     Entity entity;
 
@@ -59,6 +61,7 @@ public class Icon implements Cloneable {
         Injector.getAppComponent().inject(this);
         bgBuffer = new UColor(0f,0f,0f);
         fgBuffer = new UColor(0f,0f,0f);
+        animate = true;
     }
 
     public Icon(String type) {
@@ -82,23 +85,27 @@ public class Icon implements Cloneable {
 
     public void draw(int x, int y) { draw(x, y, UColor.WHITE, 1f, 1f); }
     public void draw(int x, int y, UColor light, float opacity, float saturation) {
-        if (bgColor != null) {
-            bgBuffer.set(bgColor);
+        UColor bg = animate ? bgColor() : bgColor;
+        if (bg != null) {
+            bgBuffer.set(bg);
             bgBuffer.illuminateWith(light, opacity);
             bgBuffer.desaturateBy(1f - saturation);
             renderer.drawRect(x,y,config.getTileWidth(),config.getTileHeight(),bgBuffer);
         }
-        if (fgColor != null) {
-            int g = glyph(commander.frameCounter);
+        UColor fg = animate ? fgColor : fgColor();
+        if (fg != null) {
+            int g = glyph(animate ? commander.frameCounter : 0);
             if (isOutline())
-                renderer.drawTileOutline(g, x+glyphX(), y+glyphY(), UColor.BLACK);
-            fgBuffer.set(fgColor);
+                renderer.drawTileOutline(g, x+(animate ? glyphX() : 0), y+(animate ? glyphY() : 0), UColor.BLACK);
+            fgBuffer.set(fg);
             fgBuffer.illuminateWith(light, opacity);
             fgBuffer.desaturateBy(1f - saturation);
-            renderer.drawTile(g, x+glyphX(), y+glyphY(), fgBuffer);
+            renderer.drawTile(g, x+(animate ? glyphX() : 0), y+(animate ? glyphY() : 0), fgBuffer);
         }
     }
 
+    public UColor bgColor() { return bgColor; }
+    public UColor fgColor() { return fgColor; }
 
     public Icon makeClone() {
         try {
@@ -214,4 +221,6 @@ public class Icon implements Cloneable {
     public void setAnimFreq(float f) { animFreq = f; }
     public String getEditorHelpMsg() { return editorHelpMsg; }
     public void setEditorHelpMsg(String s) { editorHelpMsg = s; }
+    public boolean isAnimate() { return animate; }
+    public void setAnimate(boolean b) { animate = b; }
 }
