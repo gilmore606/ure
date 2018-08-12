@@ -16,9 +16,7 @@ import ure.things.UContainer;
 import ure.ui.UCamera;
 import ure.ui.particles.ParticleHit;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * UActor represents a UThing which can perform actions.  This includes the player and NPCs.
@@ -151,7 +149,7 @@ public class UActor extends UThing implements Interactable {
     public void moveTriggerFrom(UActor actor) {
         if (actor instanceof UPlayer) {
             aggressionFrom(actor);
-            commander.printScroll(null, "You attack " + getDname() + "!", UColor.COLOR_LIGHTRED);
+            commander.printScroll(null, "You attack " + getDname() + "!", UColor.LIGHTRED);
             area().addParticle(new ParticleHit(areaX(), areaY(), bloodColor(), 0.5f+random.nextFloat()*0.5f));
         }
     }
@@ -161,7 +159,7 @@ public class UActor extends UThing implements Interactable {
     }
 
     public UColor bloodColor() {
-        return UColor.COLOR_RED;
+        return UColor.RED;
     }
 
     // TODO: Parameterize all of these hardcoded strings somewhere
@@ -402,7 +400,7 @@ public class UActor extends UThing implements Interactable {
         return "";
     }
     public UColor UIstatusColor() {
-        return UColor.COLOR_GRAY;
+        return UColor.GRAY;
     }
 
     public int getMoveAnimX() { return moveAnimX; }

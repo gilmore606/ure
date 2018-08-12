@@ -7,7 +7,6 @@ import ure.areas.UCartographer;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.render.URenderer;
-import ure.render.URendererOGL;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.sys.UConfig;
@@ -62,9 +61,9 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
         camera.moveTo(area, 40,20);
         rootView.addChild(camera);
 
-        UColor borderColor = UColor.COLOR_DARKGRAY;
+        UColor borderColor = UColor.DARKGRAY;
 
-        statusPanel = new UStatusPanel(200, 200, 10, 10, config.getTextColor(), UColor.COLOR_BLACK, borderColor);
+        statusPanel = new UStatusPanel(200, 200, 10, 10, config.getTextColor(), UColor.BLACK, borderColor);
         statusPanel.addText("name", " ",0,0);
         statusPanel.addText("race", "Owl",0,1);
         statusPanel.addText("class", "Ornithologist",0,2);
@@ -75,11 +74,11 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
         statusPanel.setPosition(1200,0);
         rootView.addChild(statusPanel);
 
-        actorPanel = new UActorPanel(200,600,10,10,config.getTextColor(), UColor.COLOR_BLACK, borderColor);
+        actorPanel = new UActorPanel(200,600,10,10,config.getTextColor(), UColor.BLACK, borderColor);
         actorPanel.setPosition(1200,200);
         rootView.addChild(actorPanel);
 
-        lensPanel = new ULensPanel(camera, 0, 0, 200, 200, 12, 12, config.getTextColor(), UColor.COLOR_BLACK, borderColor);
+        lensPanel = new ULensPanel(camera, 0, 0, 200, 200, 12, 12, config.getTextColor(), UColor.BLACK, borderColor);
         lensPanel.setPosition(1200,800);
         rootView.addChild(lensPanel);
 
@@ -182,7 +181,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
 
     public UPlayer makeNewPlayer(String playername) {
         System.out.println("Creating a brand new @Player");
-        player = new UPlayer("Player", '@', UColor.COLOR_WHITE, true, new UColor(0.1f, 0.1f, 0.4f), 2, 3);
+        player = new UPlayer("Player",new UColor(0.1f, 0.1f, 0.4f), 2, 3);
         player.setName(playername);
         player.setID(commander.generateNewID(player));
 

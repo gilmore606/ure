@@ -65,7 +65,7 @@ public class UModalEntityPickMulti extends UModal {
             int liney = y+prompt.length+1;
             drawIcon(entity.icon(), xpad+1, liney+ypad);
             String n = entity.getName();
-            UColor textColor = UColor.COLOR_GRAY;
+            UColor textColor = UColor.GRAY;
             if (selectedEntities.get(y)) {
                 textColor = null;
                 drawTile(commander.config.getUiCheckGlyph().charAt(0), xpad+2, liney+ypad, hiliteColor);

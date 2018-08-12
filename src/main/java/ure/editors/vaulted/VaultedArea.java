@@ -15,8 +15,8 @@ public class VaultedArea extends UArea {
         super(thexsize, theysize, "null");
         label = "vaulted";
         resetSunColorLerps();
-        addSunColorLerp(0, UColor.COLOR_WHITE);
-        addSunColorLerp(24*60, UColor.COLOR_WHITE);
+        addSunColorLerp(0, UColor.WHITE);
+        addSunColorLerp(24*60, UColor.WHITE);
         setSunColor(1f,1f,1f);
     }
 

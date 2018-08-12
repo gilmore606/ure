@@ -46,6 +46,13 @@ public class UIconCzar {
         }
     }
 
+    /**
+     * Pulling out these templates is probably something only GlyphEd should be doing.
+     */
+    public Icon getTemplateByName(String name) {
+        return iconsByName.get(name);
+    }
+
     public Icon getIconByName(String name) {
         Icon template = iconsByName.get(name);
         if (template != null) {

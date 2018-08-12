@@ -71,7 +71,7 @@ public class UModalEquipPick extends UModal {
             }
             if (thing == equipped)
                 drawTile(commander.config.getUiCheckGlyph().charAt(0), 2, y+ypad, commander.config.getHiliteColor());
-            drawString(n, 3, y+ypad, (y == selection || thing == equipped )? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
+            drawString(n, 3, y+ypad, (y == selection || thing == equipped )? null : UColor.GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
         if (showDetail) {

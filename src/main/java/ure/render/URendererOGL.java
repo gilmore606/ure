@@ -227,7 +227,7 @@ public class URendererOGL implements URenderer {
         }
         renderBuffer(); // Make sure we draw anything left in the buffer
         // Uncomment to draw the font texture over the screen for debugging purposes
-        // addQuad(10, 10, tileFont.bitmapWidth, tileFont.bitmapHeight, UColor.COLOR_WHITE, 0, 0, 1, 1);
+        // addQuad(10, 10, tileFont.bitmapWidth, tileFont.bitmapHeight, UColor.WHITE, 0, 0, 1, 1);
         endRendering();
     }
 

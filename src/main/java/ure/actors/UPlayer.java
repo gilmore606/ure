@@ -33,7 +33,7 @@ public class UPlayer extends UActor {
         super();
     }
 
-    public UPlayer(String thename, char theicon, UColor thecolor, boolean addOutline, UColor selfLightColor, int selfLight, int selfLightFalloff) {
+    public UPlayer(String thename, UColor selfLightColor, int selfLight, int selfLightFalloff) {
         super();
         initializeAsTemplate();
         this.selfLight = selfLight;

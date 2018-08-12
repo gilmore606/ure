@@ -197,7 +197,7 @@ public class UModal extends View implements UAnimator {
     }
 
     public void addText(String name, String text, int row, int col) {
-        addTextFrag(new TextFrag(name, text, row, col, UColor.COLOR_WHITE));
+        addTextFrag(new TextFrag(name, text, row, col, UColor.WHITE));
     }
     public void addText(String name, String text, int row, int col, UColor color) {
         addTextFrag(new TextFrag(name, text, row, col, color));
@@ -295,7 +295,7 @@ public class UModal extends View implements UAnimator {
         ArrayList<String> details = entity.UIdetails(callbackContext);
         int linepos = 1;
         for (String line : details) {
-            drawString(line, xoff, linepos+yoff, UColor.COLOR_LIGHTGRAY);
+            drawString(line, xoff, linepos+yoff, UColor.LIGHTGRAY);
             linepos++;
         }
     }

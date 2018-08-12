@@ -80,7 +80,7 @@ public class Icon implements Cloneable {
     public int getAnimOffset() { return animOffset; }
     public void setAnimOffset(int i) { animOffset = i; }
 
-    public void draw(int x, int y) { draw(x, y, UColor.COLOR_WHITE, 1f, 1f); }
+    public void draw(int x, int y) { draw(x, y, UColor.WHITE, 1f, 1f); }
     public void draw(int x, int y, UColor light, float opacity, float saturation) {
         if (bgColor != null) {
             bgBuffer.set(bgColor);
@@ -91,7 +91,7 @@ public class Icon implements Cloneable {
         if (fgColor != null) {
             int g = glyph(commander.frameCounter);
             if (isOutline())
-                renderer.drawTileOutline(g, x+glyphX(), y+glyphY(), UColor.COLOR_BLACK);
+                renderer.drawTileOutline(g, x+glyphX(), y+glyphY(), UColor.BLACK);
             fgBuffer.set(fgColor);
             fgBuffer.illuminateWith(light, opacity);
             fgBuffer.desaturateBy(1f - saturation);

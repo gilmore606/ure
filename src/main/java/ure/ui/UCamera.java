@@ -12,7 +12,6 @@ import ure.sys.UCommander;
 import ure.sys.UConfig;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
-import ure.ui.Icons.Icon;
 import ure.ui.particles.UParticle;
 
 import javax.inject.Inject;
@@ -430,12 +429,12 @@ public class UCamera extends View implements UAnimator {
     public UColor lightAt(int col, int row) {
         UColor total;
         if (!isValidCell(col,row))
-            return UColor.COLOR_BLACK;
+            return UColor.BLACK;
         if (!config.isLightEnable()) {
-            total = UColor.COLOR_WHITE;
+            total = UColor.WHITE;
         } else if (lightcells[col][row] == null) {
             System.out.println("WARNING!  nonexistent lightcell");
-            total = UColor.COLOR_BLACK;
+            total = UColor.BLACK;
         } else {
             total = lightcells[col][row].light(commander.frameCounter);
             // TODO : this is a dumb implementation for glow, or at least a dumb place for it
@@ -500,7 +499,7 @@ public class UCamera extends View implements UAnimator {
                 tOpacity = config.getSeenOpacity();
                 tSaturation = config.getSeenSaturation();
                 if (config.isSeenLightGray())
-                    light = UColor.COLOR_GRAY;
+                    light = UColor.GRAY;
             }
             UColor terrainLight = light;
             if (t.isGlow())

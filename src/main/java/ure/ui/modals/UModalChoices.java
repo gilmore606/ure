@@ -2,7 +2,6 @@ package ure.ui.modals;
 
 import ure.commands.UCommand;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.GLKey;
 
 import java.util.ArrayList;
@@ -54,7 +53,7 @@ public class UModalChoices extends UModal {
         int drawSelection = 0;
         for (String choice : choices) {
             int oldxtab = xtab;
-            drawString(choice, xtab, cellh-1, (selection == drawSelection) ? null : UColor.COLOR_GRAY, (selection == drawSelection) ? tempHiliteColor : null);
+            drawString(choice, xtab, cellh-1, (selection == drawSelection) ? null : UColor.GRAY, (selection == drawSelection) ? tempHiliteColor : null);
             xtab += textWidth(choice) + 1;
             drawSelection++;
             if (mousex < xtab && mousex >= oldxtab && mousey > 0 && mousey <= cellh)

@@ -645,7 +645,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
         filelist.add("<new vaultSet>");
 
-        UModalStringPick spmodal = new UModalStringPick("Select vaultSet to edit:", UColor.COLOR_BLACK, 0, 0,
+        UModalStringPick spmodal = new UModalStringPick("Select vaultSet to edit:", UColor.BLACK, 0, 0,
                 filelist, true, this, "vaulted-pickfile");
         printScroll("Launching VaultEd...");
         showModal(spmodal);
@@ -653,7 +653,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
     public void hearModalStringPick(String context, String filename) {
         if (filename.equals("<new vaultSet>")) {
-            UModalGetString fmodal = new UModalGetString("Filename?", 20, true, UColor.COLOR_BLACK, this, "vaulted-newfile");
+            UModalGetString fmodal = new UModalGetString("Filename?", 20, true, UColor.BLACK, this, "vaulted-newfile");
             showModal(fmodal);
         } else {
             doLaunchVaulted(filename);
@@ -662,7 +662,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     void doLaunchVaulted(String filename) {
         UArea oldarea = null;
         if (player == null)
-            player = new UPlayer("Vault Editor Guy", '@', UColor.COLOR_WHITE, true, null, 0, 0);
+            player = new UPlayer("Vault Editor Guy", null, 0, 0);
         else
             oldarea = player.area();
         VaultedArea edarea = new VaultedArea(30,30);

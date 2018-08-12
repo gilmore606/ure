@@ -5,20 +5,14 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
-import ure.areas.UCell;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.sys.GLKey;
 import ure.terrain.UTerrain;
 import ure.ui.Icons.Icon;
 import ure.ui.Icons.IconDeserializer;
-import ure.ui.Icons.UIconCzar;
 import ure.ui.modals.*;
 
-import javax.inject.Inject;
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -105,7 +99,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     void fillIconLists() {
         thingIcons = new ArrayList<>();
         for (String name : thingNames) {
-            Icon icon = iconCzar.getIconByName(name);
+            Icon icon = iconCzar.getTemplateByName(name);
             if (icon == null) {
                 icon = new Icon("blank");
                 icon.setName(name);
@@ -117,7 +111,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
         boolean foundplayer = false;
         for (String name : actorNames) {
             if (name.equals("player")) foundplayer = true;
-            Icon icon = iconCzar.getIconByName(name);
+            Icon icon = iconCzar.getTemplateByName(name);
             if (icon == null) {
                 icon = new Icon("blank");
                 icon.setName(name);
@@ -130,11 +124,13 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
         if (!foundplayer) {
             Icon playericon = new Icon("blank");
             playericon.setName("player");
+            playericon.setGlyph(64);
+            playericon.setFgColor(new UColor(UColor.WHITE));
             actorIcons.add(playericon);
         }
         terrainIcons = new ArrayList<>();
         for (String name : terrainNames) {
-            Icon icon = iconCzar.getIconByName(name);
+            Icon icon = iconCzar.getTemplateByName(name);
             if (icon == null) {
                 icon = new Icon("blank");
                 icon.setName(name);
@@ -414,6 +410,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
                 gv[i] = selectedIcon.getGlyphVariants()[i];
             gv[gv.length-1] = 33;
             selectedIcon.setGlyphVariants(gv);
+            selectedGlyph++;
         }
     }
 
@@ -534,15 +531,15 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     @Override
     public void drawContent() {
 
-        drawString("Reload", 33,34, UColor.COLOR_YELLOW);
-        drawString("Save", 37, 34, UColor.COLOR_YELLOW);
-        drawString("Quit", 40, 34, UColor.COLOR_YELLOW);
+        drawString("Reload", 33,34, UColor.YELLOW);
+        drawString("Save", 37, 34, UColor.YELLOW);
+        drawString("Quit", 40, 34, UColor.YELLOW);
         updateMouseGrid();
 
 
         drawString(selectedIcon.getName(), 1, 5, null);
         // Sample displays
-        renderer.drawRectBorder(1 * gw() + xpos, 1 * gh() + ypos, 3 * gw(), 3 * gh(), 1, UColor.COLOR_BLACK, UColor.COLOR_GRAY);
+        renderer.drawRectBorder(1 * gw() + xpos, 1 * gh() + ypos, 3 * gw(), 3 * gh(), 1, UColor.BLACK, UColor.GRAY);
         drawIcon(selectedIcon, 2, 2);
         for (int i=0;i<4;i++) {
             for (int x=0;x<3;x++) {
@@ -559,9 +556,9 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
 
 
         // Type selector
-        drawString("terrain", 23, 1, glyphType == TERRAIN ? UColor.COLOR_YELLOW : UColor.COLOR_GRAY);
-        drawString("thing", 23,2, glyphType == THING ? UColor.COLOR_YELLOW : UColor.COLOR_GRAY);
-        drawString("actor", 23, 3, glyphType == ACTOR ? UColor.COLOR_YELLOW : UColor.COLOR_GRAY);
+        drawString("terrain", 23, 1, glyphType == TERRAIN ? UColor.YELLOW : UColor.GRAY);
+        drawString("thing", 23,2, glyphType == THING ? UColor.YELLOW : UColor.GRAY);
+        drawString("actor", 23, 3, glyphType == ACTOR ? UColor.YELLOW : UColor.GRAY);
 
         // Glyph grid
         for (int x=0;x<16;x++) {
@@ -569,116 +566,116 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
                 int ascii = x+y*16;
                 int unicode = cp437toUnicode(ascii);
                 if (unicode == selectedUnicode())
-                    renderer.drawRect((gridposx+x)*(gw()+gridspacex)+xpos, (gridposy+y)*(gh() + gridspacey)+ypos, gw(), gh(), UColor.COLOR_YELLOW);
+                    renderer.drawRect((gridposx+x)*(gw()+gridspacex)+xpos, (gridposy+y)*(gh() + gridspacey)+ypos, gw(), gh(), UColor.YELLOW);
                 else if (ascii == cursorAscii)
-                    renderer.drawRect((gridposx+x)*(gw()+gridspacex)+xpos, (gridposy+y)*(gh() + gridspacey)+ypos, gw(), gh(), UColor.COLOR_BLUE);
-                renderer.drawTile(unicode, (gridposx+x)*(gw()+gridspacex)+xpos, (gridposy+y)*(gh() + gridspacey)+ypos, UColor.COLOR_GRAY);
+                    renderer.drawRect((gridposx+x)*(gw()+gridspacex)+xpos, (gridposy+y)*(gh() + gridspacey)+ypos, gw(), gh(), UColor.BLUE);
+                renderer.drawTile(unicode, (gridposx+x)*(gw()+gridspacex)+xpos, (gridposy+y)*(gh() + gridspacey)+ypos, UColor.GRAY);
             }
         }
         int u = selectedIcon.getGlyph();
-        drawString("CP437", 1, 17+gridposy, UColor.COLOR_DARKGRAY);
-        drawString(Integer.toString(UnicodeToCp437(u)), 4, 17+gridposy, UColor.COLOR_YELLOW);
-        drawString("Unicode", 7,17+gridposy,UColor.COLOR_DARKGRAY);
-        drawString(Integer.toString(u), 11, 17+gridposy, UColor.COLOR_YELLOW);
+        drawString("CP437", 1, 17+gridposy, UColor.DARKGRAY);
+        drawString(Integer.toString(UnicodeToCp437(u)), 4, 17+gridposy, UColor.YELLOW);
+        drawString("Unicode", 7,17+gridposy,UColor.DARKGRAY);
+        drawString(Integer.toString(u), 11, 17+gridposy, UColor.YELLOW);
 
         // Color sliders
         drawMeter(meterx, metery, 1, 8, editColor.fR(), 1f, editColor);
         drawMeter(meterx+2,metery,1,8,editColor.fG(),1f, editColor);
         drawMeter(meterx+4,metery,1,8,editColor.fB(),1f, editColor);
-        drawString("R", 20, 16, UColor.COLOR_RED);
-        drawString("G", 22, 16, UColor.COLOR_GREEN);
-        drawString("B", 24, 16, UColor.COLOR_BLUE);
-        drawString(Integer.toString(editColor.iR()), 20, 17, UColor.COLOR_YELLOW);
-        drawString(Integer.toString(editColor.iG()), 22, 17, UColor.COLOR_YELLOW);
-        drawString(Integer.toString(editColor.iB()), 24, 17, UColor.COLOR_YELLOW);
+        drawString("R", 20, 16, UColor.RED);
+        drawString("G", 22, 16, UColor.GREEN);
+        drawString("B", 24, 16, UColor.BLUE);
+        drawString(Integer.toString(editColor.iR()), 20, 17, UColor.YELLOW);
+        drawString(Integer.toString(editColor.iG()), 22, 17, UColor.YELLOW);
+        drawString(Integer.toString(editColor.iB()), 24, 17, UColor.YELLOW);
 
         // Coloredit selector
-        drawString("fg",18,20,UColor.COLOR_DARKGRAY);
+        drawString("fg",18,20,UColor.DARKGRAY);
         drawSwatch(selectedIcon.fgColor,20,20);
         UColor[] fgvar = selectedIcon.getFgVariants();
         if (fgvar != null) {
             for (int i = 0;i < fgvar.length;i++) {
                 drawSwatch(fgvar[i], 21 + i, 20);
             }
-            drawTile(43, 21 + fgvar.length, 20, UColor.COLOR_YELLOW);
+            drawTile(43, 21 + fgvar.length, 20, UColor.YELLOW);
         } else {
-            drawTile(43,21,20,UColor.COLOR_YELLOW);
+            drawTile(43,21,20,UColor.YELLOW);
         }
-        drawString("bg", 18, 22, UColor.COLOR_DARKGRAY);
+        drawString("bg", 18, 22, UColor.DARKGRAY);
         drawSwatch(selectedIcon.bgColor,20,22);
         UColor[] bgvar = selectedIcon.getBgVariants();
         if (bgvar != null) {
             for (int i = 0;i < bgvar.length;i++) {
                 drawSwatch(bgvar[i], 21 + i, 22);
             }
-            drawTile(43, 21 + bgvar.length, 22, UColor.COLOR_YELLOW);
+            drawTile(43, 21 + bgvar.length, 22, UColor.YELLOW);
         } else {
-            drawTile(43, 21, 22, UColor.COLOR_YELLOW);
+            drawTile(43, 21, 22, UColor.YELLOW);
         }
 
         // Glyphedit selector
-        drawString("glyph", 17, 24, UColor.COLOR_DARKGRAY);
+        drawString("glyph", 17, 24, UColor.DARKGRAY);
         drawTileSwatch(selectedIcon.glyph, 20, 24, 0);
         int[] gvar = selectedIcon.getGlyphVariants();
         if (gvar != null) {
             for (int i=0;i<gvar.length;i++) {
                 drawTileSwatch(gvar[i], 21+i, 24, i+1);
             }
-            drawTile(43, 21+gvar.length,24, UColor.COLOR_YELLOW);
+            drawTile(43, 21+gvar.length,24, UColor.YELLOW);
         } else {
-            drawTile(43, 21, 24, UColor.COLOR_YELLOW);
+            drawTile(43, 21, 24, UColor.YELLOW);
         }
-        drawString("plus to add variant", 21, 26, UColor.COLOR_DARKGRAY);
-        drawString("rightClick to remove", 21, 27, UColor.COLOR_DARKGRAY);
+        drawString("plus to add variant", 21, 26, UColor.DARKGRAY);
+        drawString("rightClick to remove", 21, 27, UColor.DARKGRAY);
 
         // Icon scroll list
         if (glyphType == TERRAIN)
-            drawString("rightClick for background", 33, 6, UColor.COLOR_DARKGRAY);
+            drawString("rightClick for background", 33, 6, UColor.DARKGRAY);
         ArrayList<Icon> iconset = currentIconSet();
         for (int i=0;i<12;i++) {
             if (i+pageOffset < iconset.size()) {
                 Icon icon = iconset.get(i + pageOffset);
                 drawIcon(icon, 31, 8 + i);
                 if (icon.getName().equals(selection)) {
-                    drawString(icon.getName(), 33, 8 + i, UColor.COLOR_YELLOW);
+                    drawString(icon.getName(), 33, 8 + i, UColor.YELLOW);
                 } else {
-                    drawString(icon.getName(), 33, 8 + i, UColor.COLOR_GRAY);
+                    drawString(icon.getName(), 33, 8 + i, UColor.GRAY);
                 }
             }
         }
         listUpEnabled = false;
         listDownEnabled = false;
         if (pageOffset > 0) {
-            renderer.drawTile(94, 33 * gw() + xpos, 7 * gh() + ypos, UColor.COLOR_YELLOW);
-            renderer.drawTile(94, 34 * gw() + xpos, 7 * gh() + ypos, UColor.COLOR_YELLOW);
+            renderer.drawTile(94, 33 * gw() + xpos, 7 * gh() + ypos, UColor.YELLOW);
+            renderer.drawTile(94, 34 * gw() + xpos, 7 * gh() + ypos, UColor.YELLOW);
             listUpEnabled = true;
         }
         if (pageOffset+12 < iconset.size()) {
-            renderer.drawTile(118, 33 * gw() + xpos, 20 * gh() + ypos, UColor.COLOR_YELLOW);
-            renderer.drawTile(118, 34 * gw() + xpos, 20 * gh() + ypos, UColor.COLOR_YELLOW);
+            renderer.drawTile(118, 33 * gw() + xpos, 20 * gh() + ypos, UColor.YELLOW);
+            renderer.drawTile(118, 34 * gw() + xpos, 20 * gh() + ypos, UColor.YELLOW);
             listDownEnabled = true;
         }
 
         // Type selector
-        drawString("type", 1, 19+gridposy, UColor.COLOR_DARKGRAY);
-        drawString(selectedIcon.getTYPE(), 4, 19+gridposy, UColor.COLOR_YELLOW);
+        drawString("type", 1, 19+gridposy, UColor.DARKGRAY);
+        drawString(selectedIcon.getTYPE(), 4, 19+gridposy, UColor.YELLOW);
 
         // Type params
-        drawString("animAmpX", 1, 21+gridposy, UColor.COLOR_GRAY);
-        drawSlider(6,21+gridposy,10,selectedIcon.getAnimAmpX(), UColor.COLOR_YELLOW);
-        drawString("animAmpY", 1, 23+gridposy, UColor.COLOR_GRAY);
-        drawSlider(6,23+gridposy,10,selectedIcon.getAnimAmpY(), UColor.COLOR_YELLOW);
-        drawString("animFreq", 1, 25+gridposy, UColor.COLOR_GRAY);
-        drawSlider(6,25+gridposy,10,selectedIcon.getAnimFreq(), UColor.COLOR_YELLOW);
+        drawString("animAmpX", 1, 21+gridposy, UColor.GRAY);
+        drawSlider(6,21+gridposy,10,selectedIcon.getAnimAmpX(), UColor.YELLOW);
+        drawString("animAmpY", 1, 23+gridposy, UColor.GRAY);
+        drawSlider(6,23+gridposy,10,selectedIcon.getAnimAmpY(), UColor.YELLOW);
+        drawString("animFreq", 1, 25+gridposy, UColor.GRAY);
+        drawSlider(6,25+gridposy,10,selectedIcon.getAnimFreq(), UColor.YELLOW);
     }
 
     void drawSlider(int x, int y, int length, float val, UColor color) {
-        renderer.drawRectBorder(x*gw()+xpos, y*gw()+ypos, length*gw(),gh(),1,UColor.COLOR_DARKGRAY, color);
+        renderer.drawRectBorder(x*gw()+xpos, y*gw()+ypos, length*gw(),gh(),1,UColor.DARKGRAY, color);
         renderer.drawRect(x*gw()+xpos, y*gw()+ypos, (int)((length*val)*gw()), gh(), color);
     }
 
     void drawMeter(int x, int y, int width, int height, float val, float maxval, UColor color) {
-        renderer.drawRect(x*gw()+xpos,y*gh()+ypos,width*gw(),height*gh(),UColor.COLOR_DARKGRAY);
+        renderer.drawRect(x*gw()+xpos,y*gh()+ypos,width*gw(),height*gh(),UColor.DARKGRAY);
         int dh = (int)((height*gh()) * (val/maxval));
         renderer.drawRect(x*gw()+xpos,y*gh()+ypos+(height*gh()-dh), width*gw(), dh, color);
     }
@@ -695,18 +692,18 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
 
     void drawTileSwatch(int unicode, int x, int y, int swatchi) {
         if (swatchi == selectedGlyph)
-            renderer.drawRectBorder(x*gw()+xpos-2,y*gw()+ypos-2, gw()+4,gh()+4,2,UColor.COLOR_BLACK, UColor.COLOR_YELLOW);
-        drawTile(unicode,x,y,UColor.COLOR_WHITE);
+            renderer.drawRectBorder(x*gw()+xpos-2,y*gw()+ypos-2, gw()+4,gh()+4,2,UColor.BLACK, UColor.YELLOW);
+        drawTile(unicode,x,y,UColor.WHITE);
     }
 
     void drawSwatch(UColor color, int x, int y) {
         UColor fillcolor = color;
-        if (color == null) fillcolor = UColor.COLOR_BLACK;
-        UColor bordercolor = UColor.COLOR_BLACK;
-        if (color == editColor) bordercolor = UColor.COLOR_YELLOW;
+        if (color == null) fillcolor = UColor.BLACK;
+        UColor bordercolor = UColor.BLACK;
+        if (color == editColor) bordercolor = UColor.YELLOW;
         renderer.drawRectBorder(x*gw()+xpos-2,y*gh()+ypos-2,gw()+4,gh()+4,2,fillcolor,bordercolor);
         if (color == null)
-            renderer.drawTile(88,x*gw()+xpos,y*gh()+ypos, UColor.COLOR_RED);
+            renderer.drawTile(88,x*gw()+xpos,y*gh()+ypos, UColor.RED);
     }
 
     public void drawTile(int u, int x, int y, UColor color, UColor bgcolor) {
@@ -722,7 +719,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
             pixy = y*gh()+ypos-(int)(Math.abs(Math.sin((commander.frameCounter+x*4+y*5)*commander.config.getActorBounceSpeed()*0.1f))*commander.config.getActorBounceAmount()*5f);
         }
         if (actor && commander.config.isOutlineActors())
-            renderer.drawTileOutline(u, x*gw()+xpos,pixy,UColor.COLOR_BLACK);
+            renderer.drawTileOutline(u, x*gw()+xpos,pixy,UColor.BLACK);
         if (actor && commander.config.getActorBounceAmount() > 0f) {
             renderer.drawTile(u,x*gw()+xpos, pixy, color);
         } else {
@@ -803,6 +800,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     public void hearModalChoices(String context, String choice) {
         if (context.equals("quit") && choice.equals("Yes")) {
             dismiss();
+            iconCzar.loadIcons();
         }
         if (context.equals("reload") && choice.equals("Yes")) {
 

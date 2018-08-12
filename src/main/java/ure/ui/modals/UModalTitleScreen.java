@@ -4,10 +4,8 @@ import ure.areas.UArea;
 import ure.commands.UCommand;
 import ure.editors.glyphed.GlyphedModal;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.GLKey;
 import ure.ui.RexFile;
-import ure.ui.USpeaker;
 
 import java.io.File;
 
@@ -44,7 +42,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         if (alpha >= 1f) {
             drawString(titleMsg, cellw/2 - (textWidthInCells(titleMsg)/2), 11);
             for (int i = 0;i < options.length;i++) {
-                drawString(options[i], 15, 13 + i, (i == cursor) ? null : UColor.COLOR_GRAY, (i == cursor) ? commander.config.getHiliteColor() : null);
+                drawString(options[i], 15, 13 + i, (i == cursor) ? null : UColor.GRAY, (i == cursor) ? commander.config.getHiliteColor() : null);
             }
         }
     }

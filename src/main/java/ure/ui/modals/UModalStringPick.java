@@ -2,7 +2,6 @@ package ure.ui.modals;
 
 import ure.commands.UCommand;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.GLKey;
 
 import java.util.ArrayList;
@@ -57,7 +56,7 @@ public class UModalStringPick extends UModal {
         }
         int y = 0;
         for (String choice : choices) {
-            drawString(choices.get(y), xpad, ypad +headerHeight + y, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
+            drawString(choices.get(y), xpad, ypad +headerHeight + y, y == selection ? null : UColor.GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
     }
