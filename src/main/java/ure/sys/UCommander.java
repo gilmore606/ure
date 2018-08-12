@@ -22,13 +22,14 @@ import ure.render.URenderer;
 import ure.sys.events.TimeTickEvent;
 import ure.things.UThing;
 import ure.things.UThingCzar;
+import ure.ui.Icon;
 import ure.ui.UCamera;
 import ure.ui.modals.*;
 import ure.ui.panels.UScrollPanel;
 import ure.ui.panels.UStatusPanel;
 import ure.ui.USpeaker;
-import ure.areas.vaulted.VaultedArea;
-import ure.areas.vaulted.VaultedModal;
+import ure.editors.vaulted.VaultedArea;
+import ure.editors.vaulted.VaultedModal;
 
 import javax.inject.Inject;
 import java.io.*;
@@ -56,8 +57,12 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     @Inject
     EventBus bus;
 
+    @Inject
     public UConfig config;
-    public Random random;
+
+    @Inject
+    Random random;
+
     public USpeaker speaker;
 
     private HashSet<UAnimator> animators;
@@ -81,6 +86,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public int frameCounter;
 
     private boolean breakLatchOnInput = true;
+    private int walkDestX = -1;
+    private int walkDestY = -1;
 
     private HashMap<GLKey, UCommand> keyBindings;
     private LinkedBlockingQueue<GLKey> keyBuffer;
@@ -99,9 +106,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public UCommander() {
         Injector.getAppComponent().inject(this);
         bus.register(this);
-        config = new UConfig();
-        random = new Random();
     }
+
     public void registerComponents(UREGame _game, UPlayer theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
         game = _game;
         renderer = theRenderer;
@@ -154,6 +160,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      */
     public void registerScrollPrinter(UScrollPanel printer) {
         scrollPrinter = printer;
+        addAnimator(printer);
     }
 
     /**
@@ -182,7 +189,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             if (field.getName().startsWith("GLFW_KEY_")) {
                 try {
                     glmap.put(field.getName(), field.getInt(null));
-                    System.out.println("REFLECT: read GLFW keymap pair " + field.getName() + " as " + Integer.toString(field.getInt(null)));
+                    System.out.println("KEYBIND: read GLFW keymap pair " + field.getName() + " as " + Integer.toString(field.getInt(null)));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -202,7 +209,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                 Field idField = commandClass.getField("id");
                 String idValue = (String) idField.get(null);
                 if (idValue != null) {
-                    System.out.println("REFLECT: found command " + idValue);
+                    System.out.println("KEYBIND: found command " + idValue);
                     commandMap.put(idValue, commandClass);
                 }
             }
@@ -243,14 +250,26 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public void keyPressed(GLKey k) {
-        keyBuffer.add(k);
+        if (keyBuffer.size() < 2)
+            keyBuffer.add(k);
     }
 
     public int mouseX() { return renderer.getMousePosX(); }
     public int mouseY() { return renderer.getMousePosY(); }
+    public boolean mouseButton() { return renderer.getMouseButton(); }
 
+    public void setAutoWalk(int walkDestX, int walkDestY) {
+        this.walkDestX = walkDestX;
+        this.walkDestY = walkDestY;
+    }
+
+    /**
+     * Return true if player actually did something
+     */
     public void consumeKeyFromBuffer() {
         if (!keyBuffer.isEmpty()) {
+            if (breakLatchOnInput)
+                latchBreak();
             GLKey k = keyBuffer.remove();
             if (k.k == 0)
                 return;
@@ -273,16 +292,41 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     showModal(new UModalURESplash());
                 }
             }
+        } else if (moveLatch && config.isNethackShiftRun()) {
+            player.doAction(new ActionWalk(player, moveLatchX, moveLatchY));
+        } else if (walkDestX >= 0 && player != null) {
+            if (!player.stepToward(walkDestX, walkDestY))
+                latchBreak();
+            if (player.areaX() == walkDestX && player.areaY() == walkDestY)
+                latchBreak();
         }
     }
 
     void hearCommand(UCommand command, GLKey k) {
-        if (command != null && player != null) System.out.println("actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
+        if (command != null && player != null)
+            System.out.println("PLAYER: actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
         if (modal != null) {
             modal.hearCommand(command, k);
         } else if (command != null) {
             command.execute((UPlayer)player);
         }
+    }
+
+    public void mousePressed() {
+        if (modal != null)
+            modal.mouseClick();
+        else
+            setAutoWalk(mouseX()/config.getTileWidth() + modalCamera.leftEdge, mouseY()/config.getTileHeight() + modalCamera.topEdge);
+    }
+    public void mouseReleased() {
+
+    }
+    public void mouseRightPressed() {
+        if (modal != null)
+            modal.mouseRightClick();
+    }
+    public void mouseRightReleased() {
+
     }
 
     public void setMoveLatch(int xdir, int ydir) {
@@ -300,6 +344,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         moveLatch = false;
         moveLatchX = 0;
         moveLatchY = 0;
+        walkDestX = -1;
+        walkDestY = -1;
     }
 
     /**
@@ -333,6 +379,9 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void printScroll(String text) {
         scrollPrinter.print(text);
     }
+    public void printScroll(String text, UColor color) { scrollPrinter.print(null, text, color); }
+    public void printScroll(Icon icon, String text) { scrollPrinter.print(icon, text); }
+    public void printScroll(Icon icon, String text, UColor color) { scrollPrinter.print(icon, text, color); }
 
     /**
      * Print a message to the scroll printer if the player can see the source.
@@ -340,10 +389,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      * @param source
      * @param text
      */
-    public void printScrollIfSeen(UThing source, String text) {
+    public void printScrollIfSeen(UThing source, String text) { printScrollIfSeen(source,text,null); }
+    public void printScrollIfSeen(UThing source, String text, UColor color) {
         if (player != null)
             if (player.canSee(source))
-                printScroll(text);
+                printScroll(source.getIcon(), text, color);
     }
 
     void animationFrame() {
@@ -397,42 +447,20 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                 }
             }
 
-            if (!waitingForInput) {
-                if (modal == null)
-                    tickActors();
-                waitingForInput = true;
-            }
-            // if it's the player's turn, do a command if we have one
-            if (waitingForInput) {
-                if (player == null) {
-                    if (!keyBuffer.isEmpty()) {
-                        consumeKeyFromBuffer();
-                        tickTime();
-                    }
-                } else if (!keyBuffer.isEmpty() || moveLatch) {
-                    if (moveLatch) {
-                        if (breakLatchOnInput && !keyBuffer.isEmpty()) {
-                            latchBreak();
-                            consumeKeyFromBuffer();
-                        } else {
-                            player.doAction(new ActionWalk(player, moveLatchX, moveLatchY));
-                        }
-                    } else {
-                        consumeKeyFromBuffer();
-                    }
-                    renderer.render();
-                    if (player != null) {
-                        if (modal == null && player.actionTime() < 0f) {
-                            tickTime();
-                        }
-                        waitingForInput = false;
-                    }
+            if (player != null) {
+                if (player.getActionTime() > 0f) {
+                    consumeKeyFromBuffer();
+                } else {
+                    tickTime();
+                    letActorsAct();
                 }
+            } else {
+                consumeKeyFromBuffer();
             }
         }
     }
 
-    public void tickActors() {
+    public void letActorsAct() {
         // need to use a clone to iterate, since actors might drop out during this loop
         ArrayList<UActor> tmpactors = (ArrayList<UActor>)actors.clone();
         System.out.println("ticking " + Integer.toString(tmpactors.size()) + " actors");
@@ -555,17 +583,23 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     void attachModal(UModal newmodal) {
         if (modal != null) {
             modalStack.push(modal);
-            modal = null;
+            modal.addChild(newmodal);
+            modal = newmodal;
+        } else {
+            renderer.getRootView().addChild(newmodal);
+            modal = newmodal;
         }
-        modal = newmodal;
-        renderer.getRootView().addChild(modal);
     }
 
     public void detachModal() {
-        renderer.getRootView().removeChild(modal);
-        modal = null;
-        if (!modalStack.isEmpty())
-            modal = modalStack.pop();
+        if (!modalStack.isEmpty()) {
+            UModal oldmodal = modalStack.pop();
+            oldmodal.removeChild(modal);
+            modal = oldmodal;
+        } else {
+            renderer.getRootView().removeChild(modal);
+            modal = null;
+        }
     }
 
     public void detachModal(UModal modal) {
@@ -580,6 +614,12 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void wipeModals() {
         while (modal != null)
             detachModal();
+    }
+
+    public boolean hasModal() {
+        if (modal == null)
+            return false;
+        return true;
     }
 
     /**

@@ -1,4 +1,4 @@
-package ure.areas.vaulted;
+package ure.editors.vaulted;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ure.actors.UPlayer;
@@ -6,7 +6,6 @@ import ure.areas.UVaultSet;
 import ure.commands.CommandQuit;
 import ure.commands.UCommand;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.GLKey;
 import ure.ui.modals.HearModalGetString;
 import ure.ui.modals.UModal;
@@ -63,42 +62,50 @@ public class VaultedModal extends UModal implements HearModalGetString {
     }
 
     @Override
-    public void drawContent(URenderer renderer) {
-        drawString(renderer, "q/a : cycle terrains", 1, 15);
-        drawString(renderer, "1-9 : palette pick", 1, 16);
-        drawString(renderer, "pass: place terrain", 1, 17);
-        drawString(renderer, "C   : crop to corner", 1, 18);
-        drawString(renderer, "W   : wipe!", 1, 19);
-        drawString(renderer, "pgUp/Dn: cycle vaults", 1, 21);
-        drawString(renderer, "ins    : add new vault", 1, 22);
-        drawString(renderer, "n   : name vault", 1, 23);
-        drawString(renderer, "S   : save", 1, 24);
-        drawString(renderer, "vault " + Integer.toString(cursor + 1) + " (of " + Integer.toString(vaultSet.size()) + ")", 1, 27);
-        drawString(renderer, "'" + vaultSet.vaultAt(cursor).getName() + "'", 1, 28);
-        drawString(renderer, filename + ".json", 1, 29);
+    public void drawContent() {
+        drawString("q/a : cycle terrains", 1, 15);
+        drawString("1-9 : palette pick", 1, 16);
+        drawString("pass: place terrain", 1, 17);
+        drawString("C   : crop to corner", 1, 18);
+        drawString("W   : wipe!", 1, 19);
+        drawString("pgUp/Dn: cycle vaults", 1, 21);
+        drawString("ins    : add new vault", 1, 22);
+        drawString("n   : name vault", 1, 23);
+        drawString("S   : save", 1, 24);
+        drawString("vault " + Integer.toString(cursor + 1) + " (of " + Integer.toString(vaultSet.size()) + ")", 1, 27);
+        drawString("'" + vaultSet.vaultAt(cursor).getName() + "'", 1, 28);
+        drawString(filename + ".json", 1, 29);
 
-        drawIcon(renderer, terrainCzar.getTerrainByName(terrains[currentTerrain]).getIcon(), 1, 1);
-        drawString(renderer, terrains[currentTerrain], 3, 1);
+        drawIcon(terrainCzar.getTerrainByName(terrains[currentTerrain]).getIcon(), 1, 1);
+        drawString(terrains[currentTerrain], 3, 1);
         for (int i=0;i<terrainPalette.length;i++) {
-            drawString(renderer, Integer.toString(i+1), 1, 3+i);
-            drawIcon(renderer, terrainCzar.getTerrainByName(terrains[terrainPalette[i]]).getIcon(), 2, 3+i);
-            drawString(renderer, terrains[terrainPalette[i]], 4, 3+i);
+            drawString(Integer.toString(i+1), 1, 3+i);
+            drawIcon(terrainCzar.getTerrainByName(terrains[terrainPalette[i]]).getIcon(), 2, 3+i);
+            drawString(terrains[terrainPalette[i]], 4, 3+i);
         }
 
-        drawString(renderer, Integer.toString(commander.player().areaX()) + "," + Integer.toString(commander.player().areaY()), 6, 0);
+        drawString(Integer.toString(commander.player().areaX()) + "," + Integer.toString(commander.player().areaY()), 6, 0);
     }
 
     @Override
     public void hearCommand(UCommand command, GLKey k) {
         if (command != null) {
             if (command.id.equals("MOVE_N"))
-                commander.player().walkDir(0, -1);
-            else if (command.id.equals("MOVE_S"))
-                commander.player().walkDir(0, 1);
+                move(0,-1);
+            else if (command.id.equals("MOVE_NW"))
+                move(-1,-1);
             else if (command.id.equals("MOVE_W"))
-                commander.player().walkDir(-1, 0);
+                move(-1,0);
+            else if (command.id.equals("MOVE_SW"))
+                move(-1,1);
+            else if (command.id.equals("MOVE_S"))
+                move(0,1);
+            else if (command.id.equals("MOVE_SE"))
+                move(1,1);
             else if (command.id.equals("MOVE_E"))
-                commander.player().walkDir(1, 0);
+                move(1,0);
+            else if (command.id.equals("MOVE_NE"))
+                move(1,-1);
             else if (command.id.equals("PASS"))
                 stampTerrain();
         }
@@ -128,6 +135,21 @@ public class VaultedModal extends UModal implements HearModalGetString {
         else if (k.k == GLFW_KEY_N)
             renameVault();
 
+    }
+
+    void move(int dx, int dy) {
+        int x = commander.player().areaX() + dx;
+        int y = commander.player().areaY() + dy;
+        boolean wrap = commander.config.isWrapSelect();
+        if (x < 0)
+            x = wrap ? area.xsize-1 : 0;
+        if (y < 0)
+            y = wrap ? area.ysize-1 : 0;
+        if (x >= area.xsize)
+            x = wrap ? 0 : area.xsize-1;
+        if (y >= area.ysize)
+            y = wrap ? 0 : area.ysize-1;
+        commander.player().moveToCell(x,y);
     }
 
     void stampTerrain() {

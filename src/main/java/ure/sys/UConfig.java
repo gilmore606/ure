@@ -33,15 +33,18 @@ public class UConfig {
     private int animFrameMilliseconds = 33;                     // milliseconds between animation frames
     private int screenWidth = 1400;                             // window width in pixels
     private int screenHeight = 1000;                            // window height in pixels
-    private String glyphFont = "Deferral-Square.ttf";               // irrelevant for non-ascii renderer
-    private String textFont = "Px437_Phoenix_BIOS-2y.ttf";
-    private int glyphWidth = 16;
-    private int glyphHeight = 17;
-    private int textWidth = 9;
-    private int textHeight = 17;
+    private String tileFont = "/fonts/Deferral-Square.ttf";    // irrelevant for non-ascii renderer
+    private float tileFontSize = 18;
+    private String textFont = "/fonts/UbuntuMono-R.ttf";
+    private float textFontSize = 16;
+    private int tileWidth = 18;
+    private int tileHeight = 18;
+    private int textWidth = 10;
+    private int textHeight = 16;
 
-    private String uiFrameGlyphs = "+-+|+-+|";                               // corners and sides for UI box frames
-    private int modalFrameLine = 2;                             // thickness of pixel line around modals
+    private String uiCheckGlyph = "*";                          // checkmark for UI selections
+    private String uiFrameGlyphs;                  // corners and sides for UI box frames
+    private int modalFrameLine = 3;                             // thickness of pixel line around modals
     private int modalShadowStyle = UConfig.SHADOW_BLOCK;        // drop shadow style for modal popups
     private int modalPosition = UConfig.POS_CAMERA_CENTER;      // position of modal popups
     private boolean wrapSelect = true;                          // wrap around when scrolling through selections
@@ -52,7 +55,7 @@ public class UConfig {
     private UColor modalBgColor = new UColor(0.1f,0.1f,0f);                         // bgColor of modal popups
     private UColor modalFrameColor = new UColor(0.7f,0.7f,0.1f);     // glyph color for modal popup frame glyphs
     private UColor modalShadowColor = new UColor(0f,0f,0f,0.5f);  // color (and alpha) of modal shadows
-    private UColor textColor = UColor.COLOR_WHITE;                             // color for ui/scroll text
+    private UColor textColor = UColor.COLOR_OFFWHITE;                             // color for ui/scroll text
     private UColor hiliteColor = new UColor(1f,1f,0.2f, 0.3f);            // color for ui selection highlighting
 
     private boolean outlineActors = true;                           // draw a black outline around Actor glyphs?
@@ -69,7 +72,7 @@ public class UConfig {
     private boolean lightBloom = true;                  // TODO: lights adding to >fullbright bloom to white
     private boolean smoothLightCones = true;            // dither edges of light cones
 
-    private float visibilityThreshold = 0.3f;           // how 'visible' is a cell before we consider it seen? (ucamera 512, 537)
+    private float visibilityThreshold = 0.2f;           // how 'visible' is a cell before we consider it seen? (ucamera 512, 537)
     private float seenOpacity = 0.55f;                  // how bright to draw seen-but-not-visible terrain
     private float seenSaturation = 0.07f;               // how much color to leave in seen-but-not-visible terrain
     private boolean seenLightGray = true;               // ignore light in seen-but-not-visible and use gray
@@ -112,7 +115,7 @@ public class UConfig {
     private boolean runNeighborAreas = true;        // keep areas we just left awake?
     private boolean loadAreasAhead = true;          // preemptively load upcoming areas?
 
-    private boolean nethackShiftRun = false;        // nethack-style Shift+Move?  false for 'shift = no repeat wait' simpler running
+    private boolean nethackShiftRun = true;        // nethack-style Shift+Move?  false for 'shift = no repeat wait' simpler running
     private boolean smartInteract = true;           // autodetect targets for interact command?
     private boolean interactStairs = true;          // interact command can trigger stairs?
 
@@ -209,12 +212,12 @@ public class UConfig {
         this.animFrameMilliseconds = animFrameMilliseconds;
     }
 
-    public String getGlyphFont() {
-        return glyphFont;
+    public String getTileFont() {
+        return tileFont;
     }
 
-    public void setGlyphFont(String glyphFont) {
-        this.glyphFont = glyphFont;
+    public void setTileFont(String tileFont) {
+        this.tileFont = tileFont;
     }
 
     public String getTextFont() {
@@ -225,20 +228,36 @@ public class UConfig {
         this.textFont = textFont;
     }
 
-    public int getGlyphWidth() {
-        return glyphWidth;
+    public float getTileFontSize() {
+        return tileFontSize;
     }
 
-    public void setGlyphWidth(int glyphWidth) {
-        this.glyphWidth = glyphWidth;
+    public void setTileFontSize(float tileFontSize) {
+        this.tileFontSize = tileFontSize;
     }
 
-    public int getGlyphHeight() {
-        return glyphHeight;
+    public float getTextFontSize() {
+        return textFontSize;
     }
 
-    public void setGlyphHeight(int glyphHeight) {
-        this.glyphHeight = glyphHeight;
+    public void setTextFontSize(float textFontSize) {
+        this.textFontSize = textFontSize;
+    }
+
+    public int getTileWidth() {
+        return tileWidth;
+    }
+
+    public void setTileWidth(int tileWidth) {
+        this.tileWidth = tileWidth;
+    }
+
+    public int getTileHeight() {
+        return tileHeight;
+    }
+
+    public void setTileHeight(int tileHeight) {
+        this.tileHeight = tileHeight;
     }
 
     public int getTextWidth() {
@@ -257,10 +276,12 @@ public class UConfig {
         this.textHeight = textHeight;
     }
 
+    public String getUiCheckGlyph() { return uiCheckGlyph; }
+    public void setUiCheckGlyph(String s) { uiCheckGlyph = s; }
+
     public String getUiFrameGlyphs() {
         return uiFrameGlyphs;
     }
-
     public void setUiFrameGlyphs(String uiFrameGlyphs) {
         this.uiFrameGlyphs = uiFrameGlyphs;
     }

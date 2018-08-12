@@ -1,6 +1,11 @@
 package ure.ui.particles;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.math.UColor;
+import ure.sys.Injector;
+
+import javax.inject.Inject;
+import java.util.Random;
 
 /**
  * A hit on an actor.  Spray out blood particles too.
@@ -31,5 +36,13 @@ public class ParticleHit extends UParticle {
             area.addParticle(new ParticleBlood(x,y,0,1,bloodColor,intensity));
             area.addParticle(new ParticleBlood(x,y,-1,1,bloodColor,intensity));
         }
+    }
+
+    @Override
+    public int glyphOffsetX() {
+        return glyphOffsetY();
+    }
+    public int glyphOffsetY() {
+        return random.nextInt(5)-3;
     }
 }

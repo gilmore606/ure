@@ -2,17 +2,18 @@ package ure.actors.behaviors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.actions.ActionWalk;
+import ure.actors.actions.UAction;
 import ure.actors.UActor;
+import ure.actors.UNPC;
 import ure.math.UColor;
 import ure.math.UPath;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
-import ure.actors.actions.UAction;
-import ure.actors.UNPC;
 import ure.things.UThing;
 
 import javax.inject.Inject;
+import java.util.Random;
 
 /**
  * UBehavior implements a source of actions for an NPC actor to perform, to emulate a behavior or achieve
@@ -22,15 +23,19 @@ import javax.inject.Inject;
  * make decisions.
  *
  */
-public abstract class UBehavior {
+public abstract class UBehavior implements Cloneable {
 
     @Inject
     @JsonIgnore
-    UCommander commander;
+    Random random;
 
-    public UActor actor;        // the actor we're a part of
+    @Inject
+    @JsonIgnore
+    protected UCommander commander;
 
     protected String TYPE = "";
+
+    public float freq = 1f;          // how often should we even consider acting?
 
     float relativeUrgency;      // how urgent are we vs our NPC's other behaviors?
     float currentUrgency;       // urgency of our last action request
@@ -49,13 +54,30 @@ public abstract class UBehavior {
     }
 
     /**
+     * If your Behavior has Object members you'll need to make new instances for those members by overriding this.
+     */
+    public UBehavior makeClone() {
+        try {
+            UBehavior clone = (UBehavior)clone();
+            return clone;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
      * Override action() to return UActions on demand for the actor to perform.
      *
-     * @param actor
-     * @return
      */
-    public UAction action(UNPC actor) {
-        return null;
+    public UAction action(UNPC actor) { return null; }
+
+    public UAction getAction(UNPC actor) {
+        currentStatus = "";
+        currentUrgency = 0f;
+        currentStatusColor = UColor.COLOR_GRAY;
+        if (random.nextFloat() > freq) return null;
+        return action(actor);
     }
 
     /**
@@ -79,7 +101,12 @@ public abstract class UBehavior {
     public void hearEvent(UNPC actor, UAction action) {
 
     }
+    /**
+     * Notice and possibly remember aggression from attacker.
+     */
+    public void aggressionFrom(UNPC actor, UActor attacker) {
 
+    }
     /**
      * Will I let actor Interact with me?
      */
@@ -123,9 +150,12 @@ public abstract class UBehavior {
      * Go and kill it.
      */
     public UAction Attack(UNPC actor, UActor target) {
-        if (UPath.mdist(actor.areaX(),actor.areaY(),target.areaX(),target.areaY()) > 2)
+        currentStatus = "hostile";
+        currentStatusColor = UColor.COLOR_RED;
+        currentUrgency = 0.8f;
+        if (UPath.mdist(actor.areaX(),actor.areaY(),target.areaX(),target.areaY()) > 1)
             return Approach(actor, target);
-        actor.emote(actor + " flails ineffectually.");
+        actor.emote(actor.getName() + " flails ineffectually at " + target.getName() + ".", UColor.COLOR_LIGHTRED);
         return null;
     }
 
@@ -140,7 +170,7 @@ public abstract class UBehavior {
      * Respond to threat from it (by fight or flight).
      */
     public UAction ForF(UNPC actor, UActor threat) {
-        return null;
+        return Attack(actor, threat);
     }
 
     public float getRelativeUrgency() { return relativeUrgency; }
@@ -151,8 +181,8 @@ public abstract class UBehavior {
     public void setCurrentStatus(String status) { currentStatus = status; }
     public UColor getCurrentStatusColor() { return currentStatusColor; }
     public void setCurrentStatusColor(UColor c) { currentStatusColor = c; }
-    public UActor getActor() { return actor; }
-    public void setActor(UActor _actor) { actor = _actor; }
     public String getTYPE() { return TYPE; }
     public void setTYPE(String t) { TYPE = t; }
+    public float getFreq() { return freq; }
+    public void setFreq(Float f) { freq = f; }
 }

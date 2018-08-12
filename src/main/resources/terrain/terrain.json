@@ -134,11 +134,12 @@
       "passable": false,
       "opaque": true,
       "sunvis": 0.5,
-      "glyph": "$",
-      "fgcolor": [0,220,0],
-      "fgvariants": [ [50,220,0],[40,180,0],[0,240,0]],
-      "bgcolor": [0,40,0],
-      "walkmsg": "Tall pine trees."
+      "glyph": "T",
+      "fgcolor": [180,100,0],
+      "fgvariants": [ [180,100,0],[170,110,0],[190,120,0]],
+      "bgcolor": [0,75,0],
+      "walkmsg": "Tall pine trees.",
+      "bonkmsg": "A towering ancient fir tree."
     },
   {
     "name": "sapling",
@@ -148,8 +149,8 @@
     "spawnok": true,
     "sunvis": 1.0,
     "glyph": "$",
-    "fgcolor": [0,220,0],
-    "fgvariants": [ [50,220,0],[40,180,0],[0,240,0]],
+    "fgcolor": [0,170,0],
+    "fgvariants": [ [40,170,0],[20,130,0],[0,150,10]],
     "bgcolor": [0,40,0],
     "bgvariants": [ [0,45,0],[0,60,0],[0,50,5],[5,60,5],[5,45,9] ]
   },
@@ -168,10 +169,28 @@
       "bgcolor": [0,75,127],
       "bgvariants": [ [0,75,127],[0,80,135],[0,83,139],[0,72,140] ],
       "bonkmsg": "You can't swim, and that water looks cold anyway.",
-      "walkmsg": "You splash through the cold water.",
+      "walkmsg": "You splash through waist-deep water.",
       "animationFrames": 250,
-      "waves": 2
+      "waves": 1
     },
+  {
+    "name": "deep water",
+    "type": "water",
+    "filechar": "w",
+    "passable": true,
+    "opaque": false,
+    "breaklatch": true,
+    "sunvis": 1.0,
+    "movespeed": 0.3,
+    "glyph": "~",
+    "fgcolor": [40,200,255],
+    "fgvariants": [ [40,200,255],[150,150,255],[95,150,255],[0,180,245]],
+    "bgcolor": [0,45,127],
+    "bgvariants": [ [10,45,157],[0,40,180],[15,30,200],[5,10,140]],
+    "walkmsg": "You swim across the water.",
+    "animationFrames": 350,
+    "waves": 2
+  },
     {
       "name": "wooden bridge",
       "filechar": "B",
@@ -190,9 +209,9 @@
       "opaque": false,
       "sunvis": 1.0,
       "movespeed": 0.7,
-      "glyph": "~",
-      "fgcolor": [255,215,0],
-      "bgcolor": [255,235,127],
+      "glyph": ".",
+      "fgcolor": [155,115,15],
+      "bgcolor": [145,105,50],
       "walkmsg": "Damp sand.  Trudge, trudge."
     },
     {
@@ -265,7 +284,7 @@
     "opaque": false,
     "sunvis": 0.0,
     "glyph": "X",
-    "fgcolor": [70,70,70],
+    "fgcolor": [255,255,255],
     "bgcolor": [30,30,30],
     "breaklatch": true,
     "walkmsg": "A trapdoor in the floor leads to a lower level."
@@ -278,7 +297,7 @@
     "opaque": false,
     "sunvis": 0.0,
     "glyph": "H",
-    "fgcolor": [70,70,70],
+    "fgcolor": [255,255,255],
     "bgcolor": [30,30,30],
     "breaklatch": true,
     "walkmsg": "A ladder leads up to a trapdoor in the ceiling."

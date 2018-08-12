@@ -2,11 +2,15 @@ package ure.ui;
 
 import ure.render.URenderer;
 
+import javax.inject.Inject;
 import java.lang.ref.WeakReference;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class View {
+
+    @Inject
+    public URenderer renderer;
 
     protected int x, y, width, height;
 
@@ -131,9 +135,8 @@ public class View {
 
     /**
      * Draw this view.  The renderer will handle drawing any child views.
-     * @param renderer The renderer that will provide drawing primitives.
      */
-    public void draw(URenderer renderer) {
+    public void draw() {
         // Do any drawing required for this view, then draw children
     }
 

@@ -3,8 +3,13 @@ package ure.ui.particles;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.Injector;
 import ure.sys.UAnimator;
 import ure.areas.UArea;
+import ure.sys.UCommander;
+
+import javax.inject.Inject;
+import java.util.Random;
 
 public class UParticle implements UAnimator {
 
@@ -13,6 +18,10 @@ public class UParticle implements UAnimator {
 
     @JsonIgnore
     UArea area;
+
+    @Inject
+    @JsonIgnore
+    protected Random random;
 
     public int x, y;
     char glyph;
@@ -24,6 +33,7 @@ public class UParticle implements UAnimator {
     String glyphFrames;
 
     public UParticle(int thex, int they, int lifeticks, UColor _fgColor, float startalpha, boolean _receiveLight) {
+        Injector.getAppComponent().inject(this);
         x = thex;
         y = they;
         ticksLeft = lifeticks;
@@ -63,6 +73,9 @@ public class UParticle implements UAnimator {
         else
             colorbuffer.set(fgR,fgG,fgB);
         colorbuffer.setAlpha(alpha * vis);
-        renderer.drawGlyph(glyph(), px, py, colorbuffer, 0, 0);
+        renderer.drawGlyph(glyph(), px, py, colorbuffer);
     }
+
+    public int glyphOffsetX() { return 0; }
+    public int glyphOffsetY() { return 0; }
 }

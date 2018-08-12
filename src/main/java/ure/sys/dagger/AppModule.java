@@ -10,10 +10,13 @@ import ure.areas.UCartographer;
 import ure.areas.ULandscaper;
 import ure.actors.behaviors.BehaviorDeserializer;
 import ure.actors.behaviors.UBehavior;
+import ure.render.URenderer;
+import ure.render.URendererOGL;
 import ure.sys.UCommander;
 import ure.actors.ActorDeserializer;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
+import ure.sys.UConfig;
 import ure.terrain.TerrainDeserializer;
 import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
@@ -22,6 +25,7 @@ import ure.things.UThing;
 import ure.things.UThingCzar;
 
 import javax.inject.Singleton;
+import java.util.Random;
 
 /**
  *
@@ -54,9 +58,17 @@ public class AppModule {
 
     @Provides
     @Singleton
+    public URenderer providesRenderer() {
+        URenderer rend = new URendererOGL();
+        rend.initialize();
+        return rend;
+    }
+
+    @Provides
+    @Singleton
     public UActorCzar providesActorCzar() {
         UActorCzar czar = new UActorCzar();
-        //czar.loadActors("/actors.json");
+        //czar.loadActors("/actors.json"); -- can't do this here because it relies on some other things being loaded
         return czar;
     }
 
@@ -87,5 +99,17 @@ public class AppModule {
     @Singleton
     public EventBus providesEventBus() {
         return new EventBus();
+    }
+
+    @Provides
+    @Singleton
+    public UConfig providesConfig() {
+        return new UConfig();
+    }
+
+    @Provides
+    @Singleton
+    public Random providesRandom() {
+        return new Random();
     }
 }

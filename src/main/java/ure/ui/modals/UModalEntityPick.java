@@ -1,14 +1,17 @@
 package ure.ui.modals;
 
+import ure.actors.actions.UAction;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.sys.Entity;
 import ure.sys.GLKey;
+import ure.things.UThing;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class UModalEntityPick extends UModal {
+public class UModalEntityPick extends UModal implements HearModalStringPick {
 
     String header;
     UColor bgColor;
@@ -18,6 +21,7 @@ public class UModalEntityPick extends UModal {
     boolean showDetail;
     boolean escapable;
     boolean categorize;
+    boolean selectForVerbs;
     ArrayList<String> categories;
     ArrayList<ArrayList<Entity>> categoryLists;
     ArrayList<ArrayList<String>> categoryItemNames;
@@ -27,8 +31,10 @@ public class UModalEntityPick extends UModal {
     int selectionCategory = 0;
     UColor tempHiliteColor, flashColor;
 
+    HashMap<String,UAction> contextActions;
+
     public UModalEntityPick(String _header, UColor _bgColor, int _xpad, int _ypad, ArrayList<Entity> _entities,
-                            boolean _showDetail, boolean _escapable, boolean _categorize, HearModalEntityPick _callback, String _callbackContext) {
+                            boolean _showDetail, boolean _escapable, boolean _categorize, boolean _selectForVerbs, HearModalEntityPick _callback, String _callbackContext) {
         super(_callback, _callbackContext, _bgColor);
         header = _header;
         xpad = _xpad;
@@ -38,22 +44,32 @@ public class UModalEntityPick extends UModal {
         showDetail =  _showDetail;
         escapable = _escapable;
         categorize = _categorize;
+        selectForVerbs = _selectForVerbs;
         if (categorize)
             Categorize();
         int width = 0;
         for (Entity entity : entities) {
-            if (entity.getName().length() > width)
-                width = entity.getName().length();
+            int len = textWidth(entity.name());
+            if (len > width) width = len;
         }
         textWidth = width;
         if (showDetail || categorize)
-            width += 9;
+            width += Math.max(12, width+1);
         int height = 0;
+        if (showDetail)
+            height += 8;
         if (categorize)
-            height = Math.max(biggestCategoryLength, categories.size()) + 9 + ypad;
-        else
-            height = Math.max(6, entities.size() + 2 + ypad);
-        setDimensions(width + 2 + xpad, height);
+            height += categories.size();
+        int listsize = entities.size();
+        if (categorize) {
+            listsize = 0;
+            for (ArrayList<Entity> cat : categoryLists) {
+                int len = cat.size();
+                if (len > listsize) listsize = len;
+            }
+        }
+        height = Math.max(height, listsize+1);
+        setDimensions(width + 1 + xpad*2, height + 1 + ypad*2);
         if (bgColor == null)
             bgColor = commander.config.getModalBgColor();
         setBgColor(bgColor);
@@ -130,7 +146,7 @@ public class UModalEntityPick extends UModal {
             if (total > 1)
                 displaynames.add(Integer.toString(totals.get(i)) + " " + entity.getPlural());
             else
-                displaynames.add(entity.getName());
+                displaynames.add(entity.name());
             i++;
             writeList.add(entity);
         }
@@ -138,33 +154,31 @@ public class UModalEntityPick extends UModal {
     }
 
     @Override
-    public void drawContent(URenderer renderer) {
+    public void drawContent() {
+        selection = mouseToSelection(shownEntities().size(), 2+ypad, selection, 0, 12);
+        int oldCategory = selectionCategory;
+        if (categorize) {
+            selectionCategory = mouseToSelection(categoryLists.size(), 9+ypad, selectionCategory, 3 + textWidth, 100);
+            if (selectionCategory != oldCategory) selection = 0;
+        }
         if (header != null)
-            drawString(renderer, header, 0, 0);
+            drawString(header, xpad, ypad);
         int y = 0;
         for (Entity entity : shownEntities()) {
-            drawIcon(renderer, entity.getIcon(), 1, y + 2);
-            String n = entity.getName();
+            drawIcon(entity.getIcon(), 1+xpad, y + 2+ypad);
+            String n = entity.name();
             if (categorize)
                 n = (categoryItemNames.get(selectionCategory)).get(y);
-            drawString(renderer, n, 3, y + 2, null, (y == selection) ? tempHiliteColor : null);
+            drawString(n, 3+xpad, y + 2+ypad, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
-        if (showDetail) {
-            drawString(renderer, shownEntities().get(selection).getName(), 4+textWidth, 2);
-            ArrayList<String> details = shownEntities().get(selection).UIdetails(callbackContext);
-            int linepos = 4;
-            for (String line : details) {
-                drawString(renderer, line, 4+textWidth, linepos);
-                linepos++;
-            }
-        }
+        if (showDetail) showDetail(shownEntities().get(selection),4+textWidth+xpad,2+ypad);
         if (categorize && !dismissed) {
             int caty = 7;
             if (!showDetail) caty = 1;
             int i =0;
             for (String cat : categories) {
-                drawString(renderer, cat, 4+textWidth, 2+caty+i, (i == selectionCategory) ? null : UColor.COLOR_GRAY,
+                drawString(cat, 4+textWidth+xpad, 2+caty+i+ypad, (i == selectionCategory) ? null : UColor.COLOR_GRAY,
                         (i == selectionCategory) ? tempHiliteColor : null);
                 i++;
             }
@@ -180,20 +194,37 @@ public class UModalEntityPick extends UModal {
             selection = cursorMove(selection, 1, shownEntities().size());
         } else if (command.id.equals("MOVE_W")) {
             selection = 0;
-            selectionCategory = cursorMove(selectionCategory, -1, categoryLists.size());
+            if (categoryLists != null)
+                selectionCategory = cursorMove(selectionCategory, -1, categoryLists.size());
         } else if (command.id.equals("MOVE_E")) {
             selection = 0;
-            selectionCategory = cursorMove(selectionCategory, 1, categoryLists.size());
+            if (categoryLists != null)
+                selectionCategory = cursorMove(selectionCategory, 1, categoryLists.size());
         } else if (command.id.equals("PASS")) {
             selectEntity();
         } else if (command.id.equals("ESC") && escapable) {
             escape();
         }
     }
+    @Override
+    public void mouseClick() { selectEntity(); }
 
-    public void selectEntity() {
-        dismiss();
-        ((HearModalEntityPick)callback).hearModalEntityPick(callbackContext, shownEntities().get(selection));
+    void selectEntity() {
+        if (selectForVerbs) {
+            UThing thing = (UThing)(shownEntities().get(selection));
+            contextActions = thing.contextActions(commander.player());
+            if (contextActions != null) {
+                ArrayList<String> verbs = new ArrayList<>();
+                for (String v : contextActions.keySet())
+                    verbs.add(v);
+                UModalStringPick smodal = new UModalStringPick(thing.getName() + ":",null,0,0, verbs, true, this, "contextaction");
+                smodal.setChildPosition(5,3+selection, this);
+                commander.showModal(smodal);
+            }
+        } else {
+            dismiss();
+            ((HearModalEntityPick) callback).hearModalEntityPick(callbackContext, shownEntities().get(selection));
+        }
     }
 
     @Override
@@ -206,5 +237,13 @@ public class UModalEntityPick extends UModal {
             }
         }
         super.animationTick();
+    }
+
+    public void hearModalStringPick(String context, String selection) {
+        dismiss();
+        dismissFrameEnd = 0;
+        UAction action = contextActions.get(selection);
+        if (action != null)
+            commander.player().doAction(action);
     }
 }

@@ -23,7 +23,8 @@ public class UModalNotify extends UModal {
     }
 
     @Override
-    public void drawContent(URenderer renderer) {
-        drawStrings(renderer, textlines, xpad, ypad);
+    public void drawContent() {
+        drawStrings(textlines, xpad, ypad);
     }
+
 }

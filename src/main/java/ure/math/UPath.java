@@ -17,8 +17,6 @@ import java.util.TreeSet;
  */
 public class UPath {
 
-    private static Random random = new Random();
-
     static class Nodelist extends TreeSet<Node> {
         public Nodelist() {
             super(new Node(0,0));
@@ -125,27 +123,20 @@ public class UPath {
             stepcount++;
             Node q = openlist.pollFirst();
             openlist.remove(q);
-            Node[] steps = new Node[5];
+            Node[] steps = new Node[8];
             steps[0] = NodeIfOpen(area, q.x-1, q.y, q, actor);
             steps[1] = NodeIfOpen(area, q.x+1, q.y, q, actor);
             steps[2] = NodeIfOpen(area, q.x, q.y-1, q, actor);
             steps[3] = NodeIfOpen(area, q.x, q.y+1, q, actor);
-            if (random.nextFloat() < 0.5f) {
-                steps[4] = steps[1];
-                steps[1] = steps[3];
-                steps[3] = steps[4];
-            }
-            if (random.nextFloat() < 0.5f) {
-                steps[4] = steps[0];
-                steps[0] = steps[2];
-                steps[2] = steps[4];
-            }
-            for (int i=0;i<4;i++) {
+            steps[4] = NodeIfOpen(area, q.x-1,q.y-1, q, actor);
+            steps[5] = NodeIfOpen(area, q.x+1,q.y+1, q, actor);
+            steps[6] = NodeIfOpen(area, q.x-1,q.y+1,q,actor);
+            steps[7] = NodeIfOpen(area, q.x+1,q.y-1,q,actor);
+            for (int i=0;i<8;i++) {
                 Node step = steps[i];
                 if (step != null) {
                     if (step.x == x2 && step.y == y2) { // FOUND IT
                         while (step.parent != start) {
-                            System.out.println("step " + Integer.toString(step.x - x1) + "," + Integer.toString(step.y - y1));
                             step = step.parent;
                         }
                         System.out.println("found path in " + Integer.toString(stepcount) + " steps");

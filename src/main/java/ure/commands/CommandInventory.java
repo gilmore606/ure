@@ -21,7 +21,6 @@ public class CommandInventory extends UCommand implements HearModalEntityPick {
 
     @Override
     public void execute(UPlayer player) {
-        //UModalNotify modal = new UModalNotify("No inventory implemented yet.", null, 2, 2);
         ArrayList<Entity> inventory = new ArrayList<>();
         Iterator<UThing> i = player.iterator();
         while (i.hasNext())
@@ -31,7 +30,7 @@ public class CommandInventory extends UCommand implements HearModalEntityPick {
             modal = new UModalNotify("You aren't carrying anything.", null, 1, 3);
         else
              modal = new UModalEntityPick("You are carrying:", null, 2, 1, inventory, true,
-                     true, true, (HearModalEntityPick)this, "inventory");
+                     true, true, true, (HearModalEntityPick)this, "inventory");
         commander.showModal(modal);
     }
 

@@ -13,6 +13,7 @@ import ure.things.UThing;
 import ure.ui.particles.UParticle;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -93,6 +94,8 @@ public class UCell implements UContainer {
     public Iterator<UThing> iterator() {
         return getContents().iterator();
     }
+    public ArrayList<UThing> things() { return getContents().getThings(); }
+
     public int containerType() { return UContainer.TYPE_CELL; }
 
     public void moveTriggerFrom(UActor actor) {
@@ -106,7 +109,7 @@ public class UCell implements UContainer {
     public void walkedOnBy(UActor actor) {
         if (actor instanceof UPlayer && getContents().hasThings()) {
             UThing thing = getContents().topThing();
-            commander.printScroll(thing.walkMsg(actor));
+            commander.printScroll(thing.getIcon(), thing.walkMsg(actor));
         }
         getTerrain().walkedOnBy(actor, this);
     }
@@ -130,6 +133,19 @@ public class UCell implements UContainer {
      */
     public UThing topThingAt() {
         return getContents().topThing();
+    }
+
+    /**
+     * Get all the things here gettable by this actor.
+     */
+    public ArrayList<UThing> gettableThingsAt(UActor actor) {
+        ArrayList<UThing> gettables = new ArrayList<>();
+        for (UThing thing : contents.getThings()) {
+            if (thing.isMovableBy(actor)) {
+                gettables.add(thing);
+            }
+        }
+        return gettables;
     }
 
     public boolean willAcceptThing(UThing thing) {

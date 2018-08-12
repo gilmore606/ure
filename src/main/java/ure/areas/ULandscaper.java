@@ -43,8 +43,9 @@ public abstract class ULandscaper {
     @JsonIgnore
     UThingCzar thingCzar;
 
+    @Inject
     @JsonIgnore
-    protected Random random = new Random();
+    protected Random random;
 
     @JsonIgnore
     USimplexNoise simplexNoise = new USimplexNoise();
@@ -58,98 +59,94 @@ public abstract class ULandscaper {
     protected String type = "";
 
     /**
-     * Grid implements a 2D boolean grid useful for proxy calculations about terrain.
-     *
+     * Room is used by shapers to track and dig rooms.  It represents a room location in a shape.
+     * Walls and doors are outside of this square.
      */
-    class Grid {
-        boolean cells[][];
-        int width;
-        int height;
-        public Grid(int w, int h) {
-            cells = new boolean[w][h];
-            width = w;
-            height = h;
+    public class Room {
+        int x,y,width,height;
+        public Room(int x, int y, int width, int height) {
+            this.x=x;
+            this.y=y;
+            this.width=width;
+            this.height=height;
         }
-        public void set(int[] c, boolean val) {
-            set(c[0],c[1],val);
-        }
-        public void set(int x, int y, boolean val) {
-            if (x>=0 && x<width && y>=0 && y<height)
-                cells[x][y] = val;
-        }
-        public boolean get(int[] c) {
-            return get(c[0],c[1]);
-        }
-        public boolean get(int x, int y) {
-            if (x>=0 && x<width && y>=0 && y<height)
-                return cells[x][y];
-            return true;
-        }
-        public void copyFrom(Grid src) {
-            for (int x=0;x<width;x++) {
-                for (int y=0;y<height;y++) {
-                    cells[x][y] = src.get(x,y);
-                }
+    }
+
+    /**
+     * Digger is used by shapeMines() to dig tunnels.
+     */
+    public class Digger {
+        Shape brush, mask;
+        float x,y,angle, turnChance;
+        boolean done, turning, willConnect;
+        int forksteps, turnsteps, turnStepCount, turnDir, minForkSteps, maxForkSteps;
+
+        public Digger(Shape mask, int x, int y, float angle, int width, int minForkSteps, int maxForkSteps, float connectChance, int turnStepCount, float turnChance) {
+            brush = new Shape(width,width);  brush.invert();
+            this.mask = mask;
+            this.x = x;
+            this.y = y;
+            this.angle = angle;
+            this.minForkSteps = minForkSteps;
+            this.maxForkSteps = maxForkSteps;
+            if (randf() < connectChance) {
+                this.willConnect = true;
+            } else {
+                this.willConnect = false;
             }
+            this.turnStepCount = turnStepCount;
+            this.turnChance = turnChance;
+            done = false; turning = false;
+            forksteps = 0; turnsteps = 0;
         }
-        public int neighborsAt(int x, int y) { return neighborsAt(x, y, 1); }
-        public int neighborsAt(int x, int y, int dist) {
-            int neighbors = 0;
-            for (int ox=-dist;ox<=dist;ox++) {
-                for (int oy=-dist;oy<=dist;oy++) {
-                    if (get(x+ox,y+oy))
-                        neighbors++;
-                }
-            }
-            return neighbors;
-        }
-        public int flood_deprecated(int x, int y) {
-            // recursive, blows out the stack
-            int total = 0;
-            if (x<0 || x>=width || y<0 || y>= height)
-                return 0;
-            if (cells[x][y])
-                return 0;
-            cells[x][y] = true;
-            total++;
-            total += flood(x+1,y);
-            total += flood(x-1,y);
-            total += flood(x,y+1);
-            total += flood(x,y-1);
-            System.out.println("GEN : flood_deprecated found " + Integer.toString(total) + " cells");
-            return total;
-        }
-        public int flood(int x, int y) {
-            ArrayList<int[]> q = new ArrayList<int[]>();
-            if (cells[x][y]) return 0;
-            int total = 0;
-            q.add(new int[]{x,y});
-            int[] n = new int[]{0,0};
-            ArrayList<int[]> noobs = new ArrayList<int[]>();
-            while (!q.isEmpty()) {
-                noobs.clear();
-                for (int[] N : q) {
-                    int[] w = new int[]{N[0],N[1]};
-                    int[] e = new int[]{N[0],N[1]};
-                    while (!get(w[0] - 1, w[1]))
-                        w[0] = w[0] - 1;
-                    while (!get(e[0] + 1, e[1]))
-                        e[0] = e[0] + 1;
-                    for (int i = w[0];i <= e[0];i++) {
-                        n[0] = i;
-                        n[1] = w[1];
-                        set(n, true); total++;
-                        if (!get(n[0], n[1] - 1)) noobs.add(new int[]{n[0], n[1] - 1});
-                        if (!get(n[0], n[1] + 1)) noobs.add(new int[]{n[0], n[1] + 1});
+        public boolean run() {
+            if (done) return true;
+            mask.maskWith(brush, Shape.MASK_OR, (int)x, (int)y);
+            x += Math.cos(angle);
+            y += Math.sin(angle);
+            if (x < brush.xsize || y < brush.ysize || x > mask.xsize-brush.xsize || y > mask.ysize-brush.ysize) {
+                terminate();
+            } else {
+                int stopDistMin = brush.xsize/2+2;
+                int stopDistMax = willConnect ? brush.xsize/2+2 : brush.xsize+minForkSteps;
+                for (int dist=stopDistMin;dist<=stopDistMax;dist++) {
+                    for (int sweep=-4;sweep<=4;sweep++) {
+                        float sweptAngle = angle + (float)sweep * 0.03f;
+                        if (mask.value((int)Math.rint(x + Math.cos(sweptAngle) * (0.5f+dist)), (int)Math.rint(y + Math.sin(sweptAngle) * (0.5f+dist)))) {
+                            if (willConnect)
+                                mask.maskWith(brush, Shape.MASK_OR, (int) x, (int) y);
+                            terminate();
+                        }
                     }
                 }
-                q.clear();
-                for (int[] noob : noobs) {
-                    q.add(noob);
-                }
             }
-            System.out.println("GEN : flood found " + Integer.toString(total) + " cells");
-            return total;
+            if (turning) {
+                turnsteps++;
+                angle = angle + (1.5708f / turnStepCount) * turnDir;
+                if (turnsteps >= turnStepCount)
+                    turning = false;
+            } else {
+                forksteps++;
+            }
+            if (!done && !turning && forksteps >= minForkSteps && randf() < turnChance*(float)(forksteps-minForkSteps)/(float)(maxForkSteps-minForkSteps)) {
+                turning = true;
+                turnDir = randf() > 0.5f ? -1 : 1;
+                turnsteps = 0;
+                forksteps = 0;
+            }
+            return done;
+        }
+        void terminate() {
+            done = true;
+        }
+        boolean shouldFork(int minsteps, int maxsteps) {
+            if (forksteps <= minsteps) return false;
+            if (turning) return false;
+            if (randf() < (float)(forksteps-minsteps)/(float)(maxsteps-minsteps)) {
+                forksteps = 0;
+                return true;
+            }
+            return false;
         }
     }
 
@@ -177,10 +174,6 @@ public abstract class ULandscaper {
      *
      * Override this and add parameters to be passed in by your UCartographer to determine the
      * character of the area you produce.
-     *
-     * You <b>must</b> call SetStairsLabels() at the end of this method before you return the area to ensure that
-     * area links are properly created.
-     *
      * @param area
      */
     public void buildArea(UArea area, int level, String[] tags) {
@@ -190,12 +183,6 @@ public abstract class ULandscaper {
     /**
      * Fill a rectangle from x1,y1 to x2,y2 with the given terrain.
      *
-     * @param area
-     * @param t
-     * @param x1
-     * @param y1
-     * @param x2
-     * @param y2
      */
     public void fillRect(UArea area, String t, int x1, int y1, int x2, int y2) { drawRect(area, t, x1, y1, x2, y2, true); }
     public void drawRect(UArea area, String t, int x1, int y1, int x2, int y2) { drawRect(area, t, x1, y1, x2, y2, false); }
@@ -211,8 +198,6 @@ public abstract class ULandscaper {
 
     /**
      * Convenience random numbers.
-     * @param max 0-max exclusive.
-     * @return
      */
     public int rand(int max) {
         return random.nextInt(max);
@@ -238,8 +223,6 @@ public abstract class ULandscaper {
             UCell cell = randomCell(area, terrains);
             String name = things[random.nextInt(things.length)];
             UThing thing = thingCzar.getThingByName(name);
-            if (thing.getContents().getThings() == null)
-                System.out.println("*** BUG scatterThings got a thing back with no contents.things bound for area " + area.label);
             thing.moveToCell(area, cell.x, cell.y);
         }
     }
@@ -247,10 +230,6 @@ public abstract class ULandscaper {
     /**
      * Spawn a new thing by name into the area.
      *
-     * @param area
-     * @param x
-     * @param y
-     * @param thing
      */
     public void spawnThingAt(UArea area, int x, int y, String thing) {
         UThing thingobj = thingCzar.getThingByName(thing);
@@ -260,12 +239,6 @@ public abstract class ULandscaper {
     /**
      * Spawn an abstract light directly into the area.
      *
-     * @param area
-     * @param x
-     * @param y
-     * @param color
-     * @param falloff
-     * @param range
      */
     public void spawnLightAt(UArea area, int x, int y, UColor color, int falloff, int range) {
         ULight light = new ULight(color, range, falloff);
@@ -274,11 +247,6 @@ public abstract class ULandscaper {
 
     /**
      * Does cell have any of these terrain names?
-     *
-     * @param area
-     * @param cell
-     * @param terrains
-     * @return
      */
     boolean cellHasTerrain(UArea area, UCell cell, String[] terrains) {
         if (cell == null) return false;
@@ -292,10 +260,6 @@ public abstract class ULandscaper {
 
     /**
      * Which of cell's neighbors (and cell) have these terrain names?
-     *
-     * @param area
-     * @param cell
-     * @param terrains
      * @return A 2D grid of cell's immediate surroundings, true if that cell has one
      * of the given terrain names.
      */
@@ -310,11 +274,6 @@ public abstract class ULandscaper {
     }
     /**
      * How many of cell's neighbors (and cell) have these terrain names?
-     *
-     * @param area
-     * @param cell
-     * @param terrains
-     * @return
      */
     int numNeighborsHaveTerrain(UArea area, UCell cell, String[] terrains) {
         boolean[][] neighbors = neighborsHaveTerrain(area, cell, terrains);
@@ -330,10 +289,6 @@ public abstract class ULandscaper {
 
     /**
      * Pick a random cell having one of these terrains.
-     *
-     * @param area
-     * @param terrains
-     * @return
      */
     public UCell randomCell(UArea area, String[] terrains) {
         UCell cell = null;
@@ -359,9 +314,6 @@ public abstract class ULandscaper {
     /**
      * Pick a random cell that can accept this thing.
      *
-     * @param area
-     * @param thing
-     * @return
      */
     public UCell randomOpenCell(UArea area, UThing thing) {
         UCell cell = null;
@@ -511,27 +463,110 @@ public abstract class ULandscaper {
         return "";
     }
 
-    public void digRiver(UArea area, String t, int x1, int y1, int x2, int y2, float riverWidth, float twist, float twistmax) {
-        int width = x2-x1; int height = y2-y1;
+    public Shape shapeCaves(int xsize, int ysize) { return shapeCaves(xsize,ysize,0.45f,5,2,3); }
+    public Shape shapeCaves(int xsize, int ysize, float initialDensity, int jumblePasses, int jumbleDensity, int smoothPasses) {
+        Shape mask = new Shape(xsize, ysize);
+        float fillratio = -1f;
+        int tries = 0;
+        while ((fillratio < 0.25f) && (tries < 8)) {
+            System.out.println("SCAPER: shapeCaves attempt " + Integer.toString(tries));
+            tries++;
+
+            // Fill with initial noise, minus a horizontal gap (to promote connectedness later)
+            mask.noiseWipe(initialDensity);
+            int gapY = rand(ysize/2) + ysize/3;
+            for (int x=0;x<xsize;x++) { mask.clear(x,gapY); mask.clear(x,gapY+1); mask.clear(x,gapY-1); }
+
+            mask.jumble(5, jumbleDensity, jumblePasses);
+            mask.smooth(5, smoothPasses);
+
+            // Check if we made enough space
+            int[] point = mask.randomCell(false);
+            int spacecount = mask.floodCount(point[0],point[1],false);
+            fillratio = (float)spacecount / (float)(xsize*ysize);
+        }
+        mask.invert();
+        return mask;
+    }
+
+    public Shape shapeOval(int xsize, int ysize) {
+        Shape mask = new Shape(xsize, ysize);
+        int ox = xsize/2; int oy = ysize/2;
+        int width = ox; int height = oy;
+        int hh = height * height;
+        int ww = width * width;
+        int hhww = hh * ww;
+        int x0 = width;
+        int dx = 0;
+        for (int x=-width;x<=width;x++)
+            mask.set(ox+x,oy);
+        for (int y=1;y<=height;y++) {
+            int x1=x0-(dx-1);
+            for ( ;x1>0;x1--) {
+                if (x1 * x1 * hh + y * y * ww <= hhww)
+                    break;
+            }
+            dx = x0-x1;
+            x0 = x1;
+            for (int x=-x0;x<=x0;x++) {
+                mask.set(ox+x,oy-y);
+                mask.set(ox+x,oy+y);
+            }
+        }
+        return mask;
+    }
+
+    public Shape shapeBlob(int xsize, int ysize) {
+        Shape mask = shapeOval(xsize, ysize);
+        mask.erode(0.5f, 3);
+        return mask;
+    }
+
+    public Shape shapeOddBlob(int xsize, int ysize) { return shapeOddBlob(xsize,ysize,3,0.3f); }
+    public Shape shapeOddBlob(int xsize, int ysize, int parts, float twist) {
+        Shape mask = new Shape(xsize,ysize);
+        for (int i=0;i<parts;i++) {
+            float xprop = 0.3f + random.nextFloat()*0.7f - twist;
+            float yprop = 0.3f + random.nextFloat()*0.7f - twist;
+            if (random.nextFloat() > 0.5f) {
+                float tmp = xprop;
+                xprop = yprop;
+                yprop = tmp;
+            }
+            Shape oval = shapeOval((int)(xsize * xprop), (int)(ysize * yprop));
+            int xvar = (int)(xsize*(1f-xprop))+1;
+            int yvar = (int)(ysize*(1f-yprop))+1;
+            int xoff = random.nextInt(xvar) - (xvar/2);
+            int yoff = random.nextInt(yvar) - (yvar/2);
+            mask.maskWith(oval, Shape.MASK_OR, xoff, yoff);
+        }
+        mask.smooth(5, 2);
+        mask.erode(0.5f, 2);
+        return mask;
+    }
+
+    // TODO: variable width
+    public Shape shapeRoad(int xsize, int ysize, float width, float twist, float twistmax) {
+        Shape mask = new Shape(xsize, ysize);
         int edge = random.nextInt(4);
         float startx, starty, dx, dy, ctwist;
         if (edge == 0) {
-            starty = (float)y1;  startx = (float)(random.nextInt(width) + x1);
+            starty = 0f;  startx = (float)(random.nextInt(xsize));
             dx = 0f ; dy = 1f;
         } else if (edge == 1) {
-            starty = (float)height; startx = (float)(random.nextInt(width) + x1);
+            starty = (float)ysize; startx = (float)(random.nextInt(xsize));
             dx = 0f; dy = -1f;
         } else if (edge == 2) {
-            startx = (float)x1; starty = (float)(random.nextInt(height) + y1);
+            startx = 0f; starty = (float)(random.nextInt(ysize));
             dx = 1f; dy = 0f;
         } else {
-            startx = (float)width; starty = (float)(random.nextInt(height) + y1);
+            startx = (float)xsize; starty = (float)(random.nextInt(ysize));
             dx = -1f; dy = 0f;
         }
         ctwist = 0f;
         boolean hitedge = false;
         while (!hitedge) {
-            fillRect(area, t, (int)startx, (int)starty, (int)(startx+riverWidth), (int)(starty+riverWidth));
+            mask.fillRect((int)startx, (int)starty, (int)(startx+width), (int)(starty+width));
             startx += dx;
             starty += dy;
             if (random.nextFloat() < twist) {
@@ -542,80 +577,68 @@ public abstract class ULandscaper {
                     starty += ctwist;
                 }
             }
-            if (startx > x2 || startx < x1 || starty > y2 || starty < y1) {
+            if (startx >= xsize || startx < 0 || starty >= ysize || starty < 0) {
                 hitedge = true;
             }
             ctwist = ctwist + random.nextFloat() * twist - (twist/2f);
             if (ctwist > twistmax) ctwist = twistmax;
             if (ctwist < -twistmax) ctwist = -twistmax;
         }
+        return mask;
     }
 
-    public void digCaves(UArea area, String t, int x1, int y1, int x2, int y2) {
-        digCaves(area,t,x1,y1,x2,y2,0.42f,6,4,3);
-    }
-    public void digCaves(UArea area, String t, int x1, int y1, int x2, int y2, float initialDensity, int jumblePasses, int jumbleDensity, int smoothPasses) {
-        int width = x2-x1; int height = y2-y1;
-        Grid map = new Grid(width,height);
-        Grid scratchmap = new Grid(width,height);
-        float fillratio = 0f;
-        int tries = 0;
-        while ((fillratio < 0.25f) && (tries < 8)) {
-            tries++;
-            int gapY = random.nextInt(height / 2) + height / 3;
-            for (int x = 0;x < width;x++) {
-                for (int y = 0;y < height;y++) {
-                    if ((y < gapY || y > gapY + 1) && random.nextFloat() < initialDensity)
-                        map.set(x, y, true);
-                    else
-                        map.set(x, y, false);
-                }
-            }
-            for (int i = 0;i < jumblePasses;i++) {
-                System.out.println("  jumble " + Integer.toString(i));
-                for (int x = 0;x < width;x++) {
-                    for (int y = 0;y < height;y++) {
-                        if (map.neighborsAt(x, y) >= 5 || map.neighborsAt(x, y, 2) <= jumbleDensity) {
-                            scratchmap.set(x, y, true);
-                        } else {
-                            scratchmap.set(x, y, false);
+    public Shape shapeMines(int xsize, int ysize, int tunnelWidth, int minForkSteps, int maxForkSteps, int turnStepCount, float turnChance, float connectChance, float narrowChance, float roomChance, float backRoomChance, int maxRooms, int roomSizeMin, int roomSizeMax) {
+        Shape mask = new Shape(xsize,ysize);
+        ArrayList<Room> spareRooms = new ArrayList<>();
+        for (int i=0;i<maxRooms;i++) {
+            spareRooms.add(new Room(0, 0,rand(roomSizeMax-roomSizeMin)+roomSizeMin, rand(roomSizeMax-roomSizeMin)+roomSizeMin));
+        }
+        Digger firstDigger = new Digger(mask,xsize/2,ysize/2,1.5707f,tunnelWidth, minForkSteps, maxForkSteps, connectChance, turnStepCount, turnChance);
+        Digger secondDigger = new Digger(mask,xsize/2,ysize/2,-1.5707f, tunnelWidth, minForkSteps, maxForkSteps, connectChance, turnStepCount, turnChance);
+        ArrayList<Digger> diggers = new ArrayList<>();
+        ArrayList<Digger> tmp;
+        diggers.add(firstDigger);
+        diggers.add(secondDigger);
+        boolean allDone = false;
+        while (!allDone) {
+            allDone = true;
+            tmp = (ArrayList<Digger>)diggers.clone();
+            for (Digger digger : tmp) {
+                if (!digger.run()) {
+                    allDone = false;
+                    if (digger.shouldFork(minForkSteps,maxForkSteps) && diggers.size() < 150) {
+                        float childAngle = digger.angle + (randf() < 0.5f ? -1.5708f : 1.5708f);
+                        int childWidth = digger.brush.xsize;
+                        if (childWidth > 2 && randf() < narrowChance) childWidth--;
+                        Digger child = new Digger(mask,(int)digger.x,(int)digger.y,childAngle,childWidth,minForkSteps,maxForkSteps,connectChance, turnStepCount, turnChance);
+                        diggers.add(child);
+                        if (randf() < 0.5f) {
+                            Digger child2 = new Digger(mask,(int)digger.x,(int)digger.y,childAngle+3.1416f,childWidth,minForkSteps,maxForkSteps,connectChance,turnStepCount,turnChance);
+                            diggers.add(child2);
+                        }
+                    } else if (!digger.turning && randf() < roomChance && !spareRooms.isEmpty()) {
+                        Room room = spareRooms.get(rand(spareRooms.size()));
+                        // is there room.w/h space N units toward angle?
+                        float roomangle = randf() < 0.5f ? digger.angle - 1.5708f : digger.angle + 1.5708f;
+                        if (mask.tryToFitRoom((int)digger.x,(int)digger.y,room.width,room.height,roomangle,digger.brush.xsize/2+1,true)) {
+                            spareRooms.remove(room);
+                            if (randf() < backRoomChance) {
+                                Room oldroom = room;
+                                room = spareRooms.get(rand(spareRooms.size()));
+                                int offx = (int)Math.rint(digger.x+(digger.brush.xsize/2+oldroom.height/2+1)*Math.cos(roomangle));
+                                int offy = (int)Math.rint(digger.y+(digger.brush.xsize/2+oldroom.height/2+1)*Math.sin(roomangle));
+                                float backangle = roomangle;
+                                if (mask.tryToFitRoom(offx,offy,room.width,room.height,backangle,oldroom.height/2+1,true)) {
+                                    spareRooms.remove(room);
+                                    mask.set(offx-(int)Math.rint(Math.sin(backangle)),offy-(int)Math.rint(Math.sin(backangle)));
+                                }
+                            }
                         }
                     }
                 }
-                map.copyFrom(scratchmap);
-            }
-            for (int i = 0;i < smoothPasses;i++) {
-                System.out.println("  smooth " + Integer.toString(i));
-                for (int x = 0;x < width;x++) {
-                    for (int y = 0;y < height;y++) {
-                        if (map.neighborsAt(x, y) >= 5) {
-                            scratchmap.set(x, y, true);
-                        } else {
-                            scratchmap.set(x, y, false);
-                        }
-                    }
-                }
-                map.copyFrom(scratchmap);
-            }
-            scratchmap.copyFrom(map);
-            int x = width / 2;
-            int y = height / 2;
-            int rantries = 0;
-            while (scratchmap.get(x, y) && rantries < 500) {
-                rantries++;
-                x = random.nextInt(width - 2) + 2;
-                y = random.nextInt(height - 2) + 2;
-            }
-            int spacecount = scratchmap.flood(x, y);
-            fillratio = (float) spacecount / (float) (width * height);
-        }
-        System.out.println("printing cave dig into area");
-        for (int x=0;x<width;x++) {
-            for (int y=0;y<height;y++) {
-                if (!map.get(x,y) && scratchmap.get(x,y))
-                    area.setTerrain(x+x1, y+y1, t);
             }
         }
+        return mask;
     }
 
     boolean canFitBoxAt(UArea area, int x, int y, int width, int height, String[] floorTerrains) {
@@ -651,21 +674,6 @@ public abstract class ULandscaper {
         UTerrain t = area.terrainAt(cell.x,cell.y);
         if (t instanceof Stairs)
             ((Stairs)t).setLabel(label);
-    }
-
-    /**
-     * Set the label for a Stairs (in the given area) to its proper outgoing area.
-     *
-     * This should be called by any ULandscaper.makeArea() before returning.
-     *
-     * @param area
-     * @param x
-     * @param y
-     * @param t
-     */
-    public void SetStairsLabel(UArea area, UCartographer carto, int x, int y, Stairs t) {
-        // TODO: Should this be setting area.label() ?
-        t.setLabel("");
     }
 
     public void buildRoom(UArea area, int x, int y, int w, int h, String floort, String wallt) {
@@ -820,12 +828,12 @@ public abstract class ULandscaper {
         int w = room[2];
         int h = room[3];
         if (randf() < 0.2f) {
-            fillRect(area, "carvings", x1+1,y1+1,x1+w-3,y1+h-3);
+            fillRect(area, "carvings", x1+2,y1+2,x1+w-3,y1+h-3);
         }
     }
 
 
-    public void scatterActorsByTags(UArea area, int x1, int x2, int y1, int y2, String[] tags, int level, int amount) {
+    public void scatterActorsByTags(UArea area, int x1, int y1, int x2, int y2, String[] tags, int level, int amount) {
         ArrayList<String> names = new ArrayList<>();
         for (String tag : tags) {
             String[] thenames = actorCzar.getActorsByTag(tag,level);
@@ -844,12 +852,12 @@ public abstract class ULandscaper {
             else
                 name = names.get(random.nextInt(names.size()));
             UActor actor = actorCzar.getActorByName(name);
-            UCell dest = getRandomSpawn(area, actor, x1, x2, y1, y2);
+            UCell dest = getRandomSpawn(area, actor, x1, y1, x2, y2);
             actor.moveToCell(area, dest.x, dest.y);
         }
     }
 
-    public void scatterThingsByTags(UArea area, int x1, int x2, int y1, int y2, String[] tags, int level, int amount) {
+    public void scatterThingsByTags(UArea area, int x1, int y1, int x2, int y2, String[] tags, int level, int amount) {
         ArrayList<String> names = new ArrayList<>();
         for (String tag : tags) {
             System.out.println("get names for " + tag);
@@ -866,11 +874,17 @@ public abstract class ULandscaper {
             else
                 name = names.get(random.nextInt(names.size()));
             UThing thing = thingCzar.getThingByName(name);
-            UCell dest = getRandomSpawn(area, thing, x1, x2, y1, y2);
+            UCell dest = getRandomSpawn(area, thing, x1, y1, x2, y2);
             thing.moveToCell(area, dest.x, dest.y);
         }
     }
 
+    /**
+     * Link a new region to a spot in this area.
+     * @param exittype Stairs to place in the area.
+     * @param destlevel Level the stairs go to in the new region.
+     * @param backexittype Exit type the region should make going back to us.
+     */
     public void linkRegionAt(UArea area, int x, int y, String exittype, URegion region, int destlevel, String backexittype) {
         region.addLink(destlevel, backexittype, area.label);
         commander.cartographer.addRegion(region);

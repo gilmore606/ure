@@ -1,11 +1,12 @@
 package ure.things;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
+import ure.actors.actions.*;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
-import ure.actors.actions.Interactable;
 import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.areas.UCell;
@@ -34,6 +35,14 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     @JsonIgnore
     public UCommander commander;
 
+    @Inject
+    @JsonIgnore
+    public UActorCzar actorCzar;
+
+    @Inject
+    @JsonIgnore
+    protected Random random;
+
     protected String name;
     protected long ID;
     protected String iname;
@@ -45,6 +54,10 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     protected int weight;
     protected boolean movable = true;
     protected int value;
+    public String[] equipSlots;
+    protected int equipSlotCount = 1;
+    public boolean equipped;
+
     protected int[] color;
     protected int[] colorvariance = new int[]{0,0,0};
     protected String getFailMsg = "You can't pick that up.";
@@ -70,13 +83,29 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         Injector.getAppComponent().inject(this);
     }
 
-    public void initialize() {
+    /**
+     * Set up a new template object fresh from resource JSON deserializing, to make it cloneable.
+     */
+    public void initializeAsTemplate() {
         setContents(new UCollection(this, this.name));
         if (getGlyphColor() == null && getColor() != null) {
             SetupColors();
         }
         setIcon(new Icon(getGlyph(), getGlyphColor(), null));
         stats = new HashMap<>();
+        contents = new UCollection();
+        equipped = false;
+    }
+
+    /**
+     * Set up a fresh clone from a template object.
+     */
+    public void initializeAsCloneFrom(UThing template) {
+        stats = (HashMap)template.stats.clone();
+        contents = template.contents.clone();
+        contents.reconnect(null, this);
+        location = null;
+        equipped = false;
     }
 
     public long getID() { return ID; }
@@ -98,10 +127,10 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         contents.closeOut();
         contents = null;
         closed = true;
+        equipped = false;
     }
 
     public void SetupColors() {
-        Random random = new Random();
         int[] thecolor = new int[]{color[0], color[1], color[2]};
         for (int i=0;i<3;i++) {
             if (colorvariance[i] > 0)
@@ -125,11 +154,14 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     }
 
     public Icon icon() { return getIcon(); }
+    public String name() { return name; }
+    public int value() { return value; }
+    public int weight() { return weight; }
 
     public ArrayList<String> UIdetails(String context) {
         ArrayList<String> d = new ArrayList<>();
-        d.add("Weight " + Integer.toString(getWeight()));
-        d.add("Value " + Integer.toString(getValue()));
+        d.add("Weight " + Integer.toString(weight()));
+        d.add("Value " + Integer.toString(value()));
         return d;
     }
 
@@ -162,6 +194,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public void leaveCurrentLocation() {
         if (getLocation() != null) {
             getLocation().removeThing(this);
+            equipped = false;
         }
         this.setLocation(null);
     }
@@ -175,6 +208,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public Iterator<UThing> iterator() {
         return getContents().iterator();
     }
+    public ArrayList<UThing> things() { return getContents().getThings(); }
 
     public int containerType() { return UContainer.TYPE_THING; }
     public boolean willAcceptThing(UThing thing) {
@@ -198,7 +232,9 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
 
     public UThing makeClone() {
         try {
-            return (UThing) super.clone();
+            UThing clone = (UThing) super.clone();
+
+            return clone;
         } catch (CloneNotSupportedException e) {
             System.out.println(" Cloning not allowed. ");
             return this;
@@ -206,12 +242,42 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     }
 
     public boolean tryGetBy(UActor actor) {
-        if (!isMovable()) {
+        if (!isMovableBy(actor)) {
             if (actor instanceof UPlayer)
                 commander.printScroll(getGetFailMsg());
             return false;
         }
         return true;
+    }
+
+    public boolean tryEquip(UActor actor) {
+        if (!equipped) {
+            equipped = true;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean tryUnequip(UActor actor) {
+        if (equipped) {
+            equipped = false;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean tryDrop(UContainer dest) {
+        moveTo(dest);
+        return location == dest;
+    }
+
+    public boolean fitsOnBodypart(String part) {
+        if (equipSlots == null) return false;
+        for (int i=0;i<equipSlots.length;i++) {
+            if (equipSlots[i].equals(part))
+                return true;
+        }
+        return false;
     }
 
     public void gotBy(UActor actor) {
@@ -237,21 +303,20 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public void setCategory(String _category) { category = _category; }
 
     //The camera class will call this, and tell where in screen coords to draw it.
-    // TODO: Things should probably not be tied directly to the rendering system.  Ideally they would just be part of the data layer, not the presentation layer
     public void render(URenderer renderer, int x, int y, UColor light, float vis){
-        int xoff = glyphOffsetX();
-        int yoff = glyphOffsetY();
         char icon = getGlyph();
         UColor color = new UColor(this.getGlyphColor());
         if (this.drawGlyphOutline()) {
-            renderer.drawGlyphOutline(icon, x, y, UColor.COLOR_BLACK, xoff, yoff);
+            renderer.drawTileOutline(icon, x + glyphOffsetX(), y + glyphOffsetY(), UColor.COLOR_BLACK);
         }
         color.illuminateWith(light, vis);
-        renderer.drawGlyph(icon, x, y, color, xoff, yoff);
+        renderer.drawTile(icon, x + glyphOffsetX(), y + glyphOffsetY(), color);
     }
 
-    public void emote(String text) {
-        commander.printScrollIfSeen(this, text);
+    public void emote(String text) { emote(text, null); }
+    public void emote(String text, UColor color) {
+
+        commander.printScrollIfSeen(this, text, color);
     }
 
     public String getName() {
@@ -289,6 +354,16 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         if (last == 's')
             return getName() + "es";
         return getName() + "s";
+    }
+
+    /**
+     * Override this to add information about my status.
+     */
+    public String description() {
+        return description;
+    }
+    public boolean isMovableBy(UActor actor) {
+        return isMovable();
     }
 
     public void setPlural(String plural) {
@@ -342,6 +417,13 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public void setValue(int value) {
         this.value = value;
     }
+
+    public String[] getEquipSlots() { return equipSlots; }
+    public void setEquipSlots(String[] s) { equipSlots = s; }
+    public int getEquipSlotCount() { return equipSlotCount; }
+    public void setEquipSlotCount(int i) { equipSlotCount = i; }
+    public boolean isEquipped() { return equipped; }
+    public void setEquipped(boolean b) { equipped = b; }
 
     public int[] getColor() {
         return color;
@@ -438,6 +520,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public boolean isUsable(UActor actor) {
         return false;
     }
+    public String useVerb() { return ""; }
 
     public float useFrom(UActor actor) {
         return 0f;
@@ -472,7 +555,36 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         this.spawnterrain = spawnterrain;
     }
 
-    public void animationTick() {
+    public void animationTick() { }
 
+    public HashMap<String, UAction> contextActions(UActor actor) {
+        HashMap<String,UAction> actions = new HashMap<>();
+
+        if (isMovableBy(actor))
+            actions.put("drop", new ActionDrop(actor, this));
+        if (isUsable(actor))
+            actions.put(useVerb(), new ActionUse(actor, this));
+        if (equipSlots != null) {
+            if (equipSlots[0].equals("equip")) {
+                if (equipped)
+                    actions.put("unequip", new ActionUnequip(actor, this));
+                else
+                    actions.put("equip", new ActionEquip(actor, this));
+            } else {
+                if (equipped) {
+                    actions.put("remove from " + equipSlots[0], new ActionUnequip(actor, this));
+                } else {
+                    actions.put("wear on " + equipSlots[0], new ActionEquip(actor, this));
+                }
+            }
+        }
+        return actions;
+    }
+
+    /**
+     * Throw myself away into the void.
+     */
+    public void junk() {
+        leaveCurrentLocation();
     }
 }

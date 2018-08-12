@@ -14,7 +14,7 @@ import java.util.Iterator;
  *
  */
 
-public class UCollection {
+public class UCollection implements Cloneable {
 
     @JsonIgnore
     private UContainer container;
@@ -86,14 +86,12 @@ public class UCollection {
     }
 
     public UThing topThing() {
-        if (things.isEmpty())
-            return null;
+        if (things.isEmpty()) return null;
         return things.get(0);
     }
 
     public UActor actor() {
-        if (actors.isEmpty())
-            return null;
+        if (actors.isEmpty()) return null;
         return actors.get(0);
     }
 
@@ -101,6 +99,7 @@ public class UCollection {
      * Whatever we're in just moved.
      */
     public void notifyMove() {
+        if (things.isEmpty()) return;
         for (UThing thing : things)
             thing.notifyMove();
     }
@@ -111,5 +110,18 @@ public class UCollection {
 
     public ArrayList<UActor> getActors() {
         return actors;
+    }
+
+    @Override
+    public UCollection clone() {
+        try {
+            UCollection clone = (UCollection)super.clone();
+            clone.actors = (ArrayList<UActor>)actors.clone();
+            clone.things = (ArrayList<UThing>)things.clone();
+            return clone;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

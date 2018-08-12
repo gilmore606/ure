@@ -56,8 +56,9 @@ public class UArea implements Serializable {
     protected HashSet<UParticle> particles = new HashSet<>();
 
 
+    @Inject
     @JsonIgnore
-    private Random random = new Random();
+    Random random;
 
     protected UColor sunColor = new UColor(130,50,25);
     protected float clouds = 0.2f;
@@ -243,7 +244,7 @@ public class UArea implements Serializable {
                 UCell pcell = cellAt(commander.player().areaX(), commander.player().areaY());
                 if (pcell != null)
                     if (pcell.sunBrightness() > 0.1f)
-                        commander.printScroll(msg);
+                        commander.printScroll(msg, getSunColor());
             }
         }
     }
@@ -446,6 +447,8 @@ public class UArea implements Serializable {
     }
 
     public void addParticle(UParticle particle) {
+        if (commander.hasModal())
+            return;
         if (isValidXY(particle.x, particle.y)) {
             cellAt(particle.x,particle.y).addParticle(particle);
             particle.reconnect(this);

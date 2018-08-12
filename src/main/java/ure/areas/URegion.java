@@ -30,6 +30,10 @@ public class URegion {
     @JsonIgnore
     UActorCzar actorCzar;
 
+    @Inject
+    @JsonIgnore
+    Random random;
+
     protected String id;
     protected String name;
     protected ULandscaper[] landscapers;
@@ -40,8 +44,6 @@ public class URegion {
     protected String inwardExitType;
     protected String outwardExitType;
     protected String defaultBGM;
-
-    protected Random random = new Random();
 
     protected ArrayList<Link> links;
 

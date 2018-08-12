@@ -1,7 +1,5 @@
 package ure.terrain;
 
-import java.util.Random;
-
 /**
  * Lava does damage to things that move into it.
  */
@@ -17,9 +15,8 @@ public class Lava extends UTerrain {
             bubbleFrames--;
             return '.';
         }
-        Random r = new Random();
-        if (r.nextFloat() > 0.9992)
-            bubbleFrames = r.nextInt(60) + 8;
+        if (random.nextFloat() > 0.9992)
+            bubbleFrames = random.nextInt(60) + 8;
         return super.getGlyph();
     }
 

@@ -3,6 +3,7 @@ package ure.things;
 import ure.areas.UArea;
 import ure.things.UThing;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public interface UContainer {
@@ -17,4 +18,5 @@ public interface UContainer {
     Iterator<UThing> iterator();
     int containerType();
     boolean willAcceptThing(UThing thing);
+    ArrayList<UThing> things();
 }

@@ -3,4 +3,4 @@
  *
  */
 
-package ure.areas.vaulted;
+package ure.editors.vaulted;

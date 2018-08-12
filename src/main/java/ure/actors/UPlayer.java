@@ -34,7 +34,7 @@ public class UPlayer extends UActor {
 
     public UPlayer(String thename, char theicon, UColor thecolor, boolean addOutline, UColor selfLightColor, int selfLight, int selfLightFalloff) {
         super();
-        initialize();
+        initializeAsTemplate();
         this.selfLight = selfLight;
         this.selfLightFalloff = selfLightFalloff;
         this.selfLightColor = selfLightColor;
@@ -42,6 +42,8 @@ public class UPlayer extends UActor {
         if (selfLight > 0) {
             light = new ULight(selfLightColor, selfLightFalloff + selfLight, selfLight);
         }
+        bodytype = "humanoid";
+        body = commander.actorCzar.getNewBody(bodytype);
     }
 
     @Override

@@ -39,19 +39,19 @@ public class UModalTarget extends UModal {
     }
 
     @Override
-    public void drawFrame(URenderer renderer) {
+    public void drawFrame() {
 
     }
 
     @Override
-    public void drawContent(URenderer renderer) {
+    public void drawContent() {
         commander.printScroll(prompt);
         int camx = cellx - commander.modalCamera().leftEdge;
         int camy = celly - commander.modalCamera().topEdge;
-        renderer.drawGlyph(glyphs.charAt(0), (camx) * gw(), (camy-1)*gh(), glyphColor, 0, 0);
-        renderer.drawGlyph(glyphs.charAt(2), (camx) * gw(), (camy+1)*gh(), glyphColor, 0, 0);
-        renderer.drawGlyph(glyphs.charAt(3), (camx - 1) * gw(), camy * gh(), glyphColor, 0, 0);
-        renderer.drawGlyph(glyphs.charAt(1), (camx + 1) * gw(), camy * gh(), glyphColor, 0, 0);
+        renderer.drawGlyph(glyphs.charAt(0), (camx) * gw(), (camy-1)*gh(), glyphColor);
+        renderer.drawGlyph(glyphs.charAt(2), (camx) * gw(), (camy+1)*gh(), glyphColor);
+        renderer.drawGlyph(glyphs.charAt(3), (camx - 1) * gw(), camy * gh(), glyphColor);
+        renderer.drawGlyph(glyphs.charAt(1), (camx + 1) * gw(), camy * gh(), glyphColor);
     }
 
     @Override

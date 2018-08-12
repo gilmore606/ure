@@ -33,8 +33,9 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
     static UScrollPanel scrollPanel;
     static ULensPanel lensPanel;
     static UActorPanel actorPanel;
-    static URenderer renderer;
 
+    @Inject
+    URenderer renderer;
     @Inject
     UCommander commander;
     @Inject
@@ -81,7 +82,9 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
 
         scrollPanel = new UScrollPanel(1200, 200, 12, 12, commander.config.getTextColor(), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
         scrollPanel.addLineFade(new UColor(1.0f, 1.0f, 1.0f));
+        scrollPanel.addLineFade(new UColor(0.8f, 0.8f, 0.8f));
         scrollPanel.addLineFade(new UColor(0.6f, 0.6f, 0.6f));
+        scrollPanel.addLineFade(new UColor(0.5f, 0.5f, 0.5f));
         scrollPanel.addLineFade(new UColor(0.4f, 0.4f, 0.4f));
         scrollPanel.addLineFade(new UColor(0.3f, 0.3f, 0.3f));
         scrollPanel.setPosition(0,800);
@@ -98,12 +101,11 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
         commander.setStatusPanel(statusPanel);
         commander.setScrollPanel(scrollPanel);
         commander.registerModalCamera(camera);
-        commander.config.setUiFrameGlyphs(null);
     }
 
     public void startUp()  {
-        renderer = new URendererOGL();
-        renderer.initialize();
+        //renderer = new URendererOGL();
+        //renderer.initialize();
 
         cartographer = new ExampleCartographer();
 
@@ -197,7 +199,23 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
         item.moveTo(player);
         item = thingCzar.getThingByName("butcher knife");
         item.moveTo(player);
+        item = thingCzar.getThingByName("hiking boots");
+        item.moveTo(player);
 
+        item = thingCzar.getThingByName("army helmet");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("confusion helmet");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("aluminum bat");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("leather jacket");
+        item.moveTo(player);
+        item = thingCzar.getThingByName("Adidas-brand running shoes +6");
+        item.moveTo(player);
+        item = thingCzar.getPile("gold coins", 100);
+        item.moveTo(player);
+        item = thingCzar.getPile("gold coins", 320);
+        item.moveTo(player);
         return player;
     }
 }

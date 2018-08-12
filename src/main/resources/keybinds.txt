@@ -27,8 +27,10 @@ shift+q,QUIT
 space,PASS
 e,INTERACT
 i,INVENTORY
-g,GET
+g,GETMULTI
 d,DROP
 period,TRAVEL
 t,THROW
 u,USE
+shift+e,EAT
+backslash,EQUIPMENT

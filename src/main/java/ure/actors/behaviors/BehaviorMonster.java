@@ -20,13 +20,9 @@ public class BehaviorMonster extends UBehavior {
     public UAction action(UNPC actor) {
         for (Entity entity : actor.seenEntities) {
             if (entity instanceof UPlayer) {
-                currentUrgency = 1f;
-                currentStatus = "hostile";
-                currentStatusColor = UColor.COLOR_RED;
                 return Attack(actor, (UPlayer)entity);
             }
         }
-        currentStatus = "";
         return null;
     }
 
@@ -35,6 +31,13 @@ public class BehaviorMonster extends UBehavior {
         if (entity instanceof UPlayer) {
             return true;
         }
+        return false;
+    }
+
+    @Override
+    public boolean isHostileTo(UNPC actor, Entity entity) {
+        if (entity instanceof UPlayer)
+            return true;
         return false;
     }
 }

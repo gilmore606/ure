@@ -33,6 +33,9 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
     @JsonIgnore
     UCommander commander;
 
+    @Inject
+    Random random;
+
     @JsonIgnore
     protected UCell cell;
 
@@ -78,7 +81,16 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
         Injector.getAppComponent().inject(this);
     }
 
-    public void initialize() {
+    /**
+     * Set up a new template object fresh from resource JSON deserializing, to make it cloneable.
+     */
+    public void initializeAsTemplate() {
+
+    }
+    /**
+     * Set up a fresh clone from a template object.
+     */
+    public void initializeAsCloneFrom(UTerrain template) {
         setFgColor(new UColor(fgcolor[0], fgcolor[1], fgcolor[2]));
         setBgColor(new UColor(bgcolor[0], bgcolor[1], bgcolor[2]));
         setFgColorBuffer(new UColor(0f,0f,0f));
@@ -100,20 +112,20 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
 
     public void becomeReal(UCell c) {
         cell = c;
-        initialize();
+        applyColorVariance();
+    }
+
+    public void applyColorVariance() {
         if (getBgvariants() != null) {
-            Random r = new Random();
-            getBgColor().set(getBgvariants()[r.nextInt(getBgvariants().length - 1)]);
+            getBgColor().set(getBgvariants()[random.nextInt(getBgvariants().length - 1)]);
         }
         if (getFgvariants() != null) {
-            Random r = new Random();
-            getFgColor().set(getFgvariants()[r.nextInt(getFgvariants().length-1)]);
+            getFgColor().set(getFgvariants()[random.nextInt(getFgvariants().length-1)]);
         }
         if (getBgvariance() != null) {
-            Random r = new Random();
-            getBgColor().set(getBgColor().iR() + r.nextInt(getBgvariance()[0]) - getBgvariance()[0] / 2,
-                    getBgColor().iG() + r.nextInt(getBgvariance()[1]) - getBgvariance()[1] / 2,
-                    getBgColor().iB() + r.nextInt(getBgvariance()[2]) - getBgvariance()[2] / 2);
+            getBgColor().set(getBgColor().iR() + random.nextInt(getBgvariance()[0]) - getBgvariance()[0] / 2,
+                    getBgColor().iG() + random.nextInt(getBgvariance()[1]) - getBgvariance()[1] / 2,
+                    getBgColor().iB() + random.nextInt(getBgvariance()[2]) - getBgvariance()[2] / 2);
         }
     }
 
@@ -146,7 +158,8 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
 
     public void walkedOnBy(UActor actor, UCell cell) {
         if (actor instanceof UPlayer) {
-            printScroll(getWalkmsg(), cell);
+            if (walkmsg != null)
+                commander.printScroll(this.getIcon(), getWalkmsg());
         }
     }
 
@@ -156,13 +169,6 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
 
     public float interactionFrom(UActor actor) {
         return 0f;
-    }
-
-    // TODO: Why does this method exist?
-    public void printScroll(String msg, UCell cell) {
-        if (getWalkmsg() != null)
-            if (getWalkmsg().length() > 0)
-                commander.printScroll(msg);
     }
 
     public UTerrain makeClone() {
@@ -202,7 +208,7 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
         getStats().put(stat, value);
     }
 
-
+    public String name() { return name; }
     public void setName(String name) {
         this.name = name;
     }

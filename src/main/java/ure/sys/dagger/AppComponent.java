@@ -12,14 +12,18 @@ import ure.examplegame.ExampleGame;
 import ure.terrain.Stairs;
 import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
+import ure.things.SpawnItem;
 import ure.things.UThing;
 import ure.things.UThingCzar;
+import ure.ui.Icon;
+import ure.ui.RexFile;
 import ure.ui.UCamera;
 import ure.ui.USpeaker;
 import ure.ui.panels.ULensPanel;
 import ure.ui.panels.UPanel;
 import ure.ui.panels.UStatusPanel;
 import ure.ui.modals.UModal;
+import ure.ui.particles.UParticle;
 
 import javax.inject.Singleton;
 
@@ -62,4 +66,9 @@ public interface AppComponent {
     void inject(UPanel pan);
     void inject(USpeaker speak);
     void inject(Stairs stairs);
+    void inject(UParticle parti);
+    void inject(Icon icon);
+    void inject(RexFile rexfile);
+    void inject(Shape shape);
+    void inject(SpawnItem item);
 }

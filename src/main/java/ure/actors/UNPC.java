@@ -7,6 +7,9 @@ import ure.actors.actions.UAction;
 import ure.actors.behaviors.UBehavior;
 import ure.math.UColor;
 import ure.sys.Entity;
+import ure.sys.UCommander;
+import ure.things.SpawnItem;
+import ure.things.UThing;
 
 import java.util.ArrayList;
 
@@ -18,45 +21,40 @@ public class UNPC extends UActor implements Interactable {
 
     protected int visionRange = 12;
     protected String[] ambients;
-    protected String[] behaviors;
 
-    protected ArrayList<UBehavior> behaviorObjects;
-
-    @JsonIgnore
-    protected String[] defaultBehaviors;
+    protected ArrayList<UBehavior> behaviors;
+    protected SpawnItem[] spawnwith;
 
     @JsonIgnore
     public ArrayList<Entity> seenEntities;
 
+
+
     @Override
-    public void initialize() {
-        super.initialize();
-        initializeBehaviors();
+    public void initializeAsCloneFrom(UThing template) {
+        super.initializeAsCloneFrom(template);
+        if (template instanceof UNPC) {
+            behaviors = new ArrayList<>();
+            ArrayList<UBehavior> templateBehaviors = ((UNPC)template).getBehaviors();
+            if (templateBehaviors != null) {
+                for (UBehavior b : templateBehaviors) {
+                    behaviors.add(b.makeClone());
+                }
+            }
+        }
+        body = actorCzar.getNewBody(bodytype);
+        spawnItems();
     }
 
-    public void initializeBehaviors() {
-        behaviorObjects = new ArrayList<>();
-        if (defaultBehaviors != null) {
-            for (String bname : defaultBehaviors) {
-                UBehavior b = getBehaviorByType(bname);
-                behaviorObjects.add(b);
+    void spawnItems() {
+        if (spawnwith != null) {
+            for (SpawnItem spawnItem : spawnwith) {
+                UThing spawn = spawnItem.spawn(commander);
+                if (spawn != null) {
+                    spawn.moveTo(this);
+                }
             }
         }
-        if (behaviors != null) {
-            for (String bname : behaviors) {
-                UBehavior b = getBehaviorByType(bname);
-                behaviorObjects.add(b);
-            }
-        }
-    }
-    public UBehavior getBehaviorByType(String behaviorType) {
-        Class<? extends UBehavior> type = commander.actorCzar.behaviorDeserializer.classForType(behaviorType);
-        try {
-            return type.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     @Override
@@ -80,6 +78,10 @@ public class UNPC extends UActor implements Interactable {
      * Should we go to sleep?  Probably if the player's far away.
      */
     public void sleepCheck() {
+        if (area() == null)
+            stopActing();
+        if (area().closed || area().closeRequested)
+            stopActing();
         if (commander.player() == null || commander.player().area() != area()) {
             if (!area().getLabel().equals("TITLE"))
                 stopActing();
@@ -91,8 +93,15 @@ public class UNPC extends UActor implements Interactable {
 
     @Override
     public void hearEvent(UAction action) {
-        for (UBehavior behavior : behaviorObjects) {
+        for (UBehavior behavior : behaviors) {
             behavior.hearEvent(this, action);
+        }
+    }
+
+    @Override
+    public void aggressionFrom(UActor attacker) {
+        for (UBehavior behavior: behaviors) {
+            behavior.aggressionFrom(this, attacker);
         }
     }
 
@@ -103,9 +112,9 @@ public class UNPC extends UActor implements Interactable {
         UAction bestAction = null;
         float bestUrgency = 0f;
         int bc=0;
-        for (UBehavior behavior : getBehaviorObjects()) {
+        for (UBehavior behavior : behaviors) {
             bc++;
-            UAction action = behavior.action(this);
+            UAction action = behavior.getAction(this);
             if (action != null) {
                 if (bestAction == null) {
                     bestAction = action;
@@ -121,7 +130,7 @@ public class UNPC extends UActor implements Interactable {
     UBehavior controllingBehavior() {
         float bestUrgency = 0f;
         UBehavior b = null;
-        for (UBehavior behavior : getBehaviorObjects()) {
+        for (UBehavior behavior : behaviors) {
             if (behavior.getCurrentUrgency() > bestUrgency) {
                 b = behavior;
                 bestUrgency = behavior.getCurrentUrgency();
@@ -150,7 +159,7 @@ public class UNPC extends UActor implements Interactable {
 
     boolean caresAbout(Entity entity) {
         if (entity == this) return false;
-        for (UBehavior behavior : behaviorObjects) {
+        for (UBehavior behavior : behaviors) {
             if (behavior.caresAbout(this, entity))
                 return true;
         }
@@ -174,7 +183,7 @@ public class UNPC extends UActor implements Interactable {
     }
 
     UAction Ambient() {
-        return new ActionEmote(this, getAmbients()[commander.random.nextInt(getAmbients().length)]);
+        return new ActionEmote(this, getAmbients()[random.nextInt(getAmbients().length)]);
     }
 
 
@@ -182,7 +191,7 @@ public class UNPC extends UActor implements Interactable {
     public boolean isInteractable(UActor actor) {
         if (isHostileTo(actor))
             return false;
-        for (UBehavior b : behaviorObjects) {
+        for (UBehavior b : behaviors) {
             if (b.willInteractWith(this, actor))
                 return true;
         }
@@ -191,7 +200,7 @@ public class UNPC extends UActor implements Interactable {
 
     @Override
     public boolean isHostileTo(UActor actor) {
-        for (UBehavior b : behaviorObjects) {
+        for (UBehavior b : behaviors) {
             if (b.isHostileTo(this, actor))
                 return true;
         }
@@ -200,7 +209,7 @@ public class UNPC extends UActor implements Interactable {
 
     @Override
     public float interactionFrom(UActor actor) {
-        for (UBehavior b : behaviorObjects) {
+        for (UBehavior b : behaviors) {
             if (b.willInteractWith(this, actor))
                 return b.interactionFrom(this, actor);
         }
@@ -224,19 +233,14 @@ public class UNPC extends UActor implements Interactable {
         this.ambients = ambients;
     }
 
-    public String[] getBehaviors() {
+    public ArrayList<UBehavior> getBehaviors() {
         return behaviors;
     }
 
-    public void setBehaviors(String[] behaviors) {
-        this.behaviors = behaviors;
+    public void setBehaviors(ArrayList<UBehavior> behaviorObjects) {
+        this.behaviors = behaviorObjects;
     }
 
-    public ArrayList<UBehavior> getBehaviorObjects() {
-        return behaviorObjects;
-    }
-
-    public void setBehaviorObjects(ArrayList<UBehavior> behaviorObjects) {
-        this.behaviorObjects = behaviorObjects;
-    }
+    public SpawnItem[] getSpawnwith() { return spawnwith; }
+    public void setSpawnwith(SpawnItem[] s) { spawnwith = s; }
 }

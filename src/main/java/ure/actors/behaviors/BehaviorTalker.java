@@ -11,25 +11,19 @@ import ure.ui.modals.UModalNotify;
 /**
  * I can talk and be talked to (by and to the player, mostly).
  */
-public class BehaviorTalking extends UBehavior {
+public class BehaviorTalker extends UBehavior {
 
-    public static final String TYPE = "talking";
+    public static final String TYPE = "talker";
 
-    float babbleChance = 0.1f;
+    public String comments[];
+    public String responses[];
 
-    String babbles[];
-
-    public BehaviorTalking() {
+    public BehaviorTalker() {
         super(TYPE);
-        babbles = new String[]{"Yawn.","I'm bored.","This place sucks.","Found any cool wands lately?","Another day, another gold piece."};
     }
 
     @Override
     public UAction action(UNPC actor) {
-        currentStatus = "";
-        if (commander.random.nextFloat() > babbleChance) {
-            return null;
-        }
         UAction action = null;
         UPlayer player = null;
         for (Entity entity : actor.seenEntities) {
@@ -37,7 +31,7 @@ public class BehaviorTalking extends UBehavior {
                 player = (UPlayer)entity;
                 currentStatus = "talking";
                 currentUrgency = 0.3f;
-                action = new ActionTalk(actor, babbleAt(actor,player));
+                action = new ActionTalk(actor, commentTo(actor,player));
             }
         }
         return action;
@@ -51,12 +45,16 @@ public class BehaviorTalking extends UBehavior {
         return false;
     }
 
-    String babbleAt(UNPC actor, UActor target) {
+    String commentTo(UNPC actor, UActor target) {
         if (actor.isHostileTo(target)) {
             return("I'm gonna kill you!");
         } else {
-            return babbles[commander.random.nextInt(babbles.length-1)];
+            return comments[random.nextInt(comments.length)];
         }
+    }
+
+    String responseTo(UNPC actor, UActor target) {
+        return responses[random.nextInt(responses.length)];
     }
 
     @Override
@@ -68,9 +66,14 @@ public class BehaviorTalking extends UBehavior {
 
     @Override
     public float interactionFrom(UNPC actor, UActor interactor) {
-        String text = actor.getDescription() + "\n \n\"" + babbleAt(actor, interactor) + "\"";
+        String text = actor.getDescription() + "\n \n\"" + responseTo(actor, interactor) + "\"";
         UModalNotify nmodal = new UModalNotify(text, null, 1, 1);
         commander.showModal(nmodal);
         return 0.5f;
     }
+
+    public String[] getComments() { return comments; }
+    public String[] getResponses() { return responses; }
+    public void setComments(String[] c) { comments = c; }
+    public void setResponses(String[] r) { responses = r; }
 }

@@ -60,7 +60,7 @@ public class UTerrainCzar {
                     InputStream inputStream = getClass().getResourceAsStream("/terrain/" + resourceName);
                     UTerrain[] terrainObjs = objectMapper.readValue(inputStream, UTerrain[].class);
                     for (UTerrain terrain : terrainObjs) {
-                        terrain.initialize();
+                        terrain.initializeAsTemplate();
                         terrains.put(terrain.getFilechar(), terrain);
                         terrainsByName.put(terrain.getName(), terrain);
                     }
@@ -78,9 +78,11 @@ public class UTerrainCzar {
      * @return
      */
     public UTerrain getTerrainForFilechar(char thechar) {
-        UTerrain terrain = terrains.get(thechar).makeClone();
-        terrain.setID(commander.generateNewID(terrain));
-        return terrain;
+        UTerrain template = terrains.get(thechar);
+        UTerrain clone = template.makeClone();
+        clone.initializeAsCloneFrom(template);
+        clone.setID(commander.generateNewID(clone));
+        return clone;
     }
 
     /**
@@ -91,6 +93,13 @@ public class UTerrainCzar {
      */
     public UTerrain getTerrainByName(String name) {
         return (UTerrain)(getTerrainForFilechar(terrainsByName.get(name).getFilechar()));
+    }
+
+    public ArrayList<UTerrain> getAllTerrainTemplates() {
+        ArrayList<UTerrain> terrains = new ArrayList<>();
+        for (String key : terrainsByName.keySet())
+            terrains.add(terrainsByName.get(key));
+        return terrains;
     }
 
     public Set<String> getAllTerrains() {
