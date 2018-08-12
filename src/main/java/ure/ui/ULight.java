@@ -3,6 +3,7 @@ package ure.ui;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.areas.UArea;
 import ure.math.UColor;
+import ure.math.UPath;
 
 import java.lang.Math;
 
@@ -12,6 +13,9 @@ import java.lang.Math;
  */
 
 public class ULight {
+    public static final int POINT = 0;
+    public static final int AMBIENT = 1;
+
     public static final int FLICKER_NONE = 0;
     public static final int FLICKER_FIRE = 1;
     public static final int FLICKER_PULSE = 2;
@@ -31,15 +35,19 @@ public class ULight {
     UArea area;
 
     public int x,y;
+    public int type;
+    public int width,height;
 
     public ULight() {}
 
     public ULight(int[] thecolor, int therange, int thefalloff) {
+        type = POINT;
         setColor(new UColor(thecolor[0],thecolor[1],thecolor[2]));
         setRange(therange);
         setFalloff(thefalloff);
     }
     public ULight(UColor thecolor, int therange, int thefalloff) {
+        type = POINT;
         setColor(new UColor(thecolor.fR(), thecolor.fG(), thecolor.fB(), thecolor.fA()));
         setRange(therange);
         setFalloff(thefalloff);
@@ -79,21 +87,43 @@ public class ULight {
         area = null;
     }
 
+    public void makeAmbient(int width, int height) {
+        type = AMBIENT;
+        this.width = width;
+        this.height = height;
+    }
+
     public boolean canTouch(UCamera camera) {
-        int circleDistX = Math.abs(x - camera.getCenterColumn());
-        int circleDistY = Math.abs(y - camera.getCenterRow());
-        if (circleDistX > (camera.columns /2 + getRange())) return false;
-        if (circleDistY > (camera.rows /2 + getRange())) return false;
-        if (circleDistX <= (camera.columns /2)) return true;
-        if (circleDistY <= (camera.rows /2)) return true;
-        double cornerDistSq = Math.pow(circleDistX - camera.columns /2, 2) + Math.pow(circleDistY - camera.rows /2, 2);
-        if (cornerDistSq <= Math.pow(getRange(),2)) return true;
-        return false;
+        if (type == POINT) {
+            int circleDistX = Math.abs(x - camera.getCenterColumn());
+            int circleDistY = Math.abs(y - camera.getCenterRow());
+            if (circleDistX > (camera.columns / 2 + getRange())) return false;
+            if (circleDistY > (camera.rows / 2 + getRange())) return false;
+            if (circleDistX <= (camera.columns / 2)) return true;
+            if (circleDistY <= (camera.rows / 2)) return true;
+            double cornerDistSq = Math.pow(circleDistX - camera.columns / 2, 2) + Math.pow(circleDistY - camera.rows / 2, 2);
+            if (cornerDistSq <= Math.pow(getRange(), 2)) return true;
+            return false;
+        } else {
+            int x1 = x-falloff; int x2 = x+width+falloff;
+            int y1 = y-falloff; int y2 = y+height+falloff;
+            if (x2 < camera.leftEdge) return false;
+            if (y2 < camera.topEdge) return false;
+            if (x1 > camera.rightEdge) return false;
+            if (y1 > camera.bottomEdge) return false;
+            return true;
+        }
     }
     public boolean canTouch(int tx, int ty) {
-        if (intensityAtOffset(x - tx, y - ty) > 0.01f)
+        if (type == POINT) {
+            if (intensityAtOffset(x - tx, y - ty) > 0.01f)
+                return true;
+            return false;
+        } else {
+            if (UPath.mdist(x,y,tx,ty) > (Math.max(height+falloff,width+falloff)))
+                return false;
             return true;
-        return false;
+        }
     }
 
     public float intensityAtTime(int time) {
@@ -200,4 +230,15 @@ public class ULight {
     public void setFlickerOffset(int flickerOffset) {
         this.flickerOffset = flickerOffset;
     }
+
+    public void setX(int i) { x = i; }
+    public int getX() { return x; }
+    public void setY(int i) { y = i; }
+    public int getY() { return y; }
+    public void setType(int i) { type = i; }
+    public int getType() { return type; }
+    public void setWidth(int i) { width = i; }
+    public int getWidth() { return width; }
+    public void setHeight(int i) { height = i; }
+    public int getHeight() { return height; }
 }
