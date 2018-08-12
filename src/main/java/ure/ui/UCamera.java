@@ -295,34 +295,39 @@ public class UCamera extends View implements UAnimator {
 
     void projectLight(int ox, int oy, ULight light, boolean projectVisibility) {
         projectToCell(ox, oy, light, projectVisibility, 1f);
-        for (int octant=0;octant<8;octant++) {
-            UShadowLine line = new UShadowLine();
-            boolean fullShadow = false;
-            int row = 0;
-            boolean inFrame = true;
-            while (inFrame) {
-                row++;
-                if (!isValidCell(ox + transformOctantCol(row, 0, octant),oy + transformOctantRow(row, 0, octant)))
-                    inFrame = false;
-                else {
-                    boolean inRow = true;
-                    for (int col = 0; col <= row; col++) {
-                        int dy = oy + transformOctantRow(row, col, octant);
-                        int dx = ox + transformOctantCol(row, col, octant);
-                        if (!isValidCell(dx, dy))
-                            inRow = false;
-                        else {
-                            if (fullShadow) {
-                                // projectToCell(dx, dy, light, projectVisibility, 0f);
-                            } else {
-                                UShadow projection = new UShadow(0f, 0f);
-                                projection.projectTile(row, col);
-                                boolean visible = !line.isInShadow(projection);
-                                if (visible) {
-                                    projectToCell(dx, dy, light, projectVisibility, 1f);
-                                    if (area.blocksLight(dx + leftEdge, dy + topEdge)) {
-                                        line.add(projection);
-                                        fullShadow = line.isFullShadow();
+        boolean isAmbient = true;
+        if (light == null) isAmbient = false;
+        else if (light.type == ULight.POINT) isAmbient = false;
+        if (projectVisibility || !isAmbient) {
+            for (int octant = 0;octant < 8;octant++) {
+                UShadowLine line = new UShadowLine();
+                boolean fullShadow = false;
+                int row = 0;
+                boolean inFrame = true;
+                while (inFrame) {
+                    row++;
+                    if (!isValidCell(ox + transformOctantCol(row, 0, octant), oy + transformOctantRow(row, 0, octant)))
+                        inFrame = false;
+                    else {
+                        boolean inRow = true;
+                        for (int col = 0;col <= row;col++) {
+                            int dy = oy + transformOctantRow(row, col, octant);
+                            int dx = ox + transformOctantCol(row, col, octant);
+                            if (!isValidCell(dx, dy))
+                                inRow = false;
+                            else {
+                                if (fullShadow) {
+                                    // projectToCell(dx, dy, light, projectVisibility, 0f);
+                                } else {
+                                    UShadow projection = new UShadow(0f, 0f);
+                                    projection.projectTile(row, col);
+                                    boolean visible = !line.isInShadow(projection);
+                                    if (visible) {
+                                        projectToCell(dx, dy, light, projectVisibility, 1f);
+                                        if (area.blocksLight(dx + leftEdge, dy + topEdge)) {
+                                            line.add(projection);
+                                            fullShadow = line.isFullShadow();
+                                        }
                                     }
                                 }
                             }
@@ -330,31 +335,65 @@ public class UCamera extends View implements UAnimator {
                     }
                 }
             }
-        }
-        if (config.isSmoothLightCones()) {
-            for (int col = 0;col < columns;col++) {
-                for (int row = 0;row < rows;row++) {
-                    float v = visibilityAt(col, row);
-                    if (v == 0f) {
-                        int neigh = 0;
-                        if (visibilityAt(col - 1, row) == 1f && !area.blocksLight(col + leftEdge - 1, row + topEdge))
-                            neigh++;
-                        if (visibilityAt(col + 1, row) == 1f && !area.blocksLight(col + leftEdge + 1, row + topEdge))
-                            neigh++;
-                        if (visibilityAt(col, row - 1) == 1f && !area.blocksLight(col + leftEdge, row + topEdge - 1))
-                            neigh++;
-                        if (visibilityAt(col, row + 1) == 1f && !area.blocksLight(col + leftEdge, row + topEdge + 1))
-                            neigh++;
-                        if (neigh > 2)
-                            projectToCell(col, row, light, projectVisibility, 0.75f);
-                        else if (neigh > 1)
-                            projectToCell(col, row, light, projectVisibility, 0.6f);
+            if (config.isSmoothLightCones()) {
+                for (int col = 0;col < columns;col++) {
+                    for (int row = 0;row < rows;row++) {
+                        float v = visibilityAt(col, row);
+                        if (v == 0f) {
+                            int neigh = 0;
+                            if (visibilityAt(col - 1, row) == 1f && !area.blocksLight(col + leftEdge - 1, row + topEdge))
+                                neigh++;
+                            if (visibilityAt(col + 1, row) == 1f && !area.blocksLight(col + leftEdge + 1, row + topEdge))
+                                neigh++;
+                            if (visibilityAt(col, row - 1) == 1f && !area.blocksLight(col + leftEdge, row + topEdge - 1))
+                                neigh++;
+                            if (visibilityAt(col, row + 1) == 1f && !area.blocksLight(col + leftEdge, row + topEdge + 1))
+                                neigh++;
+                            if (neigh > 2)
+                                projectToCell(col, row, light, projectVisibility, 0.75f);
+                            else if (neigh > 1)
+                                projectToCell(col, row, light, projectVisibility, 0.6f);
+                        }
                     }
                 }
             }
+        } else {
+            projectAmbient(ox,oy,light);
         }
-
     }
+
+    void projectAmbient(int x1, int y1, ULight light) {
+        for (int ix=x1;ix<x1+light.width;ix++) {
+            for (int iy=y1;iy<y1+light.height;iy++) {
+                projectToCell(ix,iy,light,false,1f);
+            }
+        }
+        float fall = 0.15f;
+        float val = 0f;
+        int w = light.width;
+        int h = light.height;
+        x1 -= 1;
+        w += 2;
+        y1 -= 1;
+        h +=2;
+        for (int ix=x1;ix<x1+w;ix++) {
+            val = spreadAmbient(light, ix,y1,0,-1, fall);
+            projectToCell(ix,y1,light,false,val);
+            val = spreadAmbient(light, ix,y1+h,0,1, fall);
+            projectToCell(ix,y1+h,light,false,val);
+        }
+        for (int iy=y1;iy<y1+h;iy++) {
+            val = spreadAmbient(light, x1,iy,-1,0, fall);
+            projectToCell(x1,iy,light,false,val);
+            val = spreadAmbient(light, x1+w,iy,1,0, fall);
+            projectToCell(x1+w,iy,light,false,val);
+        }
+    }
+
+    float spreadAmbient(ULight light, int x, int y, int dx, int dy, float fall) {
+            return fall * 3f;
+    }
+
     void projectToCell(int col, int row, ULight light, boolean projectVisibility, float intensity) {
         if (projectVisibility)
             setVisibilityAt(col, row, intensity);

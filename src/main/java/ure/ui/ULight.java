@@ -35,7 +35,7 @@ public class ULight {
     UArea area;
 
     public int x,y;
-    public int type;
+    public int type = 0;
     public int width,height;
 
     public ULight() {}
