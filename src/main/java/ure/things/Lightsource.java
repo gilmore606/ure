@@ -28,6 +28,7 @@ public class Lightsource extends UThing {
     protected boolean switchable = false;
     protected float sparkrate = 0f;
     protected int[] onglyphcolor;
+    protected UColor glyphColorSaved;
     protected String isOnMsg = "It's on.";
     protected String isOffMsg = "It's off.";
     protected char onglyph = 0;
@@ -106,12 +107,18 @@ public class Lightsource extends UThing {
             if (getLocation() != null) {
                 getLight().moveTo(area(), areaX(), areaY());
             }
+            if (onglyphcolor != null) {
+                glyphColorSaved = icon().fgColor;
+                icon.setFgColor(new UColor(onglyphcolor[0],onglyphcolor[1],onglyphcolor[2]));
+            }
         }
     }
 
     public void turnOff() {
         setOn(false);
         getLight().removeFromArea();
+        if (glyphColorSaved != null && onglyphcolor != null)
+            icon.setFgColor(glyphColorSaved);
     }
 
     @Override
