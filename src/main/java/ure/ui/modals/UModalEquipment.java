@@ -6,8 +6,6 @@ import ure.actors.actions.ActionEquip;
 import ure.actors.actions.ActionUnequip;
 import ure.commands.UCommand;
 import ure.math.UColor;
-import ure.render.URenderer;
-import ure.sys.Entity;
 import ure.sys.GLKey;
 import ure.things.UThing;
 
@@ -42,8 +40,8 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
             }
         }
         int longestthing = 0;
-        for (int i=0;i<slotsThings.size();i++) {
-            UThing thing = slotsThings.get(i);
+        for (int i=0;i<actor.things().size();i++) {
+            UThing thing = actor.things().get(i);
             if (thing != null) {
                 int len = textWidth(thing.name());
                 if (len > longestthing) longestthing = len;
@@ -91,10 +89,10 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
             UThing thing = slotsThings.get(i);
             if (thing != null) {
                 drawIcon(thing.getIcon(), 7+xpad, i+ypad);
-                drawString(thing.getName(), 8+xpad, i+ypad, i == selection ? null : UColor.COLOR_GRAY, i == selection ? commander.config.getHiliteColor() : null);
+                drawString(thing.getName(), 8+xpad, i+ypad, i == selection ? null : UColor.GRAY, i == selection ? config.getHiliteColor() : null);
             } else {
                 if (i == selection) {
-                    drawString("        ", 8+xpad, i+ypad, null, commander.config.getHiliteColor());
+                    drawString("        ", 8+xpad, i+ypad, null, config.getHiliteColor());
                 }
             }
         }
@@ -105,7 +103,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
         for (UThing poss : possible) {
             if (poss != null) {
                 if (!poss.equipped) {
-                    drawString(poss.getName(), detailX + xpad, ypad + i + 5, UColor.COLOR_GRAY);
+                    drawString(poss.getName(), detailX + xpad, ypad + i + 5, UColor.GRAY);
                     i++;
                 }
             }

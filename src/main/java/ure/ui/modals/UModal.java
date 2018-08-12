@@ -1,11 +1,15 @@
 package ure.ui.modals;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import ure.actors.UActorCzar;
 import ure.sys.*;
 import ure.commands.UCommand;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.terrain.UTerrainCzar;
-import ure.ui.Icon;
+import ure.things.UThingCzar;
+import ure.ui.Icons.Icon;
+import ure.ui.Icons.UIconCzar;
+import ure.ui.USpeaker;
 import ure.ui.View;
 
 import javax.inject.Inject;
@@ -22,7 +26,19 @@ public class UModal extends View implements UAnimator {
     @Inject
     public UCommander commander;
     @Inject
+    public UConfig config;
+    @Inject
+    public USpeaker speaker;
+    @Inject
     public UTerrainCzar terrainCzar;
+    @Inject
+    public UThingCzar thingCzar;
+    @Inject
+    public UActorCzar actorCzar;
+    @Inject
+    public UIconCzar iconCzar;
+    @Inject
+    public ObjectMapper objectMapper;
 
     HearModal callback;
     String callbackContext;
@@ -58,7 +74,7 @@ public class UModal extends View implements UAnimator {
         callback = _callback;
         callbackContext = _callbackContext;
         if (_bgColor == null)
-            bgColor = commander.config.getModalBgColor();
+            bgColor = config.getModalBgColor();
         else
             bgColor = _bgColor;
     }
@@ -67,8 +83,8 @@ public class UModal extends View implements UAnimator {
 
     }
 
-    public int gw() { return commander.config.getTileWidth(); }
-    public int gh() { return commander.config.getTileHeight(); }
+    public int gw() { return config.getTileWidth(); }
+    public int gh() { return config.getTileHeight(); }
 
     public void setBgColor(UColor color) {
         bgColor = color;
@@ -78,9 +94,9 @@ public class UModal extends View implements UAnimator {
         cellw = x;
         cellh = y;
         int screenw = 0, screenh = 0;
-        if (commander.config.getModalPosition() == UConfig.POS_WINDOW_CENTER) {
-            screenw = commander.config.getScreenWidth();
-            screenh = commander.config.getScreenHeight();
+        if (config.getModalPosition() == UConfig.POS_WINDOW_CENTER) {
+            screenw = config.getScreenWidth();
+            screenh = config.getScreenHeight();
         } else {
             screenw = commander.modalCamera().getWidthInCells() * gw();
             screenh = commander.modalCamera().getHeightInCells() * gh();
@@ -111,7 +127,7 @@ public class UModal extends View implements UAnimator {
     }
 
     public void drawString(String string, int x, int y) {
-        drawString(string,x,y,commander.config.getTextColor(), null);
+        drawString(string,x,y,config.getTextColor(), null);
     }
     public void drawString(String string, int x, int y, UColor color) {
         drawString(string,x,y,color, null);
@@ -120,10 +136,10 @@ public class UModal extends View implements UAnimator {
         if (highlight != null) {
             int stringWidth = renderer.textWidth(string) + 4;
             renderer.drawRect(x * gw() + xpos - 2, y * gh() + ypos - 3,
-                    stringWidth, commander.config.getTextHeight() + 4, highlight);
+                    stringWidth, config.getTextHeight() + 4, highlight);
         }
         if (color == null)
-            color = commander.config.getTextColor();
+            color = config.getTextColor();
         renderer.drawString(x*gw()+xpos,y*gh()+ypos,color,string);
     }
     public void drawTile(char glyph, int x, int y, UColor color) {
@@ -131,17 +147,17 @@ public class UModal extends View implements UAnimator {
     }
 
     public void drawFrame() {
-        if (commander.config.getModalShadowStyle() == UConfig.SHADOW_BLOCK) {
-            UColor shadowColor = commander.config.getModalShadowColor();
+        if (config.getModalShadowStyle() == UConfig.SHADOW_BLOCK) {
+            UColor shadowColor = config.getModalShadowColor();
             renderer.drawRect(xpos, ypos, relx(cellw+2)-xpos, rely(cellh+2)-ypos, shadowColor);
         }
-        UColor color = commander.config.getModalFrameColor();
-        int border = commander.config.getModalFrameLine();
+        UColor color = config.getModalFrameColor();
+        int border = config.getModalFrameLine();
         if (border > 0)
             renderer.drawRectBorder(xpos - gw(),ypos - gh(),relx(cellw+2)-xpos,rely(cellh+2)-ypos,border, bgColor, color);
         else
             renderer.drawRect(xpos - gw(), ypos - gh(),  relx(cellw+2) - xpos,rely(cellh+2) - ypos, bgColor);
-        String frames = commander.config.getUiFrameGlyphs();
+        String frames = config.getUiFrameGlyphs();
 
         if (frames != null) {
             renderer.drawTile(frames.charAt(0), relx(-1), rely(-1), color);
@@ -167,26 +183,26 @@ public class UModal extends View implements UAnimator {
     /**
      * Convert a modal-relative cell position to an absolute screen position.
      */
-    public int relx(int x)  { return (x * commander.config.getTileWidth()) + xpos; }
-    public int rely(int y)  { return (y * commander.config.getTileHeight()) + ypos; }
+    public int relx(int x)  { return (x * config.getTileWidth()) + xpos; }
+    public int rely(int y)  { return (y * config.getTileHeight()) + ypos; }
 
     public void hearCommand(UCommand command, GLKey k) {
         dismiss();
     }
 
-    void dismiss() {
-        commander.speaker.playUIsound(commander.config.soundUIselectClose, 1f);
+    public void dismiss() {
+        speaker.playUIsound(config.soundUIselectClose, 1f);
         dismissed = true;
     }
 
-    void escape() {
+    public void escape() {
         dismissed = true;
         dismissFrameEnd = 0;
-        commander.speaker.playUIsound(commander.config.soundUIcancelClose, 1f);
+        speaker.playUIsound(config.soundUIcancelClose, 1f);
     }
 
     public void addText(String name, String text, int row, int col) {
-        addTextFrag(new TextFrag(name, text, row, col, UColor.COLOR_WHITE));
+        addTextFrag(new TextFrag(name, text, row, col, UColor.WHITE));
     }
     public void addText(String name, String text, int row, int col, UColor color) {
         addTextFrag(new TextFrag(name, text, row, col, color));
@@ -267,7 +283,7 @@ public class UModal extends View implements UAnimator {
         return renderer.textWidth(line) / gw() + 1;
     }
 
-    public void drawStrings(String[] lines, int x, int y) { drawStrings(lines,x,y,commander.config.getTextColor()); }
+    public void drawStrings(String[] lines, int x, int y) { drawStrings(lines,x,y,config.getTextColor()); }
     public void drawStrings(String[] lines, int x, int y, UColor c) {
         if (lines != null) {
             int i = 0;
@@ -284,7 +300,7 @@ public class UModal extends View implements UAnimator {
         ArrayList<String> details = entity.UIdetails(callbackContext);
         int linepos = 1;
         for (String line : details) {
-            drawString(line, xoff, linepos+yoff, UColor.COLOR_LIGHTGRAY);
+            drawString(line, xoff, linepos+yoff, UColor.LIGHTGRAY);
             linepos++;
         }
     }
@@ -293,13 +309,13 @@ public class UModal extends View implements UAnimator {
         int oldcursor = cursor;
         cursor += delta;
         if (cursor < 0) {
-            if (commander.config.isWrapSelect()) {
+            if (config.isWrapSelect()) {
                 cursor = total - 1;
             } else {
                 cursor = 0;
             }
         } else if (cursor >= total) {
-            if (commander.config.isWrapSelect()) {
+            if (config.isWrapSelect()) {
                 cursor = 0;
             } else {
                 cursor = total - 1;
@@ -307,13 +323,13 @@ public class UModal extends View implements UAnimator {
         }
         String sound;
         if (cursor > oldcursor) {
-            sound = commander.config.soundUIcursorDown;
+            sound = config.soundUIcursorDown;
         } else if (cursor < oldcursor) {
-            sound = commander.config.soundUIcursorUp;
+            sound = config.soundUIcursorUp;
         } else {
-            sound = commander.config.soundUIbumpLimit;
+            sound = config.soundUIbumpLimit;
         }
-        commander.speaker.playUIsound(sound, 0.5f);
+        speaker.playUIsound(sound, 0.5f);
         return cursor;
     }
 }

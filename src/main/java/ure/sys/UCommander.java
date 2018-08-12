@@ -22,7 +22,7 @@ import ure.render.URenderer;
 import ure.sys.events.TimeTickEvent;
 import ure.things.UThing;
 import ure.things.UThingCzar;
-import ure.ui.Icon;
+import ure.ui.Icons.Icon;
 import ure.ui.UCamera;
 import ure.ui.modals.*;
 import ure.ui.panels.UScrollPanel;
@@ -52,18 +52,15 @@ import static org.lwjgl.glfw.GLFW.*;
 public class UCommander implements URenderer.KeyListener,HearModalGetString,HearModalStringPick {
 
     @Inject
+    public USpeaker speaker;
+    @Inject
     protected ObjectMapper objectMapper;
-
     @Inject
     EventBus bus;
-
     @Inject
     public UConfig config;
-
     @Inject
     Random random;
-
-    public USpeaker speaker;
 
     private HashSet<UAnimator> animators;
     private ArrayList<UActor> actors;
@@ -121,8 +118,6 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         readKeyBinds();
         renderer.setKeyListener(this);
         keyBuffer = new LinkedBlockingQueue<GLKey>();
-        speaker = new USpeaker();
-        speaker.initialize();
         addAnimator(speaker);
         modalStack = new Stack<>();
         actorCzar.loadActors();
@@ -645,7 +640,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
         filelist.add("<new vaultSet>");
 
-        UModalStringPick spmodal = new UModalStringPick("Select vaultSet to edit:", UColor.COLOR_BLACK, 0, 0,
+        UModalStringPick spmodal = new UModalStringPick("Select vaultSet to edit:", UColor.BLACK, 0, 0,
                 filelist, true, this, "vaulted-pickfile");
         printScroll("Launching VaultEd...");
         showModal(spmodal);
@@ -653,7 +648,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
     public void hearModalStringPick(String context, String filename) {
         if (filename.equals("<new vaultSet>")) {
-            UModalGetString fmodal = new UModalGetString("Filename?", 20, true, UColor.COLOR_BLACK, this, "vaulted-newfile");
+            UModalGetString fmodal = new UModalGetString("Filename?", 20, true, UColor.BLACK, this, "vaulted-newfile");
             showModal(fmodal);
         } else {
             doLaunchVaulted(filename);
@@ -662,7 +657,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     void doLaunchVaulted(String filename) {
         UArea oldarea = null;
         if (player == null)
-            player = new UPlayer("Vault Editor Guy", '@', UColor.COLOR_WHITE, true, null, 0, 0);
+            player = new UPlayer("Vault Editor Guy", null, 0, 0);
         else
             oldarea = player.area();
         VaultedArea edarea = new VaultedArea(30,30);

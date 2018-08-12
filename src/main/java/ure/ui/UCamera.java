@@ -9,6 +9,7 @@ import ure.render.URenderer;
 import ure.sys.Injector;
 import ure.sys.UAnimator;
 import ure.sys.UCommander;
+import ure.sys.UConfig;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
 import ure.ui.particles.UParticle;
@@ -25,9 +26,12 @@ public class UCamera extends View implements UAnimator {
 
     @Inject
     UCommander commander;
+    @Inject
+    UConfig config;
+    @Inject
+    URenderer renderer;
 
     public UArea area;
-    private URenderer renderer;
     float zoom = 1.0f;
     public int columns, rows;
     private int centerColumn, centerRow;
@@ -106,9 +110,8 @@ public class UCamera extends View implements UAnimator {
         }
     }
 
-    public UCamera(URenderer theRenderer, int x, int y, int width, int height) {
+    public UCamera(int x, int y, int width, int height) {
         Injector.getAppComponent().inject(this);
-        renderer = theRenderer;
         visibilitySources = new HashSet<>();
         setBounds(x, y, width, height);
         setupGrid();
@@ -151,8 +154,8 @@ public class UCamera extends View implements UAnimator {
     }
 
     private void setupGrid() {
-        float cellWidth = (float)commander.config.getTileWidth() * zoom;
-        float cellHeight = (float)commander.config.getTileHeight() * zoom;
+        float cellWidth = (float)config.getTileWidth() * zoom;
+        float cellHeight = (float)config.getTileHeight() * zoom;
         columns = (int)(width / cellWidth) + 2;
         rows = (int)(height / cellHeight) + 2;
         System.out.println("cell: " + cellWidth + "," + cellHeight + "  cols: " + columns + " rows: " + rows);
@@ -241,7 +244,7 @@ public class UCamera extends View implements UAnimator {
         for (int col = 0; col < columns; col++) {
             for (int row = 0; row < rows; row++) {
                 float vis = visibilityAt(col, row);
-                if (vis > commander.config.getVisibilityThreshold() && lightAt(col,row).grayscale() > commander.config.getVisibilityThreshold())
+                if (vis > config.getVisibilityThreshold() && lightAt(col,row).grayscale() > config.getVisibilityThreshold())
                     area.setSeen(col + leftEdge, row + topEdge);
             }
         }
@@ -261,7 +264,7 @@ public class UCamera extends View implements UAnimator {
 
 
     public float visibilityAt(int col, int row) {
-        if (!commander.config.isVisibilityEnable())
+        if (!config.isVisibilityEnable())
             return 1.0f;
         if (!isValidCell(col, row))
             return 0f;
@@ -328,7 +331,7 @@ public class UCamera extends View implements UAnimator {
                 }
             }
         }
-        if (commander.config.isSmoothLightCones()) {
+        if (config.isSmoothLightCones()) {
             for (int col = 0;col < columns;col++) {
                 for (int row = 0;row < rows;row++) {
                     float v = visibilityAt(col, row);
@@ -426,12 +429,12 @@ public class UCamera extends View implements UAnimator {
     public UColor lightAt(int col, int row) {
         UColor total;
         if (!isValidCell(col,row))
-            return UColor.COLOR_BLACK;
-        if (!commander.config.isLightEnable()) {
-            total = UColor.COLOR_WHITE;
+            return UColor.BLACK;
+        if (!config.isLightEnable()) {
+            total = UColor.WHITE;
         } else if (lightcells[col][row] == null) {
             System.out.println("WARNING!  nonexistent lightcell");
-            total = UColor.COLOR_BLACK;
+            total = UColor.BLACK;
         } else {
             total = lightcells[col][row].light(commander.frameCounter);
             // TODO : this is a dumb implementation for glow, or at least a dumb place for it
@@ -440,7 +443,7 @@ public class UCamera extends View implements UAnimator {
                     UTerrain t = area.terrainAt(col + leftEdge + i, row + topEdge + j);
                     if (t != null)
                         if (t.isGlow())
-                            total.addLights(t.getBgColor(), 0.5f);
+                            total.addLights(t.icon().getBgColor(), 0.5f);
                 }
             }
         }
@@ -451,7 +454,7 @@ public class UCamera extends View implements UAnimator {
         return area.terrainAt(localCol + leftEdge, localRow + topEdge);
     }
 
-    public Iterator<UThing> thingsAt(int localCol, int localRow) {
+    public ArrayList<UThing> thingsAt(int localCol, int localRow) {
         return area.thingsAt(localCol + leftEdge, localRow + topEdge);
     }
     public UActor actorAt(int localCol, int localRow) { return area.actorAt(localCol+ leftEdge,localRow+ topEdge); }
@@ -468,91 +471,82 @@ public class UCamera extends View implements UAnimator {
         // Render Cells.
         for (int col=0; col<camw; col++) {
             for (int row=0; row<camh; row++) {
-                drawCell(renderer, col, row);
+                drawCell(col, row);
             }
         }
         for (int col=0; col<camw; col++) {
             for (int row=0; row<camh; row++) {
-                drawCellActor(renderer, col, row);
+                drawCellActor(col, row);
             }
         }
         for (int col=0; col<camw; col++) {
             for (int row=0; row<camh; row++) {
-                drawCellParticle(renderer, col, row);
+                drawCellParticle(col, row);
             }
         }
     }
 
-    private void drawCell(URenderer renderer, int col, int row) {
-        int cellw = commander.config.getTileWidth();
-        int cellh = commander.config.getTileHeight();
+    private void drawCell(int col, int row) {
+        int cellw = config.getTileWidth();
+        int cellh = config.getTileHeight();
         float vis = visibilityAt(col,row);
         UColor light = lightAt(col,row);
         UTerrain t = terrainAt(col,row);
         if (t != null) {
+            t.icon().setAnimate(true);
             float tOpacity = vis;
             float tSaturation = 1f;
-            if ((vis < commander.config.getVisibilityThreshold()) && area.seenCell(col + leftEdge, row + topEdge)) {
-                tOpacity = commander.config.getSeenOpacity();
-                tSaturation = commander.config.getSeenSaturation();
-                if (commander.config.isSeenLightGray())
-                    light = UColor.COLOR_GRAY;
+            if ((vis < config.getVisibilityThreshold()) && area.seenCell(col + leftEdge, row + topEdge)) {
+                t.icon().setAnimate(false);
+                tOpacity = config.getSeenOpacity();
+                tSaturation = config.getSeenSaturation();
+                if (config.isSeenLightGray())
+                    light = UColor.GRAY;
             }
             UColor terrainLight = light;
             if (t.isGlow())
                 terrainLight.set(1f,1f,1f);
-            // TODO: Use alpha here too?
-            UColor terrainBg = t.getBgColorBuffer();
-            UColor terrainFg = t.getFgColorBuffer();
-            terrainBg.set(t.getBgColor().r, t.getBgColor().g, t.getBgColor().b);
-            terrainBg.illuminateWith(terrainLight, tOpacity);
-            terrainBg.desaturateBy(1f - tSaturation);
-            renderer.drawRect(col * cellw, row * cellh, cellw, cellh, terrainBg);
-
-            terrainFg.set(t.getFgColor().r, t.getFgColor().g, t.getFgColor().b);
-            terrainFg.illuminateWith(terrainLight, tOpacity);
-            terrainFg.desaturateBy(1f - tSaturation);
-            renderer.drawTile(t.glyph(col + leftEdge,row + topEdge), col * cellw + t.glyphOffsetX(), row * cellh  + t.glyphOffsetY(), t.getFgColorBuffer());
+            t.icon().draw(col * cellw, row * cellh, terrainLight, tOpacity, tSaturation);
+            t.icon().setAnimate(true);
         } else {
-            renderer.drawRect(col * cellw, row * cellh, cellw, cellh, commander.config.getCameraBgColor());
+            renderer.drawRect(col * cellw, row * cellh, cellw, cellh, config.getCameraBgColor());
         }
 
-        if (vis < commander.config.getVisibilityThreshold())
+        if (vis < config.getVisibilityThreshold())
             return;
-        Iterator<UThing> things = thingsAt(col,row);
-        if (things != null) {
-            while (things.hasNext()) {
-                things.next().render(renderer, col * cellw, row * cellh, light, vis);
+        if (thingsAt(col,row) != null) {
+            for (UThing thing : thingsAt(col,row)) {
+                thing.icon().draw(col*cellw, row*cellh, light, vis, 1f);
             }
         }
     }
 
-    private void drawCellActor(URenderer renderer, int col, int row) {
+    private void drawCellActor(int col, int row) {
         UActor actor = actorAt(col, row);
         if (actor == null) return;
         float vis = visibilityAt(col,row);
-        if (vis < commander.config.getVisibilityThreshold()) return;
+        if (vis < config.getVisibilityThreshold()) return;
 
         UColor light = lightAt(col,row);
-        actor.render(renderer, col*commander.config.getTileWidth(), row*commander.config.getTileHeight(), light, vis);
+        actor.icon().draw(col*config.getTileWidth()+actor.getMoveAnimX(), row*config.getTileHeight()+actor.getMoveAnimY(), light, vis, 1f);
     }
-    private void drawCellParticle(URenderer renderer, int col, int row) {
+    private void drawCellParticle(int col, int row) {
         UCell cell = cellAt(col,row);
         if (cell != null) {
             UParticle particle = cellAt(col, row).getParticle();
             if (particle != null) {
                 UColor light = lightAt(col,row);
                 float vis = visibilityAt(col,row);
-                if (vis < commander.config.getVisibilityThreshold()) return;
-                particle.render(renderer, col * commander.config.getTileWidth() + particle.glyphOffsetX(), row * commander.config.getTileHeight() + particle.glyphOffsetY(), light, vis);
+                if (vis < config.getVisibilityThreshold()) return;
+                particle.render(renderer, col * config.getTileWidth() + particle.glyphOffsetX(), row * config.getTileHeight() + particle.glyphOffsetY(), light, vis);
             }
         }
     }
 
     public void animationTick() {
         float visThreshold;
-        if (commander.config.isVisibilityEnable())
-            visThreshold = commander.config.getVisibilityThreshold();
+        if (config.isVisibilityEnable())
+            visThreshold = config.getVisibilityThreshold();
         else
             visThreshold = -1f;
         for (int col = leftEdge; col< rightEdge; col++) {

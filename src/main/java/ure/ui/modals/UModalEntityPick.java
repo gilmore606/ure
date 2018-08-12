@@ -3,7 +3,6 @@ package ure.ui.modals;
 import ure.actors.actions.UAction;
 import ure.commands.UCommand;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.Entity;
 import ure.sys.GLKey;
 import ure.things.UThing;
@@ -165,11 +164,11 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
             drawString(header, xpad, ypad);
         int y = 0;
         for (Entity entity : shownEntities()) {
-            drawIcon(entity.getIcon(), 1+xpad, y + 2+ypad);
+            drawIcon(entity.icon(), 1+xpad, y + 2+ypad);
             String n = entity.name();
             if (categorize)
                 n = (categoryItemNames.get(selectionCategory)).get(y);
-            drawString(n, 3+xpad, y + 2+ypad, y == selection ? null : UColor.COLOR_GRAY, (y == selection) ? tempHiliteColor : null);
+            drawString(n, 3+xpad, y + 2+ypad, y == selection ? null : UColor.GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
         if (showDetail) showDetail(shownEntities().get(selection),4+textWidth+xpad,2+ypad);
@@ -178,7 +177,7 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
             if (!showDetail) caty = 1;
             int i =0;
             for (String cat : categories) {
-                drawString(cat, 4+textWidth+xpad, 2+caty+i+ypad, (i == selectionCategory) ? null : UColor.COLOR_GRAY,
+                drawString(cat, 4+textWidth+xpad, 2+caty+i+ypad, (i == selectionCategory) ? null : UColor.GRAY,
                         (i == selectionCategory) ? tempHiliteColor : null);
                 i++;
             }

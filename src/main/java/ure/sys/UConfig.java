@@ -50,12 +50,12 @@ public class UConfig {
     private boolean wrapSelect = true;                          // wrap around when scrolling through selections
     private int cursorBlinkSpeed = 20;
 
-    private UColor windowBgColor = UColor.COLOR_BLACK;                          // bgColor of game window
-    private UColor cameraBgColor = UColor.COLOR_BLACK;                          // bgColor of camera (for unseen territory)
+    private UColor windowBgColor = UColor.BLACK;                          // bgColor of game window
+    private UColor cameraBgColor = UColor.BLACK;                          // bgColor of camera (for unseen territory)
     private UColor modalBgColor = new UColor(0.1f,0.1f,0f);                         // bgColor of modal popups
     private UColor modalFrameColor = new UColor(0.7f,0.7f,0.1f);     // glyph color for modal popup frame glyphs
     private UColor modalShadowColor = new UColor(0f,0f,0f,0.5f);  // color (and alpha) of modal shadows
-    private UColor textColor = UColor.COLOR_OFFWHITE;                             // color for ui/scroll text
+    private UColor textColor = UColor.OFFWHITE;                             // color for ui/scroll text
     private UColor hiliteColor = new UColor(1f,1f,0.2f, 0.3f);            // color for ui selection highlighting
 
     private boolean outlineActors = true;                           // draw a black outline around Actor glyphs?

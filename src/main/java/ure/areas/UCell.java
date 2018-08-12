@@ -202,7 +202,6 @@ public class UCell implements UContainer {
                 thing.animationTick();
             }
         }
-        getTerrain().animationTick();
     }
 
     public void addParticle(UParticle _particle) {

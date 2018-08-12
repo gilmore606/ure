@@ -2,7 +2,6 @@ package ure.ui.modals;
 
 import ure.commands.UCommand;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.GLKey;
 
 public class UModalLoading extends UModal {
@@ -11,7 +10,7 @@ public class UModalLoading extends UModal {
     int xpad,ypad;
 
     public UModalLoading() {
-        super(null, "", UColor.COLOR_BLACK);
+        super(null, "", UColor.BLACK);
         this.text = "Loading...";
         this.xpad = 1;
         this.ypad = 1;

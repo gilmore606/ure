@@ -40,7 +40,7 @@ public class ULight {
         setFalloff(thefalloff);
     }
     public ULight(UColor thecolor, int therange, int thefalloff) {
-        setColor(thecolor);
+        setColor(new UColor(thecolor.fR(), thecolor.fG(), thecolor.fB(), thecolor.fA()));
         setRange(therange);
         setFalloff(thefalloff);
     }

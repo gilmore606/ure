@@ -6,6 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.*;
+import ure.sys.UConfig;
 import ure.sys.events.PlayerChangedAreaEvent;
 import ure.sys.Injector;
 import ure.sys.UAnimator;
@@ -37,9 +38,8 @@ import static org.lwjgl.system.libc.LibCStdlib.free;
 public class USpeaker implements UAnimator {
 
     @Inject
-    UCommander commander;
+    UConfig config;
     @Inject
-    @JsonIgnore
     EventBus bus;
 
     boolean initialized = false;
@@ -77,9 +77,9 @@ public class USpeaker implements UAnimator {
 
         public void animationTick() {
             if (fadeDir != 0) {
-                float fadePerFrame = commander.config.getMusicFadeTime() / (1000 / commander.config.getAnimFrameMilliseconds());
+                float fadePerFrame = config.getMusicFadeTime() / (1000 / config.getAnimFrameMilliseconds());
                 gain += fadeDir * fadePerFrame;
-                alSourcef(source, AL_GAIN, gain * commander.config.getVolumeMusic());
+                alSourcef(source, AL_GAIN, gain * config.getVolumeMusic());
                 if (fadeDir == 1 && gain >= 1f) {
                     fadeInEnd();
                 } else if (fadeDir == -1 && gain <= 0f) {
@@ -182,7 +182,7 @@ public class USpeaker implements UAnimator {
             IntBuffer channelsBuffer = stackMallocInt(1);
             stackPush();
             IntBuffer sampleRateBuffer = stackMallocInt(1);
-            ShortBuffer rawBuffer = stb_vorbis_decode_filename(commander.config.getResourcePath() + filename, channelsBuffer, sampleRateBuffer);
+            ShortBuffer rawBuffer = stb_vorbis_decode_filename(config.getResourcePath() + filename, channelsBuffer, sampleRateBuffer);
             int channels = channelsBuffer.get();
             int sampleRate = sampleRateBuffer.get();
             stackPop();
@@ -198,7 +198,7 @@ public class USpeaker implements UAnimator {
         } else if (filename.endsWith(".wav")) {
             AudioInputStream stream = null;
             try {
-                stream = AudioSystem.getAudioInputStream(new File(commander.config.getResourcePath() + filename));
+                stream = AudioSystem.getAudioInputStream(new File(config.getResourcePath() + filename));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -237,7 +237,7 @@ public class USpeaker implements UAnimator {
         alGenSources(source);
         alSourcef(source.get(0), AL_GAIN, gain);
         alSourcef(source.get(0), AL_REFERENCE_DISTANCE, 2.0f);
-        alSourcef(source.get(0), AL_MAX_DISTANCE, (float)commander.config.getVolumeFalloffDistance());
+        alSourcef(source.get(0), AL_MAX_DISTANCE, (float)config.getVolumeFalloffDistance());
         return source;
     }
 
@@ -284,10 +284,10 @@ public class USpeaker implements UAnimator {
     }
 
     public void playUIsound(String file, float gain) {
-        play(file, gain * commander.config.getVolumeUI(), 0, 0, false);
+        play(file, gain * config.getVolumeUI(), 0, 0, false);
     }
     public void playWorldSound(String file, float gain, int x, int y) {
-        play(file, gain * commander.config.getVolumeWorld(), x, y, true);
+        play(file, gain * config.getVolumeWorld(), x, y, true);
     }
 
     public void play(String file, float gain, int x, int y, boolean useEnvironment) {

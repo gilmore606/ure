@@ -1,5 +1,6 @@
 package ure.terrain;
 
+import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.actors.UActor;
 
@@ -19,6 +20,14 @@ public class Door extends UTerrain {
 
     boolean open;
 
+    @Override
+    public void reconnect(UArea area, UCell cell) {
+        super.reconnect(area,cell);
+        if (open)
+            icon().useVariant(0);
+        else
+            icon().useVariant(1);
+    }
     public boolean isOpen() { return open; }
 
     @Override
@@ -36,14 +45,6 @@ public class Door extends UTerrain {
      */
     public boolean openOnMove(UActor actor) {
         return openOnMove && canBeOpenedBy(actor);
-    }
-
-    @Override
-    public char getGlyph() {
-        if (isOpen()) {
-            return glyphopen;
-        }
-        return super.getGlyph();
     }
 
     @Override
@@ -76,6 +77,8 @@ public class Door extends UTerrain {
     public boolean canBeClosedBy(UActor actor) {
         if (!isOpen())
             return false;
+        if (cell.actorAt() != null)
+            return false;
         return true;
     }
 
@@ -85,6 +88,7 @@ public class Door extends UTerrain {
      */
     public void openedBy(UActor actor, UCell cell) {
         commander.printScrollIfSeen(actor, openmsg);
+        icon().useVariant(0);
         open = true;
     }
 
@@ -96,6 +100,7 @@ public class Door extends UTerrain {
     public void closedBy(UActor actor, UCell cell) {
         commander.printScrollIfSeen(actor, closemsg);
         open = false;
+        icon().useVariant(1);
     }
 
     @Override

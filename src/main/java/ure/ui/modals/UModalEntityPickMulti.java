@@ -51,9 +51,9 @@ public class UModalEntityPickMulti extends UModal {
         width = Math.max(width, longestLine(prompt));
         setDimensions(width + xpad, height + ypad);
         if (bgColor == null)
-            bgColor = commander.config.getModalBgColor();
+            bgColor = config.getModalBgColor();
         setBgColor(bgColor);
-        hiliteColor = commander.config.getHiliteColor();
+        hiliteColor = config.getHiliteColor();
     }
 
     @Override
@@ -63,12 +63,12 @@ public class UModalEntityPickMulti extends UModal {
         int y = 0;
         for (Entity entity: entities) {
             int liney = y+prompt.length+1;
-            drawIcon(entity.getIcon(), xpad+1, liney+ypad);
+            drawIcon(entity.icon(), xpad+1, liney+ypad);
             String n = entity.getName();
-            UColor textColor = UColor.COLOR_GRAY;
+            UColor textColor = UColor.GRAY;
             if (selectedEntities.get(y)) {
                 textColor = null;
-                drawTile(commander.config.getUiCheckGlyph().charAt(0), xpad+2, liney+ypad, hiliteColor);
+                drawTile(config.getUiCheckGlyph().charAt(0), xpad+2, liney+ypad, hiliteColor);
             }
             drawString(n, xpad+3, liney+ypad, textColor, (y == selection) ? hiliteColor : null);
             y++;

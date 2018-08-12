@@ -40,8 +40,8 @@ public class UModalGetString extends UModal {
         else
             fieldY = prompt.length + 1;
 
-        fieldColor = new UColor(commander.config.getHiliteColor());
-        cursorColor = new UColor(commander.config.getHiliteColor());
+        fieldColor = new UColor(config.getHiliteColor());
+        cursorColor = new UColor(config.getHiliteColor());
         fieldColor.setAlpha(0.2f);
         cursorColor.setAlpha(1f);
     }
@@ -53,7 +53,7 @@ public class UModalGetString extends UModal {
         renderer.drawRect(0 + xpos, fieldY * gh() + ypos, maxlength*gw(), gh(), fieldColor);
         drawString(input, 0, fieldY);
         if (blunk) {
-            renderer.drawRect(xpos + renderer.stringWidth(input), fieldY * gh() + ypos + (gh()/2), commander.config.getTextWidth(), gh()/2, cursorColor);
+            renderer.drawRect(xpos + renderer.stringWidth(input), fieldY * gh() + ypos + (gh()/2), config.getTextWidth(), gh()/2, cursorColor);
         }
         renderer.setFont(URenderer.FontType.TILE_FONT);
     }
@@ -62,7 +62,7 @@ public class UModalGetString extends UModal {
     public void animationTick() {
         super.animationTick();
         blinkCount++;
-        if (blinkCount > commander.config.getCursorBlinkSpeed()) {
+        if (blinkCount > config.getCursorBlinkSpeed()) {
             blinkCount = 0;
             blunk = !blunk;
         }
@@ -80,16 +80,16 @@ public class UModalGetString extends UModal {
                     input = "";
                 else
                     input = input.substring(0, input.length() - 1);
-                commander.speaker.playUIsound(commander.config.soundUIkeystroke, 1f);
+                speaker.playUIsound(config.soundUIkeystroke, 1f);
             } else
-                commander.speaker.playUIsound(commander.config.soundUIbumpLimit, 1f);
+                speaker.playUIsound(config.soundUIbumpLimit, 1f);
         } else if (k.k == GLFW_KEY_ENTER) {
             sendInput();
         } else {
             String typed = k.typed();
             if (typed != null) {
                 input = input + typed;
-                commander.speaker.playUIsound(commander.config.soundUIkeystroke, 1f);
+                speaker.playUIsound(config.soundUIkeystroke, 1f);
             }
         }
     }

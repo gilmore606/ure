@@ -44,8 +44,10 @@ public class Lightsource extends UThing {
 
     void makeLight() {
         if (isLightcolorUseGlyph()) {
-            SetupColors();
-            setLight(new ULight(getGlyphColor(), getLightrange(), getLightfalloff()));
+            if (icon().getFgColor() == null)
+                setLight(new ULight(UColor.WHITE, getLightrange(), getLightfalloff()));
+            else
+                setLight(new ULight(icon().getFgColor(), getLightrange(), getLightfalloff()));
         } else {
             setLight(new ULight(new UColor(lightcolor[0], lightcolor[1], lightcolor[2]), getLightrange(), getLightfalloff()));
         }
@@ -138,12 +140,6 @@ public class Lightsource extends UThing {
             return d;
     }
 
-    @Override
-    public char getGlyph() {
-        if (isOn() && onglyph != 0)
-            return onglyph;
-        return super.getGlyph();
-    }
     public int[] getLightcolor() {
         return lightcolor;
     }
@@ -257,9 +253,9 @@ public class Lightsource extends UThing {
             if (random.nextFloat() < 0.3f) {
                 area().addParticle(new ParticleSpark(areaX() - 1 + random.nextInt(3),
                         areaY() - 1 + random.nextInt(3),
-                        UColor.COLOR_YELLOW, 8 + random.nextInt(10), 0.3f + random.nextFloat() * 0.4f));
+                        UColor.YELLOW, 8 + random.nextInt(10), 0.3f + random.nextFloat() * 0.4f));
             } else {
-                area().addParticle(new ParticleSpark(areaX(), areaY() - (random.nextInt(2)),  UColor.COLOR_YELLOW, 8 + random.nextInt(10), 0.6f));
+                area().addParticle(new ParticleSpark(areaX(), areaY() - (random.nextInt(2)),  UColor.YELLOW, 8 + random.nextInt(10), 0.6f));
             }
         }
     }
