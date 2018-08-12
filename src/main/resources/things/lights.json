@@ -62,6 +62,8 @@
     "type": "lightsource",
     "category": "tools",
     "description": "A heavy metal Maglite flashlight.",
+    "equipSlots": [ "equip" ],
+    "litWhenUnequipped": false,
     "lightcolor": [
       254, 254, 254
     ],
