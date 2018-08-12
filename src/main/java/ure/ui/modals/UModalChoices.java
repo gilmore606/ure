@@ -41,8 +41,8 @@ public class UModalChoices extends UModal {
             width = cwidth;
         setDimensions(width, height);
         dismissFrameEnd = 8;
-        tempHiliteColor = commander.config.getHiliteColor();
-        flashColor = new UColor(commander.config.getHiliteColor());
+        tempHiliteColor = config.getHiliteColor();
+        flashColor = new UColor(config.getHiliteColor());
         flashColor.setAlpha(1f);
     }
 

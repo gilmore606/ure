@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import ure.math.UColor;
 import ure.sys.Injector;
 import ure.sys.UCommander;
+import ure.sys.UConfig;
 import ure.ui.Icons.Icon;
 import ure.ui.View;
 
@@ -17,6 +18,8 @@ public class UPanel extends View {
 
     @Inject
     public UCommander commander;
+    @Inject
+    public UConfig config;
     @Inject
     public EventBus bus;
 
@@ -80,8 +83,8 @@ public class UPanel extends View {
             icon.draw(padX + (x*gw()), padY + (y*gw()));
     }
 
-    public int gw() { return commander.config.getTileWidth(); }
-    public int gh() { return commander.config.getTileHeight(); }
+    public int gw() { return config.getTileWidth(); }
+    public int gh() { return config.getTileHeight(); }
 
     public boolean isMouseInside() {
         int mousex = commander.mouseX();

@@ -120,11 +120,11 @@ public class UActor extends UThing implements Interactable {
                 System.out.println("ERROR: Camera.PINSTYLE_SCREENS not implemented!");
             }
         }
-        int moveFrames = commander.config.getMoveAnimFrames();
-        if (this instanceof UPlayer) moveFrames = commander.config.getMoveAnimPlayerFrames();
+        int moveFrames = config.getMoveAnimFrames();
+        if (this instanceof UPlayer) moveFrames = config.getMoveAnimPlayerFrames();
         if (oldx >=0 && oldarea == thearea && moveFrames > 0) {
-            setMoveAnimX((oldx-destX)*commander.config.getTileWidth());
-            setMoveAnimY((oldy-destY)*commander.config.getTileHeight());
+            setMoveAnimX((oldx-destX)*config.getTileWidth());
+            setMoveAnimY((oldy-destY)*config.getTileHeight());
             setMoveAnimDX(-(getMoveAnimX() / moveFrames));
             setMoveAnimDY(-(getMoveAnimY() / moveFrames));
         }

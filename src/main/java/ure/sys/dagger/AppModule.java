@@ -26,6 +26,7 @@ import ure.things.UThingCzar;
 import ure.ui.Icons.Icon;
 import ure.ui.Icons.IconDeserializer;
 import ure.ui.Icons.UIconCzar;
+import ure.ui.USpeaker;
 
 import javax.inject.Singleton;
 import java.util.Random;
@@ -123,5 +124,13 @@ public class AppModule {
     @Singleton
     public Random providesRandom() {
         return new Random();
+    }
+
+    @Provides
+    @Singleton
+    public USpeaker providesSpeaker() {
+        USpeaker s = new USpeaker();
+        s.initialize();
+        return s;
     }
 }

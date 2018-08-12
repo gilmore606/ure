@@ -17,10 +17,10 @@ public class UStatusPanel extends UPanel {
         super(pixelw,pixelh,padx,pady,fg,bg,borderc);
         bus.register(this);
         texts = new HashMap<String,TextFrag>();
-        textRows = (pixelw-padx) / commander.config.getTextWidth();
-        textColumns = (pixelh-pady) / commander.config.getTextHeight();
-        charWidth = commander.config.getTextWidth();
-        charHeight = commander.config.getTextHeight();
+        charWidth = config.getTextWidth();
+        charHeight = config.getTextHeight();
+        textRows = (pixelw-padx) / config.getTextWidth();
+        textColumns = (pixelh-pady) / config.getTextHeight();
     }
 
     public void addText(String name, String text, int row, int col) {

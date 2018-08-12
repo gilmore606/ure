@@ -52,18 +52,15 @@ import static org.lwjgl.glfw.GLFW.*;
 public class UCommander implements URenderer.KeyListener,HearModalGetString,HearModalStringPick {
 
     @Inject
+    public USpeaker speaker;
+    @Inject
     protected ObjectMapper objectMapper;
-
     @Inject
     EventBus bus;
-
     @Inject
     public UConfig config;
-
     @Inject
     Random random;
-
-    public USpeaker speaker;
 
     private HashSet<UAnimator> animators;
     private ArrayList<UActor> actors;
@@ -121,8 +118,6 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         readKeyBinds();
         renderer.setKeyListener(this);
         keyBuffer = new LinkedBlockingQueue<GLKey>();
-        speaker = new USpeaker();
-        speaker.initialize();
         addAnimator(speaker);
         modalStack = new Stack<>();
         actorCzar.loadActors();

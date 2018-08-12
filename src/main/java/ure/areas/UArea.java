@@ -7,6 +7,7 @@ import ure.actors.UPlayer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actors.actions.UAction;
+import ure.sys.UConfig;
 import ure.sys.events.TimeTickEvent;
 import ure.ui.ULight;
 import ure.actors.UActor;
@@ -37,11 +38,12 @@ public class UArea implements Serializable {
     @Inject
     @JsonIgnore
     public UCommander commander;
-
+    @Inject
+    @JsonIgnore
+    public UConfig config;
     @Inject
     @JsonIgnore
     public UTerrainCzar terrainCzar;
-
     @Inject
     @JsonIgnore
     public EventBus bus;
@@ -83,7 +85,7 @@ public class UArea implements Serializable {
     public UArea() {
         Injector.getAppComponent().inject(this);
         bus.register(this);
-        commander.config.addDefaultSunCycle(this);
+        config.addDefaultSunCycle(this);
     }
     public UArea(int thexsize, int theysize, String defaultTerrain) {
         this();

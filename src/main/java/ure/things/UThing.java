@@ -12,6 +12,7 @@ import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.UConfig;
 import ure.ui.Icons.Icon;
 import ure.ui.Icons.UIconCzar;
 import ure.ui.UCamera;
@@ -35,6 +36,9 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     @Inject
     @JsonIgnore
     public UCommander commander;
+    @Inject
+    @JsonIgnore
+    public UConfig config;
     @Inject
     @JsonIgnore
     public UActorCzar actorCzar;

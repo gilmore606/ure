@@ -89,10 +89,10 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
             UThing thing = slotsThings.get(i);
             if (thing != null) {
                 drawIcon(thing.getIcon(), 7+xpad, i+ypad);
-                drawString(thing.getName(), 8+xpad, i+ypad, i == selection ? null : UColor.GRAY, i == selection ? commander.config.getHiliteColor() : null);
+                drawString(thing.getName(), 8+xpad, i+ypad, i == selection ? null : UColor.GRAY, i == selection ? config.getHiliteColor() : null);
             } else {
                 if (i == selection) {
-                    drawString("        ", 8+xpad, i+ypad, null, commander.config.getHiliteColor());
+                    drawString("        ", 8+xpad, i+ypad, null, config.getHiliteColor());
                 }
             }
         }

@@ -42,10 +42,10 @@ public class UModalEquipPick extends UModal {
         }
         setDimensions(width + 2 + xpad, height);
         if (bgColor == null)
-            bgColor = commander.config.getModalBgColor();
+            bgColor = config.getModalBgColor();
         setBgColor(bgColor);
-        tempHiliteColor = commander.config.getHiliteColor();
-        flashColor = new UColor(commander.config.getHiliteColor());
+        tempHiliteColor = config.getHiliteColor();
+        flashColor = new UColor(config.getHiliteColor());
         flashColor.setAlpha(1f);
         dismissFrameEnd = 8;
         int i = 0;
@@ -70,7 +70,7 @@ public class UModalEquipPick extends UModal {
                 n = thing.getName();
             }
             if (thing == equipped)
-                drawTile(commander.config.getUiCheckGlyph().charAt(0), 2, y+ypad, commander.config.getHiliteColor());
+                drawTile(config.getUiCheckGlyph().charAt(0), 2, y+ypad, config.getHiliteColor());
             drawString(n, 3, y+ypad, (y == selection || thing == equipped )? null : UColor.GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
@@ -114,7 +114,7 @@ public class UModalEquipPick extends UModal {
     public void animationTick() {
         if (dismissed) {
             if ((dismissFrames % 2) == 0) {
-                tempHiliteColor = commander.config.getModalBgColor();
+                tempHiliteColor = config.getModalBgColor();
             } else {
                 tempHiliteColor = flashColor;
             }

@@ -18,7 +18,7 @@ public class UModalNotify extends UModal {
         int width = longestLine(textlines);
         setDimensions(width + xpad*2, ypad*2 + textlines.length);
         if (bgColor == null)
-            bgColor = commander.config.getModalBgColor();
+            bgColor = config.getModalBgColor();
         setBgColor(bgColor);
     }
 
