@@ -68,6 +68,8 @@ public class UParticle implements UAnimator {
         this.gravy = gravy;
     }
 
+    public int frame() { return ticksInitial-ticksLeft; }
+
     public void reconnect(UArea area) {
         this.area = area;
     }

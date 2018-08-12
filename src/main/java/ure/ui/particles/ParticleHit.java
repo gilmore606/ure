@@ -21,7 +21,7 @@ public class ParticleHit extends UParticle {
     @Override
     public void animationTick() {
         super.animationTick();
-        if (ticksInitial-ticksLeft == 1) {
+        if (frame() == 1) {
             int angle = 0;
             for (int i=0;i<9;i++) {
                 angle += random.i(360/5);
@@ -30,6 +30,8 @@ public class ParticleHit extends UParticle {
                 float py = speed*(float)Math.sin(Math.toRadians(angle));
                 area.addParticle(new ParticleBlood(x,y,bloodColor,intensity*2f,px,py));
             }
+        } else if (frame() < 6) {
+            area.addParticle(new ParticleStain(x+random.i(3)-1,y+random.i(3)-1,bloodColor,9617, 120,40,0.6f));
         }
     }
 
