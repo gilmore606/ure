@@ -22,7 +22,7 @@ roguelike.  Here's our intended roadmap of feature additions that will get us to
 ## 1.0
 - ~~TrueType font support / separate text and glyph fonts, specified at runtime~~
 - Camera zoom
-- Map modal
+- ~~Map modal~~
 - RexPaint entity sprites for UI display
 - Status effects
 

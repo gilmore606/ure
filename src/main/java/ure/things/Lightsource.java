@@ -28,6 +28,7 @@ public class Lightsource extends UThing {
     protected boolean spawnOn = false;
     protected boolean switchable = false;
     protected boolean litWhenUnequipped = true;
+    protected boolean junkOnEmpty = true;
     protected float sparkrate = 0f;
     protected int[] onglyphcolor;
     protected UColor glyphColorSaved;
@@ -301,6 +302,8 @@ public class Lightsource extends UThing {
     public String getIsOffMsg() { return isOffMsg; }
     public int[] getOnglyphcolor() { return onglyphcolor; }
     public void setOnglyphcolor(int[] i) { onglyphcolor = i; }
+    public UColor getGlyphColorSaved() { return glyphColorSaved; }
+    public void setGlyphColorSaved(UColor c) { glyphColorSaved = c; }
     public char getOnglyph() { return onglyph; }
     public void setOnglyph(char c) { onglyph = c; }
     public float getSparkrate() { return sparkrate; }
@@ -314,8 +317,10 @@ public class Lightsource extends UThing {
             if (isOn())
                 fuel = Math.max(0, fuel - (commander.turnCounter - lastBurnTurn));
             lastBurnTurn = commander.turnCounter;
-            if (fuel == 0)
+            if (fuel == 0) {
                 turnOff();
+                if (junkOnEmpty) junk();
+            }
         }
         if (on()) {
             if (random.f() < sparkrate) {

@@ -103,6 +103,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
             commander.showModal(smodal);
         } else if (options[cursor].equals("Credits")) {
             UModalNotify nmodal = new UModalNotify("URE: the unRoguelike Engine\n \nSpunky - metaprogramming, persistence, rendering\nMoycakes - OpenGL\nKapho - QA, content\nGilmore - misc", null, 1, 1);
+            nmodal.setTitle("credits");
             commander.showModal(nmodal);
         } else if (options[cursor].equals("VaultEd")) {
             commander.launchVaulted();

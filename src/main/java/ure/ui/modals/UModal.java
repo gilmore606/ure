@@ -52,6 +52,7 @@ public class UModal extends View implements UAnimator {
     public boolean dismissed;
     int dismissFrames = 0;
     int dismissFrameEnd = 0;
+    String title;
 
     class TextFrag {
         String name;
@@ -109,6 +110,8 @@ public class UModal extends View implements UAnimator {
         xpos = x*gw() + parent.xpos;
         ypos = y*gh() + parent.ypos;
     }
+
+    public void setTitle(String s) { title = s; }
 
     @Override
     public void draw() {
@@ -172,6 +175,10 @@ public class UModal extends View implements UAnimator {
                 renderer.drawTile(frames.charAt(3), relx(-1), rely(y), color);
                 renderer.drawTile(frames.charAt(7), relx(cellw), rely(y), color);
             }
+        }
+        if (title != null) {
+            renderer.drawRect(xpos+gw()-5, ypos-(int)(gh()*1.5f+3), gw()*textWidth(title)+8,gh()+6,bgColor);
+            renderer.drawString(xpos+gw(),ypos-(int)(gh()*1.5f), config.getModalFrameColor(), title);
         }
 
     }

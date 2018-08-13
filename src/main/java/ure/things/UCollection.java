@@ -115,6 +115,7 @@ public class UCollection implements Cloneable {
      * Whatever we're in just moved.
      */
     public void notifyMove() {
+        if (things == null) return;
         if (things.isEmpty()) return;
         for (UThing thing : things)
             thing.notifyMove();

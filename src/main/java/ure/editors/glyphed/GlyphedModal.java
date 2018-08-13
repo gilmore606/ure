@@ -74,6 +74,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
         fillIconLists();
         setupDisplayIcons();
         selectIcon(0);
+        setTitle("glyphEd");
     }
 
     void getAllTypes() {

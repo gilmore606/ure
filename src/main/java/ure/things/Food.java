@@ -29,6 +29,10 @@ public class Food extends UThing {
 
     @Override
     public float useFrom(UActor actor) {
+        return eatFrom(actor);
+    }
+
+    public float eatFrom(UActor actor) {
         bitesLeft--;
         if (actor instanceof UPlayer) {
             String message;

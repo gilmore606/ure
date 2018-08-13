@@ -34,11 +34,11 @@ public class UConfig {
     private int screenWidth = 1400;                             // window width in pixels
     private int screenHeight = 1000;                            // window height in pixels
     private String tileFont = "/fonts/Deferral-Square.ttf";    // irrelevant for non-ascii renderer
-    private float tileFontSize = 18;
+    private float tileFontSize = 20;
     private String textFont = "/fonts/UbuntuMono-R.ttf";
     private float textFontSize = 16;
-    private int tileWidth = 18;
-    private int tileHeight = 18;
+    private int tileWidth = 20;
+    private int tileHeight = 20;
     private int textWidth = 10;
     private int textHeight = 16;
 

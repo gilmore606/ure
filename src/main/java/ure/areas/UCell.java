@@ -201,7 +201,7 @@ public class UCell implements UContainer {
         if (actor != null)
             actor.animationTick();
         if (contents.hasThings()) {
-            for (UThing thing : contents.getThings()) {
+            for (UThing thing : (ArrayList<UThing>)contents.getThings().clone()) {
                 thing.animationTick();
             }
         }
