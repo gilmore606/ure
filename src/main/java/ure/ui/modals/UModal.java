@@ -177,8 +177,8 @@ public class UModal extends View implements UAnimator {
             }
         }
         if (title != null) {
-            renderer.drawRect(xpos+gw()-5, ypos-(int)(gh()*1.5f+3), gw()*textWidth(title)+8,gh()+6,bgColor);
-            renderer.drawString(xpos+gw(),ypos-(int)(gh()*1.5f), config.getModalFrameColor(), title);
+            renderer.drawRect(xpos+gw()-5, ypos-(int)(gh()*1.5f+3), gw()*textWidth(title)+8,gh()+6,config.getModalFrameColor());
+            renderer.drawString(xpos+gw(),ypos-(int)(gh()*1.5f), bgColor, title);
         }
 
     }
