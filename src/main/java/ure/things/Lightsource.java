@@ -34,6 +34,8 @@ public class Lightsource extends UThing {
     protected String isOnMsg = "It's on.";
     protected String isOffMsg = "It's off.";
     protected char onglyph = 0;
+    protected int fuel = -1;
+    protected int lastBurnTurn;
 
     protected boolean on;
 
@@ -43,6 +45,16 @@ public class Lightsource extends UThing {
     public void initializeAsTemplate() {
         setOn(false);
         super.initializeAsTemplate();
+    }
+
+    @Override
+    public void initializeAsCloneFrom(UThing template) {
+        lastBurnTurn = commander.turnCounter;
+    }
+
+    public void addFuel(int fuel) {
+        this.fuel += fuel;
+        on();
     }
 
     void makeLight() {
@@ -63,6 +75,8 @@ public class Lightsource extends UThing {
             return false;
         if (getLight() == null)
             makeLight();
+        if (fuel == 0)
+            return false;
         if (isSpawnOn() && !isSwitchable())
             setOn(true);
         return isOn();
@@ -291,13 +305,24 @@ public class Lightsource extends UThing {
     public void setOnglyph(char c) { onglyph = c; }
     public float getSparkrate() { return sparkrate; }
     public void setSparkrate(float r) { sparkrate = r; }
+    public int getFuel() { return fuel; }
+    public void setFuel(int i) { fuel = i; }
 
     @Override
     public void animationTick() {
-        if (random.f() < sparkrate) {
+        if (fuel > 0) {
+            if (isOn())
+                fuel = Math.max(0, fuel - (commander.turnCounter - lastBurnTurn));
+            lastBurnTurn = commander.turnCounter;
+            if (fuel == 0)
+                turnOff();
+        }
+        if (on()) {
+            if (random.f() < sparkrate) {
                 area().addParticle(new ParticleSpark(areaX(), areaY(),
                         UColor.YELLOW, 8 + random.i(10), 0.3f + random.f(0.4f)));
 
+            }
         }
     }
 

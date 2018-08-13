@@ -7,6 +7,8 @@
   "description": "A wooden torch dipped in pitch.",
   "isOnMsg": "It's burning.",
   "isOffMsg": "",
+    "litWhenUnequipped": false,
+    "fuel": 15,
   "onglyphcolor": [255,200,90],
   "lightcolor": [255,235,185],
   "lightrange": 20,
