@@ -182,10 +182,13 @@ public class Lightsource extends UThing {
 
     @Override
     public float useFrom(UActor actor) {
-        if (!isOn())
+        if (!isOn()) {
+            if (!litWhenUnequipped && !equipped)
+                tryEquip(actor);
             turnOn();
-        else
+        } else {
             turnOff();
+        }
         return 0.5f;
     }
 
