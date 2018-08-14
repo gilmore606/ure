@@ -92,7 +92,7 @@ public class UConfig {
     private float volumeAmbient = 1f;
     private float volumeWorld = 1f;
     private float volumeUI = 0.5f;
-    private float musicFadeTime = 2f;                   // seconds to crossfade background music
+    private float musicFadeTime = 2.5f;                   // seconds to crossfade background music
 
     private int volumeFalloffDistance = 25;             // cells away for a sound to attenuate to -infDB
     private String titleMusic = "sounds/ultima_dungeon.ogg";

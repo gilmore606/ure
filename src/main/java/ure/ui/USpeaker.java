@@ -94,7 +94,7 @@ public class USpeaker implements UAnimator, Runnable {
         public Deck(USpeaker s, String id) {
             speaker = s;
             deckID = id;
-            fadePerFrame = config.getMusicFadeTime() / (1000 / config.getAnimFrameMilliseconds());
+            fadePerFrame = 1f / (config.getMusicFadeTime() * (1000 / config.getAnimFrameMilliseconds()));
         }
         public void linkOtherDeck(Deck d) { otherDeck = d; }
 
@@ -143,7 +143,7 @@ public class USpeaker implements UAnimator, Runnable {
             alcSetThreadContext(context);
             IntBuffer b = makePlaySource(0f);
             source = b.get(0);
-            alSourcei(source, AL_DIRECT_CHANNELS_SOFT, AL_TRUE);
+            //alSourcei(source, AL_DIRECT_CHANNELS_SOFT, AL_TRUE);
             buffers = memAllocInt(2);
             alGenBuffers(buffers);
             for (int i=0;i<buffers.limit();i++) {
