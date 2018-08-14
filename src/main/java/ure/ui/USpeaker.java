@@ -1,11 +1,9 @@
 package ure.ui;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import org.apache.commons.io.IOUtils;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.openal.*;
+
 import ure.sys.UConfig;
 import ure.sys.events.PlayerChangedAreaEvent;
 import ure.sys.Injector;
@@ -23,9 +21,13 @@ import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 
+import org.lwjgl.BufferUtils;
+import org.lwjgl.openal.*;
+
+import static org.lwjgl.BufferUtils.createByteBuffer;
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.openal.ALC10.*;
-import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_filename;
+import static org.lwjgl.stb.STBVorbis.*;
 import static org.lwjgl.system.MemoryStack.stackMallocInt;
 import static org.lwjgl.system.MemoryStack.stackPop;
 import static org.lwjgl.system.MemoryStack.stackPush;
@@ -35,12 +37,15 @@ import static org.lwjgl.system.libc.LibCStdlib.free;
  * A singleton to play background music and sound effects
  *
  */
-public class USpeaker implements UAnimator {
+public class USpeaker implements UAnimator, Runnable {
 
     @Inject
     UConfig config;
     @Inject
     EventBus bus;
+
+    Thread playerThread;
+    UCommander commander;
 
     boolean initialized = false;
 
@@ -56,11 +61,12 @@ public class USpeaker implements UAnimator {
     ArrayList<Integer[]> activeSoundsTmp;
 
 
+
     /**
      * A virtual DJ deck for mixing BGM audio
      */
     public class Deck {
-        public String track;
+        public String filename;
         public float gain;
         public int fadeDir;
         public USpeaker speaker;
@@ -103,33 +109,36 @@ public class USpeaker implements UAnimator {
         public void fadeIn(String filename) {
             fadeDir = 1;
             gain = 0f;
-            track = filename;
+            this.filename = filename;
             start();
             otherDeck.fadeOut();
         }
         public void fadeOut() {
-            if (track != null) {
+            if (filename != null) {
                 fadeDir = -1;
             }
         }
         public void start() {
-            System.out.println("SPEAKER: starting playback for bgm '" + track + "' on deck " + deckID);
+            System.out.println("SPEAKER: starting playback for bgm '" + filename + "' on deck " + deckID);
             IntBuffer b = makePlaySource(0f);
             source = b.get(0);
-            b = makePlayBuffer(track);
+            b = makePlayBuffer(filename);
             buffer = b.get(0);
             alSourcei(source, AL_LOOPING, AL_TRUE);
             alSourcei(source, AL_BUFFER, buffer);
             alSourcePlay(source);
         }
         public void stop() {
-            System.out.println("SPEAKER: ending playback for bgm '" + track + "' on deck " + deckID);
+            System.out.println("SPEAKER: ending playback for bgm '" + filename + "' on deck " + deckID);
             alSourceStop(source);
             alDeleteSources(source);
             alDeleteBuffers(buffer);
-            track = null;
+            filename = null;
             gain = 0f;
             fadeDir = 0;
+        }
+        public void update() {
+
         }
     }
 
@@ -223,7 +232,7 @@ public class USpeaker implements UAnimator {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            ByteBuffer data = BufferUtils.createByteBuffer(b.length).put(b);
+            ByteBuffer data = createByteBuffer(b.length).put(b);
             data.flip();
             alBufferData(buffer.get(0), openALFormat, data, (int)format.getSampleRate());
             return buffer;
@@ -242,17 +251,17 @@ public class USpeaker implements UAnimator {
     }
 
     /**
-     * Ask the BGM DJ to fade into a new music track.
+     * Ask the BGM DJ to fade into a new music filename.
      */
     public void playBGM(String filename) {
         if (filename == null) return;
-        if (BGMdeck1.track != null)
-            if (BGMdeck1.track.equals(filename) && (BGMdeck2.track == null)) return;
-        if (BGMdeck2.track != null)
-            if (BGMdeck2.track.equals(filename) && (BGMdeck1.track == null)) return;
-        if (BGMdeck1.track == null)
+        if (BGMdeck1.filename != null)
+            if (BGMdeck1.filename.equals(filename) && (BGMdeck2.filename == null)) return;
+        if (BGMdeck2.filename != null)
+            if (BGMdeck2.filename.equals(filename) && (BGMdeck1.filename == null)) return;
+        if (BGMdeck1.filename == null)
             BGMdeck1.fadeIn(filename);
-        else if (BGMdeck2.track == null)
+        else if (BGMdeck2.filename == null)
             BGMdeck2.fadeIn(filename);
         else
             BGMqueued = filename;
@@ -299,5 +308,28 @@ public class USpeaker implements UAnimator {
         alSourcei(source, AL_BUFFER, buffer);
         alSourcePlay(source);
         activeSounds.add(new Integer[]{source,buffer});
+    }
+
+    public void startThread(UCommander c) {
+        commander = c;
+        if (playerThread == null) {
+            playerThread = new Thread(this);
+            playerThread.start();
+        } else if (!playerThread.isAlive()) {
+            playerThread = new Thread(this);
+            playerThread.start();
+        }
+    }
+
+    public void run() {
+        System.out.println("SPEAKER: background thread starting");
+        while (!commander.isQuitGame()) {
+            BGMdeck1.update();
+            BGMdeck2.update();
+            try {
+                Thread.sleep(33);
+            } catch (Exception e) { e.printStackTrace(); }
+        }
+        System.out.println("SPEAKER: game quit detected, background thread exiting");
     }
 }

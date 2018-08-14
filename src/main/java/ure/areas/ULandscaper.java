@@ -60,7 +60,7 @@ public abstract class ULandscaper {
     protected String type = "";
 
     /**
-     * Room is used by shapers to track and dig rooms.  It represents a room location in a shape.
+     * Room is used by shapers to filename and dig rooms.  It represents a room location in a shape.
      * Walls and doors are outside of this square.
      */
     public class Room {

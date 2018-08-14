@@ -120,6 +120,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         renderer.setKeyListener(this);
         keyBuffer = new LinkedBlockingQueue<GLKey>();
         addAnimator(speaker);
+        speaker.startThread(this);
         modalStack = new Stack<>();
         actorCzar.loadActors();
     }
