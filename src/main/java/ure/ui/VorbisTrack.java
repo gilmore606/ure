@@ -29,10 +29,10 @@ import static org.lwjgl.system.MemoryUtil.NULL;
  *
  */
 public class VorbisTrack implements AutoCloseable {
-    private final ByteBuffer encodedAudio;
+    private ByteBuffer encodedAudio;
     private final long handle;
-    private final int channels;
-    private final int sampleRate;
+    public final int channels;
+    public final int sampleRate;
     final int samplesLength;
     final float samplesSec;
     private final AtomicInteger sampleIndex;
@@ -40,7 +40,7 @@ public class VorbisTrack implements AutoCloseable {
     VorbisTrack(String filePath, AtomicInteger sampleIndex) {
         try {
             encodedAudio = ioResourceToByteBuffer(filePath, 256*1024);
-        } catch (IOException e) { throw new RuntimeException(e); }
+        } catch (IOException e) { e.printStackTrace(); }
 
         try (MemoryStack stack = stackPush()) {
             IntBuffer error = stack.mallocInt(1);
@@ -48,8 +48,10 @@ public class VorbisTrack implements AutoCloseable {
             if (handle == NULL)
                 throw new RuntimeException("Failed to open OGG file.  Error: " + error.get(0));
             STBVorbisInfo info = STBVorbisInfo.mallocStack(stack);
+            stb_vorbis_get_info(handle, info);
             this.channels = info.channels();
             this.sampleRate = info.sample_rate();
+            System.out.println("SPEAKER: vorbis file detected " + Integer.toString(channels) + " channel " + Integer.toString(sampleRate) + " samplerate");
         }
         this.samplesLength = stb_vorbis_stream_length_in_samples(handle);
         this.samplesSec = stb_vorbis_stream_length_in_seconds(handle);
@@ -60,12 +62,22 @@ public class VorbisTrack implements AutoCloseable {
     public void close() {
         stb_vorbis_close(handle);
     }
+
     void progressBy(int samples) {
         sampleIndex.set(sampleIndex.get() + samples);
     }
+
+    void rewind() { seek(0); }
+
+    void seek(int sampleIndex) {
+        stb_vorbis_seek(handle, sampleIndex);
+        setSampleIndex(sampleIndex);
+    }
+
     void setSampleIndex(int sampleIndex) {
         this.sampleIndex.set(sampleIndex);
     }
+
     synchronized int getSamples(ShortBuffer pcm) {
         return stb_vorbis_get_samples_short_interleaved(handle, channels, pcm);
     }
@@ -75,8 +87,10 @@ public class VorbisTrack implements AutoCloseable {
         Path path = Paths.get(resource);
         if (Files.isReadable(path)) {
             try (SeekableByteChannel fc = Files.newByteChannel(path)) {
-                buffer = createByteBuffer((int)fc.size()+1);
-                while (fc.read(buffer) != -1) { ; }
+                buffer = BufferUtils.createByteBuffer((int)fc.size()+1);
+                while (fc.read(buffer) != -1) {
+                    ;
+                }
             }
         } else {
             try (
