@@ -93,7 +93,7 @@ public class USpeaker implements UAnimator, Runnable {
             this.y = 0;
             this.file = terrain.getAmbientsound();
             this.pointcount = 0;
-            this.gain = 0f;
+            this.gain = terrain.getAmbientsoundGain();
             source = makePlaySource(gain);
             buffer = makePlayBuffer("sounds/" + file);
         }
@@ -120,25 +120,25 @@ public class USpeaker implements UAnimator, Runnable {
             return y;
         }
         public void updateState(UPlayer player) {
-            gain = config.getVolumeAmbient();
             if (playing && pointcount == 0)
                 stop();
             else if (!playing && pointcount > 0)
                 start();
             else {
                 alSource3f(source.get(0), AL_POSITION, (float)x, 0f, (float)y);
-                alSourcef(source.get(0), AL_GAIN, gain);
+                alSourcef(source.get(0), AL_GAIN, gain * config.getVolumeAmbient());
             }
         }
         void stop() {
             playing = false;
+            alSourceStop(source.get(0));
         }
         void start() {
             playing = true;
             alSourcei(source.get(0), AL_LOOPING, AL_TRUE);
             alSource3f(source.get(0), AL_POSITION, (float)x, (float)y, 0f);
             alSourcei(source.get(0), AL_BUFFER, buffer.get(0));
-            alSourcef(source.get(0), AL_GAIN, gain);
+            alSourcef(source.get(0), AL_GAIN, gain * config.getVolumeAmbient());
             alSourcePlay(source.get(0));
         }
     }
@@ -412,6 +412,8 @@ public class USpeaker implements UAnimator, Runnable {
 
     @Subscribe
     public void playerChangedArea(PlayerChangedAreaEvent event) {
+        if (commander.player() != null)
+            findTerrainAmbients((UPlayer)commander.player());
         playBGM(event.destArea.getBackgroundMusic());
     }
 
@@ -484,6 +486,12 @@ public class USpeaker implements UAnimator, Runnable {
             findTerrainAmbients((UPlayer)commander.player());
     }
 
+    public void resetAmbients() {
+        for (String name : ambientSounds.keySet()) {
+            ambientSounds.get(name).newFrame();
+            ambientSounds.get(name).updateState(null);
+        }
+    }
     public void findTerrainAmbients(UPlayer player) {
         int px = player.areaX();
         int py = player.areaY();
@@ -496,7 +504,7 @@ public class USpeaker implements UAnimator, Runnable {
             for (int y=-range;y<range;y++) {
                 UTerrain t = area.terrainAt(px+x,py+y);
                 if (t != null) {
-                    if (t.getAmbientsoundRange() > 0) {
+                    if (t.getAmbientsound() != null) {
                         if (!ambientSounds.containsKey(t.getName()))
                             ambientSounds.put(t.getName(), new Ambient(t));
                         ambientSounds.get(t.getName()).addPoint(x, y, range);

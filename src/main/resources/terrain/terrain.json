@@ -114,7 +114,7 @@
       "bonkmsg": "You can't swim, and that water looks cold anyway.",
       "walkmsg": "You splash through waist-deep water.",
       "ambientsound": "ambient_water.wav",
-      "ambientsoundRange": 25
+      "ambientsoundGain": 0.7
     },
   {
     "name": "deep water",
@@ -173,7 +173,9 @@
     "opaque": false,
     "sunvis": 0.5,
     "walkmsg": "The trail slopes down into a dark cave.",
-    "breaklatch": true
+    "breaklatch": true,
+    "ambientsound": "cave_entrance.wav",
+    "ambientsoundGain": 0.9
   },
   {
     "name": "cave exit",

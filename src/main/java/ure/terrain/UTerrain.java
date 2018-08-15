@@ -67,7 +67,7 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     protected float movespeed = 1.0f;
 
     protected String ambientsound;
-    protected int ambientsoundRange;
+    protected float ambientsoundGain;
 
 
     public UTerrain() {
@@ -264,8 +264,8 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
 
     public String getAmbientsound() { return ambientsound; }
     public void setAmbientsound(String s) { ambientsound = s; }
-    public int getAmbientsoundRange() { return ambientsoundRange; }
-    public void setAmbientsoundRange(int i) { ambientsoundRange = i; }
+    public float getAmbientsoundGain() { return ambientsoundGain; }
+    public void setAmbientsoundGain(float f) { ambientsoundGain = f; }
 
     public long getID() { return ID; }
     public void setID(long newID) { ID = newID; }

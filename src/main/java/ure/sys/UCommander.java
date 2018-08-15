@@ -485,6 +485,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         player = null;
         cartographer.setupRegions();
         config.setVisibilityEnable(false);
+        speaker.resetAmbients();
         wipeModals();
         game.setupTitleScreen();
     }
