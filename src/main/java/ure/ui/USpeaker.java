@@ -120,13 +120,13 @@ public class USpeaker implements UAnimator, Runnable {
             return y;
         }
         public void updateState(UPlayer player) {
-            gain = ((float)(player.getHearingrange() - UPath.mdist(0,0,x,y)) / (float)player.getHearingrange());
+            gain = config.getVolumeAmbient();
             if (playing && pointcount == 0)
                 stop();
             else if (!playing && pointcount > 0)
                 start();
             else {
-                alSource3f(source.get(0), AL_POSITION, (float)x, (float)y, 0f);
+                alSource3f(source.get(0), AL_POSITION, (float)x, 0f, (float)y);
                 alSourcef(source.get(0), AL_GAIN, gain);
             }
         }

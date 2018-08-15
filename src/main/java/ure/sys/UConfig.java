@@ -89,7 +89,7 @@ public class UConfig {
 
     private float volumeMaster = 1f;
     private float volumeMusic = 0.2f;
-    private float volumeAmbient = 1f;
+    private float volumeAmbient = 0.5f;
     private float volumeWorld = 1f;
     private float volumeUI = 0.5f;
     private float musicFadeTime = 2.5f;                   // seconds to crossfade background music

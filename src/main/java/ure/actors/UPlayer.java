@@ -45,6 +45,7 @@ public class UPlayer extends UActor {
         }
         bodytype = "humanoid";
         body = commander.actorCzar.getNewBody(bodytype);
+        hearingrange = config.getVolumeFalloffDistance();
     }
 
     @Override
