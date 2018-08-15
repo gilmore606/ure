@@ -4,6 +4,9 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import org.apache.commons.io.IOUtils;
 
+import ure.actors.UPlayer;
+import ure.areas.UArea;
+import ure.math.UPath;
 import ure.sys.UConfig;
 import ure.sys.events.PlayerChangedAreaEvent;
 import ure.sys.Injector;
@@ -20,10 +23,13 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.*;
+import ure.sys.events.TimeTickEvent;
+import ure.terrain.UTerrain;
 
 import static org.lwjgl.BufferUtils.createByteBuffer;
 import static org.lwjgl.openal.AL10.*;
@@ -62,9 +68,80 @@ public class USpeaker implements UAnimator, Runnable {
     Deck BGMdeck2;
     String BGMqueued;
 
+    HashMap<String,Ambient> ambientSounds;
     ArrayList<Integer[]> activeSounds;
     ArrayList<Integer[]> activeSoundsTmp;
 
+
+    /**
+     * Info about an ambient sound we're playing.
+     * TODO: write a better algo than 'nearest cell' for god's sake
+     */
+    public class Ambient {
+        public String terrain;
+        public int x, y;
+        public int pointcount;
+        public String file;
+        boolean playing;
+        float gain;
+        IntBuffer source;
+        IntBuffer buffer;
+
+        public Ambient(UTerrain terrain) {
+            this.terrain = terrain.getName();
+            this.x = 0;
+            this.y = 0;
+            this.file = terrain.getAmbientsound();
+            this.pointcount = 0;
+            this.gain = 0f;
+            source = makePlaySource(gain);
+            buffer = makePlayBuffer("sounds/" + file);
+        }
+        public void newFrame() {
+            pointcount = 0;
+        }
+        public void addPoint(int pointx, int pointy, int range) {
+            if (pointcount == 0) {
+                x = pointx;
+                y = pointy;
+                pointcount++;
+                return;
+            }
+            pointcount++;
+            if (UPath.mdist(0,0,pointx,pointy) < UPath.mdist(0,0,x,y)) {
+                x = pointx;
+                y = pointy;
+            }
+        }
+        public int x() {
+            return x;
+        }
+        public int y() {
+            return y;
+        }
+        public void updateState(UPlayer player) {
+            gain = ((float)(player.getHearingrange() - UPath.mdist(0,0,x,y)) / (float)player.getHearingrange());
+            if (playing && pointcount == 0)
+                stop();
+            else if (!playing && pointcount > 0)
+                start();
+            else {
+                alSource3f(source.get(0), AL_POSITION, (float)x, (float)y, 0f);
+                alSourcef(source.get(0), AL_GAIN, gain);
+            }
+        }
+        void stop() {
+            playing = false;
+        }
+        void start() {
+            playing = true;
+            alSourcei(source.get(0), AL_LOOPING, AL_TRUE);
+            alSource3f(source.get(0), AL_POSITION, (float)x, (float)y, 0f);
+            alSourcei(source.get(0), AL_BUFFER, buffer.get(0));
+            alSourcef(source.get(0), AL_GAIN, gain);
+            alSourcePlay(source.get(0));
+        }
+    }
 
 
     /**
@@ -214,6 +291,7 @@ public class USpeaker implements UAnimator, Runnable {
         BGMdeck1.linkOtherDeck(BGMdeck2);
         BGMdeck2.linkOtherDeck(BGMdeck1);
 
+        ambientSounds = new HashMap<>();
         activeSounds = new ArrayList<>();
         activeSoundsTmp = new ArrayList<>();
     }
@@ -398,5 +476,38 @@ public class USpeaker implements UAnimator, Runnable {
         alcDestroyContext(context);
         alcCloseDevice(device);
         System.out.println("SPEAKER: OpenAL device closed.  Will I dream?");
+    }
+
+    @Subscribe
+    public void hearTimeTick(TimeTickEvent e) {
+        if (commander.player() != null)
+            findTerrainAmbients((UPlayer)commander.player());
+    }
+
+    public void findTerrainAmbients(UPlayer player) {
+        int px = player.areaX();
+        int py = player.areaY();
+        UArea area = player.area();
+        int range = player.getHearingrange();
+        for (String name : ambientSounds.keySet()) {
+            ambientSounds.get(name).newFrame();
+        }
+        for (int x=-range;x<range;x++) {
+            for (int y=-range;y<range;y++) {
+                UTerrain t = area.terrainAt(px+x,py+y);
+                if (t != null) {
+                    if (t.getAmbientsoundRange() > 0) {
+                        if (!ambientSounds.containsKey(t.getName()))
+                            ambientSounds.put(t.getName(), new Ambient(t));
+                        ambientSounds.get(t.getName()).addPoint(x, y, range);
+                    }
+                }
+            }
+        }
+        for (String name : ambientSounds.keySet()) {
+            Ambient a = ambientSounds.get(name);
+            a.updateState(player);
+            System.out.println("SPEAKER: ambient " + name + " at " + Integer.toString(a.x()) + "," + Integer.toString(a.y()));
+        }
     }
 }

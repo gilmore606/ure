@@ -33,6 +33,7 @@ public class UActor extends UThing implements Interactable {
     protected int wakerange = 12;
     protected int sleeprange = 16;
     protected int sightrange = 9;
+    protected int hearingrange = 15;
     protected float actionspeed = 1f;
     protected float movespeed = 1f;
     protected String bodytype = "humanoid";
@@ -405,6 +406,8 @@ public class UActor extends UThing implements Interactable {
     public void setSightrange(int sightrange) {
         this.sightrange = sightrange;
     }
+    public int getHearingrange() { return hearingrange; }
+    public void setHearingrange(int h) { hearingrange = h; }
 
     public int getCameraPinStyle() {
         return cameraPinStyle;

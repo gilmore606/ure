@@ -66,6 +66,9 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     protected float sunvis = 0.0f;
     protected float movespeed = 1.0f;
 
+    protected String ambientsound;
+    protected int ambientsoundRange;
+
 
     public UTerrain() {
         Injector.getAppComponent().inject(this);
@@ -258,6 +261,11 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     public void setMovespeed(float movespeed) {
         this.movespeed = movespeed;
     }
+
+    public String getAmbientsound() { return ambientsound; }
+    public void setAmbientsound(String s) { ambientsound = s; }
+    public int getAmbientsoundRange() { return ambientsoundRange; }
+    public void setAmbientsoundRange(int i) { ambientsoundRange = i; }
 
     public long getID() { return ID; }
     public void setID(long newID) { ID = newID; }

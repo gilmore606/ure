@@ -112,7 +112,9 @@
       "sunvis": 1.0,
       "movespeed": 0.5,
       "bonkmsg": "You can't swim, and that water looks cold anyway.",
-      "walkmsg": "You splash through waist-deep water."
+      "walkmsg": "You splash through waist-deep water.",
+      "ambientsound": "ambient_water.wav",
+      "ambientsoundRange": 25
     },
   {
     "name": "deep water",
