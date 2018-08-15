@@ -198,14 +198,14 @@ public class UModal extends View implements UAnimator {
     }
 
     public void dismiss() {
-        speaker.playUIsound(config.soundUIselectClose, 1f);
+        speaker.playUIsound(config.soundUIselect, 1f);
         dismissed = true;
     }
 
     public void escape() {
         dismissed = true;
         dismissFrameEnd = 0;
-        speaker.playUIsound(config.soundUIcancelClose, 1f);
+        speaker.playUIsound(config.soundUIcancel, 1f);
     }
 
     public void addText(String name, String text, int row, int col) {

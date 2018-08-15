@@ -100,8 +100,8 @@ public class UConfig {
     public String soundUImodalOpen = "sounds/echo_alert_rev.ogg";
     public String soundUIcursorUp = "sounds/mouse_over3.wav";
     public String soundUIcursorDown = "sounds/mouse_over3.wav";
-    public String soundUIselectClose = "sounds/melodic2_click.ogg";
-    public String soundUIcancelClose = "sounds/echo_alert.ogg";
+    public String soundUIselect = "sounds/melodic2_click.ogg";
+    public String soundUIcancel = "sounds/echo_alert.ogg";
     public String soundUIkeystroke = "sounds/mouse_over3.ogg";
     public String soundUIbumpLimit = "sounds/melodic1_click.ogg";
 

@@ -487,6 +487,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         config.setVisibilityEnable(false);
         speaker.resetAmbients();
         wipeModals();
+        speaker.playUIsound(config.soundUIcancel, 1f);
         game.setupTitleScreen();
     }
 
@@ -593,6 +594,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     void attachModal(UModal newmodal) {
         if (modal != null) {
+            speaker.playUIsound(config.soundUIselect, 1f);
             modalStack.push(modal);
             modal.addChild(newmodal);
             modal = newmodal;
