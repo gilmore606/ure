@@ -53,6 +53,9 @@ public class UModal extends View implements UAnimator {
     public boolean dismissed;
     int dismissFrames = 0;
     int dismissFrameEnd = 0;
+    int zoomFrame = 0;
+    int zoomDir = 0;
+    float zoom = 1f;
     String title;
 
     class TextFrag {
@@ -82,7 +85,11 @@ public class UModal extends View implements UAnimator {
     }
 
     public void onOpen() {
-
+        if (!isChild()) {
+            zoomFrame = 0;
+            zoom = 0.2f;
+            zoomDir = 1;
+        }
     }
 
     public int gw() { return config.getTileWidth(); }
@@ -119,7 +126,8 @@ public class UModal extends View implements UAnimator {
         if (cellw > 0 && cellh > 0) {
             drawFrame();
         }
-        drawContent();
+        if (zoom >= 1f)
+            drawContent();
     }
 
     public void drawContent() {
@@ -151,35 +159,39 @@ public class UModal extends View implements UAnimator {
     }
 
     public void drawFrame() {
+        int _cellw = (int)(zoom * (float)cellw);
+        int _cellh = (int)(zoom * (float)cellh);
+        int _xpos = xpos + (int)(0.5f * (cellw - _cellw)*gw());
+        int _ypos = ypos + (int)(0.5f * (cellh - _cellh)*gh());
         if (config.getModalShadowStyle() == UConfig.SHADOW_BLOCK) {
             UColor shadowColor = config.getModalShadowColor();
-            renderer.drawRect(xpos, ypos, relx(cellw+2)-xpos, rely(cellh+2)-ypos, shadowColor);
+            renderer.drawRect(_xpos, _ypos, relx(_cellw+2)-_xpos, rely(_cellh+2)-_ypos, shadowColor);
         }
         UColor color = config.getModalFrameColor();
         int border = config.getModalFrameLine();
         if (border > 0)
-            renderer.drawRectBorder(xpos - gw(),ypos - gh(),relx(cellw+2)-xpos,rely(cellh+2)-ypos,border, bgColor, color);
+            renderer.drawRectBorder(_xpos - gw(),_ypos - gh(),relx(_cellw+2)-_xpos,rely(_cellh+2)-_ypos,border, bgColor, color);
         else
-            renderer.drawRect(xpos - gw(), ypos - gh(),  relx(cellw+2) - xpos,rely(cellh+2) - ypos, bgColor);
+            renderer.drawRect(_xpos - gw(), _ypos - gh(),  relx(_cellw+2) - _xpos,rely(_cellh+2) - _ypos, bgColor);
         String frames = config.getUiFrameGlyphs();
 
         if (frames != null) {
             renderer.drawTile(frames.charAt(0), relx(-1), rely(-1), color);
-            renderer.drawTile(frames.charAt(2), relx(cellw), rely(-1), color);
-            renderer.drawTile(frames.charAt(4), relx(cellw), rely(cellh), color);
-            renderer.drawTile(frames.charAt(6), relx(-1), rely(cellh), color);
-            for (int x = 0;x < cellw;x++) {
+            renderer.drawTile(frames.charAt(2), relx(_cellw), rely(-1), color);
+            renderer.drawTile(frames.charAt(4), relx(_cellw), rely(_cellh), color);
+            renderer.drawTile(frames.charAt(6), relx(-1), rely(_cellh), color);
+            for (int x = 0;x < _cellw;x++) {
                 renderer.drawTile(frames.charAt(1), relx(x), rely(-1), color);
-                renderer.drawTile(frames.charAt(5), relx(x), rely(cellh), color);
+                renderer.drawTile(frames.charAt(5), relx(x), rely(_cellh), color);
             }
-            for (int y = 0;y < cellh;y++) {
+            for (int y = 0;y < _cellh;y++) {
                 renderer.drawTile(frames.charAt(3), relx(-1), rely(y), color);
-                renderer.drawTile(frames.charAt(7), relx(cellw), rely(y), color);
+                renderer.drawTile(frames.charAt(7), relx(_cellw), rely(y), color);
             }
         }
-        if (title != null) {
-            renderer.drawRect(xpos+gw()-5, ypos-(int)(gh()*1.5f+3), gw()*textWidth(title)+8,gh()+6,config.getModalFrameColor());
-            renderer.drawString(xpos+gw(),ypos-(int)(gh()*1.5f), bgColor, title);
+        if (title != null && zoom >= 1f) {
+            renderer.drawRect(_xpos+gw()-5, _ypos-(int)(gh()*1.5f+3), gw()*textWidth(title)+8,gh()+6,config.getModalFrameColor());
+            renderer.drawString(_xpos+gw(),_ypos-(int)(gh()*1.5f), bgColor, title);
         }
 
     }
@@ -227,6 +239,14 @@ public class UModal extends View implements UAnimator {
             }
         } else {
             updateMouse();
+            if (zoomDir != 0) {
+                zoomFrame++;
+                zoom += (0.8f / config.getModalZoomFrames());
+                if (zoomFrame == config.getModalZoomFrames()) {
+                    zoomDir = 0;
+                    zoom = 1f;
+                }
+            }
         }
     }
 
@@ -343,5 +363,9 @@ public class UModal extends View implements UAnimator {
         }
         speaker.playUI(sound);
         return cursor;
+    }
+
+    public boolean isChild() {
+        return commander.hasChildModal();
     }
 }

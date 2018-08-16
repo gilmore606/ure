@@ -482,8 +482,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         setPlayer(player);
         config.setVisibilityEnable(true);
         player.moveToCell(area, player.getSaveAreaX(), player.getSaveAreaY());
-        postPlayerLevelportEvent(null);
         player.startActing();
+        postPlayerLevelportEvent(null);
     }
 
     public void quitGame() {
@@ -642,6 +642,14 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     public boolean hasModal() {
         if (modal == null)
+            return false;
+        return true;
+    }
+
+    public boolean hasChildModal() {
+        if (modalStack == null)
+            return false;
+        if (modalStack.empty())
             return false;
         return true;
     }

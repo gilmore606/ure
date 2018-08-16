@@ -48,6 +48,7 @@ public class UConfig {
     private int modalFrameLine = 3;                             // thickness of pixel line around modals
     private int modalShadowStyle = UConfig.SHADOW_BLOCK;        // drop shadow style for modal popups
     private int modalPosition = UConfig.POS_CAMERA_CENTER;      // position of modal popups
+    private int modalZoomFrames = 5;                           // frames of zoom in/out animation
     private boolean wrapSelect = true;                          // wrap around when scrolling through selections
     private int cursorBlinkSpeed = 20;
 
@@ -317,10 +318,11 @@ public class UConfig {
     public int getModalPosition() {
         return modalPosition;
     }
-
     public void setModalPosition(int modalPosition) {
         this.modalPosition = modalPosition;
     }
+    public int getModalZoomFrames() { return modalZoomFrames; }
+    public void setModalZoomFrames(int i) { modalZoomFrames = i; }
 
     public boolean isWrapSelect() { return wrapSelect; }
     public void setWrapSelect(boolean wrap) { wrapSelect = wrap; }
