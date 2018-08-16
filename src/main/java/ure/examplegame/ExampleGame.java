@@ -164,19 +164,12 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
             cartographer.startLoader();
             area = cartographer.getArea(player.getSaveAreaLabel());
         }
-        commander.setPlayer(player);
-        System.out.println("Un-hiding interface panels");
+        commander.startGame(player, area);
         statusPanel.unHide();
         lensPanel.unHide();
         scrollPanel.unHide();
         actorPanel.unHide();
-
-
-        commander.config.setVisibilityEnable(true);
         player.attachCamera(camera, commander.config.getCameraPinStyle());
-        player.moveToCell(area, player.getSaveAreaX(), player.getSaveAreaY());
-        commander.postPlayerLevelportEvent(null);
-        player.startActing();
     }
 
     public UPlayer makeNewPlayer(String playername) {

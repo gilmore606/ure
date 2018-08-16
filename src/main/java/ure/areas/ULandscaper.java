@@ -682,7 +682,7 @@ public abstract class ULandscaper {
         drawRect(area, wallt, x, y, (x+w)-1, (y+h)-1);
     }
 
-    public void buildComplex(UArea area, int x1, int y1, int x2, int y2, String floort, String wallt, String[] drawoverts, int roomsizeMin, int roomsizeMax, float hallChance, int hallwidth, int roomsmax, int minroomarea) {
+    public void buildComplex(UArea area, int x1, int y1, int x2, int y2, String floort, String wallt, String[] drawoverts, int roomsizeMin, int roomsizeMax, float hallChance, int hallwidth, int roomsmax, int minroomarea, ArrayList<Room> roomsReturn) {
         ArrayList<int[]> rooms = new ArrayList<int[]>();
         boolean addExteriorDoors = true;
         boolean addExteriorWindows = true;
@@ -692,6 +692,7 @@ public abstract class ULandscaper {
         int firsty = y1 + (y2-y1)/2;
         buildRoom(area, firstx,firsty,firstw,firsth, floort, wallt);
         rooms.add(new int[]{firstx,firsty,firstw,firsth});
+        roomsReturn.add(new Room(firstx,firsty,firstw,firsth));
         boolean done = false;
         int fails = 0;
         while (!done && (fails < rooms.size()*6) && (rooms.size() < roomsmax)) {
@@ -781,6 +782,7 @@ public abstract class ULandscaper {
                 }
                 buildRoom(area, newroom[0],newroom[1],newroom[2],newroom[3],floort,wallt);
                 rooms.add(newroom);
+                roomsReturn.add(new Room(newroom[0],newroom[1],newroom[2],newroom[3]));
                 int doorstyle = rand(2);
                 if (doorstyle == 0) {
                     int mid = doormin;
@@ -830,6 +832,12 @@ public abstract class ULandscaper {
         int h = room[3];
         if (randf() < 0.2f) {
             fillRect(area, "carvings", x1+2,y1+2,x1+w-3,y1+h-3);
+        }
+        if (randf() < 0.6f) {
+            ULight light = new ULight(UColor.WHITE, 20, 20);
+            //light.setFlicker(ULight.FLICKER_FRITZ, 1f, 1f, 0);
+            light.makeAmbient(w-2,h-2);
+            light.moveTo(area,x1+1,y1+1);
         }
     }
 

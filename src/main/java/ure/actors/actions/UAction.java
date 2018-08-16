@@ -1,8 +1,10 @@
 package ure.actors.actions;
 
+import ure.math.URandom;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actors.UActor;
+import ure.ui.USpeaker;
 
 import javax.inject.Inject;
 
@@ -20,8 +22,14 @@ public abstract class UAction {
 
     @Inject
     UCommander commander;
+    @Inject
+    URandom random;
+    @Inject
+    USpeaker speaker;
 
     public static String id = "ACTION";
+
+    public String sounds[];
 
     public UActor actor;
 
@@ -49,6 +57,9 @@ public abstract class UAction {
      */
     public float doNow() {
         doMe();
+        if (sounds != null) {
+            speaker.play(random.member(sounds), 1f, actor.areaX() - commander.player().areaX(), actor.areaY() - commander.player().areaY(), true);
+        }
         return timeCost();
     }
 

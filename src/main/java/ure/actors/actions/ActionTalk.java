@@ -10,8 +10,9 @@ public class ActionTalk extends UAction {
     String text;
 
     public ActionTalk(UActor theactor, String thetext) {
-        actor = theactor;
+        super(theactor);
         text = thetext;
+        sounds = new String[]{"sounds/talking.wav"};
     }
 
     @Override

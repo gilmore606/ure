@@ -475,6 +475,15 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
     }
 
+    public void startGame(UPlayer player, UArea area) {
+        speaker.playUIsound("sounds/game_start.wav", 1f);
+        setPlayer(player);
+        config.setVisibilityEnable(true);
+        player.moveToCell(area, player.getSaveAreaX(), player.getSaveAreaY());
+        postPlayerLevelportEvent(null);
+        player.startActing();
+    }
+
     public void quitGame() {
         quitGame = true;
     }

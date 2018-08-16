@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.areas.UArea;
 import ure.math.UColor;
 import ure.math.UPath;
+import ure.math.URandom;
+import ure.sys.Injector;
 
+import javax.inject.Inject;
 import java.lang.Math;
 
 /**
@@ -13,6 +16,11 @@ import java.lang.Math;
  */
 
 public class ULight {
+
+    @Inject
+    @JsonIgnore
+    URandom random;
+
     public static final int POINT = 0;
     public static final int AMBIENT = 1;
 
@@ -38,15 +46,19 @@ public class ULight {
     public int type = 0;
     public int width,height;
 
-    public ULight() {}
+    public ULight() {
+        Injector.getAppComponent().inject(this);
+    }
 
     public ULight(int[] thecolor, int therange, int thefalloff) {
+        Injector.getAppComponent().inject(this);
         type = POINT;
         setColor(new UColor(thecolor[0],thecolor[1],thecolor[2]));
         setRange(therange);
         setFalloff(thefalloff);
     }
     public ULight(UColor thecolor, int therange, int thefalloff) {
+        Injector.getAppComponent().inject(this);
         type = POINT;
         setColor(new UColor(thecolor.fR(), thecolor.fG(), thecolor.fB(), thecolor.fA()));
         setRange(therange);
@@ -150,6 +162,8 @@ public class ULight {
         return i;
     }
     float intensityFlickerFritz(int time) {
+        if (random.f() < 0.02f)
+            return 1f;
         return 0f;
     }
     float intensityFlickerBlink(int time) {

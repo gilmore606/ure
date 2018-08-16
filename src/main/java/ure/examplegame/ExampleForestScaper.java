@@ -2,6 +2,8 @@ package ure.examplegame;
 
 import ure.areas.*;
 
+import java.util.ArrayList;
+
 public class ExampleForestScaper extends ULandscaper {
 
     public static final String TYPE = "forestscaper";
@@ -94,8 +96,9 @@ public class ExampleForestScaper extends ULandscaper {
             int ruinw = 20+rand(20); int ruinh = 20+rand(20);
             UCell ruinloc = findAreaWithout(area,1,1,area.xsize-ruinw,area.ysize-ruinh,ruinw-1,ruinh-1, new String[]{"rock"});
             if (ruinloc != null) {
+                ArrayList<Room> rooms = new ArrayList<>();
                 buildComplex(area, ruinloc.x, ruinloc.y, ruinloc.x + ruinw, ruinloc.y + ruinh, "floor", "wall",
-                        new String[]{"tree","sapling","grass","water"}, 5, 9+rand(5),0.3f,3,4+rand(30),8+rand(6));
+                        new String[]{"tree","sapling","grass","water"}, 5, 9+rand(5),0.3f,3,4+rand(30),8+rand(6), rooms);
                 if (i < basements) {
                     UCell doorcell = randomCell(area, "floor", ruinloc.x, ruinloc.y, ruinloc.x + ruinw, ruinloc.y + ruinh);
                     if (doorcell != null) {

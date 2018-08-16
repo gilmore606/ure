@@ -19,6 +19,7 @@ import ure.ui.Icons.Icon;
 import ure.ui.Icons.UIconCzar;
 import ure.ui.RexFile;
 import ure.ui.UCamera;
+import ure.ui.ULight;
 import ure.ui.USpeaker;
 import ure.ui.panels.ULensPanel;
 import ure.ui.panels.UPanel;
@@ -73,4 +74,5 @@ public interface AppComponent {
     void inject(RexFile rexfile);
     void inject(Shape shape);
     void inject(SpawnItem item);
+    void inject(ULight lit);
 }

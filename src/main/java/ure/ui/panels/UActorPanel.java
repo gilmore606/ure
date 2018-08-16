@@ -24,12 +24,14 @@ public class UActorPanel extends UPanel {
 
     public void updateActors(UPlayer player) {
         actors.clear();
-        for (UActor actor : player.area().getActors()) {
-            if ((actor != player) && player.canSee(actor)) {
-                actors.add(actor);
+        if (!hidden) {
+            for (UActor actor : player.area().getActors()) {
+                if ((actor != player) && player.canSee(actor)) {
+                    actors.add(actor);
+                }
             }
-        }
         sortActors(player);
+        }
     }
 
     public void sortActors(UPlayer player) {

@@ -24,4 +24,7 @@ public class URandom extends Random {
     public int member(int[] list) { return list[i(list.length)]; }
 
     public float member(float[] list) { return list[i(list.length)]; }
+
+    public String member(String[] list) { return list[i(list.length)]; }
+
 }
