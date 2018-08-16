@@ -3,6 +3,7 @@ package ure.sys;
 import ure.areas.UArea;
 import ure.math.UColor;
 import ure.ui.UCamera;
+import ure.ui.sounds.Sound;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,13 +98,14 @@ public class UConfig {
     private int volumeFalloffDistance = 25;             // cells away for a sound to attenuate to -infDB
     private String titleMusic = "sounds/ultima_dungeon.ogg";
 
-    public String soundUImodalOpen = "sounds/echo_alert_rev.ogg";
+    public String soundUImodalOpen ="sounds/echo_alert_rev.ogg";
     public String soundUIcursorUp = "sounds/mouse_over3.wav";
     public String soundUIcursorDown = "sounds/mouse_over3.wav";
     public String soundUIselect = "sounds/melodic2_click.ogg";
     public String soundUIcancel = "sounds/echo_alert.ogg";
     public String soundUIkeystroke = "sounds/mouse_over3.ogg";
     public String soundUIbumpLimit = "sounds/melodic1_click.ogg";
+    public Sound soundModalOpen, soundCursorUp, soundCursorDown, soundSelect, soundCancel, soundKeystroke, soundBumpLimit;
 
     // Game functionality
 
@@ -138,6 +140,19 @@ public class UConfig {
         AddSunLerp(20*60, 0.9f, 0.4f, 0.4f, "");
         AddSunLerp(21*60, 0.4f, 0.3f, 0.4f, "The sun sets.");
         AddSunLerp(24*60, 0.1f, 0.1f, 0.3f, "");
+    }
+
+    /**
+     * Set up things we need to set up after singleton injection is done.
+     */
+    public void initialize() {
+        soundModalOpen = new Sound(soundUImodalOpen);
+        soundCursorUp = new Sound(soundUIcursorUp);
+        soundCursorDown = new Sound(soundUIcursorDown);
+        soundSelect = new Sound(soundUIselect);
+        soundCancel = new Sound(soundUIcancel);
+        soundKeystroke = new Sound(soundUIkeystroke);
+        soundBumpLimit = new Sound(soundUIbumpLimit);
     }
 
     /**

@@ -9,7 +9,8 @@ import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
 import ure.ui.Icons.Icon;
 import ure.ui.Icons.UIconCzar;
-import ure.ui.USpeaker;
+import ure.ui.sounds.Sound;
+import ure.ui.sounds.USpeaker;
 import ure.ui.View;
 
 import javax.inject.Inject;
@@ -198,14 +199,14 @@ public class UModal extends View implements UAnimator {
     }
 
     public void dismiss() {
-        speaker.playUIsound(config.soundUIselect, 1f);
+        speaker.playUI(config.soundSelect);
         dismissed = true;
     }
 
     public void escape() {
         dismissed = true;
         dismissFrameEnd = 0;
-        speaker.playUIsound(config.soundUIcancel, 1f);
+        speaker.playUI(config.soundCancel);
     }
 
     public void addText(String name, String text, int row, int col) {
@@ -243,6 +244,10 @@ public class UModal extends View implements UAnimator {
             return selection;
         if (mousex < xmin || mousey >= xmax)
             return selection;
+        if (mousesel < selection)
+            speaker.playUI(config.soundCursorUp);
+        if (mousesel > selection)
+            speaker.playUI(config.soundCursorDown);
         return mousesel;
     }
     public void mouseClick() {
@@ -328,15 +333,15 @@ public class UModal extends View implements UAnimator {
                 cursor = total - 1;
             }
         }
-        String sound;
+        Sound sound;
         if (cursor > oldcursor) {
-            sound = config.soundUIcursorDown;
+            sound = config.soundCursorDown;
         } else if (cursor < oldcursor) {
-            sound = config.soundUIcursorUp;
+            sound = config.soundCursorUp;
         } else {
-            sound = config.soundUIbumpLimit;
+            sound = config.soundBumpLimit;
         }
-        speaker.playUIsound(sound, 0.5f);
+        speaker.playUI(sound);
         return cursor;
     }
 }

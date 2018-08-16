@@ -80,16 +80,16 @@ public class UModalGetString extends UModal {
                     input = "";
                 else
                     input = input.substring(0, input.length() - 1);
-                speaker.playUIsound(config.soundUIkeystroke, 1f);
+                speaker.playUI(config.soundKeystroke);
             } else
-                speaker.playUIsound(config.soundUIbumpLimit, 1f);
+                speaker.playUI(config.soundBumpLimit);
         } else if (k.k == GLFW_KEY_ENTER) {
             sendInput();
         } else {
             String typed = k.typed();
             if (typed != null) {
                 input = input + typed;
-                speaker.playUIsound(config.soundUIkeystroke, 1f);
+                speaker.playUI(config.soundKeystroke);
             }
         }
     }

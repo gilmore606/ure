@@ -13,17 +13,16 @@ import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.UConfig;
 import ure.ui.Icons.Icon;
 import ure.ui.Icons.UIconCzar;
 import ure.ui.UCamera;
+import ure.ui.sounds.USpeaker;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Random;
 
 /**
  * Created by gilmore on 6/20/2018.
@@ -53,6 +52,9 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     @Inject
     @JsonIgnore
     protected EventBus bus;
+    @Inject
+    @JsonIgnore
+    protected USpeaker speaker;
 
     protected String name;
     protected long ID;

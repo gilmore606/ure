@@ -20,7 +20,8 @@ import ure.ui.Icons.UIconCzar;
 import ure.ui.RexFile;
 import ure.ui.UCamera;
 import ure.ui.ULight;
-import ure.ui.USpeaker;
+import ure.ui.sounds.Sound;
+import ure.ui.sounds.USpeaker;
 import ure.ui.panels.ULensPanel;
 import ure.ui.panels.UPanel;
 import ure.ui.panels.UStatusPanel;
@@ -75,4 +76,5 @@ public interface AppComponent {
     void inject(Shape shape);
     void inject(SpawnItem item);
     void inject(ULight lit);
+    void inject(Sound snd);
 }

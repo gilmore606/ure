@@ -4,7 +4,8 @@ import ure.math.URandom;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actors.UActor;
-import ure.ui.USpeaker;
+import ure.ui.sounds.Sound;
+import ure.ui.sounds.USpeaker;
 
 import javax.inject.Inject;
 
@@ -30,9 +31,11 @@ public abstract class UAction {
     public static String id = "ACTION";
 
     public String sounds[];
+    public float soundgain;
 
     public UActor actor;
 
+    Sound sound;
     float cost = 1.0f;
     boolean shouldBroadcastEvent = true;
 
@@ -45,6 +48,8 @@ public abstract class UAction {
     public UAction(UActor theactor) {
         Injector.getAppComponent().inject(this);
         actor = theactor;
+        if (sounds != null)
+            sound = new Sound(sounds, (soundgain > 0f) ? soundgain : 1f);
     }
 
     /**
@@ -57,9 +62,8 @@ public abstract class UAction {
      */
     public float doNow() {
         doMe();
-        if (sounds != null) {
-            speaker.play(random.member(sounds), 1f, actor.areaX() - commander.player().areaX(), actor.areaY() - commander.player().areaY(), true);
-        }
+        if (sound != null)
+            speaker.playWorld(sound, actor.areaX(), actor.areaY());
         return timeCost();
     }
 

@@ -1,4 +1,4 @@
-package ure.ui;
+package ure.ui.sounds;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBVorbisInfo;

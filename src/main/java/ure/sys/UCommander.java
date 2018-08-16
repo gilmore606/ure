@@ -28,7 +28,8 @@ import ure.ui.UCamera;
 import ure.ui.modals.*;
 import ure.ui.panels.UScrollPanel;
 import ure.ui.panels.UStatusPanel;
-import ure.ui.USpeaker;
+import ure.ui.sounds.Sound;
+import ure.ui.sounds.USpeaker;
 import ure.editors.vaulted.VaultedArea;
 import ure.editors.vaulted.VaultedModal;
 
@@ -123,6 +124,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         speaker.startThread(this);
         modalStack = new Stack<>();
         actorCzar.loadActors();
+        config.initialize();
     }
 
     public long generateNewID(Entity entity) {
@@ -351,7 +353,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      * @param modal
      */
     public void showModal(UModal modal) {
-        speaker.playUIsound(config.soundUImodalOpen, 1f);
+        speaker.playUI(config.soundModalOpen);
         attachModal(modal);
         modal.onOpen();
     }
@@ -476,7 +478,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public void startGame(UPlayer player, UArea area) {
-        speaker.playUIsound("sounds/game_start.wav", 1f);
+        speaker.playUI(new Sound("sounds/game_start.wav"));
         setPlayer(player);
         config.setVisibilityEnable(true);
         player.moveToCell(area, player.getSaveAreaX(), player.getSaveAreaY());
@@ -496,7 +498,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         config.setVisibilityEnable(false);
         speaker.resetAmbients();
         wipeModals();
-        speaker.playUIsound(config.soundUIcancel, 1f);
+        speaker.playUI(config.soundCancel);
         game.setupTitleScreen();
     }
 
@@ -603,7 +605,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     void attachModal(UModal newmodal) {
         if (modal != null) {
-            speaker.playUIsound(config.soundUIselect, 1f);
+            speaker.playUI(config.soundSelect);
             modalStack.push(modal);
             modal.addChild(newmodal);
             modal = newmodal;

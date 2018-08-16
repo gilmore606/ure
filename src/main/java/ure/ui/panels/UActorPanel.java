@@ -73,7 +73,8 @@ public class UActorPanel extends UPanel {
 
     @Subscribe
     public void hearPlayerChangedArea(PlayerChangedAreaEvent event) {
-        updateActors((UPlayer)commander.player());
+        if (!hidden)
+            updateActors((UPlayer)commander.player());
     }
 
     @Subscribe
