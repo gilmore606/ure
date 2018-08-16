@@ -106,8 +106,6 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
     }
 
     public void startUp()  {
-        //renderer = new URendererOGL();
-        //renderer.initialize();
 
         cartographer = new ExampleCartographer();
 
@@ -156,9 +154,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
             cartographer.startLoader();
             area = cartographer.makeStartArea();
             UCell startcell = area.randomOpenCell(player);
-            player.setSaveAreaLabel(area.getLabel());
-            player.setSaveAreaX(startcell.x);
-            player.setSaveAreaY(startcell.y);
+            player.setSaveLocation(area, startcell.x, startcell.y);
         } else {
             System.out.println("Loading existing player into " + player.getSaveAreaLabel());
             cartographer.startLoader();
@@ -169,7 +165,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
         lensPanel.unHide();
         scrollPanel.unHide();
         actorPanel.unHide();
-        player.attachCamera(camera, commander.config.getCameraPinStyle());
+        player.attachCamera(camera, config.getCameraPinStyle());
     }
 
     public UPlayer makeNewPlayer(String playername) {

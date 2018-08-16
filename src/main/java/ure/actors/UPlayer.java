@@ -118,6 +118,11 @@ public class UPlayer extends UActor {
         saveAreaY = areaY();
         saveTurn = commander.getTurn();
     }
+    public void setSaveLocation(UArea area, int x, int y) {
+        saveAreaLabel = area.getLabel();
+        saveAreaX = x;
+        saveAreaY = y;
+    }
 
     public void setSaveAreaLabel(String l) { saveAreaLabel = l; }
     public String getSaveAreaLabel() { return saveAreaLabel; }
