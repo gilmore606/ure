@@ -87,7 +87,7 @@ public class UModal extends View implements UAnimator {
     public void onOpen() {
         if (!isChild()) {
             zoomFrame = 0;
-            zoom = 0.2f;
+            zoom = 0.5f;
             zoomDir = 1;
         }
     }
@@ -161,8 +161,8 @@ public class UModal extends View implements UAnimator {
     public void drawFrame() {
         int _cellw = (int)(zoom * (float)cellw);
         int _cellh = (int)(zoom * (float)cellh);
-        int _xpos = xpos + (int)(0.5f * (cellw - _cellw)*gw());
-        int _ypos = ypos + (int)(0.5f * (cellh - _cellh)*gh());
+        int _xpos = xpos + 2 * (int)(0.5f * (cellw - _cellw)*gw());
+        int _ypos = ypos + 2 * (int)(0.5f * (cellh - _cellh)*gh());
         if (config.getModalShadowStyle() == UConfig.SHADOW_BLOCK) {
             UColor shadowColor = config.getModalShadowColor();
             renderer.drawRect(_xpos, _ypos, relx(_cellw+2)-_xpos, rely(_cellh+2)-_ypos, shadowColor);
@@ -241,7 +241,7 @@ public class UModal extends View implements UAnimator {
             updateMouse();
             if (zoomDir != 0) {
                 zoomFrame++;
-                zoom += (0.8f / config.getModalZoomFrames());
+                zoom += (0.5f / config.getModalZoomFrames());
                 if (zoomFrame == config.getModalZoomFrames()) {
                     zoomDir = 0;
                     zoom = 1f;

@@ -48,9 +48,9 @@ public class UConfig {
     private int modalFrameLine = 3;                             // thickness of pixel line around modals
     private int modalShadowStyle = UConfig.SHADOW_BLOCK;        // drop shadow style for modal popups
     private int modalPosition = UConfig.POS_CAMERA_CENTER;      // position of modal popups
-    private int modalZoomFrames = 5;                           // frames of zoom in/out animation
+    private int modalZoomFrames = 4;                           // frames of zoom in/out animation
     private boolean wrapSelect = true;                          // wrap around when scrolling through selections
-    private int cursorBlinkSpeed = 20;
+    private int cursorBlinkSpeed = 15;
 
     private UColor windowBgColor = UColor.BLACK;                          // bgColor of game window
     private UColor cameraBgColor = UColor.BLACK;                          // bgColor of camera (for unseen territory)
@@ -96,7 +96,7 @@ public class UConfig {
     private float volumeUI = 0.5f;
     private float musicFadeTime = 2.5f;                   // seconds to crossfade background music
 
-    private int volumeFalloffDistance = 25;             // cells away for a sound to attenuate to -infDB
+    private int volumeFalloffDistance = 40;             // cells away for a sound to attenuate to -infDB
     private String titleMusic = "sounds/ultima_dungeon.ogg";
 
     public String soundUImodalOpen ="sounds/echo_alert_rev.ogg";
