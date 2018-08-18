@@ -1,6 +1,8 @@
 package ure.examplegame;
 
 import ure.areas.*;
+import ure.terrain.Stairs;
+import ure.terrain.UTerrain;
 
 import java.util.ArrayList;
 
@@ -14,13 +16,44 @@ public class ExampleForestScaper extends ULandscaper {
 
     @Override
     public void buildArea(UArea area, int level, String[] tags) {
+        fillRect(area, "rock", 0, 0, area.xsize-1, area.ysize-1);
+        Shape space = new Shape(area.xsize,area.ysize);
+        Room room = new Room(40,40,10,10);
+        room.print(space);
+        for (Face face : room.faces()) {
+            Room newroom = new Room(random.i(10) + 6, random.i(10) + 6);
+            if (face.addRoom(newroom, space) != null)
+                newroom.print(space);
+            face.punchDoors(space);
+            for (Face f2 : newroom.faces()) {
+                Room room2 = new Room(random.i(5)+5,random.i(5)+5);
+                if (f2.addRoom(room2, space) != null) {
+                           room2.print(space);
+                }
+                f2.punchDoors(space);
+            }
+        }
+        space.writeTerrain(area, "floor", 0, 0);
+        area.setTerrain(42,42,"cave entrance");
+        UTerrain t = area.terrainAt(42,42);
+        if (t instanceof Stairs)
+            ((Stairs)(t)).setLabel("forest " + Integer.toString(level+1));
+    }
+
+    public void buildAreaWhoops(UArea area, int level, String[] tags) {
 
         fillRect(area, "tree", 0, 0, area.xsize-1, area.ysize-1);
+
+        boolean addTown = true;
 
         // Dig a network of big grass spaces.
         Shape grass = shapeCaves(area.xsize-4, area.ysize-4, 0.38f, 4, 2, 3);
         grass.grow(1).writeTerrain(area, "grass", 1, 1);
 
+        // Clear a space for the town.
+        if (addTown) {
+            fillRect(area, "grass", (area.xsize/3), (area.ysize/3), (area.xsize/3)*2, (area.ysize/3)*2);
+        }
         // Add some holes in the tree clumps, some random lone trees and saplings, and a fringe of saplings
         grass.copy().invert().edges().writeTerrain(area, "sapling", 1 ,1, 0.5f);
         grass.writeTerrain(area, "tree", 1 ,1, 0.03f);
@@ -69,6 +102,7 @@ public class ExampleForestScaper extends ULandscaper {
         Shape banks = rivermask.copy().grow(1).edges().maskWith(lakemask, Shape.MASK_NOT);
         banks.writeTerrain(area, "sand", -2, -2);
         banks.writeTerrain(area, "grass", -2, -2, 0.1f);
+
 
         // Rock formations and caves
         int caves = rand(3)+3;
@@ -137,8 +171,8 @@ public class ExampleForestScaper extends ULandscaper {
     public URegion makeBasementRegion() {
         String name = "Musty basement";
         String id = "basement-" + Integer.toString(rand(1000000));
-        URegion region = new URegion(id, name, new ULandscaper[]{new ExampleDungeonScaper()},
-                        new String[]{"basement"}, 60, 60, rand(4)+2, "trapdoor", "ladder", "sounds/ultima_dungeon.ogg");
+        URegion region = new URegion(id, name, new ULandscaper[]{new ExampleMineScaper()},
+                        new String[]{"mine"}, 80, 80, rand(4)+2, "trapdoor", "ladder", "sounds/ultima_dungeon.ogg");
         return region;
     }
 

@@ -98,10 +98,14 @@ public class URegion {
             if (link.onLevel == level)
                 stairs.put(link.label, link.exitType);
         if (level > 1) {
-            stairs.put(getId() + " " + Integer.toString(level-1), getOutwardExitType());
+            String outExit = getOutwardExitType();
+            if (outExit != null)
+                stairs.put(getId() + " " + Integer.toString(level-1), outExit);
         }
         if (level < getMaxlevel()) {
-            stairs.put(getId() + " " + Integer.toString(level+1), getInwardExitType());
+            String inExit = getInwardExitType();
+            if (inExit != null)
+                stairs.put(getId() + " " + Integer.toString(level+1), inExit);
         }
         makeStairs(area, scaper, stairs);
         area.setBackgroundMusic(getBGM(level));

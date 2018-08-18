@@ -60,7 +60,7 @@ public abstract class ULandscaper {
     protected String type = "";
 
     /**
-     * Room is used by shapers to filename and dig rooms.  It represents a room location in a shape.
+     * Room is used by shapers to dig rooms.  It represents a room location in a shape.
      * Walls and doors are outside of this square.
      */
     public class Room {
@@ -70,6 +70,105 @@ public abstract class ULandscaper {
             this.y=y;
             this.width=width;
             this.height=height;
+        }
+        public Room(int width, int height) {
+            this.width=width;
+            this.height=height;
+            this.x=-1;
+            this.y=-1;
+        }
+        public Face[] faces() {
+            Face[] faces = new Face[4];
+            faces[0] = new Face(x,y-1,width,0,-1);
+            faces[1] = new Face(x+width,y,height,1,0);
+            faces[2] = new Face(x,y+height,width,0,1);
+            faces[3] = new Face(x-1,y,height,-1,0);
+            return faces;
+        }
+        public void print(Shape space) {
+            for (int xi=0;xi<width;xi++) {
+                for (int yi = 0;yi < height;yi++) {
+                    space.set(x + xi, y + yi);
+                }
+            }
+        }
+        public void punchDoors(Shape space) {
+            for (Face face : faces()) {
+                face.punchDoors(space);
+            }
+        }
+    }
+
+    /**
+     * Face is used to dig away from rooms.
+     */
+    public class Face {
+        int x,y,length;
+        int facex,facey;
+        public Face(int x, int y, int length, int facex, int facey) {
+            this.x = x;
+            this.y = y;
+            this.length = length;
+            this.facex = facex;
+            this.facey = facey;
+        }
+
+        /**
+         * Try to add the room somewhere along me.
+         * If we can, record the room's xy and return it, else return null.
+         */
+        public Room addRoom(Room room, Shape space) {
+            ArrayList<int[]> spaces = new ArrayList<>();
+            for (int i=-(facex != 0 ? room.height - 3 : room.width-3);i<length-3;i++) {
+                boolean blocked = false;
+                int fx = x + (i*Math.abs(facey));
+                int fy = y + (i*Math.abs(facex));
+                for (int cx=0;cx<room.width;cx++) {
+                    for (int cy=0;cy<room.height;cy++) {
+                        int tx = cx * (facex == -1 ? -1 : 1);
+                        int ty = cy * (facey == -1 ? -1 : 1);
+                        if (space.value(fx+tx,fy+ty) || space.value(fx+tx+facey,fy+ty+facex) || space.value(fx+tx-facey,fy+ty-facex)) {
+                            blocked = true;
+                            break;
+                        }
+                    }
+                    if (blocked) break;
+                }
+                if (!blocked) {
+                    spaces.add(new int[]{fx, fy});
+                }
+            }
+            if (spaces.size() == 0) return null;
+            int[] point = spaces.get(random.i(spaces.size()));
+            room.x = point[0] + facex;
+            if (facex == -1) room.x -= room.width-1;
+            room.y = point[1] + facey;
+            if (facey == -1) room.y -= room.height-1;
+            return room;
+        }
+
+        /**
+         * Translate coordinates from my relative space to absolute space.
+         */
+        public int transX(int i, int dx, int dy) {
+
+        }
+        public int transY(int i, int dx, int dy) {
+
+        }
+
+        /**
+         * Punch a doorhole somewhere along us, if possible.
+         */
+        public void punchDoors(Shape space) {
+            for (int i : random.seq(length)) {
+                int fx = x + (i*Math.abs(facey));
+                int fy = y + (i*Math.abs(facex));
+                if (space.value(fx+facex,fy+facey) && space.value(fx-facex,fy-facey)) {
+                    space.set(fx,fy);
+                    return;
+                }
+            }
         }
     }
 

@@ -23,8 +23,11 @@ public class CommandInventory extends UCommand implements HearModalEntityPick {
     public void execute(UPlayer player) {
         ArrayList<Entity> inventory = new ArrayList<>();
         Iterator<UThing> i = player.iterator();
-        while (i.hasNext())
-            inventory.add((Entity)i.next());
+        while (i.hasNext()) {
+            UThing thing = i.next();
+            if (!thing.isEquipped())
+                inventory.add((Entity)thing);
+        }
         UModal modal;
         if (inventory.isEmpty())
             modal = new UModalNotify("You aren't carrying anything.", null, 0, 0);

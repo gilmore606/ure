@@ -27,4 +27,20 @@ public class URandom extends Random {
 
     public String member(String[] list) { return list[i(list.length)]; }
 
+    /**
+     * Random sequence from 0 to len.
+     */
+    public int[] seq(int len) {
+        int[] seq = new int[len];
+        for (int i=0;i<len;i++)
+            seq[i] = i;
+        for (int i=len-1;i>0;i--) {
+            int j = i(i);
+            int tmp = seq[j];
+            seq[j] = seq[i];
+            seq[i] = tmp;
+        }
+        return seq;
+    }
+
 }
