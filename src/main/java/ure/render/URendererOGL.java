@@ -55,6 +55,7 @@ public class URendererOGL implements URenderer {
     private FontTexture currentFont;
 
     private KeyListener keyListener;
+    private ResolutionListener resolutionListener;
 
     private DoubleBuffer xf, yf;
 
@@ -112,6 +113,11 @@ public class URendererOGL implements URenderer {
     @Override
     public void setKeyListener(KeyListener listener) {
         this.keyListener = listener;
+    }
+
+    @Override
+    public void setResolutionListener(ResolutionListener listener) {
+        this.resolutionListener = listener;
     }
 
     @Override
@@ -396,6 +402,9 @@ public class URendererOGL implements URenderer {
             matrix.setOrtho2D(0, config.getScreenWidth(), config.getScreenHeight(), 0);
         } else {
             matrix.setOrtho2D(0, width * horizontalScaleFactor, height * verticalScaleFactor, 0);
+        }
+        if (resolutionListener != null) {
+            resolutionListener.resolutionChanged((int) (width * horizontalScaleFactor), (int) (height * verticalScaleFactor));
         }
     }
 
