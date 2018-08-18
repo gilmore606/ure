@@ -710,4 +710,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             doLaunchVaulted(input);
         }
     }
+
+    public void toggleFullscreen() {
+        renderer.toggleFullscreen();
+    }
 }

@@ -114,4 +114,5 @@ public interface URenderer {
     int getMousePosX();
     int getMousePosY();
     boolean getMouseButton();
+    void toggleFullscreen();
 }
