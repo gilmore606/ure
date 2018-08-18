@@ -17,6 +17,7 @@ import ure.things.UThingCzar;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -85,6 +86,11 @@ public abstract class ULandscaper {
             faces[3] = new Face(x-1,y,height,-1,0);
             return faces;
         }
+        public void rotate() {
+            int tmp = width;
+            width = height;
+            height = tmp;
+        }
         public void print(Shape space) {
             for (int xi=0;xi<width;xi++) {
                 for (int yi = 0;yi < height;yi++) {
@@ -118,43 +124,55 @@ public abstract class ULandscaper {
          * If we can, record the room's xy and return it, else return null.
          */
         public Room addRoom(Room room, Shape space) {
-            ArrayList<int[]> spaces = new ArrayList<>();
-            for (int i=-(facex != 0 ? room.height - 3 : room.width-3);i<length-3;i++) {
+            ArrayList<Integer> spaces = new ArrayList<>();
+            for (int i=-(room.width-3);i<length-3;i++) {
                 boolean blocked = false;
-                int fx = x + (i*Math.abs(facey));
-                int fy = y + (i*Math.abs(facex));
-                for (int cx=0;cx<room.width;cx++) {
-                    for (int cy=0;cy<room.height;cy++) {
-                        int tx = cx * (facex == -1 ? -1 : 1);
-                        int ty = cy * (facey == -1 ? -1 : 1);
-                        if (space.value(fx+tx,fy+ty) || space.value(fx+tx+facey,fy+ty+facex) || space.value(fx+tx-facey,fy+ty-facex)) {
+                for (int cx=-1;cx<room.width+1;cx++) {
+                    for (int cy=0;cy<room.height+2;cy++) {
+                        if (space.value(transX(cx+i,cy),transY(cx+i,cy))) {
                             blocked = true;
                             break;
                         }
                     }
                     if (blocked) break;
                 }
-                if (!blocked) {
-                    spaces.add(new int[]{fx, fy});
-                }
+                if (!blocked) spaces.add(i);
             }
             if (spaces.size() == 0) return null;
-            int[] point = spaces.get(random.i(spaces.size()));
-            room.x = point[0] + facex;
-            if (facex == -1) room.x -= room.width-1;
-            room.y = point[1] + facey;
-            if (facey == -1) room.y -= room.height-1;
+            int i = (int)random.member((List)spaces);
+            room.x = transX(i,1);
+            room.y = transY(i, 1);
+            if (facey == -1) {
+                room.y -= room.height-1;
+            } else if (facex == -1) {
+                room.rotate();
+                room.x -= room.width-1;
+            } else if (facex == 1) {
+                room.rotate();
+            }
             return room;
         }
 
         /**
          * Translate coordinates from my relative space to absolute space.
          */
-        public int transX(int i, int dx, int dy) {
-
+        public int transX(int dx, int dy) {
+            if (facey == -1 || facey == 1) {
+                return x + dx;
+            } else if (facex == 1) {
+                return x + dy;
+            } else {
+                return x - dy;
+            }
         }
-        public int transY(int i, int dx, int dy) {
-
+        public int transY(int dx, int dy) {
+            if (facey == -1) {
+                return y - dy;
+            } else if (facey == 1) {
+                return y + dy;
+            } else {
+                return y + dx;
+            }
         }
 
         /**

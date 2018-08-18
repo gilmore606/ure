@@ -22,15 +22,16 @@ public class ExampleForestScaper extends ULandscaper {
         room.print(space);
         for (Face face : room.faces()) {
             Room newroom = new Room(random.i(10) + 6, random.i(10) + 6);
-            if (face.addRoom(newroom, space) != null)
+            if (face.addRoom(newroom, space) != null) {
                 newroom.print(space);
-            face.punchDoors(space);
+                face.punchDoors(space);
+            }
             for (Face f2 : newroom.faces()) {
                 Room room2 = new Room(random.i(5)+5,random.i(5)+5);
                 if (f2.addRoom(room2, space) != null) {
-                           room2.print(space);
+                    room2.print(space);
+                    room2.punchDoors(space);
                 }
-                f2.punchDoors(space);
             }
         }
         space.writeTerrain(area, "floor", 0, 0);
