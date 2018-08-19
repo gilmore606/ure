@@ -43,6 +43,8 @@ public class ULight {
     protected float flickerIntensity = 0f;
     protected int flickerOffset = 0;
 
+    protected boolean permanent;
+
     @JsonIgnore
     UArea area;
 
@@ -78,10 +80,6 @@ public class ULight {
         setFlickerSpeed(speed);
         setFlickerIntensity(intensity);
         setFlickerOffset(offset);
-    }
-
-    public void close() {
-        removeFromArea();
     }
 
     public void moveTo(UArea thearea, int thex, int they) {
@@ -281,4 +279,6 @@ public class ULight {
     public int getWidth() { return width; }
     public void setHeight(int i) { height = i; }
     public int getHeight() { return height; }
+    public boolean isPermanent() { return permanent; }
+    public void setPermanent(boolean b) { permanent = b; }
 }

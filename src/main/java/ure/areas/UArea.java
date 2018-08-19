@@ -471,8 +471,7 @@ public class UArea implements Serializable {
     }
 
     public void animationTick() {
-        HashSet<UParticle> tmp = (HashSet)particles.clone();
-        for (UParticle particle : tmp) {
+        for (UParticle particle : (HashSet<UParticle>)particles.clone()) {
             particle.animationTick();
             if (particle.isFizzled())
                 fizzleParticle(particle);
@@ -489,6 +488,11 @@ public class UArea implements Serializable {
         for (UActor actor : getActors()) {
             //System.out.println("AREA " + label + ": sleeping " + actor.getName() + " for freeze");
             commander.unregisterActor(actor);
+        }
+        for (ULight light : (HashSet<ULight>)lights.clone()) {
+            if (!light.isPermanent()) {
+                removeLight(light);
+            }
         }
     }
 

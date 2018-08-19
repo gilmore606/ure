@@ -105,6 +105,12 @@ public class Lightsource extends UThing {
     }
 
     @Override
+    public void reconnect(UArea area, UContainer container) {
+        super.reconnect(area, container);
+        deployLight();
+    }
+
+    @Override
     public boolean tryEquip(UActor actor) {
         if (super.tryEquip(actor)) {
             deployLight();

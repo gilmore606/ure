@@ -988,6 +988,7 @@ public abstract class ULandscaper {
             if (randf() < 0.0f)
                 light.setFlicker(ULight.FLICKER_FRITZ, 1f, 1f, 0);
             light.makeAmbient(w,h);
+            light.setPermanent(true);
             light.moveTo(area,x1,y1);
         }
     }
