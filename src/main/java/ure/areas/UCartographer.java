@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import org.apache.commons.io.FileUtils;
+import ure.math.URandom;
 import ure.sys.events.PlayerChangedAreaEvent;
 import ure.sys.Injector;
 import ure.sys.UCommander;
@@ -20,6 +21,7 @@ import javax.inject.Inject;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -53,6 +55,8 @@ public class UCartographer implements Runnable {
     protected ObjectMapper objectMapper;
     @Inject
     protected EventBus bus;
+    @Inject
+    protected URandom random;
 
     protected ArrayList<UArea> activeAreas = new ArrayList<>();
     protected ArrayList<UArea> closeableAreas = new ArrayList<>();
