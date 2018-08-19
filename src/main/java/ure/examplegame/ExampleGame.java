@@ -215,5 +215,6 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
         actorPanel.setBounds(statusPanel.getX(), statusPanel.getHeight() + 1, statusPanel.getWidth(), height - statusPanel.getHeight() - lensPanel.getHeight() - 2);
         scrollPanel.setBounds(0, height - scrollPanel.getHeight(), width - statusPanel.getWidth(), scrollPanel.getHeight());
         camera.setBounds(0, 0, width - statusPanel.getWidth(), height - scrollPanel.getHeight());
+        camera.setupGrid();
     }
 }
