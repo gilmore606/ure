@@ -15,44 +15,8 @@ public class ExampleForestScaper extends ULandscaper {
         super(TYPE);
     }
 
-    @Override
-    public void buildArea(UArea area, int level, String[] tags) {
-        fillRect(area, "rock", 0, 0, area.xsize-1, area.ysize-1);
-        Shape space = new Shape(100,100);
-        Room room = new Room(20,20,10,10);
-        room.print(space);
-        ArrayList<Face> faces = new ArrayList<>();
-        for (Face face : room.faces())
-            faces.add(face);
-        int iter = 0;
-        while (!faces.isEmpty() && iter < 100000) {
-            Room newroom = new Room(100,100);
-            while (newroom.width * newroom.height > 150)
-                newroom = new Room(random.i(18)+2,random.i(18)+2);
-            Face face = (Face)random.member((List)faces);
-            if (face.addRoom(newroom,space) != null) {
-                newroom.print(space);
-                if (random.f() < 0.7f)
-                    newroom.punchDoors(space);
-                else
-                    face.punchDoors(space);
-                faces.remove(face);
-                for (Face newface : newroom.faces())
-                    faces.add(newface);
-            } else {
-                if (random.f() < 0.1f)
-                    faces.remove(face);
-            }
-            iter++;
-        }
-        space.writeTerrain(area, "floor", 0, 0);
-        area.setTerrain(42,42,"cave entrance");
-        UTerrain t = area.terrainAt(42,42);
-        if (t instanceof Stairs)
-            ((Stairs)(t)).setLabel("forest " + Integer.toString(level+1));
-    }
 
-    public void buildAreaWhoops(UArea area, int level, String[] tags) {
+    public void buildArea(UArea area, int level, String[] tags) {
 
         fillRect(area, "tree", 0, 0, area.xsize-1, area.ysize-1);
 
@@ -183,8 +147,8 @@ public class ExampleForestScaper extends ULandscaper {
     public URegion makeBasementRegion() {
         String name = "Musty basement";
         String id = "basement-" + Integer.toString(rand(1000000));
-        URegion region = new URegion(id, name, new ULandscaper[]{new ExampleMineScaper()},
-                        new String[]{"mine"}, 80, 80, rand(4)+2, "trapdoor", "ladder", "sounds/ultima_dungeon.ogg");
+        URegion region = new URegion(id, name, new ULandscaper[]{new ExampleComplexScaper()},
+                        new String[]{"complex"}, 80, 80, rand(4)+2, "trapdoor", "ladder", "sounds/ultima_dungeon.ogg");
         return region;
     }
 

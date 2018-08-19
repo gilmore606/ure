@@ -468,6 +468,32 @@ public class Shape {
     }
 
     /**
+     * Prune dead-end one space hallways
+     */
+    public Shape pruneDeadEnds() {
+        clearBuffer();
+        int passes = 20;
+        for (int i=0;i<passes;i++) {
+            boolean killedone = false;
+            for (int x=0;x<xsize;x++) {
+                for (int y=0;y<ysize;y++) {
+                    if (value(x,y)) {
+                        int n = neighborsPrime(x, y);
+                        if (n <= 1) {
+                            writeBuffer(x, y, false);
+                            killedone = true;
+                        } else
+                            writeBuffer(x,y,true);
+                    }
+                }
+            }
+            printBuffer();
+            if (!killedone) return this;
+        }
+        return this;
+    }
+
+    /**
      * Pick N random cells of a certain value
      */
     public int[] randomCell(boolean val) { return randomCells(val,1)[0]; }
@@ -610,4 +636,5 @@ public class Shape {
         }
         return !blocked;
     }
+
 }

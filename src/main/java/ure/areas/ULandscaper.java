@@ -47,7 +47,7 @@ public abstract class ULandscaper {
 
     @Inject
     @JsonIgnore
-    protected URandom random;
+    public URandom random;
 
     @JsonIgnore
     USimplexNoise simplexNoise = new USimplexNoise();
@@ -66,6 +66,7 @@ public abstract class ULandscaper {
      */
     public class Room {
         public int x,y,width,height;
+        public boolean isHallway;
         public Room(int x, int y, int width, int height) {
             this.x=x;
             this.y=y;
@@ -91,25 +92,29 @@ public abstract class ULandscaper {
             width = height;
             height = tmp;
         }
-        public void print(Shape space) {
+        public void print(Shape space) { print(space, false); }
+        public void print(Shape space, boolean rounded) {
             for (int xi=0;xi<width;xi++) {
                 for (int yi = 0;yi < height;yi++) {
-                    space.set(x + xi, y + yi);
+                    if (!rounded || !(xi==0 || xi==width-1) || !(yi==0 || yi==height-1))
+                        space.set(x + xi, y + yi);
                 }
             }
         }
-        public void punchDoors(Shape space) {
+        public void punchDoors(Shape space) { punchDoors(space, false); }
+        public void punchDoors(Shape space, boolean punchAll) {
             for (Face face : faces()) {
-                face.punchDoors(space);
+                face.punchDoors(space, punchAll);
             }
         }
+
     }
 
     /**
      * Face is used to dig away from rooms.
      */
     public class Face {
-        int x,y,length;
+        public int x,y,length;
         int facex,facey;
         public Face(int x, int y, int length, int facex, int facey) {
             this.x = x;
@@ -129,7 +134,9 @@ public abstract class ULandscaper {
                 boolean blocked = false;
                 for (int cx=-1;cx<room.width+1;cx++) {
                     for (int cy=0;cy<room.height+2;cy++) {
-                        if (space.value(transX(cx+i,cy),transY(cx+i,cy))) {
+                        int tx = transX(cx+i,cy);
+                        int ty = transY(cx+i,cy);
+                        if (space.value(tx,ty) || !space.isValidXY(tx,ty)) {
                             blocked = true;
                             break;
                         }
@@ -178,13 +185,14 @@ public abstract class ULandscaper {
         /**
          * Punch a doorhole somewhere along us, if possible.
          */
-        public void punchDoors(Shape space) {
+        public void punchDoors(Shape space) { punchDoors(space, false); }
+        public void punchDoors(Shape space, boolean punchAll) {
             for (int i : random.seq(length)) {
                 int fx = x + (i*Math.abs(facey));
                 int fy = y + (i*Math.abs(facex));
                 if (space.value(fx+facex,fy+facey) && space.value(fx-facex,fy-facey)) {
                     space.set(fx,fy);
-                    return;
+                    if (!punchAll) return;
                 }
             }
         }
@@ -327,6 +335,25 @@ public abstract class ULandscaper {
         return random.f();
     }
 
+    /**
+     * Make a new room either small, big or hallway.
+     */
+    public Room randomRoom(float smallChance, int smallmin, int smallmax,
+                           float bigChance, int bigmin, int bigmax,
+                           float hallChance, int halllengthmin, int halllengthmax, int hallwidthmin, int hallwidthmax) {
+        float rtype = random.f();
+        if (rtype < smallChance)
+            return new Room(0,0,random.i(1+smallmax-smallmin)+smallmin, random.i(1+smallmax-smallmin)+smallmin);
+        else if (rtype < (bigChance+smallChance))
+            return new Room(0,0,random.i(1+bigmax-bigmin)+bigmin, random.i(1+bigmax-bigmin)+bigmin);
+        else {
+            Room r = new Room(0, 0, random.i(1+halllengthmax - halllengthmin) + halllengthmin, random.i(1+hallwidthmax - hallwidthmin) + hallwidthmin);
+            r.isHallway = true;
+            if (random.f() > 0.5f)
+                r.rotate();
+            return r;
+        }
+    }
     /**
      * Scatter a number of random things through the area, onto certain terrains.
      *
@@ -517,13 +544,15 @@ public abstract class ULandscaper {
                     if ((neighbors[0][1] && neighbors[2][1] && !neighbors[1][0] && !neighbors[1][2]) ||
                         !neighbors[0][1] && !neighbors[2][1] && neighbors[1][0] && neighbors[1][2]) {
                         if (neighborCount <= 5) {
-                            area.setTerrain(x,y,doorTerrain);
+                            if (random.f() < doorChance)
+                                area.setTerrain(x,y,doorTerrain);
                         }
                     }
                 }
             }
         }
     }
+
 
     public void simplexScatterTerrain(UArea area, String terrain, String[] targets, float threshold, float scatterChance, float[] noiseScales) {
         for (int x=0;x<area.xsize;x++) {

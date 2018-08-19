@@ -19,7 +19,7 @@
     "name": "rat",
     "description": "A big wet rat.",
     "bodytype": "animal",
-    "tags": [ "cavern", "complex", "title" ],
+    "tags": [ "cave", "complex", "title" ],
     "spawnlevels": [ 1,5 ],
     "behaviors": [
       {"type": "wander", "freq": 0.7},
