@@ -72,7 +72,9 @@ public class UCell implements UContainer {
     }
 
     public float sunBrightness() {
-        return getTerrain().getSunvis();
+        if (area.isSunVisible())
+            return getTerrain().getSunvis();
+        return 0f;
     }
 
     public void setSeen(boolean theseen) {

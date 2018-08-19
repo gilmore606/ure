@@ -975,19 +975,20 @@ public abstract class ULandscaper {
         }
     }
 
-    void DecorateRoom(UArea area, int[] room) {
+    public void DecorateRoom(UArea area, int[] room) {
         int x1 = room[0];
         int y1 = room[1];
         int w = room[2];
         int h = room[3];
-        if (randf() < 0.2f) {
+        if (randf() < 0.1f) {
             fillRect(area, "carvings", x1+2,y1+2,x1+w-3,y1+h-3);
         }
-        if (randf() < 0.6f) {
-            ULight light = new ULight(UColor.WHITE, 20, 20);
-            //light.setFlicker(ULight.FLICKER_FRITZ, 1f, 1f, 0);
-            light.makeAmbient(w-2,h-2);
-            light.moveTo(area,x1+1,y1+1);
+        if (randf() < 0.5f) {
+            ULight light = new ULight(UColor.LIGHTGRAY, 20, 20);
+            if (randf() < 0.0f)
+                light.setFlicker(ULight.FLICKER_FRITZ, 1f, 1f, 0);
+            light.makeAmbient(w,h);
+            light.moveTo(area,x1,y1);
         }
     }
 

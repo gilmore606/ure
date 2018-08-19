@@ -364,8 +364,8 @@ public class UCamera extends View implements UAnimator {
     }
 
     void projectAmbient(int x1, int y1, ULight light) {
-        for (int ix=x1;ix<x1+light.width;ix++) {
-            for (int iy=y1;iy<y1+light.height;iy++) {
+        for (int ix=x1-1;ix<=x1+light.width;ix++) {
+            for (int iy=y1-1;iy<=y1+light.height;iy++) {
                 projectToCell(ix,iy,light,false,1f);
             }
         }
@@ -373,21 +373,23 @@ public class UCamera extends View implements UAnimator {
         float val = 0f;
         int w = light.width;
         int h = light.height;
-        x1 -= 1;
+        int sx1 = x1-1;
         w += 2;
-        y1 -= 1;
+        int sy1 = y1-1;
         h +=2;
-        for (int ix=x1;ix<x1+w;ix++) {
-            val = spreadAmbient(light, ix,y1,0,-1, fall);
-            projectToCell(ix,y1,light,false,val);
-            val = spreadAmbient(light, ix,y1+h,0,1, fall);
-            projectToCell(ix,y1+h,light,false,val);
-        }
-        for (int iy=y1;iy<y1+h;iy++) {
-            val = spreadAmbient(light, x1,iy,-1,0, fall);
-            projectToCell(x1,iy,light,false,val);
-            val = spreadAmbient(light, x1+w,iy,1,0, fall);
-            projectToCell(x1+w,iy,light,false,val);
+        if (true) {
+            for (int ix = sx1;ix < sx1 + w;ix++) {
+                val = spreadAmbient(light, ix, sy1, 0, -1, fall);
+                projectToCell(ix, sy1, light, false, val);
+                val = spreadAmbient(light, ix, sy1 + h, 0, 1, fall);
+                projectToCell(ix, sy1 + h, light, false, val);
+            }
+            for (int iy = sy1;iy < sy1 + h;iy++) {
+                val = spreadAmbient(light, sx1, iy, -1, 0, fall);
+                projectToCell(sx1, iy, light, false, val);
+                val = spreadAmbient(light, sx1 + w, iy, 1, 0, fall);
+                projectToCell(sx1 + w, iy, light, false, val);
+            }
         }
     }
 

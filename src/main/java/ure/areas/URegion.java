@@ -109,6 +109,7 @@ public class URegion {
         }
         makeStairs(area, scaper, stairs);
         area.setBackgroundMusic(getBGM(level));
+        area.setSunVisible(sunVisible(level));
         return area;
     }
 
@@ -126,6 +127,15 @@ public class URegion {
             String exitType = links.get(label);
             scaper.placeStairs(area, exitType, label);
         }
+    }
+
+    /**
+     * Is the sunlight visible at this level of the region?
+     */
+    public boolean sunVisible(int level) {
+        if (level > 1)
+            return false;
+        return true;
     }
 
     public String describeLabel(String label, String labelname, int labeldata) {

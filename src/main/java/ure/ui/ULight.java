@@ -132,9 +132,9 @@ public class ULight {
                 return true;
             return false;
         } else {
-            if (UPath.mdist(x,y,tx,ty) > (Math.max(height+falloff,width+falloff)))
-                return false;
-            return true;
+            if (tx >= x-1 && tx <= x+width && ty >= y-1 && ty <= y+height)
+                return true;
+            return false;
         }
     }
 
@@ -174,6 +174,7 @@ public class ULight {
         return i;
     }
     public float intensityAtOffset(int xoff, int yoff) {
+        if (type == AMBIENT) return 1f;
         xoff = (int)Math.pow(Math.abs(xoff),2);
         yoff = (int)Math.pow(Math.abs(yoff),2);
         double dist = Math.sqrt((double)xoff + (double)yoff);

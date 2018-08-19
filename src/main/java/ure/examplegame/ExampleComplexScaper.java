@@ -19,12 +19,14 @@ public class ExampleComplexScaper extends ULandscaper {
 
     @Override
     public void buildArea(UArea area, int level, String[] tags) {
+        ArrayList<Room> rooms = new ArrayList<>();
         fillRect(area, "rock", 0, 0, area.xsize - 1, area.ysize - 1);
         Shape space = new Shape(area.xsize, area.ysize);
-        Room room = new Room(20, 20, 10, 10);
-        room.print(space);
+        Room firstroom = new Room(20, 20, 10, 10);
+        firstroom.print(space);
+        rooms.add(firstroom);
         ArrayList<Face> faces = new ArrayList<>();
-        for (Face face : room.faces())
+        for (Face face : firstroom.faces())
             faces.add(face);
         int iter = 0;
         while (!faces.isEmpty() && iter < 100000) {
@@ -38,6 +40,7 @@ public class ExampleComplexScaper extends ULandscaper {
             Face face = (Face) random.member((List) faces);
             if (face.addRoom(newroom, space) != null) {
                 newroom.print(space, random.f() < 0.1f);
+                rooms.add(newroom);
                 if (random.f() < 0.5f)
                     newroom.punchDoors(space, random.f() < 0.01f);
                 else
@@ -56,7 +59,9 @@ public class ExampleComplexScaper extends ULandscaper {
         }
         space.pruneDeadEnds().writeTerrain(area, "floor", 0, 0);
         addDoors(area, "door", new String[]{"rock", "door"}, 0.1f);
-
+        for (Room room : rooms) {
+            DecorateRoom(area, new int[]{room.x,room.y,room.width,room.height});
+        }
 
         int lakes = rand(4) + 1;
         Shape lakemask = new Shape(area.xsize + 4, area.ysize + 4);

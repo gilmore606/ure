@@ -292,6 +292,18 @@ public class UCartographer implements Runnable {
     }
 
     /**
+     * What Region is this area a part of?
+     */
+    public URegion regionForArea(UArea area) {
+        String label = GetLabelName(area.label);
+        for (URegion region : regions.values()) {
+            if (region.name.equals(label))
+                return region;
+        }
+        return null;
+    }
+
+    /**
      * Shut down an active Area and serialize it to disk.
      * After this method there should be no refs to that Area object or anything in it, anywhere.
      *

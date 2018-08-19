@@ -44,6 +44,9 @@ public class UArea implements Serializable {
     public UConfig config;
     @Inject
     @JsonIgnore
+    public UCartographer cartographer;
+    @Inject
+    @JsonIgnore
     public UTerrainCzar terrainCzar;
     @Inject
     @JsonIgnore
@@ -70,6 +73,7 @@ public class UArea implements Serializable {
     protected ArrayList<UColor> sunColorLerps = new ArrayList<>();
     protected HashMap<Integer,String> sunCycleMessages = new HashMap<>();
     protected int sunCycleLastAnnounceMarker;
+    public boolean sunVisible;
 
     String backgroundMusic;
 
@@ -252,6 +256,9 @@ public class UArea implements Serializable {
         }
     }
 
+    public URegion region() {
+        return cartographer.regionForArea(this);
+    }
     public boolean isValidXY(int x, int y) {
         if ((x >= 0) && (y >= 0))
             if ((x < xsize) && (y < ysize))
@@ -528,6 +535,9 @@ public class UArea implements Serializable {
     public void setSunColor(UColor sunColor) {
         this.sunColor = sunColor;
     }
+
+    public boolean isSunVisible() { return sunVisible; }
+    public void setSunVisible(boolean b) { sunVisible = b; }
 
     public float getClouds() {
         return clouds;
