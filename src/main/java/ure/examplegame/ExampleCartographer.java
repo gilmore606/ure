@@ -19,11 +19,11 @@ public class ExampleCartographer extends UCartographer {
                             "Mystic Forest",
                             new ULandscaper[]{new ExampleForestScaper()},
                             new String[]{"start"},
-                            200,
-                            200,
+                            100,
+                            100,
                             1,
-                            "",
-                            "",
+                            "cave entrance",
+                            "cave exit",
                             "sounds/ultima_wanderer.ogg"
                     )
             );

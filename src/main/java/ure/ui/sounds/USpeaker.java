@@ -33,7 +33,9 @@ import ure.terrain.UTerrain;
 
 import static org.lwjgl.BufferUtils.createByteBuffer;
 import static org.lwjgl.openal.AL10.*;
+import static org.lwjgl.openal.AL11.alSource3i;
 import static org.lwjgl.openal.ALC10.*;
+import static org.lwjgl.openal.EXTEfx.*;
 import static org.lwjgl.openal.EXTThreadLocalContext.alcSetThreadContext;
 import static org.lwjgl.stb.STBVorbis.*;
 import static org.lwjgl.system.MemoryStack.stackMallocInt;
@@ -57,11 +59,15 @@ public class USpeaker implements UAnimator, Runnable {
     UCommander commander;
 
     boolean initialized = false;
+    boolean initializedFX = false;
 
     private long device;
     private long context;
     private ALCCapabilities alcCapabilities;
     private ALCapabilities alCapabilities;
+    int efxMajor,efxMinor,maxAuxSends;
+    int[] auxSends, effects;
+    int filter;
 
     Deck BGMdeck1;
     Deck BGMdeck2;
@@ -126,6 +132,7 @@ public class USpeaker implements UAnimator, Runnable {
             else {
                 alSource3f(source.get(0), AL_POSITION, (float)x, 0f, (float)y);
                 alSourcef(source.get(0), AL_GAIN, gain * config.getVolumeAmbient());
+                addEnvironment(source.get(0), x, y);
             }
         }
         void stop() {
@@ -138,6 +145,7 @@ public class USpeaker implements UAnimator, Runnable {
             alSource3f(source.get(0), AL_POSITION, (float)x, (float)y, 0f);
             alSourcei(source.get(0), AL_BUFFER, buffer.get(0));
             alSourcef(source.get(0), AL_GAIN, gain * config.getVolumeAmbient());
+            addEnvironment(source.get(0), x, y);
             alSourcePlay(source.get(0));
         }
     }
@@ -211,6 +219,7 @@ public class USpeaker implements UAnimator, Runnable {
             }
         }
         public void start() {
+            if (!initialized) return;
             System.out.println("SPEAKER: buffering playback for bgm '" + filename + "' on deck " + deckID);
             sampleIndex = new AtomicInteger();
             track = new VorbisTrack(config.getResourcePath() + filename, sampleIndex);
@@ -309,10 +318,46 @@ public class USpeaker implements UAnimator, Runnable {
         alcCapabilities = ALC.createCapabilities(device);
         alCapabilities = AL.createCapabilities(alcCapabilities);
         if (!alCapabilities.OpenAL10) {
-            System.out.println("WARNING: OpenAL10 audio not supported on this system, giving up on sound");
+            System.out.println("SPEAKER WARNING: OpenAL10 audio not supported on this system, giving up on sound");
             return;
         }
+        System.out.println("SPEAKER OpenAL version: " + alGetString(AL_VERSION));
+        efxMajor = alcGetInteger(device, ALC_EFX_MAJOR_VERSION);
+        efxMinor = alcGetInteger(device, ALC_EFX_MINOR_VERSION);
+        System.out.println("SPEAKER EFX version: " + Integer.toString(efxMajor) + "." + Integer.toString(efxMinor));
+        maxAuxSends = alcGetInteger(device, ALC_MAX_AUXILIARY_SENDS);
         initialized = true;
+
+        filter = alGenFilters();
+        if (alGetError() != AL_NO_ERROR) System.out.println("SPEAKER WARNING: filter not supported");
+        else {
+            alFilteri(filter,AL_FILTER_TYPE,AL_FILTER_LOWPASS);
+            alFilterf(filter, AL_LOWPASS_GAIN, 0.5f);
+            alFilterf(filter, AL_LOWPASS_GAINHF, 0.5f);
+            System.out.println("SPEAKER created lowpass occlusion filter");
+        }
+
+        if (maxAuxSends >= 2) {
+            auxSends = new int[2];
+            effects = new int[2];
+            auxSends[0] = alGenAuxiliaryEffectSlots();
+            auxSends[1] = alGenAuxiliaryEffectSlots();
+            effects[0] = alGenEffects();
+            effects[1] = alGenEffects();
+            alEffecti(effects[0], AL_EFFECT_TYPE, AL_EFFECT_REVERB);
+            alEffectf(effects[0], AL_REVERB_DECAY_TIME, 1.0f);
+            alAuxiliaryEffectSloti(auxSends[0], AL_EFFECTSLOT_EFFECT, effects[0]);
+            System.out.println("SPEAKER initialized reverb on AUX0");
+            alEffecti(effects[1], AL_EFFECT_TYPE, AL_EFFECT_ECHO);
+            alEffectf(effects[1], AL_ECHO_DELAY, 0.5f);
+            alEffectf(effects[1], AL_ECHO_DAMPING, 0.5f);
+            alEffectf(effects[1], AL_ECHO_FEEDBACK, 0.4f);
+            alAuxiliaryEffectSloti(auxSends[1], AL_EFFECTSLOT_EFFECT, effects[1]);
+            System.out.println("SPEAKER initialized echo on AUX1");
+            initializedFX = true;
+        } else {
+            System.out.println("SPEAKER WARNING not enough aux sends -- disabling EFX");
+        }
     }
 
     /**
@@ -389,11 +434,22 @@ public class USpeaker implements UAnimator, Runnable {
         return source;
     }
 
+    void addEnvironment(int source, int x, int y) {
+        //if (!UPath.canSee(commander.player().areaX(),commander.player().areaY(), x,y,commander.player().area(),commander.player())) {
+        //alSourcei(source, AL_DIRECT_FILTER, filter);
+        //if (alGetError() != AL_NO_ERROR) System.out.println("SPEAKER: filter apply error");
+        //} else {
+        //alSourcei(source, AL_DIRECT_FILTER, AL_FILTER_NULL);
+    //}
+
+    }
+
     /**
      * Ask the BGM DJ to fade into a new music filename.
      */
     public void playBGM(String filename) {
         if (filename == null) return;
+        if (!initialized) return;
         if (BGMdeck1.filename != null)
             if (BGMdeck1.filename.equals(filename) && (BGMdeck2.filename == null)) return;
         if (BGMdeck2.filename != null)
@@ -444,8 +500,11 @@ public class USpeaker implements UAnimator, Runnable {
     }
 
     void play(String file, float gain, int x, int y, boolean useEnvironment) {
+        if (!initialized) return;
         int buffer = makePlayBuffer(file).get(0);
         int source = makePlaySource(gain).get(0);
+        if (useEnvironment)
+            addEnvironment(source, x, y);
         alSourcei(source, AL_LOOPING, AL_FALSE);
         alSource3f(source, AL_POSITION, (float)x, (float)y, 0f);
         alSource3f(source, AL_VELOCITY, 0f, 0f, 0f);
@@ -476,6 +535,11 @@ public class USpeaker implements UAnimator, Runnable {
             } catch (Exception e) { e.printStackTrace(); }
         }
         System.out.println("SPEAKER: game quit detected, background thread exiting");
+        IntBuffer auxEffectSlotsBuf = (IntBuffer)BufferUtils.createIntBuffer(auxSends.length).put(auxSends).rewind();
+        alDeleteAuxiliaryEffectSlots(auxEffectSlotsBuf);
+        IntBuffer effectsBuf = (IntBuffer)BufferUtils.createIntBuffer(effects.length).put(effects).rewind();
+        alDeleteEffects(effectsBuf);
+        alDeleteFilters(filter);
         alcSetThreadContext(NULL);
         alcDestroyContext(context);
         alcCloseDevice(device);

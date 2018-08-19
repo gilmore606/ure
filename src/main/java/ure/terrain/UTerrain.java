@@ -14,6 +14,7 @@ import ure.math.UColor;
 import ure.actors.UActor;
 import ure.ui.Icons.Icon;
 import ure.ui.Icons.UIconCzar;
+import ure.ui.sounds.Sound;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -55,7 +56,6 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     protected char filechar;
     protected Icon icon;
     protected String category;
-    protected String variants;
     protected HashMap<String,Integer> stats = new HashMap<>();
 
     protected boolean passable;
@@ -68,6 +68,7 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
 
     protected String ambientsound;
     protected float ambientsoundGain;
+    protected Sound stepsound;
 
 
     public UTerrain() {
@@ -266,6 +267,8 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     public void setAmbientsound(String s) { ambientsound = s; }
     public float getAmbientsoundGain() { return ambientsoundGain; }
     public void setAmbientsoundGain(float f) { ambientsoundGain = f; }
+    public Sound getStepsound() { return stepsound; }
+    public void setStepsound(Sound s) { stepsound = s; }
 
     public long getID() { return ID; }
     public void setID(long newID) { ID = newID; }

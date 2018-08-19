@@ -111,6 +111,16 @@ public class Icon implements Cloneable {
     public Icon makeClone() {
         try {
             Icon clone = (Icon)clone();
+            if (clone.fgColor != null) clone.fgColor = new UColor(clone.fgColor);
+            if (clone.bgColor != null) clone.bgColor = new UColor(clone.bgColor);
+            if (clone.fgVariants != null) {
+                for (int i=0;i<clone.fgVariants.length;i++)
+                    clone.fgVariants[i] = new UColor(clone.fgVariants[i]);
+            }
+            if (clone.bgVariants != null) {
+                for (int i=0;i<clone.bgVariants.length;i++)
+                    clone.bgVariants[i] = new UColor(clone.bgVariants[i]);
+            }
             return clone;
         } catch (Exception e) {
             e.printStackTrace();

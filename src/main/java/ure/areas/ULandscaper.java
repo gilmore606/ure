@@ -17,6 +17,7 @@ import ure.things.UThingCzar;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -46,7 +47,7 @@ public abstract class ULandscaper {
 
     @Inject
     @JsonIgnore
-    protected URandom random;
+    public URandom random;
 
     @JsonIgnore
     USimplexNoise simplexNoise = new USimplexNoise();
@@ -60,16 +61,140 @@ public abstract class ULandscaper {
     protected String type = "";
 
     /**
-     * Room is used by shapers to filename and dig rooms.  It represents a room location in a shape.
+     * Room is used by shapers to dig rooms.  It represents a room location in a shape.
      * Walls and doors are outside of this square.
      */
     public class Room {
-        int x,y,width,height;
+        public int x,y,width,height;
+        public boolean isHallway;
         public Room(int x, int y, int width, int height) {
             this.x=x;
             this.y=y;
             this.width=width;
             this.height=height;
+        }
+        public Room(int width, int height) {
+            this.width=width;
+            this.height=height;
+            this.x=-1;
+            this.y=-1;
+        }
+        public Face[] faces() {
+            Face[] faces = new Face[4];
+            faces[0] = new Face(x,y-1,width,0,-1);
+            faces[1] = new Face(x+width,y,height,1,0);
+            faces[2] = new Face(x,y+height,width,0,1);
+            faces[3] = new Face(x-1,y,height,-1,0);
+            return faces;
+        }
+        public void rotate() {
+            int tmp = width;
+            width = height;
+            height = tmp;
+        }
+        public void print(Shape space) { print(space, false); }
+        public void print(Shape space, boolean rounded) {
+            for (int xi=0;xi<width;xi++) {
+                for (int yi = 0;yi < height;yi++) {
+                    if (!rounded || !(xi==0 || xi==width-1) || !(yi==0 || yi==height-1))
+                        space.set(x + xi, y + yi);
+                }
+            }
+        }
+        public void punchDoors(Shape space) { punchDoors(space, false); }
+        public void punchDoors(Shape space, boolean punchAll) {
+            for (Face face : faces()) {
+                face.punchDoors(space, punchAll);
+            }
+        }
+
+    }
+
+    /**
+     * Face is used to dig away from rooms.
+     */
+    public class Face {
+        public int x,y,length;
+        int facex,facey;
+        public Face(int x, int y, int length, int facex, int facey) {
+            this.x = x;
+            this.y = y;
+            this.length = length;
+            this.facex = facex;
+            this.facey = facey;
+        }
+
+        /**
+         * Try to add the room somewhere along me.
+         * If we can, record the room's xy and return it, else return null.
+         */
+        public Room addRoom(Room room, Shape space) {
+            ArrayList<Integer> spaces = new ArrayList<>();
+            for (int i=-(room.width-3);i<length-3;i++) {
+                boolean blocked = false;
+                for (int cx=-1;cx<room.width+1;cx++) {
+                    for (int cy=0;cy<room.height+2;cy++) {
+                        int tx = transX(cx+i,cy);
+                        int ty = transY(cx+i,cy);
+                        if (space.value(tx,ty) || !space.isValidXY(tx,ty)) {
+                            blocked = true;
+                            break;
+                        }
+                    }
+                    if (blocked) break;
+                }
+                if (!blocked) spaces.add(i);
+            }
+            if (spaces.size() == 0) return null;
+            int i = (int)random.member((List)spaces);
+            room.x = transX(i,1);
+            room.y = transY(i, 1);
+            if (facey == -1) {
+                room.y -= room.height-1;
+            } else if (facex == -1) {
+                room.rotate();
+                room.x -= room.width-1;
+            } else if (facex == 1) {
+                room.rotate();
+            }
+            return room;
+        }
+
+        /**
+         * Translate coordinates from my relative space to absolute space.
+         */
+        public int transX(int dx, int dy) {
+            if (facey == -1 || facey == 1) {
+                return x + dx;
+            } else if (facex == 1) {
+                return x + dy;
+            } else {
+                return x - dy;
+            }
+        }
+        public int transY(int dx, int dy) {
+            if (facey == -1) {
+                return y - dy;
+            } else if (facey == 1) {
+                return y + dy;
+            } else {
+                return y + dx;
+            }
+        }
+
+        /**
+         * Punch a doorhole somewhere along us, if possible.
+         */
+        public void punchDoors(Shape space) { punchDoors(space, false); }
+        public void punchDoors(Shape space, boolean punchAll) {
+            for (int i : random.seq(length)) {
+                int fx = x + (i*Math.abs(facey));
+                int fy = y + (i*Math.abs(facex));
+                if (space.value(fx+facex,fy+facey) && space.value(fx-facex,fy-facey)) {
+                    space.set(fx,fy);
+                    if (!punchAll) return;
+                }
+            }
         }
     }
 
@@ -211,6 +336,25 @@ public abstract class ULandscaper {
     }
 
     /**
+     * Make a new room either small, big or hallway.
+     */
+    public Room randomRoom(float smallChance, int smallmin, int smallmax,
+                           float bigChance, int bigmin, int bigmax,
+                           float hallChance, int halllengthmin, int halllengthmax, int hallwidthmin, int hallwidthmax) {
+        float rtype = random.f();
+        if (rtype < smallChance)
+            return new Room(0,0,random.i(1+smallmax-smallmin)+smallmin, random.i(1+smallmax-smallmin)+smallmin);
+        else if (rtype < (bigChance+smallChance))
+            return new Room(0,0,random.i(1+bigmax-bigmin)+bigmin, random.i(1+bigmax-bigmin)+bigmin);
+        else {
+            Room r = new Room(0, 0, random.i(1+halllengthmax - halllengthmin) + halllengthmin, random.i(1+hallwidthmax - hallwidthmin) + hallwidthmin);
+            r.isHallway = true;
+            if (random.f() > 0.5f)
+                r.rotate();
+            return r;
+        }
+    }
+    /**
      * Scatter a number of random things through the area, onto certain terrains.
      *
      * @param area
@@ -332,6 +476,7 @@ public abstract class ULandscaper {
     public UCell getRandomSpawn(UArea area, UThing thing, int x1, int y1, int x2, int y2) {
         UCell cell = null;
         boolean match = false;
+        int iter = 0;
         while (cell == null || !match) {
             cell = area.cellAt(x1+random.i(x2-x1),y1+random.i(y2-y1));
             if (cell != null) {
@@ -341,6 +486,9 @@ public abstract class ULandscaper {
                 if (match && !thing.canSpawnOnTerrain(cell.terrain().getName()))
                     match = false;
             }
+            iter++;
+            if (iter > 10000)
+                return null;
         }
         return cell;
     }
@@ -400,13 +548,15 @@ public abstract class ULandscaper {
                     if ((neighbors[0][1] && neighbors[2][1] && !neighbors[1][0] && !neighbors[1][2]) ||
                         !neighbors[0][1] && !neighbors[2][1] && neighbors[1][0] && neighbors[1][2]) {
                         if (neighborCount <= 5) {
-                            area.setTerrain(x,y,doorTerrain);
+                            if (random.f() < doorChance)
+                                area.setTerrain(x,y,doorTerrain);
                         }
                     }
                 }
             }
         }
     }
+
 
     public void simplexScatterTerrain(UArea area, String terrain, String[] targets, float threshold, float scatterChance, float[] noiseScales) {
         for (int x=0;x<area.xsize;x++) {
@@ -862,7 +1012,8 @@ public abstract class ULandscaper {
                 name = names.get(random.i(names.size()));
             UActor actor = actorCzar.getActorByName(name);
             UCell dest = getRandomSpawn(area, actor, x1, y1, x2, y2);
-            actor.moveToCell(area, dest.x, dest.y);
+            if (dest != null)
+                actor.moveToCell(area, dest.x, dest.y);
         }
     }
 
