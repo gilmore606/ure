@@ -1,6 +1,8 @@
 package ure.areas;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
 import ure.math.URandom;
@@ -18,7 +20,6 @@ import ure.things.UThingCzar;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * ULandscaper is a grab bag of tools for creating and populating UAreas.
@@ -53,6 +54,8 @@ public abstract class ULandscaper {
     USimplexNoise simplexNoise = new USimplexNoise();
 
     protected String floorterrain = "rock";
+
+    private Log log = LogFactory.getLog(ULandscaper.class);
 
     /**
      * This field will be use to match the proper ULandscaper subclass when deserializing.  It will need
@@ -302,9 +305,7 @@ public abstract class ULandscaper {
      * character of the area you produce.
      * @param area
      */
-    public void buildArea(UArea area, int level, String[] tags) {
-        System.out.println("Default landscaper cannot build areas!");
-    }
+    public abstract void buildArea(UArea area, int level, String[] tags);
 
     /**
      * Fill a rectangle from x1,y1 to x2,y2 with the given terrain.
@@ -517,7 +518,6 @@ public abstract class ULandscaper {
             int x = rand(x2-x1)+x1;
             int y = rand(y2-y1)+y1;
             if (!rectHasTerrain(area, x, y, x+w, y+h, terrains)) {
-                System.out.println("found area without at " + Integer.toString(x) + "," + Integer.toString(y));
                 return area.cellAt(x,y);
             }
         }
@@ -620,7 +620,7 @@ public abstract class ULandscaper {
         float fillratio = -1f;
         int tries = 0;
         while ((fillratio < 0.25f) && (tries < 8)) {
-            System.out.println("SCAPER: shapeCaves attempt " + Integer.toString(tries));
+            log.debug("shapeCaves attempt " + Integer.toString(tries));
             tries++;
 
             // Fill with initial noise, minus a horizontal gap (to promote connectedness later)
@@ -809,7 +809,6 @@ public abstract class ULandscaper {
             int x = random.i(area.xsize);
             int y = random.i(area.ysize);
             if (canFitBoxAt(area, x, y, width, height, floorTerrains)) {
-                System.out.println("found a box");
                 int[] coords = new int[2];
                 coords[0] = x;
                 coords[1] = y;
@@ -948,7 +947,7 @@ public abstract class ULandscaper {
                         }
                     }
                 }
-                System.out.println("CARTO : made new room " + Integer.toString(newroom[2]) + " by " + Integer.toString(newroom[3]));
+                log.debug("made new room " + Integer.toString(newroom[2]) + " by " + Integer.toString(newroom[3]));
                 fails = 0;
             } else {
                 fails++;
@@ -1001,7 +1000,7 @@ public abstract class ULandscaper {
             for (String name: thenames) {
                 names.add(name);
             }
-            System.out.println("SCAPER: got " + Integer.toString(names.size()) + " actor types to scatter");
+            log.debug("got " + Integer.toString(names.size()) + " actor types to scatter");
             if (names.size() < 1)
                 return;
         }
@@ -1022,7 +1021,7 @@ public abstract class ULandscaper {
     public void scatterThingsByTags(UArea area, int x1, int y1, int x2, int y2, String[] tags, int level, int amount) {
         ArrayList<String> names = new ArrayList<>();
         for (String tag : tags) {
-            System.out.println("get names for " + tag);
+            log.debug("get names for " + tag);
             String[] thenames = thingCzar.getThingsByTag(tag,level);
             for (String name: thenames) {
                 names.add(name);

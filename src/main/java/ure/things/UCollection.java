@@ -47,7 +47,7 @@ public class UCollection implements Cloneable {
 
     public void closeOut() {
         if (container instanceof UPlayer)
-            System.out.println("*** BUG : player's collection is closing!");
+            throw new RuntimeException("*** BUG : player's collection is closing!");
         if (things != null) {
             for (UThing thing : things) {
                 thing.closeOut();

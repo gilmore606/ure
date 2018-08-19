@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import ure.actors.actions.ActionWalk;
@@ -102,6 +104,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     private boolean quitGame = false;
 
+    private Log log = LogFactory.getLog(UCommander.class);
+
     public UCommander() {
         Injector.getAppComponent().inject(this);
         bus.register(this);
@@ -150,7 +154,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void unregisterActor(UActor actor) {
         actors.remove(actor);
         if (actors.contains(actor))
-            System.out.println("****IMPOSSIBLE BUG : actor removed from commander.actors but still there");
+            log.error("****IMPOSSIBLE BUG : actor removed from commander.actors but still there");
     }
 
     /**
@@ -188,7 +192,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             if (field.getName().startsWith("GLFW_KEY_")) {
                 try {
                     glmap.put(field.getName(), field.getInt(null));
-                    System.out.println("KEYBIND: read GLFW keymap pair " + field.getName() + " as " + Integer.toString(field.getInt(null)));
+                    log.debug("read GLFW keymap pair " + field.getName() + " as " + Integer.toString(field.getInt(null)));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -208,7 +212,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                 Field idField = commandClass.getField("id");
                 String idValue = (String) idField.get(null);
                 if (idValue != null) {
-                    System.out.println("KEYBIND: found command " + idValue);
+                    log.debug("found command " + idValue);
                     commandMap.put(idValue, commandClass);
                 }
             }
@@ -234,12 +238,12 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             GLKey glkey = new GLKey(k, shiftkey, ctrlkey);
             Class commandClass = commandMap.get(commandid);
             if (commandClass == null) {
-                System.out.println("KEYBIND: ERROR - no command found for '" + commandid + "' -- check mapping file!");
+                log.error("ERROR - no command found for '" + commandid + "' -- check mapping file!");
             } else {
                 try {
                     UCommand cmd = (UCommand) commandClass.newInstance();
                     keyBindings.put(glkey, cmd);
-                    System.out.println("KEYBIND: mapping GLKey " + Integer.toString(k) + " to " + cmd.id);
+                    log.info("mapping GLKey " + Integer.toString(k) + " to " + cmd.id);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -303,7 +307,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     void hearCommand(UCommand command, GLKey k) {
         if (command != null && player != null)
-            System.out.println("PLAYER: actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
+            log.debug("PLAYER: actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
         if (modal != null) {
             modal.hearCommand(command, k);
         } else if (command != null) {
@@ -463,7 +467,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void letActorsAct() {
         // need to use a clone to iterate, since actors might drop out during this loop
         ArrayList<UActor> tmpactors = (ArrayList<UActor>)actors.clone();
-        System.out.println("ticking " + Integer.toString(tmpactors.size()) + " actors");
+        log.debug("ticking " + Integer.toString(tmpactors.size()) + " actors");
         for (UActor actor : tmpactors) {
             if (actors.contains(actor) && !actor.dead)
                 actor.act();
@@ -505,7 +509,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void persistPlayer() {
         if (player.area().getLabel().equals("vaulted"))
             return;
-        System.out.println("Persisting player " + player.getName() + "...");
+        log.debug("Persisting player " + player.getName() + "...");
         player.saveStateData();
         String path = savePath();
         File file = new File(path + "player");
@@ -558,7 +562,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
         bus.post(new TimeTickEvent(turnCounter));
         turnCounter++;
-        System.out.println("time:tick " + Integer.toString(turnCounter));
+        log.trace("time:tick " + Integer.toString(turnCounter));
         renderer.render();
     }
 

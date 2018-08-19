@@ -2,6 +2,8 @@ package ure.actors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.actors.actions.ActionWalk;
 import ure.actors.actions.Interactable;
 import ure.actors.actions.UAction;
@@ -54,6 +56,8 @@ public class UActor extends UThing implements Interactable {
 
     @JsonIgnore
     public boolean dead;
+
+    private Log log = LogFactory.getLog(UActor.class);
 
     @Override
     public void initializeAsTemplate() {
@@ -124,7 +128,7 @@ public class UActor extends UThing implements Interactable {
             }
             // TODO: implement binding of isaac style camera move by screens
             if (getCameraPinStyle() == UCamera.PINSTYLE_SCREENS) {
-                System.out.println("ERROR: Camera.PINSTYLE_SCREENS not implemented!");
+                throw new RuntimeException("Camera.PINSTYLE_SCREENS not implemented!");
             }
         }
         int moveFrames = config.getMoveAnimFrames();
@@ -358,7 +362,7 @@ public class UActor extends UThing implements Interactable {
         bus.post(new DeathEvent(name,location,null));
         UThing corpse = makeCorpse();
         corpse.moveTo(location);
-        System.out.println("made a  corpse of type " + corpse.TYPE);
+        log.debug("made a corpse of type " + corpse.TYPE);
         junk();
     }
 

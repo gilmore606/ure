@@ -3,6 +3,8 @@ package ure.editors.glyphed;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import ure.commands.UCommand;
@@ -62,6 +64,8 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
 
     UColor editColor;
 
+    private Log log = LogFactory.getLog(GlyphedModal.class);
+
     public GlyphedModal() {
         super(null, "", null);
         setDimensions(46,36);
@@ -116,8 +120,9 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
             if (icon == null) {
                 icon = new Icon("blank");
                 icon.setName(name);
+                log.debug("created new icon for " + name);
             } else {
-                System.out.println("GLYPHED: loaded existing icon " + name);
+                log.debug("loaded existing icon for " + name);
             }
             icon.setEntity(actorCzar.getActorByName(name));
             actorIcons.add(icon);
@@ -811,7 +816,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     }
 
     void writeJson(ArrayList<Icon> icons, String filename) {
-        System.out.println("GLYPHED: writing " + filename);
+        log.info("writing " + filename);
         File file = new File(commander.config.getResourcePath() + "icons/" + filename);
         try (FileOutputStream stream = new FileOutputStream(file);) {
             JsonFactory jfactory = new JsonFactory();

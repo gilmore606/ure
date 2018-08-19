@@ -3,6 +3,8 @@ package ure.areas;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.actors.UPlayer;
 import ure.math.URandom;
 import ure.sys.Injector;
@@ -87,6 +89,8 @@ public class UArea implements Serializable {
     @JsonIgnore
     public ArrayList<Stairs> stairsLinks;
 
+    private Log log = LogFactory.getLog(UArea.class);
+
     public UArea() {
         Injector.getAppComponent().inject(this);
         bus.register(this);
@@ -147,7 +151,7 @@ public class UArea implements Serializable {
         setActors(null);
         setCells(null);
         label = "closed (" + label + ")";
-        System.out.println("AREA : " + label);
+        log.debug(label);
     }
 
     /**
@@ -296,7 +300,7 @@ public class UArea implements Serializable {
     public UCell cellAt(int x, int y) {
         if (isValidXY(x,y)) {
             if (getCells() == null) {
-                System.out.println("ACK!!! getCells() was null for area " + label);
+                throw new RuntimeException("ACK!!! getCells() was null for area " + label);
             }
             return getCells()[x][y];
         }
@@ -428,7 +432,7 @@ public class UArea implements Serializable {
         if (this.closeRequested || this.closed)
             bus.unregister(this);
         else {
-            System.out.println("AREA: " + getLabel() + " tick");
+            log.trace(getLabel() + " tick");
             adjustSunColor(commander.daytimeMinutes());
         }
     }
@@ -441,7 +445,7 @@ public class UArea implements Serializable {
      */
     public void broadcastEvent(UAction action) {
         if (closed) {
-            System.out.println("WARN: " + action.id + " event in closed area " + label);
+            log.warn(action.id + " event in closed area " + label);
             return;
         }
         for (UActor actor : getActors()) {
@@ -486,7 +490,7 @@ public class UArea implements Serializable {
      */
     public void freezeForPersist() {
         for (UActor actor : getActors()) {
-            //System.out.println("AREA " + label + ": sleeping " + actor.getName() + " for freeze");
+            log.debug(label + ": sleeping " + actor.getName() + " for freeze");
             commander.unregisterActor(actor);
         }
         for (ULight light : (HashSet<ULight>)lights.clone()) {

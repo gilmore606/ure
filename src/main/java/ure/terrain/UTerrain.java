@@ -147,8 +147,7 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
         try {
             return (UTerrain) super.clone();
         } catch (CloneNotSupportedException e) {
-            System.out.println(" Cloning not allowed. ");
-            return this;
+            throw new RuntimeException(e);
         }
     }
 

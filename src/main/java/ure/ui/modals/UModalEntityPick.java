@@ -1,5 +1,7 @@
 package ure.ui.modals;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.actors.actions.UAction;
 import ure.commands.UCommand;
 import ure.math.UColor;
@@ -31,6 +33,8 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
     UColor tempHiliteColor, flashColor;
 
     HashMap<String,UAction> contextActions;
+
+    private Log log = LogFactory.getLog(UModalEntityPick.class);
 
     public UModalEntityPick(String _header, UColor _bgColor, int _xpad, int _ypad, ArrayList<Entity> _entities,
                             boolean _showDetail, boolean _escapable, boolean _categorize, boolean _selectForVerbs, HearModalEntityPick _callback, String _callbackContext) {
@@ -107,7 +111,7 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
                 biggestCategoryLength = theList.size();
             ArrayList<String> names = deDupeEntities(theList);
             categoryItemNames.add(names);
-            System.out.println("names " + categories.get(i) + " = " + Integer.toString(names.size()) + " items " + Integer.toString(theList.size()));
+            log.debug("names " + categories.get(i) + " = " + Integer.toString(names.size()) + " items " + Integer.toString(theList.size()));
             i++;
         }
     }

@@ -1,5 +1,7 @@
 package ure.examplegame;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
 import ure.areas.UArea;
@@ -23,6 +25,11 @@ import ure.ui.panels.UScrollPanel;
 import ure.ui.panels.UStatusPanel;
 
 import javax.inject.Inject;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.LogManager;
 
 public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.ResolutionListener {
 
@@ -49,7 +56,18 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
     @Inject
     UCartographer cartographer;
 
+    private Log log = LogFactory.getLog(ExampleGame.class);
+
     public ExampleGame() {
+        // Set up logging before doing anything else, including dependency injection.  That way we'll
+        // get proper logging for @Provides methods.
+        try {
+            InputStream configInputStream = new FileInputStream(new File("logging.properties"));
+            LogManager.getLogManager().readConfiguration(configInputStream);
+        } catch (IOException ioe) {
+            throw new RuntimeException("Can't configure logger", ioe);
+        }
+
         Injector.getAppComponent().inject(this);
     }
 
@@ -149,13 +167,13 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
         player = commander.loadPlayer();
         if (player == null) {
             player = makeNewPlayer(playername);
-            System.out.println("Getting the starting area");
+            log.debug("Getting the starting area");
             cartographer.startLoader();
             area = cartographer.makeStartArea();
             UCell startcell = area.randomOpenCell(player);
             player.setSaveLocation(area, startcell.x, startcell.y);
         } else {
-            System.out.println("Loading existing player into " + player.getSaveAreaLabel());
+             log.info("Loading existing player into " + player.getSaveAreaLabel());
             cartographer.startLoader();
             area = cartographer.getArea(player.getSaveAreaLabel());
         }
@@ -168,7 +186,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
     }
 
     public UPlayer makeNewPlayer(String playername) {
-        System.out.println("Creating a brand new @Player");
+        log.debug("Creating a brand new @Player");
         player = new UPlayer("Player",new UColor(0.1f, 0.1f, 0.4f), 2, 3);
         player.setName(playername);
         player.setID(commander.generateNewID(player));

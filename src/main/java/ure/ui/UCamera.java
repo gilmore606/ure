@@ -1,5 +1,7 @@
 package ure.ui;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.areas.UCell;
@@ -46,6 +48,8 @@ public class UCamera extends View implements UAnimator {
     public static int PINSTYLE_HARD = 3;
 
     private USimplexNoise noise = new USimplexNoise();
+
+    private Log log = LogFactory.getLog(UCamera.class);
 
     private class UShadow {
         float start, end;
@@ -159,7 +163,7 @@ public class UCamera extends View implements UAnimator {
                 lightcells[col][row] = new ULightcell(this, col, row, cloud);
             }
         }
-        System.out.println("cell: " + cellWidth + "," + cellHeight + "  cols: " + columns + " rows: " + rows);
+        log.trace("cell: " + cellWidth + "," + cellHeight + "  cols: " + columns + " rows: " + rows);
         leftEdge = centerColumn - (columns / 2);
         topEdge = centerRow - (rows / 2);
         rightEdge = leftEdge + columns;
@@ -482,7 +486,7 @@ public class UCamera extends View implements UAnimator {
         if (!config.isLightEnable()) {
             total = UColor.WHITE;
         } else if (lightcells[col][row] == null) {
-            System.out.println("WARNING!  nonexistent lightcell");
+            log.warn("nonexistent lightcell at " + col + "," + row);
             total = UColor.BLACK;
         } else {
             total = lightcells[col][row].light(commander.frameCounter);

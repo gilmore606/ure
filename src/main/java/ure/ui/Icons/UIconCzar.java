@@ -1,6 +1,8 @@
 package ure.ui.Icons;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 
@@ -21,6 +23,8 @@ public class UIconCzar {
 
     private HashMap<String,Icon> iconsByName;
 
+    private Log log = LogFactory.getLog(UIconCzar.class);
+
     public UIconCzar() {
         Injector.getAppComponent().inject(this);
     }
@@ -37,7 +41,7 @@ public class UIconCzar {
                     Icon[] iconObjs = objectMapper.readValue(inputStream, Icon[].class);
                     for (Icon icon : iconObjs) {
                         iconsByName.put(icon.getName(), icon);
-                        System.out.println("ICONCZAR ICON: loaded " + icon.getName());
+                        log.debug("loaded " + icon.getName());
                     }
                 } catch (IOException io) {
                     io.printStackTrace();

@@ -1,5 +1,7 @@
 package ure.render;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
@@ -66,6 +68,8 @@ public class URendererOGL implements URenderer {
     private float verticalScaleFactor = 1f;
 
     private boolean[] keyState = new boolean[65536]; // Apparently in Java these are 16bit.
+
+    private Log log = LogFactory.getLog(URendererOGL.class);
 
     public URendererOGL() {
         Injector.getAppComponent().inject(this);
@@ -389,7 +393,7 @@ public class URendererOGL implements URenderer {
         frameCount++;
         long now = System.currentTimeMillis();
         if (now - lastUpdateTime > 1000) {
-            System.out.println("[ " + frameCount + " fps ]");
+            log.trace("[ " + frameCount + " fps ]");
             frameCount = 0;
             lastUpdateTime = now;
         }

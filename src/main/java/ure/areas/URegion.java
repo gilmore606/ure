@@ -1,6 +1,8 @@
 package ure.areas;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.actors.UActorCzar;
 import ure.math.URandom;
 import ure.sys.Injector;
@@ -11,7 +13,6 @@ import ure.things.UThingCzar;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 public class URegion {
 
@@ -45,6 +46,8 @@ public class URegion {
     protected String inwardExitType;
     protected String outwardExitType;
     protected String defaultBGM;
+
+    private Log log = LogFactory.getLog(URegion.class);
 
     protected ArrayList<Link> links;
 
@@ -87,7 +90,7 @@ public class URegion {
     }
 
     public UArea makeArea(int level, String label) {
-        System.out.println("REGION " + getId() + " : making area " + Integer.toString(level));
+        log.info(getId() + ": making area " + Integer.toString(level));
         ULandscaper scaper = getLandscaperForLevel(level);
         UArea area = new UArea(getXsize(), getYsize(), scaper.floorterrain);
         area.label = label;

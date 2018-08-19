@@ -1,6 +1,8 @@
 package ure.actors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.areas.UArea;
@@ -28,6 +30,8 @@ public class UPlayer extends UActor {
 
     @JsonIgnore
     ULight light;
+
+    private Log log = LogFactory.getLog(UPlayer.class);
 
     public UPlayer() {
         super();
@@ -59,7 +63,7 @@ public class UPlayer extends UActor {
 
     @Override
     public void addActionTime(float v) {
-        System.out.println("adding action time to player");
+        log.debug("adding action time to player: " + v);
         super.addActionTime(v);
     }
 

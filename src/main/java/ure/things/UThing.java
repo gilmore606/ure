@@ -221,8 +221,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
 
             return clone;
         } catch (CloneNotSupportedException e) {
-            System.out.println(" Cloning not allowed. ");
-            return this;
+            throw new RuntimeException(e);
         }
     }
 
