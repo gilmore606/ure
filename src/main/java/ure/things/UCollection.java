@@ -35,6 +35,8 @@ public class UCollection implements Cloneable {
 
     public void reconnect(UArea area, UContainer container) {
         this.container = container;
+        if (things == null) things = new ArrayList<>();
+        if (actors == null) actors = new ArrayList<>();
         for (UThing thing : things) {
             thing.reconnect(area, container);
         }

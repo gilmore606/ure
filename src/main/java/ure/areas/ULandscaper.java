@@ -983,7 +983,7 @@ public abstract class ULandscaper {
         if (randf() < 0.1f) {
             fillRect(area, "carvings", x1+2,y1+2,x1+w-3,y1+h-3);
         }
-        if (randf() < 0.99f) {
+        if (randf() < 0.5f) {
             ULight light = new ULight(UColor.LIGHTGRAY, 20, 20);
             if (randf() < 0.0f)
                 light.setFlicker(ULight.FLICKER_FRITZ, 1f, 1f, 0);
