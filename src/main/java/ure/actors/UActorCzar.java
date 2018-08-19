@@ -45,13 +45,12 @@ public class UActorCzar {
         for (File resourceFile : files) {
             String resourceName = resourceFile.getName();
             if (resourceName.endsWith(".json")) {
-                log.debug("loading " + resourceName);
                 try {
                     InputStream inputStream = getClass().getResourceAsStream("/bodies/" + resourceName);
                     Body[] bodyObjs = objectMapper.readValue(inputStream, Body[].class);
                     for (Body body : bodyObjs) {
                         bodies.put(body.getName(), body);
-                        log.info("loaded " + body.getName());
+                        log.debug("loaded " + body.getName());
                     }
                 } catch (IOException io) {
                     throw new RuntimeException("Failed to load " + resourceName, io);
@@ -66,14 +65,13 @@ public class UActorCzar {
         for (File resourceFile : files) {
             String resourceName = resourceFile.getName();
             if (resourceName.endsWith(".json")) {
-                log.debug("loading " + resourceName);
                 try {
                     InputStream inputStream = getClass().getResourceAsStream("/actors/" + resourceName);
                     UActor[] actorObjs = objectMapper.readValue(inputStream, UActor[].class);
                     for (UActor actor : actorObjs) {
                         actor.initializeAsTemplate();
                         actorsByName.put(actor.getName(), actor);
-                        log.info("loaded " + actor.getName());
+                        log.debug("loaded " + actor.getName());
                     }
                 } catch (IOException io) {
                     throw new RuntimeException("Failed to load " + resourceName, io);
