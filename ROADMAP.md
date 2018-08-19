@@ -14,23 +14,25 @@ roguelike.  Here's our intended roadmap of feature additions that will get us to
 - ~~improved A* pathing~~
 - ~~Main Menu modal with gamesave manager and title screen~~
 - ~~ActorPanel UI display~~
+
 ## 0.9
-- Audio : ambient sounds, streaming
-- Actor AI behavior set
-- Vault stamping support in Landscaper
-- JSON configuration of main window layout, with resize support
-## 1.0
-- ~~TrueType font support / separate text and glyph fonts, specified at runtime~~
-- Camera zoom
+- ~~Audio : ambient sounds, streaming~~
+- ~~resize support~~
+- ~~TrueType font support / separate text and glyph fonts~~
 - ~~Map modal~~
+- ~~Equipment~~
+
+## 1.0
 - RexPaint entity sprites for UI display
 - Status effects
+- Actor AI behavior set
+- Vault stamping support in Landscaper
+- JSON configuration of main window layout
 
 ## 1.1+
 - Fluid/fire/gas cell simulation
-- RexPaint images embedded in terrain/vaults
-- Status effects
-
+- RexPaint images in terrain/vaults
+- Camera zoom
 - Actor conversation trees / quests
 - Object materials and composition
 
