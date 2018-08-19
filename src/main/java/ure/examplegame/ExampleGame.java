@@ -24,7 +24,7 @@ import ure.ui.panels.UStatusPanel;
 
 import javax.inject.Inject;
 
-public class ExampleGame implements UREGame, HearModalTitleScreen {
+public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.ResolutionListener {
 
     static UArea area;
     static UCamera camera;
@@ -97,8 +97,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
         rootView.addChild(scrollPanel);
 
         renderer.setRootView(rootView);
-
-
+        renderer.setResolutionListener(this);
 
         commander.setStatusPanel(statusPanel);
         commander.setScrollPanel(scrollPanel);
@@ -206,5 +205,16 @@ public class ExampleGame implements UREGame, HearModalTitleScreen {
         item = thingCzar.getPile("gold coins", 320);
         item.moveTo(player);
         return player;
+    }
+
+    @Override
+    public void resolutionChanged(int width, int height) {
+        // Position panels around the right/bottom edges
+        statusPanel.setPosition(width - statusPanel.getWidth(), 0); // upper right corner
+        lensPanel.setPosition(statusPanel.getX(), height - lensPanel.getHeight()); // bottom right
+        actorPanel.setBounds(statusPanel.getX(), statusPanel.getHeight() + 1, statusPanel.getWidth(), height - statusPanel.getHeight() - lensPanel.getHeight() - 2);
+        scrollPanel.setBounds(0, height - scrollPanel.getHeight(), width - statusPanel.getWidth(), scrollPanel.getHeight());
+        camera.setBounds(0, 0, width - statusPanel.getWidth(), height - scrollPanel.getHeight());
+        camera.setupGrid();
     }
 }

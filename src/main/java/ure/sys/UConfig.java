@@ -87,6 +87,9 @@ public class UConfig {
     private ArrayList<Integer> sunColorLerpMarkers;
     private HashMap<Integer,String> sunCycleMessages;
 
+    private boolean resizableWindow = true;             // Can the window be resized at all?
+    private boolean scaleContentToWindow = false;       // Do we warp our content to fit the window size, or draw it at a fixed resolution?
+
     // Audio
 
     private float volumeMaster = 1f;
@@ -559,6 +562,22 @@ public class UConfig {
     public void setDefaultCorpse(String s) { defaultCorpse = s; }
     public float getDefaultCorpseDesaturation() { return defaultCorpseDesaturation; }
     public void setDefaultCorpseDesaturation(float f) { defaultCorpseDesaturation = f; }
+
+    public boolean isResizableWindow() {
+        return resizableWindow;
+    }
+
+    public void setResizableWindow(boolean resizableWindow) {
+        this.resizableWindow = resizableWindow;
+    }
+
+    public boolean isScaleContentToWindow() {
+        return scaleContentToWindow;
+    }
+
+    public void setScaleContentToWindow(boolean scaleContentToWindow) {
+        this.scaleContentToWindow = scaleContentToWindow;
+    }
 
     public void setVolumeMaster(float v) { volumeMaster = v; }
     public void setVolumeMusic(float v) { volumeMusic = v; }

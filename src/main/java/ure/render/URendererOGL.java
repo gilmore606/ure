@@ -55,11 +55,15 @@ public class URendererOGL implements URenderer {
     private FontTexture currentFont;
 
     private KeyListener keyListener;
+    private ResolutionListener resolutionListener;
 
     private DoubleBuffer xf, yf;
 
     private int frameCount = 0;
     private long lastUpdateTime = System.currentTimeMillis();
+
+    private float horizontalScaleFactor = 1f;
+    private float verticalScaleFactor = 1f;
 
     private boolean[] keyState = new boolean[65536]; // Apparently in Java these are 16bit.
 
@@ -112,6 +116,11 @@ public class URendererOGL implements URenderer {
     }
 
     @Override
+    public void setResolutionListener(ResolutionListener listener) {
+        this.resolutionListener = listener;
+    }
+
+    @Override
     public void initialize() {
 
         if (!glfwInit())
@@ -125,7 +134,7 @@ public class URendererOGL implements URenderer {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 0);
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_RESIZABLE, config.isResizableWindow() ? GLFW_TRUE : GLFW_FALSE);
 
         screenWidth = config.getScreenWidth();
         screenHeight =config.getScreenHeight();
@@ -190,6 +199,8 @@ public class URendererOGL implements URenderer {
         int[] width = new int[1];
         int[] height = new int[1];
         glfwGetFramebufferSize(window, width, height);
+        horizontalScaleFactor = (float) config.getScreenWidth() / (float) width[0];
+        verticalScaleFactor = (float) config.getScreenHeight() / (float) height[0];
         resize(width[0], height[0]);
 
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
@@ -317,6 +328,16 @@ public class URendererOGL implements URenderer {
         currentFont = newFont;
     }
 
+    @Override
+    public void toggleFullscreen() {
+        if (glfwGetWindowMonitor(window) == 0) {
+            GLFWVidMode mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+            glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, mode.width(), mode.height(), mode.refreshRate());
+        } else {
+            glfwSetWindowMonitor(window, 0, 0, 0, config.getScreenWidth(), config.getScreenHeight(), GLFW_DONT_CARE);
+        }
+    }
+
     // internals
 
     private void beginRendering() {
@@ -377,7 +398,14 @@ public class URendererOGL implements URenderer {
     private void resize(int width, int height){
         screenWidth = width;
         screenHeight = height;
-        matrix.setOrtho2D(0, 1400, 1000, 0);
+        if (config.isScaleContentToWindow()) {
+            matrix.setOrtho2D(0, config.getScreenWidth(), config.getScreenHeight(), 0);
+        } else {
+            matrix.setOrtho2D(0, width * horizontalScaleFactor, height * verticalScaleFactor, 0);
+        }
+        if (resolutionListener != null) {
+            resolutionListener.resolutionChanged((int) (width * horizontalScaleFactor), (int) (height * verticalScaleFactor));
+        }
     }
 
     private void destroy(){

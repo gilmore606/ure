@@ -45,6 +45,8 @@ public class UCamera extends View implements UAnimator {
     public static int PINSTYLE_SCREENS = 2;
     public static int PINSTYLE_HARD = 3;
 
+    private USimplexNoise noise = new USimplexNoise();
+
     private class UShadow {
         float start, end;
         public UShadow(float thes, float thee) {
@@ -115,16 +117,6 @@ public class UCamera extends View implements UAnimator {
         visibilitySources = new HashSet<>();
         setBounds(x, y, width, height);
         setupGrid();
-        lightcells = new ULightcell[columns][rows];
-        USimplexNoise noise = new USimplexNoise();
-        float[] scales = new float[]{15f,22f};
-        for (int col = 0; col<columns; col++) {
-            for (int row = 0;row < rows;row++) {
-                float cloud = noise.multi(col*2,row,scales) - 0.3f;
-                if (cloud < 0.3f) cloud = 0f;
-                lightcells[col][row] = new ULightcell(this, col, row, cloud);
-            }
-        }
     }
 
     public int getCenterColumn() {
@@ -153,11 +145,20 @@ public class UCamera extends View implements UAnimator {
         setupGrid();
     }
 
-    private void setupGrid() {
+    public void setupGrid() {
         float cellWidth = (float)config.getTileWidth() * zoom;
         float cellHeight = (float)config.getTileHeight() * zoom;
-        columns = (int)(width / cellWidth) + 2;
-        rows = (int)(height / cellHeight) + 2;
+        columns = (int)(width / cellWidth);
+        rows = (int)(height / cellHeight);
+        lightcells = new ULightcell[columns][rows];
+        float[] scales = new float[]{15f,22f};
+        for (int col = 0; col<columns; col++) {
+            for (int row = 0;row < rows;row++) {
+                float cloud = noise.multi(col*2,row,scales) - 0.3f;
+                if (cloud < 0.3f) cloud = 0f;
+                lightcells[col][row] = new ULightcell(this, col, row, cloud);
+            }
+        }
         System.out.println("cell: " + cellWidth + "," + cellHeight + "  cols: " + columns + " rows: " + rows);
         leftEdge = centerColumn - (columns / 2);
         topEdge = centerRow - (rows / 2);
@@ -504,22 +505,19 @@ public class UCamera extends View implements UAnimator {
 
         renderLights();
 
-        int camw = getWidthInCells();
-        int camh = getHeightInCells();
-
         // Render Cells.
-        for (int col=0; col<camw; col++) {
-            for (int row=0; row<camh; row++) {
+        for (int col=0; col<columns; col++) {
+            for (int row=0; row<rows; row++) {
                 drawCell(col, row);
             }
         }
-        for (int col=0; col<camw; col++) {
-            for (int row=0; row<camh; row++) {
+        for (int col=0; col<columns; col++) {
+            for (int row=0; row<rows; row++) {
                 drawCellActor(col, row);
             }
         }
-        for (int col=0; col<camw; col++) {
-            for (int row=0; row<camh; row++) {
+        for (int col=0; col<columns; col++) {
+            for (int row=0; row<rows; row++) {
                 drawCellParticle(col, row);
             }
         }
@@ -598,7 +596,6 @@ public class UCamera extends View implements UAnimator {
                     area.cellAt(col,row).animationTick();
             }
         }
-        draw();
     }
 
 }
