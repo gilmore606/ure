@@ -60,7 +60,8 @@ public class ExampleComplexScaper extends ULandscaper {
         space.pruneDeadEnds().writeTerrain(area, "floor", 0, 0);
         addDoors(area, "door", new String[]{"rock", "door"}, 0.1f);
         for (Room room : rooms) {
-            DecorateRoom(area, new int[]{room.x,room.y,room.width,room.height});
+            if (!room.isHallway)
+                DecorateRoom(area, new int[]{room.x,room.y,room.width,room.height});
         }
 
         int lakes = rand(4) + 1;

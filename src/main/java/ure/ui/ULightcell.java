@@ -22,7 +22,7 @@ public class ULightcell {
 
     private UColor lightBuffer;
 
-    HashMap<ULight,Float> sources;
+    public HashMap<ULight,Float> sources;
     private UCamera camera;
 
     public ULightcell(UCamera thecam, int x, int y, float cloud) {

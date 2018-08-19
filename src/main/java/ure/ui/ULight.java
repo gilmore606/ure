@@ -6,6 +6,7 @@ import ure.math.UColor;
 import ure.math.UPath;
 import ure.math.URandom;
 import ure.sys.Injector;
+import ure.sys.UCommander;
 
 import javax.inject.Inject;
 import java.lang.Math;
@@ -17,6 +18,9 @@ import java.lang.Math;
 
 public class ULight {
 
+    @Inject
+    @JsonIgnore
+    UCommander commander;
     @Inject
     @JsonIgnore
     URandom random;
@@ -132,10 +136,31 @@ public class ULight {
                 return true;
             return false;
         } else {
-            if (tx >= x-1 && tx <= x+width && ty >= y-1 && ty <= y+height)
+            if (tx >= x-2 && tx <= x+width+1 && ty >= y-2 && ty <= y+height+1)
                 return true;
             return false;
         }
+    }
+
+    public boolean lightsWall(int wallx, int wally, UCamera camera) {
+        if (type == POINT) {
+            // if we can see the point source, we can see the walls it lights up
+            return camera.visibilityAt(x - camera.leftEdge, y-camera.topEdge) > 0.1f;
+        } else {
+            if (commander.player() == null) return true;
+            // if ambient exists between player and wall, wall is lit
+            if (UPath.intersectsRect(commander.player().areaX(),commander.player().areaY(),wallx,wally, x,y,width,height))
+                return true;
+            return false;
+        }
+    }
+
+    public boolean isProjectedAt(int x, int y, UCamera camera) {
+        ULightcell lightcell = camera.lightcellAt(x - camera.leftEdge, y - camera.topEdge);
+        if (lightcell == null) return false;
+        if (lightcell.sources.keySet().contains(this))
+            return true;
+        return false;
     }
 
     public float intensityAtTime(int time) {

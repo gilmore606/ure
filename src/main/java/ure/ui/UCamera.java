@@ -371,42 +371,43 @@ public class UCamera extends View implements UAnimator {
         }
         float fall = 0.15f;
         float val = 0f;
-        int w = light.width;
-        int h = light.height;
-        int sx1 = x1-1;
-        w += 2;
-        int sy1 = y1-1;
-        h +=2;
+        int w = light.width + 4;
+        int h = light.height + 4;
+        int sx1 = x1-2;
+        int sy1 = y1-2;
         if (true) {
             for (int ix = sx1;ix < sx1 + w;ix++) {
                 val = spreadAmbient(light, ix, sy1, 0, -1, fall);
                 projectToCell(ix, sy1, light, false, val);
-                val = spreadAmbient(light, ix, sy1 + h, 0, 1, fall);
-                projectToCell(ix, sy1 + h, light, false, val);
+                val = spreadAmbient(light, ix, sy1 + h-1, 0, 1, fall);
+                projectToCell(ix, sy1 + h-1, light, false, val);
             }
             for (int iy = sy1;iy < sy1 + h;iy++) {
                 val = spreadAmbient(light, sx1, iy, -1, 0, fall);
                 projectToCell(sx1, iy, light, false, val);
-                val = spreadAmbient(light, sx1 + w, iy, 1, 0, fall);
-                projectToCell(sx1 + w, iy, light, false, val);
+                val = spreadAmbient(light, sx1 + w-1, iy, 1, 0, fall);
+                projectToCell(sx1 + w-1, iy, light, false, val);
             }
         }
     }
 
     float spreadAmbient(ULight light, int x, int y, int dx, int dy, float fall) {
-            return fall * 3f;
+            if (!area.blocksLight(leftEdge+x-dx,topEdge+y-dy))
+                return fall * 3f;
+            return 0f;
     }
 
     void projectToCell(int col, int row, ULight light, boolean projectVisibility, float intensity) {
         if (projectVisibility)
             setVisibilityAt(col, row, intensity);
+        else if (intensity <= 0f)
+            return;
         else {
             if (light.canTouch(col + leftEdge, row + topEdge)) {
                 boolean blockedWallGlow = false;
                 if (area.blocksLight(col+ leftEdge, row+ topEdge)) {
-                    if (visibilityAt(light.x - leftEdge, light.y - topEdge) < 0.1f) {
+                    if (!light.lightsWall(col + leftEdge, row + topEdge, this))
                         blockedWallGlow = true;
-                    }
                 }
                 if (!blockedWallGlow) {
                     receiveLight(col, row, light, intensity * light.intensityAtOffset((col + leftEdge) - light.x, (row + topEdge) - light.y));
@@ -460,6 +461,12 @@ public class UCamera extends View implements UAnimator {
         if (col >= 0 && row >= 0 && col < columns && row < rows)
             return true;
         return false;
+    }
+
+    public ULightcell lightcellAt(int col, int row) {
+        if (isValidCell(col, row))
+            return lightcells[col][row];
+        return null;
     }
 
     void receiveLight(int col, int row, ULight source, float intensity) {

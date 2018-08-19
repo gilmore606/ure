@@ -3,6 +3,8 @@ package ure.math;
 import ure.areas.UArea;
 import ure.actors.UActor;
 import ure.things.UThing;
+import ure.ui.UCamera;
+import ure.ui.ULight;
 
 import java.util.Comparator;
 import java.util.Random;
@@ -64,14 +66,15 @@ public class UPath {
 
     /**
      * Utility method: Calculate the manhattan distance (4-direction travel distance) between two points.
-     * @param x1
-     * @param y1
-     * @param x2
-     * @param y2
-     * @return
      */
     public static int mdist(int x1, int y1, int x2, int y2) {
         return Math.abs(x2-x1) + Math.abs(y2-y1);
+    }
+
+    public static int mdistToRect(int px, int py, int rx, int ry, int rwidth, int rheight) {
+        int cx = Math.max(Math.min(px,rx+rwidth),rx);
+        int cy = Math.max(Math.min(py,ry+rheight),ry);
+        return mdist(px,py,cx,cy);
     }
 
     /**
@@ -101,6 +104,34 @@ public class UPath {
             }
         }
         return true;
+    }
+
+    /**
+     * Does a line from point 1 to point 2 intersect the given rect?
+     * Rect at point 2 doesn't count.
+     */
+    public static boolean intersectsRect(int x0, int y0, int x1, int y1, int rx, int ry, int rw, int rh) {
+        int dx = Math.abs(x1-x0); int dy = Math.abs(y1-y0);
+        int sx = x0<x1 ? 1 : -1;
+        int sy = y0<y1 ? 1 : -1;
+        int err = dx-dy;
+        int e2;
+        int x = x0;
+        int y = y0;
+        while (true) {
+            if (x==x1 && y==y1) break;
+            if (x >= rx && x < rx+rw && y >= ry && y < ry+rh) return true;
+            e2 = 2*err;
+            if (e2 > -1 * dy) {
+                err -= dy;
+                x += sx;
+            }
+            if (e2 < dx) {
+                err += dx;
+                y += sy;
+            }
+        }
+        return false;
     }
 
     /**

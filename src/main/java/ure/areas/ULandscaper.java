@@ -955,7 +955,7 @@ public abstract class ULandscaper {
             }
         }
         for (int[] room : rooms) {
-            DecorateRoom(area, room);
+            DecorateRoom(area, new int[]{room[0]+1,room[1]+1,room[2]-2,room[3]-2});
         }
         if (addExteriorDoors && rooms.size() > 1) {
             for (int i = 0;i < rand(rooms.size()/2) + 2;i++) {
@@ -983,7 +983,7 @@ public abstract class ULandscaper {
         if (randf() < 0.1f) {
             fillRect(area, "carvings", x1+2,y1+2,x1+w-3,y1+h-3);
         }
-        if (randf() < 0.5f) {
+        if (randf() < 0.99f) {
             ULight light = new ULight(UColor.LIGHTGRAY, 20, 20);
             if (randf() < 0.0f)
                 light.setFlicker(ULight.FLICKER_FRITZ, 1f, 1f, 0);
