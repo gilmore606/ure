@@ -5,6 +5,7 @@ import ure.terrain.Stairs;
 import ure.terrain.UTerrain;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ExampleForestScaper extends ULandscaper {
 
@@ -17,22 +18,32 @@ public class ExampleForestScaper extends ULandscaper {
     @Override
     public void buildArea(UArea area, int level, String[] tags) {
         fillRect(area, "rock", 0, 0, area.xsize-1, area.ysize-1);
-        Shape space = new Shape(area.xsize,area.ysize);
-        Room room = new Room(40,40,10,10);
+        Shape space = new Shape(100,100);
+        Room room = new Room(20,20,10,10);
         room.print(space);
-        for (Face face : room.faces()) {
-            Room newroom = new Room(random.i(10) + 6, random.i(10) + 6);
-            if (face.addRoom(newroom, space) != null) {
+        ArrayList<Face> faces = new ArrayList<>();
+        for (Face face : room.faces())
+            faces.add(face);
+        int iter = 0;
+        while (!faces.isEmpty() && iter < 100000) {
+            Room newroom = new Room(100,100);
+            while (newroom.width * newroom.height > 150)
+                newroom = new Room(random.i(18)+2,random.i(18)+2);
+            Face face = (Face)random.member((List)faces);
+            if (face.addRoom(newroom,space) != null) {
                 newroom.print(space);
-                face.punchDoors(space);
+                if (random.f() < 0.7f)
+                    newroom.punchDoors(space);
+                else
+                    face.punchDoors(space);
+                faces.remove(face);
+                for (Face newface : newroom.faces())
+                    faces.add(newface);
+            } else {
+                if (random.f() < 0.1f)
+                    faces.remove(face);
             }
-            for (Face f2 : newroom.faces()) {
-                Room room2 = new Room(random.i(5)+5,random.i(5)+5);
-                if (f2.addRoom(room2, space) != null) {
-                    room2.print(space);
-                    room2.punchDoors(space);
-                }
-            }
+            iter++;
         }
         space.writeTerrain(area, "floor", 0, 0);
         area.setTerrain(42,42,"cave entrance");

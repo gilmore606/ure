@@ -65,7 +65,7 @@ public abstract class ULandscaper {
      * Walls and doors are outside of this square.
      */
     public class Room {
-        int x,y,width,height;
+        public int x,y,width,height;
         public Room(int x, int y, int width, int height) {
             this.x=x;
             this.y=y;
