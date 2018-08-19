@@ -117,6 +117,20 @@
       "ambientsoundGain": 0.7
     },
   {
+    "name": "still water",
+    "type": "water",
+    "filechar": "p",
+    "passable": true,
+    "opaque": false,
+    "breaklatch": true,
+    "sunvis": 1.0,
+    "movespeed": 0.5,
+    "bonkmsg": "You can't swim, and that water looks cold anyway.",
+    "walkmsg": "You splash through waist-deep water.",
+    "ambientsound": "still_water.wav",
+    "ambientsoundGain": 0.5
+  },
+  {
     "name": "deep water",
     "type": "water",
     "filechar": "w",

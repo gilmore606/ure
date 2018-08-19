@@ -61,12 +61,12 @@ public class ExampleComplexScaper extends ULandscaper {
         int lakes = rand(4) + 1;
         Shape lakemask = new Shape(area.xsize + 4, area.ysize + 4);
         for (int i = 0;i < lakes;i++) {
-            int lakew = 4 + rand(15);
-            int lakeh = 4 + rand(15);
+            int lakew = 4 + rand(12);
+            int lakeh = 4 + rand(12);
             Shape lake = shapeBlob(lakew, lakeh);
             int x = rand(area.xsize);
             int y = rand(area.ysize);
-            lake.writeTerrain(area, "water", x, y);
+            lake.writeTerrain(area, "still water", x, y);
             lakemask.maskWith(lake, Shape.MASK_OR, x, y);
             if (randf() < 0.8f) {
                 Shape mud = lake.copy().grow(1 + rand(4)).erode(0.6f, 1 + rand(3)).maskWith(lake, Shape.MASK_NOT);

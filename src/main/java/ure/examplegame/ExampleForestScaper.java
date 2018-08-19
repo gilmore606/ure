@@ -44,7 +44,7 @@ public class ExampleForestScaper extends ULandscaper {
             Shape lake = shapeBlob(lakew,lakeh);
             int x = rand(area.xsize);
             int y = rand(area.ysize);
-            lake.writeTerrain(area, "water", x, y);
+            lake.writeTerrain(area, "still water", x, y);
             lakemask.maskWith(lake, Shape.MASK_OR, x, y);
             if (randf() < 0.5f) {
                 Shape mud = lake.copy().grow(1 + rand(4)).erode(0.6f, 1 + rand(3)).maskWith(lake, Shape.MASK_NOT);

@@ -110,7 +110,8 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     public Icon icon() {
         if (icon == null) {
             icon = iconCzar.getIconByName(name);
-            icon.setEntity(this);
+            if (icon != null)
+                icon.setEntity(this);
         }
         return icon;
     }
