@@ -148,8 +148,8 @@ public class UCamera extends View implements UAnimator {
     private void setupGrid() {
         float cellWidth = (float)config.getTileWidth() * zoom;
         float cellHeight = (float)config.getTileHeight() * zoom;
-        columns = (int)(width / cellWidth) + 2;
-        rows = (int)(height / cellHeight) + 2;
+        columns = (int)(width / cellWidth);
+        rows = (int)(height / cellHeight);
         lightcells = new ULightcell[columns][rows];
         float[] scales = new float[]{15f,22f};
         for (int col = 0; col<columns; col++) {
@@ -505,22 +505,19 @@ public class UCamera extends View implements UAnimator {
 
         renderLights();
 
-        int camw = getWidthInCells();
-        int camh = getHeightInCells();
-
         // Render Cells.
-        for (int col=0; col<camw; col++) {
-            for (int row=0; row<camh; row++) {
+        for (int col=0; col<columns; col++) {
+            for (int row=0; row<rows; row++) {
                 drawCell(col, row);
             }
         }
-        for (int col=0; col<camw; col++) {
-            for (int row=0; row<camh; row++) {
+        for (int col=0; col<columns; col++) {
+            for (int row=0; row<rows; row++) {
                 drawCellActor(col, row);
             }
         }
-        for (int col=0; col<camw; col++) {
-            for (int row=0; row<camh; row++) {
+        for (int col=0; col<columns; col++) {
+            for (int row=0; row<rows; row++) {
                 drawCellParticle(col, row);
             }
         }
@@ -599,7 +596,6 @@ public class UCamera extends View implements UAnimator {
                     area.cellAt(col,row).animationTick();
             }
         }
-        draw();
     }
 
 }
