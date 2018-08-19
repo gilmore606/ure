@@ -20,7 +20,7 @@ public class ExampleComplexScaper extends ULandscaper {
     @Override
     public void buildArea(UArea area, int level, String[] tags) {
         ArrayList<Room> rooms = new ArrayList<>();
-        fillRect(area, "rock", 0, 0, area.xsize - 1, area.ysize - 1);
+        fillRect(area, "wall", 0, 0, area.xsize - 1, area.ysize - 1);
         Shape space = new Shape(area.xsize, area.ysize);
         Room firstroom = new Room(20, 20, 10, 10);
         firstroom.print(space);
