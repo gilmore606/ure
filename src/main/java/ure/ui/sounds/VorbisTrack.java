@@ -1,5 +1,7 @@
 package ure.ui.sounds;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBVorbisInfo;
 import org.lwjgl.system.MemoryStack;
@@ -37,6 +39,8 @@ public class VorbisTrack implements AutoCloseable {
     final float samplesSec;
     private final AtomicInteger sampleIndex;
 
+    private Log log = LogFactory.getLog(VorbisTrack.class);
+
     VorbisTrack(String filePath, AtomicInteger sampleIndex) {
         try {
             encodedAudio = ioResourceToByteBuffer(filePath, 256*1024);
@@ -51,7 +55,7 @@ public class VorbisTrack implements AutoCloseable {
             stb_vorbis_get_info(handle, info);
             this.channels = info.channels();
             this.sampleRate = info.sample_rate();
-            System.out.println("SPEAKER: vorbis file detected " + Integer.toString(channels) + " channel " + Integer.toString(sampleRate) + " samplerate");
+            log.debug("vorbis file detected " + Integer.toString(channels) + " channel " + Integer.toString(sampleRate) + " samplerate");
         }
         this.samplesLength = stb_vorbis_stream_length_in_samples(handle);
         this.samplesSec = stb_vorbis_stream_length_in_seconds(handle);

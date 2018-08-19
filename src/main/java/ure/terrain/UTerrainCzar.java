@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 
@@ -31,6 +33,8 @@ public class UTerrainCzar {
     ObjectMapper objectMapper;
     @Inject
     UCommander commander;
+
+    private Log log = LogFactory.getLog(UTerrainCzar.class);
 
     public UTerrainCzar(String jsonfilename) {
         this();
@@ -55,7 +59,7 @@ public class UTerrainCzar {
         for (File resourceFile : files) {
             String resourceName = resourceFile.getName();
             if (resourceName.endsWith(".json")) {
-                System.out.println("TERRAINCZAR: loading " + resourceName);
+                log.debug("loading " + resourceName);
                 try {
                     InputStream inputStream = getClass().getResourceAsStream("/terrain/" + resourceName);
                     UTerrain[] terrainObjs = objectMapper.readValue(inputStream, UTerrain[].class);

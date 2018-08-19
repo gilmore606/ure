@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.actors.behaviors.BehaviorDeserializer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
@@ -30,6 +32,8 @@ public class UActorCzar {
 
     public BehaviorDeserializer behaviorDeserializer;
 
+    private Log log = LogFactory.getLog(UActorCzar.class);
+
     public UActorCzar() {
         Injector.getAppComponent().inject(this);
     }
@@ -41,16 +45,16 @@ public class UActorCzar {
         for (File resourceFile : files) {
             String resourceName = resourceFile.getName();
             if (resourceName.endsWith(".json")) {
-                System.out.println("ACTORCZAR BODIES: loading " + resourceName);
+                log.debug("loading " + resourceName);
                 try {
                     InputStream inputStream = getClass().getResourceAsStream("/bodies/" + resourceName);
                     Body[] bodyObjs = objectMapper.readValue(inputStream, Body[].class);
                     for (Body body : bodyObjs) {
                         bodies.put(body.getName(), body);
-                        System.out.println("ACTORCZAR BODIES: loaded " + body.getName());
+                        log.info("loaded " + body.getName());
                     }
                 } catch (IOException io) {
-                    io.printStackTrace();
+                    throw new RuntimeException("Failed to load " + resourceName, io);
                 }
             }
         }
@@ -62,17 +66,17 @@ public class UActorCzar {
         for (File resourceFile : files) {
             String resourceName = resourceFile.getName();
             if (resourceName.endsWith(".json")) {
-                System.out.println("ACTORCZAR: loading " + resourceName);
+                log.debug("loading " + resourceName);
                 try {
                     InputStream inputStream = getClass().getResourceAsStream("/actors/" + resourceName);
                     UActor[] actorObjs = objectMapper.readValue(inputStream, UActor[].class);
                     for (UActor actor : actorObjs) {
                         actor.initializeAsTemplate();
                         actorsByName.put(actor.getName(), actor);
-                        System.out.println("ACTORCZAR: loaded " + actor.getName());
+                        log.info("loaded " + actor.getName());
                     }
                 } catch (IOException io) {
-                    io.printStackTrace();
+                    throw new RuntimeException("Failed to load " + resourceName, io);
                 }
             }
         }

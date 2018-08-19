@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.math.URandom;
 import ure.sys.events.PlayerChangedAreaEvent;
 import ure.sys.Injector;
@@ -70,6 +72,8 @@ public class UCartographer implements Runnable {
     Thread loaderThread;
 
     public boolean waitingForLoad;
+
+    private Log log = LogFactory.getLog(UCartographer.class);
 
     public UCartographer() {
         Injector.getAppComponent().inject(this);
@@ -232,7 +236,7 @@ public class UCartographer implements Runnable {
             }
             catch (IOException e) {
                 if (e instanceof FileNotFoundException) {
-                    System.out.println("CARTO: no save found for " + label);
+                    log.debug("no save found for " + label);
                 } else {
                     e.printStackTrace();
                 }
@@ -251,7 +255,7 @@ public class UCartographer implements Runnable {
     protected void persist(Object object, String filename) {
         String path = commander.savePath();
         if (commander.config.isPersistentAreas()) {
-            System.out.println("CARTO : saving file " + path + filename);
+            log.info("saving file " + path + filename);
             File file = new File(path + filename);
             try (
                     FileOutputStream stream = new FileOutputStream(file);
@@ -276,7 +280,7 @@ public class UCartographer implements Runnable {
      *
      */
      public UArea makeArea(String label, String labelname, int labeldata) {
-         System.out.println("CARTO: make area for " + labelname + " (" + Integer.toString(labeldata) + ")");
+         log.info("make area for " + labelname + " (" + Integer.toString(labeldata) + ")");
          if (regions.containsKey(labelname)) {
              UArea area = regions.get(labelname).makeArea(labeldata, label);
              area.setLabel(label);
@@ -290,7 +294,7 @@ public class UCartographer implements Runnable {
      * Add a region to the world.  This lets the carto spawn areas for that region's label id.
      */
     public void addRegion(URegion region) {
-         System.out.println("CARTO : adding region " + region.getId());
+         log.info("adding region " + region.getId());
          persist(region, region.getId() + ".region");
          regions.put(region.getId(), region);
     }
@@ -316,15 +320,15 @@ public class UCartographer implements Runnable {
     void freezeArea(UArea area) {
         if (commander.player() != null) {
             if (commander.player().area() == area) {
-                System.out.println("ERROR: attempted to freeze player's current area!");
+                log.error("attempted to freeze player's current area!");
                 return;
             }
         } else if (area.closed) {
-            System.out.println("CARTO LOADER: WARNING - tried to freeze " + area.label + " which is already frozen");
+            log.error("tried to freeze " + area.label + " which is already frozen");
             removeActiveArea(area);
             return;
         } else if (!activeAreas.contains(area)) {
-            System.out.println("ERROR: attempted to freeze an area not in activeAreas!  Where'd that come from?");
+            log.error("attempted to freeze an area not in activeAreas!  Where'd that come from?");
             return;
         }
         area.freezeForPersist();
@@ -466,7 +470,7 @@ public class UCartographer implements Runnable {
      *
      */
     public void run() {
-        System.out.println("CARTO LOADER: background thread starting");
+        log.debug("background thread starting");
         while (!commander.isQuitGame() && (commander.player() != null) ||
                 (!loadQueue.isEmpty() || !saveQueue.isEmpty())) {
             while (!loadQueue.isEmpty()) {
@@ -476,17 +480,17 @@ public class UCartographer implements Runnable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                System.out.println("CARTO LOADER: fetching area " + next + " for queue");
+                log.debug("fetching area " + next + " for queue");
                 loadingArea = next;
                 String nextname = GetLabelName(next);
                 int nextdata = GetLabelData(next);
                 UArea area = FetchArea(next, nextname, nextdata);
                 if (area == null) {
-                    System.out.println("CARTO LOADER:  tried to fetch " + next + " and got null, creating");
+                    log.debug("tried to fetch " + next + " and got null, creating");
                     area = makeArea(next, nextname, nextdata);
 
                     if (area == null) {
-                        System.out.println("CARTO LOADER : ***FAIL*** to make area " + next);
+                        log.error("***FAIL*** to make area " + next);
                     } else {
                         persist(area, area.label + ".area");
                     }
@@ -501,7 +505,7 @@ public class UCartographer implements Runnable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                System.out.println("CARTO LOADER: saving area " + area.label + " from queue");
+                log.debug("saving area " + area.label + " from queue");
                 savingArea = area;
                 freezeArea(area);
                 savingArea = null;
@@ -517,13 +521,13 @@ public class UCartographer implements Runnable {
             for (int i=0;i<activeAreas.size();i++) {
                 UArea area = getActiveAreaAt(i);
                 if (area == null)
-                    System.out.println("******* NULL AREA IN ACTIVEAREAS");
+                    log.error("NULL AREA IN ACTIVEAREAS");
                 if (area != playerArea && !(area.label.equals("TITLE"))) {
                     if (playerArea == null) {
-                        System.out.println("CARTO LOADER: found area " + area.label + " + to harvest and freeze, player has left the world");
+                        log.debug("found area " + area.label + " + to harvest and freeze, player has left the world");
                         addAreaToSaveQueue(area);
                     } else if (area.findExitTo(playerArea.getLabel()) == null) {
-                        System.out.println("CARTO LOADER: found area " + area.label + " to harvest and freeze");
+                        log.debug("found area " + area.label + " to harvest and freeze");
                         addAreaToSaveQueue(area);
                     }
                 }
@@ -540,7 +544,7 @@ public class UCartographer implements Runnable {
                 }
             }
         }
-        System.out.println("CARTO LOADER: game quit detected, shutting down background thread");
+        log.debug("game quit detected, shutting down");
     }
 
     /**

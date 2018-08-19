@@ -37,7 +37,6 @@ public class UVaultSet {
 
     public int size() { return vaults.length; }
     public UVault vaultAt(int i) {
-        //System.out.println("(vaultAt " + Integer.toString(i) + vaults[i].toString());
         return vaults[i];
     }
     public void putVault(int i, UVault vault) {

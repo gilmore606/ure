@@ -1,5 +1,7 @@
 package ure.math;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.areas.UArea;
 import ure.actors.UActor;
 import ure.things.UThing;
@@ -7,7 +9,6 @@ import ure.ui.UCamera;
 import ure.ui.ULight;
 
 import java.util.Comparator;
-import java.util.Random;
 import java.util.TreeSet;
 
 /**
@@ -18,6 +19,8 @@ import java.util.TreeSet;
  *
  */
 public class UPath {
+
+    private static Log log = LogFactory.getLog(UPath.class);
 
     static class Nodelist extends TreeSet<Node> {
         public Nodelist() {
@@ -170,8 +173,8 @@ public class UPath {
                         while (step.parent != start) {
                             step = step.parent;
                         }
-                        System.out.println("found path in " + Integer.toString(stepcount) + " steps");
-                        System.out.println("walk " + Integer.toString(step.x - x1) + "," + Integer.toString(step.y - y1));
+                        log.debug("found path in " + Integer.toString(stepcount) + " steps");
+                        log.debug("walk " + Integer.toString(step.x - x1) + "," + Integer.toString(step.y - y1));
 
                         return new int[]{step.x, step.y};
                     }
@@ -196,7 +199,7 @@ public class UPath {
             }
             closedlist.add(q);
         }
-        System.out.println("failed path in max stepcount");
+        log.debug("failed path in max stepcount");
         return null;
     }
 }
