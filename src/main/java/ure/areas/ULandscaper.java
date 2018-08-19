@@ -476,6 +476,7 @@ public abstract class ULandscaper {
     public UCell getRandomSpawn(UArea area, UThing thing, int x1, int y1, int x2, int y2) {
         UCell cell = null;
         boolean match = false;
+        int iter = 0;
         while (cell == null || !match) {
             cell = area.cellAt(x1+random.i(x2-x1),y1+random.i(y2-y1));
             if (cell != null) {
@@ -485,6 +486,9 @@ public abstract class ULandscaper {
                 if (match && !thing.canSpawnOnTerrain(cell.terrain().getName()))
                     match = false;
             }
+            iter++;
+            if (iter > 10000)
+                return null;
         }
         return cell;
     }
@@ -1008,7 +1012,8 @@ public abstract class ULandscaper {
                 name = names.get(random.i(names.size()));
             UActor actor = actorCzar.getActorByName(name);
             UCell dest = getRandomSpawn(area, actor, x1, y1, x2, y2);
-            actor.moveToCell(area, dest.x, dest.y);
+            if (dest != null)
+                actor.moveToCell(area, dest.x, dest.y);
         }
     }
 
