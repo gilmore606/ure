@@ -2,6 +2,8 @@ package ure.actors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.actors.actions.ActionWalk;
 import ure.actors.actions.Interactable;
 import ure.actors.actions.UAction;
@@ -9,16 +11,16 @@ import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.math.UPath;
+import ure.sys.events.DeathEvent;
 import ure.terrain.UTerrain;
+import ure.things.Corpse;
 import ure.things.Lightsource;
 import ure.things.UThing;
 import ure.things.UContainer;
 import ure.ui.UCamera;
 import ure.ui.particles.ParticleHit;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * UActor represents a UThing which can perform actions.  This includes the player and NPCs.
@@ -33,9 +35,11 @@ public class UActor extends UThing implements Interactable {
     protected int wakerange = 12;
     protected int sleeprange = 16;
     protected int sightrange = 9;
+    protected int hearingrange = 15;
     protected float actionspeed = 1f;
     protected float movespeed = 1f;
     protected String bodytype = "humanoid";
+    protected String customCorpse;
     protected Body body;
 
     @JsonIgnore
@@ -50,10 +54,14 @@ public class UActor extends UThing implements Interactable {
 
     protected float actionTime = 0f;
 
+    @JsonIgnore
+    public boolean dead;
+
+    private Log log = LogFactory.getLog(UActor.class);
+
     @Override
     public void initializeAsTemplate() {
         super.initializeAsTemplate();
-        setGlyphOutline(true);
         body = actorCzar.getNewBody(bodytype);
     }
 
@@ -97,50 +105,6 @@ public class UActor extends UThing implements Interactable {
     }
 
     @Override
-    public boolean drawGlyphOutline() {
-        if (isGlyphOutline())
-            return true;
-        if (commander.config.isOutlineActors())
-            return true;
-        return false;
-    }
-
-    @Override
-    public int glyphOffsetX() {
-        if (getMoveAnimX() != 0)
-            return getMoveAnimX();
-        if (commander.config.getActorBounceAmount() > 0f)
-            return bounceAnimX();
-        return 0;
-    }
-    @Override
-    public int glyphOffsetY() {
-        if (getMoveAnimY() != 0)
-            return getMoveAnimY();
-        if (commander.config.getActorBounceAmount() > 0f)
-            return bounceAnimY();
-        return 0;
-    }
-
-    public int bounceAnimX() {
-        return 0;
-    }
-    public int bounceAnimY() {
-        return -(int)(Math.abs(Math.sin((commander.frameCounter + areaX()*3 + areaY()*4) * commander.config.getActorBounceSpeed() * 0.1f)) * commander.config.getActorBounceAmount() * 5f);
-    }
-
-    public void animationTick() {
-        if (getMoveAnimDX() != 0 || getMoveAnimDY() != 0) {
-            setMoveAnimX(getMoveAnimX() + getMoveAnimDX());
-            setMoveAnimY(getMoveAnimY() + getMoveAnimDY());
-            if (getMoveAnimDX() < 0 && getMoveAnimX() < 0) setMoveAnimX(0);
-            if (getMoveAnimDX() > 0 && getMoveAnimX() > 0) setMoveAnimX(0);
-            if (getMoveAnimDY() < 0 && getMoveAnimY() < 0) setMoveAnimY(0);
-            if (getMoveAnimDY() > 0 && getMoveAnimY() > 0) setMoveAnimY(0);
-        }
-    }
-
-    @Override
     public void moveToCell(UArea thearea, int destX, int destY) {
         int oldx = -1;
         int oldy = -1;
@@ -164,14 +128,14 @@ public class UActor extends UThing implements Interactable {
             }
             // TODO: implement binding of isaac style camera move by screens
             if (getCameraPinStyle() == UCamera.PINSTYLE_SCREENS) {
-                System.out.println("ERROR: Camera.PINSTYLE_SCREENS not implemented!");
+                throw new RuntimeException("Camera.PINSTYLE_SCREENS not implemented!");
             }
         }
-        int moveFrames = commander.config.getMoveAnimFrames();
-        if (this instanceof UPlayer) moveFrames = commander.config.getMoveAnimPlayerFrames();
+        int moveFrames = config.getMoveAnimFrames();
+        if (this instanceof UPlayer) moveFrames = config.getMoveAnimPlayerFrames();
         if (oldx >=0 && oldarea == thearea && moveFrames > 0) {
-            setMoveAnimX((oldx-destX)*commander.config.getTileWidth());
-            setMoveAnimY((oldy-destY)*commander.config.getTileHeight());
+            setMoveAnimX((oldx-destX)*config.getTileWidth());
+            setMoveAnimY((oldy-destY)*config.getTileHeight());
             setMoveAnimDX(-(getMoveAnimX() / moveFrames));
             setMoveAnimDY(-(getMoveAnimY() / moveFrames));
         }
@@ -196,17 +160,17 @@ public class UActor extends UThing implements Interactable {
     public void moveTriggerFrom(UActor actor) {
         if (actor instanceof UPlayer) {
             aggressionFrom(actor);
-            commander.printScroll(null, "You attack " + getDname() + "!", UColor.COLOR_LIGHTRED);
+            commander.printScroll(null, "You attack " + getDname() + "!", UColor.LIGHTRED);
             area().addParticle(new ParticleHit(areaX(), areaY(), bloodColor(), 0.5f+random.nextFloat()*0.5f));
         }
     }
 
     public void aggressionFrom(UActor actor) {
-
+        die();
     }
 
     public UColor bloodColor() {
-        return UColor.COLOR_RED;
+        return UColor.RED;
     }
 
     // TODO: Parameterize all of these hardcoded strings somewhere
@@ -390,11 +354,38 @@ public class UActor extends UThing implements Interactable {
         return false;
     }
 
+    public void die() {
+        dead = true;
+    }
+    public void actuallyDie() {
+        stopActing();
+        bus.post(new DeathEvent(name,location,null));
+        UThing corpse = makeCorpse();
+        corpse.moveTo(location);
+        log.debug("made a corpse of type " + corpse.TYPE);
+        junk();
+    }
+
+    public UThing makeCorpse() {
+        UThing corpse;
+        if (customCorpse != null)
+            corpse = commander.makeThing(customCorpse);
+        else {
+            corpse = commander.makeThing(config.getDefaultCorpse());
+        }
+        if (corpse instanceof Corpse) {
+            ((Corpse)corpse).become(this);
+        }
+        if (things() != null)
+            for (UThing thing : (ArrayList<UThing>)things().clone()) {
+                thing.moveTo(location);
+            }
+        return corpse;
+    }
 
     public boolean isAwake() {
         return awake;
     }
-
     public void setAwake(boolean awake) {
         this.awake = awake;
     }
@@ -402,7 +393,6 @@ public class UActor extends UThing implements Interactable {
     public int getWakerange() {
         return wakerange;
     }
-
     public void setWakerange(int wakerange) {
         this.wakerange = wakerange;
     }
@@ -410,7 +400,6 @@ public class UActor extends UThing implements Interactable {
     public int getSleeprange() {
         return sleeprange;
     }
-
     public void setSleeprange(int sleeprange) {
         this.sleeprange = sleeprange;
     }
@@ -418,55 +407,21 @@ public class UActor extends UThing implements Interactable {
     public int getSightrange() {
         return sightrange;
     }
-
     public void setSightrange(int sightrange) {
         this.sightrange = sightrange;
     }
+    public int getHearingrange() { return hearingrange; }
+    public void setHearingrange(int h) { hearingrange = h; }
 
     public int getCameraPinStyle() {
         return cameraPinStyle;
     }
-
     public void setCameraPinStyle(int cameraPinStyle) {
         this.cameraPinStyle = cameraPinStyle;
     }
-
-    public int getMoveAnimX() {
-        return moveAnimX;
-    }
-
-    public void setMoveAnimX(int moveAnimX) {
-        this.moveAnimX = moveAnimX;
-    }
-
-    public int getMoveAnimY() {
-        return moveAnimY;
-    }
-
-    public void setMoveAnimY(int moveAnimY) {
-        this.moveAnimY = moveAnimY;
-    }
-
-    public int getMoveAnimDX() {
-        return moveAnimDX;
-    }
-
-    public void setMoveAnimDX(int moveAnimDX) {
-        this.moveAnimDX = moveAnimDX;
-    }
-
-    public int getMoveAnimDY() {
-        return moveAnimDY;
-    }
-
-    public void setMoveAnimDY(int moveAnimDY) {
-        this.moveAnimDY = moveAnimDY;
-    }
-
     public float getActionTime() {
         return actionTime;
     }
-
     public void setActionTime(float actionTime) {
         this.actionTime = actionTime;
     }
@@ -481,11 +436,33 @@ public class UActor extends UThing implements Interactable {
     public String getBodytype() { return bodytype; }
     public Body getBody() { return body; }
     public void setBody(Body b) { body = b; }
+    public String getCustomCorpse() { return customCorpse; }
+    public void setCustomCorpse(String s) { customCorpse = s; }
 
     public String UIstatus() {
         return "";
     }
     public UColor UIstatusColor() {
-        return UColor.COLOR_GRAY;
+        return UColor.GRAY;
     }
+
+    public int getMoveAnimX() { return moveAnimX; }
+    public void setMoveAnimX(int moveAnimX) { this.moveAnimX = moveAnimX; }
+    public int getMoveAnimY() { return moveAnimY; }
+    public void setMoveAnimY(int moveAnimY) { this.moveAnimY = moveAnimY; }
+    public int getMoveAnimDX() { return moveAnimDX; }
+    public void setMoveAnimDX(int moveAnimDX) { this.moveAnimDX = moveAnimDX; }
+    public int getMoveAnimDY() { return moveAnimDY; }
+    public void setMoveAnimDY(int moveAnimDY) { this.moveAnimDY = moveAnimDY; }
+    public void animationTick() {
+        if (getMoveAnimDX() != 0 || getMoveAnimDY() != 0) {
+            setMoveAnimX(getMoveAnimX() + getMoveAnimDX());
+            setMoveAnimY(getMoveAnimY() + getMoveAnimDY());
+            if (getMoveAnimDX() < 0 && getMoveAnimX() < 0) setMoveAnimX(0);
+            if (getMoveAnimDX() > 0 && getMoveAnimX() > 0) setMoveAnimX(0);
+            if (getMoveAnimDY() < 0 && getMoveAnimY() < 0) setMoveAnimY(0);
+            if (getMoveAnimDY() > 0 && getMoveAnimY() > 0) setMoveAnimY(0);
+        }
+    }
+
 }

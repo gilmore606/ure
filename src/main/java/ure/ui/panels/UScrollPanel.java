@@ -1,9 +1,8 @@
 package ure.ui.panels;
 
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.UAnimator;
-import ure.ui.Icon;
+import ure.ui.Icons.Icon;
 
 import java.util.ArrayList;
 
@@ -11,7 +10,7 @@ import java.util.ArrayList;
  * ScrollPanel implements the classic scrolling text console.
  *
  * TODO: flash line/panel on activity
- * TODO: track message count since last player turn, pause for anykey if > scrollsize
+ * TODO: filename message count since last player turn, pause for anykey if > scrollsize
  */
 public class UScrollPanel extends UPanel implements UAnimator {
 
@@ -37,8 +36,8 @@ public class UScrollPanel extends UPanel implements UAnimator {
         lineFades = new ArrayList<>();
         charWidth = commander.config.getTextWidth();
         charHeight = commander.config.getTextHeight() + spacing;
-        textRows = (_pixelh - padY) / charHeight;
-        textColumns = (_pixelw - padX) / charWidth;
+        textRows = (_pixelh - _pady) / charHeight - 2;
+        textColumns = (_pixelw - _padx) / charWidth;
     }
 
     public void addLineFade(UColor fade) {

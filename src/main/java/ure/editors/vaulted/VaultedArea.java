@@ -1,5 +1,7 @@
 package ure.editors.vaulted;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.actors.actions.UAction;
 import ure.actors.UPlayer;
 import ure.areas.UArea;
@@ -11,12 +13,14 @@ import ure.things.UThing;
 
 public class VaultedArea extends UArea {
 
+    private Log log = LogFactory.getLog(VaultedArea.class);
+
     public VaultedArea(int thexsize, int theysize) {
         super(thexsize, theysize, "null");
         label = "vaulted";
         resetSunColorLerps();
-        addSunColorLerp(0, UColor.COLOR_WHITE);
-        addSunColorLerp(24*60, UColor.COLOR_WHITE);
+        addSunColorLerp(0, UColor.WHITE);
+        addSunColorLerp(24*60, UColor.WHITE);
         setSunColor(1f,1f,1f);
     }
 
@@ -52,7 +56,7 @@ public class VaultedArea extends UArea {
     }
 
     public void loadVault(UVault vault) {
-        System.out.println("Loading vault...");
+        log.info("Loading vault...");
             resize(vault.getCols(), vault.getRows());
         for (int x=0;x<vault.getCols();x++) {
             for (int y=0;y<vault.getRows();y++) {
@@ -74,7 +78,7 @@ public class VaultedArea extends UArea {
     }
 
     public void saveVault(UVault vault) {
-        System.out.println("Saving vault...");
+        log.info("Saving vault...");
         String[] tlines = new String[ysize];
         for (int y=0; y<vault.getRows();y++) {
             String line = "";

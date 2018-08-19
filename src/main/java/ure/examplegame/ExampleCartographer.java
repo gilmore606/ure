@@ -19,11 +19,11 @@ public class ExampleCartographer extends UCartographer {
                             "Mystic Forest",
                             new ULandscaper[]{new ExampleForestScaper()},
                             new String[]{"start"},
-                            200,
-                            200,
+                            100,
+                            100,
                             1,
-                            "",
-                            "",
+                            "cave entrance",
+                            "cave exit",
                             "sounds/ultima_wanderer.ogg"
                     )
             );
@@ -35,7 +35,16 @@ public class ExampleCartographer extends UCartographer {
     public UArea getTitleArea() {
         UArea area = super.getTitleArea();
         removeActiveArea(area);
-        ExampleCaveScaper scaper = new ExampleCaveScaper();
+        ULandscaper scaper;
+        float scapetype = random.f();
+        if (scapetype < 0.2f)
+            scaper = new ExampleForestScaper();
+        else if (scapetype < 0.4f)
+            scaper = new ExampleComplexScaper();
+        else if (scapetype < 0.6f)
+            scaper = new ExampleMineScaper();
+        else
+            scaper = new ExampleCaveScaper();
         scaper.buildArea(area, 1, new String[]{"cave","title"});
         scaper.scatterThings(area, new String[]{"crystal stalagmite"}, new String[]{"floor"}, 30);
         scaper.scatterThings(area, new String[]{"magma vent"}, new String[]{"floor"}, 30);

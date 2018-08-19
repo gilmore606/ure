@@ -1,9 +1,12 @@
 package ure.actors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.areas.UArea;
+import ure.ui.Icons.Icon;
 import ure.ui.ULight;
 import ure.things.UThing;
 
@@ -28,27 +31,39 @@ public class UPlayer extends UActor {
     @JsonIgnore
     ULight light;
 
+    private Log log = LogFactory.getLog(UPlayer.class);
+
     public UPlayer() {
         super();
     }
 
-    public UPlayer(String thename, char theicon, UColor thecolor, boolean addOutline, UColor selfLightColor, int selfLight, int selfLightFalloff) {
+    public UPlayer(String thename, UColor selfLightColor, int selfLight, int selfLightFalloff) {
         super();
         initializeAsTemplate();
         this.selfLight = selfLight;
         this.selfLightFalloff = selfLightFalloff;
         this.selfLightColor = selfLightColor;
-        setDisplayFields(thename, theicon, thecolor, addOutline);
+        setName(thename);
         if (selfLight > 0) {
             light = new ULight(selfLightColor, selfLightFalloff + selfLight, selfLight);
         }
         bodytype = "humanoid";
         body = commander.actorCzar.getNewBody(bodytype);
+        hearingrange = config.getVolumeFalloffDistance();
+    }
+
+    @Override
+    public Icon icon() {
+        if (icon == null) {
+            icon = iconCzar.getIconByName("player");
+            icon.setEntity(this);
+        }
+        return icon;
     }
 
     @Override
     public void addActionTime(float v) {
-        System.out.println("adding action time to player");
+        log.debug("adding action time to player: " + v);
         super.addActionTime(v);
     }
 
@@ -84,8 +99,8 @@ public class UPlayer extends UActor {
     public boolean canSee(UThing thing) {
         int x = thing.areaX();
         int y = thing.areaY();
-        if (camera.visibilityAt(x - camera.leftEdge, y - camera.topEdge) > commander.config.getVisibilityThreshold())
-            if (camera.lightAt(x-camera.leftEdge,y-camera.topEdge).grayscale() > commander.config.getVisibilityThreshold())
+        if (camera.visibilityAt(x - camera.leftEdge, y - camera.topEdge) > config.getVisibilityThreshold())
+            if (camera.lightAt(x-camera.leftEdge,y-camera.topEdge).grayscale() > config.getVisibilityThreshold())
             return true;
         return false;
     }
@@ -94,11 +109,6 @@ public class UPlayer extends UActor {
     public void walkFail(UCell cell) {
         super.walkFail(cell);
         commander.latchBreak();
-    }
-
-    @Override
-    public int bounceAnimY() {
-        return 0;
     }
 
     @Override
@@ -111,6 +121,11 @@ public class UPlayer extends UActor {
         saveAreaX = areaX();
         saveAreaY = areaY();
         saveTurn = commander.getTurn();
+    }
+    public void setSaveLocation(UArea area, int x, int y) {
+        saveAreaLabel = area.getLabel();
+        saveAreaX = x;
+        saveAreaY = y;
     }
 
     public void setSaveAreaLabel(String l) { saveAreaLabel = l; }

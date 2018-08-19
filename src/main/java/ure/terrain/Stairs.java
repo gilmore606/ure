@@ -2,6 +2,8 @@ package ure.terrain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.eventbus.EventBus;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.actors.UPlayer;
 import ure.areas.UArea;
 import ure.areas.UCell;
@@ -37,6 +39,8 @@ public class Stairs extends UTerrain implements HearModalChoices {
     @JsonIgnore
     EventBus bus;
 
+    private Log log = LogFactory.getLog(Stairs.class);
+
     public Stairs() {
         Injector.getAppComponent().inject(this); // This will inject superclass fields too, so no need to call super()
     }
@@ -51,18 +55,18 @@ public class Stairs extends UTerrain implements HearModalChoices {
 
     public void setLabel(String thelabel) {
         label = thelabel;
-        System.out.println("CARTO : setting stairs dest : " + label);
+        log.debug("setting stairs dest : " + label);
     }
 
     public void transportActor(UActor actor) {
         // TODO: cool transition bullshit i dunno
         UArea sourcearea = actor.area();
-        System.out.println("CARTO : stairs heading to " + label);
+        log.debug("heading to " + label);
         UArea destarea = commander.cartographer.getArea(label);
-        System.out.println("CARTO : stairs got new area " + destarea.getLabel());
+        log.debug("got new area " + destarea.getLabel());
         UCell dest = destarea.findExitTo(sourcearea.getLabel());
         if (dest == null) {
-            System.out.println("CARTO : couldn't find back-matching stairs!  going to random space");
+            log.warn("couldn't find back-matching stairs!  going to random space");
             dest = destarea.randomOpenCell(actor);
         }
         actor.moveToCell(destarea, dest.areaX(), dest.areaY());
@@ -96,7 +100,7 @@ public class Stairs extends UTerrain implements HearModalChoices {
             if (commander.cartographer.areaIsActive(label))
                 transportActor(actor);
             else
-                System.out.println(name + " tried to enter " + label + ", but it's not active");
+                log.warn(name + " tried to enter " + label + ", but it's not active");
         }
     }
 

@@ -1,0 +1,10 @@
+[
+  {
+    "name": "corpse",
+    "plural": "corpses",
+    "type": "corpse",
+    "category": "consumables",
+    "description": "A dead body.",
+    "value": 0
+  }
+]

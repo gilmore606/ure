@@ -34,3 +34,6 @@ t,THROW
 u,USE
 shift+e,EAT
 backslash,EQUIPMENT
+m,MAP
+o,OPEN
+f,FULLSCREEN

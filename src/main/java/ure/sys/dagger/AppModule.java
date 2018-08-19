@@ -10,6 +10,7 @@ import ure.areas.UCartographer;
 import ure.areas.ULandscaper;
 import ure.actors.behaviors.BehaviorDeserializer;
 import ure.actors.behaviors.UBehavior;
+import ure.math.URandom;
 import ure.render.URenderer;
 import ure.render.URendererOGL;
 import ure.sys.UCommander;
@@ -23,9 +24,12 @@ import ure.terrain.UTerrainCzar;
 import ure.things.ThingDeserializer;
 import ure.things.UThing;
 import ure.things.UThingCzar;
+import ure.ui.Icons.Icon;
+import ure.ui.Icons.IconDeserializer;
+import ure.ui.Icons.UIconCzar;
+import ure.ui.sounds.USpeaker;
 
 import javax.inject.Singleton;
-import java.util.Random;
 
 /**
  *
@@ -45,6 +49,7 @@ public class AppModule {
         module.addDeserializer(UActor.class, new ActorDeserializer(objectMapper));
         module.addDeserializer(ULandscaper.class, new LandscaperDeserializer(objectMapper));
         module.addDeserializer(UBehavior.class, new BehaviorDeserializer(objectMapper));
+        module.addDeserializer(Icon.class, new IconDeserializer(objectMapper));
         objectMapper.registerModule(module);
         return objectMapper;
     }
@@ -90,6 +95,14 @@ public class AppModule {
 
     @Provides
     @Singleton
+    public UIconCzar providesIconCzar() {
+        UIconCzar czar = new UIconCzar();
+        czar.loadIcons();
+        return czar;
+    }
+
+    @Provides
+    @Singleton
     public UCartographer providesCartographer() {
         UCartographer cartographer = new UCartographer();
         return cartographer;
@@ -109,7 +122,15 @@ public class AppModule {
 
     @Provides
     @Singleton
-    public Random providesRandom() {
-        return new Random();
+    public URandom providesRandom() {
+        return new URandom();
+    }
+
+    @Provides
+    @Singleton
+    public USpeaker providesSpeaker() {
+        USpeaker s = new USpeaker();
+        s.initialize();
+        return s;
     }
 }

@@ -2,6 +2,7 @@ package ure.things;
 
 import ure.actors.UActor;
 import ure.actors.UPlayer;
+import ure.ui.sounds.Sound;
 
 import java.util.ArrayList;
 
@@ -16,10 +17,13 @@ public class Food extends UThing {
     public int bitesLeft;
     public int bites = 1;
 
+    Sound sound;
+
     @Override
     public void initializeAsTemplate() {
         super.initializeAsTemplate();
         bitesLeft = bites;
+        sound = new Sound("sounds/eating.wav");
     }
 
     @Override
@@ -29,6 +33,10 @@ public class Food extends UThing {
 
     @Override
     public float useFrom(UActor actor) {
+        return eatFrom(actor);
+    }
+
+    public float eatFrom(UActor actor) {
         bitesLeft--;
         if (actor instanceof UPlayer) {
             String message;
@@ -42,6 +50,8 @@ public class Food extends UThing {
         } else {
             commander.printScrollIfSeen(actor, actor.getDname() + " eats some " + getName() + ".");
         }
+        if (sound != null)
+            speaker.playWorld(sound,actor.areaX(),actor.areaY());
         onBite();
         if (bitesLeft < 1) {
             junk();

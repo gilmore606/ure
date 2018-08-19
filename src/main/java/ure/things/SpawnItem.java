@@ -1,17 +1,19 @@
 package ure.things;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ure.math.URandom;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.Random;
 
 public class SpawnItem {
 
     @Inject
     @JsonIgnore
-    Random random;
+    URandom random;
 
     public String name;
     public float chance = 1f;
@@ -22,11 +24,11 @@ public class SpawnItem {
     }
 
     public UThing spawn(UCommander commander) {
-        if (random.nextFloat() > chance) return null;
+        if (random.f() > chance) return null;
         String tospawn = name;
         if (name == null) {
             if (oneof != null) {
-                tospawn = oneof[random.nextInt(oneof.length)];
+                tospawn = (String)random.member(oneof);
             }
         }
         if (tospawn != null) {

@@ -1,6 +1,8 @@
 package ure.render;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTBakedChar;
@@ -57,6 +59,8 @@ public class FontTexture {
     // This buffer holds the most recently looked up aligned quad.
     private STBTTAlignedQuad.Buffer alignedQuad = STBTTAlignedQuad.malloc(1);
 
+    private Log log = LogFactory.getLog(FontTexture.class);
+
     private ByteBuffer readFile(String filename) throws IOException {
         InputStream is = this.getClass().getResourceAsStream(filename);
         byte[] bytes = IOUtils.toByteArray(is);
@@ -87,7 +91,7 @@ public class FontTexture {
         // can free fontBitmap now
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        System.out.println("*** Loaded font " + resourcePath);
+        log.info("Loaded font: " + resourcePath);
     }
 
     private void readFontInfo(ByteBuffer ttfData) {

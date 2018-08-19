@@ -2,7 +2,6 @@ package ure.ui.modals;
 
 import ure.commands.UCommand;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.GLKey;
 import ure.ui.RexFile;
 
@@ -15,7 +14,7 @@ public class UModalURESplash extends UModal {
     float fadetick = 0.02f;
 
     public UModalURESplash() {
-        super(null, "", UColor.COLOR_BLACK);
+        super(null, "", UColor.BLACK);
         logo = new RexFile(commander.config.getResourcePath() + "ure_logo.xp");
         alpha = 0f;
     }

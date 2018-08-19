@@ -35,6 +35,8 @@ public class UCollection implements Cloneable {
 
     public void reconnect(UArea area, UContainer container) {
         this.container = container;
+        if (things == null) things = new ArrayList<>();
+        if (actors == null) actors = new ArrayList<>();
         for (UThing thing : things) {
             thing.reconnect(area, container);
         }
@@ -45,7 +47,7 @@ public class UCollection implements Cloneable {
 
     public void closeOut() {
         if (container instanceof UPlayer)
-            System.out.println("*** BUG : player's collection is closing!");
+            throw new RuntimeException("*** BUG : player's collection is closing!");
         if (things != null) {
             for (UThing thing : things) {
                 thing.closeOut();
@@ -73,6 +75,22 @@ public class UCollection implements Cloneable {
             things.add(thing);
     }
 
+    public int weight() {
+        int w = 0;
+        if (things != null) {
+            for (UThing thing : things)
+                w += thing.weight();
+        }
+        return w;
+    }
+    public int value() {
+        int v = 0;
+        if (things != null) {
+            for (UThing thing : things)
+                v += thing.value();
+        }
+        return v;
+    }
     public Iterator<UThing> iterator() {
         return things.iterator();
     }
@@ -99,6 +117,7 @@ public class UCollection implements Cloneable {
      * Whatever we're in just moved.
      */
     public void notifyMove() {
+        if (things == null) return;
         if (things.isEmpty()) return;
         for (UThing thing : things)
             thing.notifyMove();

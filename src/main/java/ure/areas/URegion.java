@@ -1,7 +1,10 @@
 package ure.areas;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.actors.UActorCzar;
+import ure.math.URandom;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.terrain.UTerrainCzar;
@@ -10,7 +13,6 @@ import ure.things.UThingCzar;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 public class URegion {
 
@@ -32,7 +34,7 @@ public class URegion {
 
     @Inject
     @JsonIgnore
-    Random random;
+    URandom random;
 
     protected String id;
     protected String name;
@@ -44,6 +46,8 @@ public class URegion {
     protected String inwardExitType;
     protected String outwardExitType;
     protected String defaultBGM;
+
+    private Log log = LogFactory.getLog(URegion.class);
 
     protected ArrayList<Link> links;
 
@@ -86,7 +90,7 @@ public class URegion {
     }
 
     public UArea makeArea(int level, String label) {
-        System.out.println("REGION " + getId() + " : making area " + Integer.toString(level));
+        log.info(getId() + ": making area " + Integer.toString(level));
         ULandscaper scaper = getLandscaperForLevel(level);
         UArea area = new UArea(getXsize(), getYsize(), scaper.floorterrain);
         area.label = label;
@@ -97,13 +101,18 @@ public class URegion {
             if (link.onLevel == level)
                 stairs.put(link.label, link.exitType);
         if (level > 1) {
-            stairs.put(getId() + " " + Integer.toString(level-1), getOutwardExitType());
+            String outExit = getOutwardExitType();
+            if (outExit != null)
+                stairs.put(getId() + " " + Integer.toString(level-1), outExit);
         }
         if (level < getMaxlevel()) {
-            stairs.put(getId() + " " + Integer.toString(level+1), getInwardExitType());
+            String inExit = getInwardExitType();
+            if (inExit != null)
+                stairs.put(getId() + " " + Integer.toString(level+1), inExit);
         }
         makeStairs(area, scaper, stairs);
         area.setBackgroundMusic(getBGM(level));
+        area.setSunVisible(sunVisible(level));
         return area;
     }
 
@@ -112,7 +121,7 @@ public class URegion {
     }
 
     public ULandscaper getLandscaperForLevel(int level) {
-        ULandscaper scaper = getLandscapers()[random.nextInt(getLandscapers().length)];
+        ULandscaper scaper = getLandscapers()[random.i(getLandscapers().length)];
         return scaper;
     }
 
@@ -121,6 +130,15 @@ public class URegion {
             String exitType = links.get(label);
             scaper.placeStairs(area, exitType, label);
         }
+    }
+
+    /**
+     * Is the sunlight visible at this level of the region?
+     */
+    public boolean sunVisible(int level) {
+        if (level > 1)
+            return false;
+        return true;
     }
 
     public String describeLabel(String label, String labelname, int labeldata) {

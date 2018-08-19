@@ -3,6 +3,7 @@ package ure.terrain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.actors.UPlayer;
 import ure.areas.UArea;
+import ure.math.URandom;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UAnimator;
@@ -11,7 +12,9 @@ import ure.actors.actions.Interactable;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.actors.UActor;
-import ure.ui.Icon;
+import ure.ui.Icons.Icon;
+import ure.ui.Icons.UIconCzar;
+import ure.ui.sounds.Sound;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -27,17 +30,20 @@ import java.util.Random;
  *
  */
 
-public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interactable {
+public abstract class UTerrain implements Entity, Cloneable, Interactable {
 
     @Inject
     @JsonIgnore
     UCommander commander;
-
     @Inject
-    Random random;
+    @JsonIgnore
+    UIconCzar iconCzar;
+    @Inject
+    @JsonIgnore
+    URandom random;
 
     @JsonIgnore
-    protected UCell cell;
+    public UCell cell;
 
     public static final String TYPE = "";
 
@@ -48,22 +54,9 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
     protected String walkmsg = "";
     protected String bonkmsg = "";
     protected char filechar;
-    protected char glyph;
     protected Icon icon;
     protected String category;
-    protected String variants;
     protected HashMap<String,Integer> stats = new HashMap<>();
-    protected int[] fgcolor;
-    protected int[][] fgvariants;
-    protected int[] bgcolor;
-    protected int[] bgvariance;
-    protected int[][] bgvariants;
-
-    protected UColor fgColor;
-    protected UColor bgColor;
-
-    protected UColor fgColorBuffer;
-    protected UColor bgColorBuffer;
 
     protected boolean passable;
     protected boolean opaque;
@@ -73,8 +66,9 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
     protected float sunvis = 0.0f;
     protected float movespeed = 1.0f;
 
-    protected int animationFrame;
-    protected int animationFrames;
+    protected String ambientsound;
+    protected float ambientsoundGain;
+    protected Sound stepsound;
 
 
     public UTerrain() {
@@ -91,16 +85,15 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
      * Set up a fresh clone from a template object.
      */
     public void initializeAsCloneFrom(UTerrain template) {
-        setFgColor(new UColor(fgcolor[0], fgcolor[1], fgcolor[2]));
-        setBgColor(new UColor(bgcolor[0], bgcolor[1], bgcolor[2]));
-        setFgColorBuffer(new UColor(0f,0f,0f));
-        setBgColorBuffer(new UColor(0f, 0f ,0f));
-        setIcon(new Icon(getGlyph(), getFgColor(), getBgColor()));
+        icon = null;
+        icon();
     }
 
     public void reconnect(UArea area, UCell cell) {
         // TODO: Back reference
         this.cell = cell;
+        if (icon() != null)
+            icon.setEntity(this);
     }
 
     public void closeOut() {
@@ -112,36 +105,15 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
 
     public void becomeReal(UCell c) {
         cell = c;
-        applyColorVariance();
     }
 
-    public void applyColorVariance() {
-        if (getBgvariants() != null) {
-            getBgColor().set(getBgvariants()[random.nextInt(getBgvariants().length - 1)]);
+    public Icon icon() {
+        if (icon == null) {
+            icon = iconCzar.getIconByName(name);
+            if (icon != null)
+                icon.setEntity(this);
         }
-        if (getFgvariants() != null) {
-            getFgColor().set(getFgvariants()[random.nextInt(getFgvariants().length-1)]);
-        }
-        if (getBgvariance() != null) {
-            getBgColor().set(getBgColor().iR() + random.nextInt(getBgvariance()[0]) - getBgvariance()[0] / 2,
-                    getBgColor().iG() + random.nextInt(getBgvariance()[1]) - getBgvariance()[1] / 2,
-                    getBgColor().iB() + random.nextInt(getBgvariance()[2]) - getBgvariance()[2] / 2);
-        }
-    }
-
-    public char glyph(int x, int y) {
-        if (getVariants() == null)
-            return getGlyph();
-        int seed = (x * y * 19 + 1883) / 74;
-        int period = getVariants().length();
-        return getVariants().charAt(seed % period);
-    }
-
-    public int glyphOffsetX() {
-        return 0;
-    }
-    public int glyphOffsetY() {
-        return 0;
+        return icon;
     }
 
     public void moveTriggerFrom(UActor actor, UCell cell) {
@@ -175,17 +147,8 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
         try {
             return (UTerrain) super.clone();
         } catch (CloneNotSupportedException e) {
-            System.out.println(" Cloning not allowed. ");
-            return this;
+            throw new RuntimeException(e);
         }
-    }
-
-    public void animationTick() {
-        if (getAnimationFrames() < 1) return;
-        setAnimationFrame(getAnimationFrame() + 1);
-        if (getAnimationFrame() >= getAnimationFrames())
-            setAnimationFrame(0);
-        //cell.area().redrawCell(cell.areaX(), cell.areaY());
     }
 
     public boolean isPassable() { return passable; }
@@ -195,7 +158,6 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
     public String getName() { return name; }
     public String getPlural() { return plural != null ? plural : getName() + "s"; }
     public Icon getIcon() { return icon; }
-    public char getGlyph() { return glyph; }
     public String getCategory() { return category; }
 
     public int getStat(String stat) {
@@ -245,20 +207,8 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
         this.filechar = filechar;
     }
 
-    public void setGlyph(char glyph) {
-        this.glyph = glyph;
-    }
-
     public void setIcon(Icon icon) {
         this.icon = icon;
-    }
-
-    public String getVariants() {
-        return variants;
-    }
-
-    public void setVariants(String variants) {
-        this.variants = variants;
     }
 
     public HashMap<String, Integer> getStats() {
@@ -267,78 +217,6 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
 
     public void setStats(HashMap<String, Integer> stats) {
         this.stats = stats;
-    }
-
-    public int[] getFgcolor() {
-        return fgcolor;
-    }
-
-    public void setFgcolor(int[] fgcolor) {
-        this.fgcolor = fgcolor;
-    }
-
-    public int[][] getFgvariants() {
-        return fgvariants;
-    }
-
-    public void setFgvariants(int[][] fgvariants) {
-        this.fgvariants = fgvariants;
-    }
-
-    public int[] getBgcolor() {
-        return bgcolor;
-    }
-
-    public void setBgcolor(int[] bgcolor) {
-        this.bgcolor = bgcolor;
-    }
-
-    public int[] getBgvariance() {
-        return bgvariance;
-    }
-
-    public void setBgvariance(int[] bgvariance) {
-        this.bgvariance = bgvariance;
-    }
-
-    public int[][] getBgvariants() {
-        return bgvariants;
-    }
-
-    public void setBgvariants(int[][] bgvariants) {
-        this.bgvariants = bgvariants;
-    }
-
-    public UColor getFgColor() {
-        return fgColor;
-    }
-
-    public void setFgColor(UColor fgColor) {
-        this.fgColor = fgColor;
-    }
-
-    public UColor getBgColor() {
-        return bgColor;
-    }
-
-    public void setBgColor(UColor bgColor) {
-        this.bgColor = bgColor;
-    }
-
-    public UColor getFgColorBuffer() {
-        return fgColorBuffer;
-    }
-
-    public void setFgColorBuffer(UColor fgColorBuffer) {
-        this.fgColorBuffer = fgColorBuffer;
-    }
-
-    public UColor getBgColorBuffer() {
-        return bgColorBuffer;
-    }
-
-    public void setBgColorBuffer(UColor bgColorBuffer) {
-        this.bgColorBuffer = bgColorBuffer;
     }
 
     public void setPassable(boolean passable) {
@@ -385,21 +263,12 @@ public abstract class UTerrain implements Entity, Cloneable, UAnimator, Interact
         this.movespeed = movespeed;
     }
 
-    public int getAnimationFrame() {
-        return animationFrame;
-    }
-
-    public void setAnimationFrame(int animationFrame) {
-        this.animationFrame = animationFrame;
-    }
-
-    public int getAnimationFrames() {
-        return animationFrames;
-    }
-
-    public void setAnimationFrames(int animationFrames) {
-        this.animationFrames = animationFrames;
-    }
+    public String getAmbientsound() { return ambientsound; }
+    public void setAmbientsound(String s) { ambientsound = s; }
+    public float getAmbientsoundGain() { return ambientsoundGain; }
+    public void setAmbientsoundGain(float f) { ambientsoundGain = f; }
+    public Sound getStepsound() { return stepsound; }
+    public void setStepsound(Sound s) { stepsound = s; }
 
     public long getID() { return ID; }
     public void setID(long newID) { ID = newID; }

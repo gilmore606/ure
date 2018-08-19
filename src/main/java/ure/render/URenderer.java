@@ -12,6 +12,10 @@ public interface URenderer {
         void keyPressed(GLKey key);
     }
 
+    interface ResolutionListener {
+        void resolutionChanged(int width, int height);
+    }
+
     enum FontType {
         TILE_FONT,
         TEXT_FONT
@@ -55,6 +59,12 @@ public interface URenderer {
      * @param listener
      */
     void setKeyListener(KeyListener listener);
+
+    /**
+     * Set a listener for window resolution changes.
+     * @param listener
+     */
+    void setResolutionListener(ResolutionListener listener);
 
     /**
      * Repaint the game window.
@@ -114,4 +124,5 @@ public interface URenderer {
     int getMousePosX();
     int getMousePosY();
     boolean getMouseButton();
+    void toggleFullscreen();
 }

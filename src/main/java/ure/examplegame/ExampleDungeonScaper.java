@@ -1,5 +1,7 @@
 package ure.examplegame;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.areas.UArea;
 import ure.areas.ULandscaper;
 import ure.math.UColor;
@@ -12,6 +14,8 @@ public class ExampleDungeonScaper extends ULandscaper {
 
     public static final String TYPE = "dungeonscaper";
 
+    private Log log = LogFactory.getLog(ExampleDungeonScaper.class);
+
     public ExampleDungeonScaper() {
         super(TYPE);
     }
@@ -21,7 +25,6 @@ public class ExampleDungeonScaper extends ULandscaper {
         int seen, start, exit;
         int entered, hit;
         int size;
-        UColor forceColor = null;
         RoomStruct(int x_, int y_, int w_, int h_){
             x = x_; y = y_; w = w_; h = h_;
             weight = random.nextInt(255);
@@ -35,7 +38,7 @@ public class ExampleDungeonScaper extends ULandscaper {
             size = 0;
         }
         void print(){
-            System.out.println("ROOM: x: " + x + " y: " + y + " w: " + w + " h: " + h + " weight: " + weight + " size: " + size);
+            log.debug("ROOM: x: " + x + " y: " + y + " w: " + w + " h: " + h + " weight: " + weight + " size: " + size);
         }
     }
 
@@ -195,7 +198,6 @@ public class ExampleDungeonScaper extends ULandscaper {
 
     int maxDepth = 256; // Should never get above like 20 or so
     boolean pathFind(RoomStruct room, int depth){
-        //System.out.println("Depth: " + depth);
         //floodRoom(room, new UColor(0.0f, 1.0f, 0.0f), false);
         room.hit = 1;
         ArrayList<RoomNeighbor> r = ajacentRooms(room);
@@ -209,7 +211,6 @@ public class ExampleDungeonScaper extends ULandscaper {
             for(RoomNeighbor n : r) {
                 p = roomPointers[n.y][n.x];
                 if (rooms.get(p).hit == 0 && rooms.get(p).weight > max) {
-                    //System.out.println(rooms.get(p).weight);
                     max = rooms.get(p).weight;
                     next = rooms.get(p);
                 }
@@ -257,7 +258,7 @@ public class ExampleDungeonScaper extends ULandscaper {
         exit.exit = 1;
 
         if(!pathFind(rooms.get(roomPointers[1][1]), 0)){
-            System.out.println("Something happened, we couldn't connect start to exit.");
+            log.error("Something happened, we couldn't connect start to exit.");
         }
 
 

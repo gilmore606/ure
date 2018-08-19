@@ -1,13 +1,14 @@
 package ure.actors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.actors.actions.ActionEmote;
 import ure.actors.actions.Interactable;
 import ure.actors.actions.UAction;
 import ure.actors.behaviors.UBehavior;
 import ure.math.UColor;
 import ure.sys.Entity;
-import ure.sys.UCommander;
 import ure.things.SpawnItem;
 import ure.things.UThing;
 
@@ -28,7 +29,7 @@ public class UNPC extends UActor implements Interactable {
     @JsonIgnore
     public ArrayList<Entity> seenEntities;
 
-
+    private Log log = LogFactory.getLog(UNPC.class);
 
     @Override
     public void initializeAsCloneFrom(UThing template) {
@@ -103,6 +104,7 @@ public class UNPC extends UActor implements Interactable {
         for (UBehavior behavior: behaviors) {
             behavior.aggressionFrom(this, attacker);
         }
+        super.aggressionFrom(attacker);
     }
 
     UAction nextAction() {
@@ -150,7 +152,7 @@ public class UNPC extends UActor implements Interactable {
                 if (caresAbout(actor))
                     if (canSee(actor)) {
                         seenEntities.add(actor);
-                        System.out.println(this.name + " (" + Long.toString(ID) + ") notices " + actor.getName() + "...");
+                        log.debug(this.name + " (" + Long.toString(ID) + ") notices " + actor.getName() + "...");
                     }
             }
         }

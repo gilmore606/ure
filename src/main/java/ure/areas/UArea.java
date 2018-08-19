@@ -3,10 +3,14 @@ package ure.areas;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.actors.UPlayer;
+import ure.math.URandom;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actors.actions.UAction;
+import ure.sys.UConfig;
 import ure.sys.events.TimeTickEvent;
 import ure.ui.ULight;
 import ure.actors.UActor;
@@ -37,11 +41,15 @@ public class UArea implements Serializable {
     @Inject
     @JsonIgnore
     public UCommander commander;
-
+    @Inject
+    @JsonIgnore
+    public UConfig config;
+    @Inject
+    @JsonIgnore
+    public UCartographer cartographer;
     @Inject
     @JsonIgnore
     public UTerrainCzar terrainCzar;
-
     @Inject
     @JsonIgnore
     public EventBus bus;
@@ -58,7 +66,7 @@ public class UArea implements Serializable {
 
     @Inject
     @JsonIgnore
-    Random random;
+    URandom random;
 
     protected UColor sunColor = new UColor(130,50,25);
     protected float clouds = 0.2f;
@@ -67,6 +75,7 @@ public class UArea implements Serializable {
     protected ArrayList<UColor> sunColorLerps = new ArrayList<>();
     protected HashMap<Integer,String> sunCycleMessages = new HashMap<>();
     protected int sunCycleLastAnnounceMarker;
+    public boolean sunVisible;
 
     String backgroundMusic;
 
@@ -80,10 +89,12 @@ public class UArea implements Serializable {
     @JsonIgnore
     public ArrayList<Stairs> stairsLinks;
 
+    private Log log = LogFactory.getLog(UArea.class);
+
     public UArea() {
         Injector.getAppComponent().inject(this);
         bus.register(this);
-        commander.config.addDefaultSunCycle(this);
+        config.addDefaultSunCycle(this);
     }
     public UArea(int thexsize, int theysize, String defaultTerrain) {
         this();
@@ -140,7 +151,7 @@ public class UArea implements Serializable {
         setActors(null);
         setCells(null);
         label = "closed (" + label + ")";
-        System.out.println("AREA : " + label);
+        log.debug(label);
     }
 
     /**
@@ -249,6 +260,9 @@ public class UArea implements Serializable {
         }
     }
 
+    public URegion region() {
+        return cartographer.regionForArea(this);
+    }
     public boolean isValidXY(int x, int y) {
         if ((x >= 0) && (y >= 0))
             if ((x < xsize) && (y < ysize))
@@ -286,7 +300,7 @@ public class UArea implements Serializable {
     public UCell cellAt(int x, int y) {
         if (isValidXY(x,y)) {
             if (getCells() == null) {
-                System.out.println("ACK!!! getCells() was null for area " + label);
+                throw new RuntimeException("ACK!!! getCells() was null for area " + label);
             }
             return getCells()[x][y];
         }
@@ -363,7 +377,7 @@ public class UArea implements Serializable {
         UCell cell = null;
         boolean match = false;
         while (cell == null || !match) {
-            cell = cellAt(random.nextInt(xsize), random.nextInt(ysize));
+            cell = cellAt(random.i(xsize), random.i(ysize));
             match = cell.willAcceptThing(thing);
         }
         return cell;
@@ -373,9 +387,9 @@ public class UArea implements Serializable {
         getActors().remove(thing);
     }
 
-    public Iterator<UThing> thingsAt(int x, int y) {
+    public ArrayList<UThing> thingsAt(int x, int y) {
         if (isValidXY(x,y)) {
-            return getCells()[x][y].iterator();
+            return getCells()[x][y].things();
         }
         return null;
     }
@@ -418,7 +432,7 @@ public class UArea implements Serializable {
         if (this.closeRequested || this.closed)
             bus.unregister(this);
         else {
-            System.out.println("AREA: " + getLabel() + " tick");
+            log.trace(getLabel() + " tick");
             adjustSunColor(commander.daytimeMinutes());
         }
     }
@@ -431,7 +445,7 @@ public class UArea implements Serializable {
      */
     public void broadcastEvent(UAction action) {
         if (closed) {
-            System.out.println("WARN: " + action.id + " event in closed area " + label);
+            log.warn(action.id + " event in closed area " + label);
             return;
         }
         for (UActor actor : getActors()) {
@@ -456,13 +470,12 @@ public class UArea implements Serializable {
         }
     }
     public void fizzleParticle(UParticle particle) {
-        cellAt(particle.x,particle.y).fizzleParticle();
+        cellAt(particle.x,particle.y).fizzleParticle(particle);
         particles.remove(particle);
     }
 
     public void animationTick() {
-        HashSet<UParticle> tmp = (HashSet)particles.clone();
-        for (UParticle particle : tmp) {
+        for (UParticle particle : (HashSet<UParticle>)particles.clone()) {
             particle.animationTick();
             if (particle.isFizzled())
                 fizzleParticle(particle);
@@ -477,8 +490,13 @@ public class UArea implements Serializable {
      */
     public void freezeForPersist() {
         for (UActor actor : getActors()) {
-            //System.out.println("AREA " + label + ": sleeping " + actor.getName() + " for freeze");
+            log.debug(label + ": sleeping " + actor.getName() + " for freeze");
             commander.unregisterActor(actor);
+        }
+        for (ULight light : (HashSet<ULight>)lights.clone()) {
+            if (!light.isPermanent()) {
+                removeLight(light);
+            }
         }
     }
 
@@ -525,6 +543,9 @@ public class UArea implements Serializable {
     public void setSunColor(UColor sunColor) {
         this.sunColor = sunColor;
     }
+
+    public boolean isSunVisible() { return sunVisible; }
+    public void setSunVisible(boolean b) { sunVisible = b; }
 
     public float getClouds() {
         return clouds;

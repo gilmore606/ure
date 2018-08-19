@@ -30,7 +30,7 @@ public class VaultedModal extends UModal implements HearModalGetString {
     int cursor;
 
     public VaultedModal(VaultedArea edarea, String _filename) {
-        super(null, "", UColor.COLOR_BLACK);
+        super(null, "", UColor.BLACK);
         area = edarea;
         filename = _filename;
         setDimensions(15,30);

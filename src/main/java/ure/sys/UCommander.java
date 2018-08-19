@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import ure.actors.actions.ActionWalk;
@@ -16,18 +18,20 @@ import ure.actors.UPlayer;
 import ure.areas.UArea;
 import ure.areas.UCartographer;
 import ure.commands.UCommand;
+import ure.math.URandom;
 import ure.sys.events.PlayerChangedAreaEvent;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.sys.events.TimeTickEvent;
 import ure.things.UThing;
 import ure.things.UThingCzar;
-import ure.ui.Icon;
+import ure.ui.Icons.Icon;
 import ure.ui.UCamera;
 import ure.ui.modals.*;
 import ure.ui.panels.UScrollPanel;
 import ure.ui.panels.UStatusPanel;
-import ure.ui.USpeaker;
+import ure.ui.sounds.Sound;
+import ure.ui.sounds.USpeaker;
 import ure.editors.vaulted.VaultedArea;
 import ure.editors.vaulted.VaultedModal;
 
@@ -52,18 +56,15 @@ import static org.lwjgl.glfw.GLFW.*;
 public class UCommander implements URenderer.KeyListener,HearModalGetString,HearModalStringPick {
 
     @Inject
+    public USpeaker speaker;
+    @Inject
     protected ObjectMapper objectMapper;
-
     @Inject
     EventBus bus;
-
     @Inject
     public UConfig config;
-
     @Inject
-    Random random;
-
-    public USpeaker speaker;
+    URandom random;
 
     private HashSet<UAnimator> animators;
     private ArrayList<UActor> actors;
@@ -103,6 +104,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     private boolean quitGame = false;
 
+    private Log log = LogFactory.getLog(UCommander.class);
+
     public UCommander() {
         Injector.getAppComponent().inject(this);
         bus.register(this);
@@ -121,11 +124,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         readKeyBinds();
         renderer.setKeyListener(this);
         keyBuffer = new LinkedBlockingQueue<GLKey>();
-        speaker = new USpeaker();
-        speaker.initialize();
         addAnimator(speaker);
+        speaker.startThread(this);
         modalStack = new Stack<>();
         actorCzar.loadActors();
+        config.initialize();
     }
 
     public long generateNewID(Entity entity) {
@@ -151,7 +154,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void unregisterActor(UActor actor) {
         actors.remove(actor);
         if (actors.contains(actor))
-            System.out.println("****IMPOSSIBLE BUG : actor removed from commander.actors but still there");
+            log.error("****IMPOSSIBLE BUG : actor removed from commander.actors but still there");
     }
 
     /**
@@ -189,7 +192,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             if (field.getName().startsWith("GLFW_KEY_")) {
                 try {
                     glmap.put(field.getName(), field.getInt(null));
-                    System.out.println("KEYBIND: read GLFW keymap pair " + field.getName() + " as " + Integer.toString(field.getInt(null)));
+                    log.debug("read GLFW keymap pair " + field.getName() + " as " + Integer.toString(field.getInt(null)));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -209,7 +212,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                 Field idField = commandClass.getField("id");
                 String idValue = (String) idField.get(null);
                 if (idValue != null) {
-                    System.out.println("KEYBIND: found command " + idValue);
+                    log.debug("found command " + idValue);
                     commandMap.put(idValue, commandClass);
                 }
             }
@@ -235,12 +238,12 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             GLKey glkey = new GLKey(k, shiftkey, ctrlkey);
             Class commandClass = commandMap.get(commandid);
             if (commandClass == null) {
-                System.out.println("KEYBIND: ERROR - no command found for '" + commandid + "' -- check mapping file!");
+                log.error("ERROR - no command found for '" + commandid + "' -- check mapping file!");
             } else {
                 try {
                     UCommand cmd = (UCommand) commandClass.newInstance();
                     keyBindings.put(glkey, cmd);
-                    System.out.println("KEYBIND: mapping GLKey " + Integer.toString(k) + " to " + cmd.id);
+                    log.info("mapping GLKey " + Integer.toString(k) + " to " + cmd.id);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -304,7 +307,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     void hearCommand(UCommand command, GLKey k) {
         if (command != null && player != null)
-            System.out.println("PLAYER: actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
+            log.debug("PLAYER: actiontime " + Float.toString(player.actionTime()) + "   cmd: " + command.id);
         if (modal != null) {
             modal.hearCommand(command, k);
         } else if (command != null) {
@@ -354,7 +357,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      * @param modal
      */
     public void showModal(UModal modal) {
-        speaker.playUIsound(config.soundUImodalOpen, 1f);
+        speaker.playUI(config.soundModalOpen);
         attachModal(modal);
         modal.onOpen();
     }
@@ -453,6 +456,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                 } else {
                     tickTime();
                     letActorsAct();
+                    killActors();
                 }
             } else {
                 consumeKeyFromBuffer();
@@ -463,12 +467,29 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void letActorsAct() {
         // need to use a clone to iterate, since actors might drop out during this loop
         ArrayList<UActor> tmpactors = (ArrayList<UActor>)actors.clone();
-        System.out.println("ticking " + Integer.toString(tmpactors.size()) + " actors");
+        log.debug("ticking " + Integer.toString(tmpactors.size()) + " actors");
         for (UActor actor : tmpactors) {
-            if (actors.contains(actor))
+            if (actors.contains(actor) && !actor.dead)
                 actor.act();
         }
     }
+    void killActors() {
+        ArrayList<UActor> tmpactors = (ArrayList<UActor>)actors.clone();
+        for (UActor actor : tmpactors) {
+            if (actor.dead)
+                actor.actuallyDie();
+        }
+    }
+
+    public void startGame(UPlayer player, UArea area) {
+        speaker.playUI(new Sound("sounds/game_start.wav"));
+        setPlayer(player);
+        config.setVisibilityEnable(true);
+        player.moveToCell(area, player.getSaveAreaX(), player.getSaveAreaY());
+        player.startActing();
+        postPlayerLevelportEvent(null);
+    }
+
     public void quitGame() {
         quitGame = true;
     }
@@ -479,14 +500,16 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         player = null;
         cartographer.setupRegions();
         config.setVisibilityEnable(false);
+        speaker.resetAmbients();
         wipeModals();
+        speaker.playUI(config.soundCancel);
         game.setupTitleScreen();
     }
 
     public void persistPlayer() {
         if (player.area().getLabel().equals("vaulted"))
             return;
-        System.out.println("Persisting player " + player.getName() + "...");
+        log.debug("Persisting player " + player.getName() + "...");
         player.saveStateData();
         String path = savePath();
         File file = new File(path + "player");
@@ -539,8 +562,12 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
         bus.post(new TimeTickEvent(turnCounter));
         turnCounter++;
-        System.out.println("time:tick " + Integer.toString(turnCounter));
+        log.trace("time:tick " + Integer.toString(turnCounter));
         renderer.render();
+    }
+
+    public UThing makeThing(String name) {
+        return thingCzar.getThingByName(name);
     }
 
     public int daytimeMinutes() {
@@ -582,6 +609,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     void attachModal(UModal newmodal) {
         if (modal != null) {
+            speaker.playUI(config.soundSelect);
             modalStack.push(modal);
             modal.addChild(newmodal);
             modal = newmodal;
@@ -622,6 +650,14 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         return true;
     }
 
+    public boolean hasChildModal() {
+        if (modalStack == null)
+            return false;
+        if (modalStack.empty())
+            return false;
+        return true;
+    }
+
     /**
      * Get the filesystem path to the current savestate (the world we're playing now), or the top level save path.
      * @return
@@ -645,7 +681,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
         filelist.add("<new vaultSet>");
 
-        UModalStringPick spmodal = new UModalStringPick("Select vaultSet to edit:", UColor.COLOR_BLACK, 0, 0,
+        UModalStringPick spmodal = new UModalStringPick("Select vaultSet to edit:", UColor.BLACK, 0, 0,
                 filelist, true, this, "vaulted-pickfile");
         printScroll("Launching VaultEd...");
         showModal(spmodal);
@@ -653,7 +689,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
     public void hearModalStringPick(String context, String filename) {
         if (filename.equals("<new vaultSet>")) {
-            UModalGetString fmodal = new UModalGetString("Filename?", 20, true, UColor.COLOR_BLACK, this, "vaulted-newfile");
+            UModalGetString fmodal = new UModalGetString("Filename?", 20, true, UColor.BLACK, this, "vaulted-newfile");
             showModal(fmodal);
         } else {
             doLaunchVaulted(filename);
@@ -662,7 +698,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     void doLaunchVaulted(String filename) {
         UArea oldarea = null;
         if (player == null)
-            player = new UPlayer("Vault Editor Guy", '@', UColor.COLOR_WHITE, true, null, 0, 0);
+            player = new UPlayer("Vault Editor Guy", null, 0, 0);
         else
             oldarea = player.area();
         VaultedArea edarea = new VaultedArea(30,30);
@@ -677,5 +713,9 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         if (context.equals("vaulted-newfile")) {
             doLaunchVaulted(input);
         }
+    }
+
+    public void toggleFullscreen() {
+        renderer.toggleFullscreen();
     }
 }

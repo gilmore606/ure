@@ -1,9 +1,11 @@
 package ure.things;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.eventbus.EventBus;
 import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
 import ure.actors.actions.*;
+import ure.math.URandom;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
@@ -11,15 +13,16 @@ import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.math.UColor;
-import ure.render.URenderer;
-import ure.ui.Icon;
+import ure.sys.UConfig;
+import ure.ui.Icons.Icon;
+import ure.ui.Icons.UIconCzar;
 import ure.ui.UCamera;
+import ure.ui.sounds.USpeaker;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Random;
 
 /**
  * Created by gilmore on 6/20/2018.
@@ -34,14 +37,24 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     @Inject
     @JsonIgnore
     public UCommander commander;
-
+    @Inject
+    @JsonIgnore
+    public UConfig config;
     @Inject
     @JsonIgnore
     public UActorCzar actorCzar;
-
     @Inject
     @JsonIgnore
-    protected Random random;
+    public UIconCzar iconCzar;
+    @Inject
+    @JsonIgnore
+    protected URandom random;
+    @Inject
+    @JsonIgnore
+    protected EventBus bus;
+    @Inject
+    @JsonIgnore
+    protected USpeaker speaker;
 
     protected String name;
     protected long ID;
@@ -49,7 +62,6 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     protected String dname;
     protected String plural;
     protected String type;
-    protected char glyph;
     protected String description = "A thing.";
     protected int weight;
     protected boolean movable = true;
@@ -57,9 +69,6 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public String[] equipSlots;
     protected int equipSlotCount = 1;
     public boolean equipped;
-
-    protected int[] color;
-    protected int[] colorvariance = new int[]{0,0,0};
     protected String getFailMsg = "You can't pick that up.";
     protected String category = "misc";
     protected HashMap<String,Integer> stats;
@@ -67,8 +76,6 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     protected int[] spawnlevels;
     protected String[] spawnterrain;
 
-    protected UColor glyphColor;
-    protected boolean glyphOutline = false;
     protected Icon icon;
 
     @JsonIgnore
@@ -88,13 +95,11 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
      */
     public void initializeAsTemplate() {
         setContents(new UCollection(this, this.name));
-        if (getGlyphColor() == null && getColor() != null) {
-            SetupColors();
-        }
-        setIcon(new Icon(getGlyph(), getGlyphColor(), null));
         stats = new HashMap<>();
         contents = new UCollection();
         equipped = false;
+        icon = null;
+        icon();
     }
 
     /**
@@ -106,6 +111,8 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         contents.reconnect(null, this);
         location = null;
         equipped = false;
+        icon = null;
+        icon();
     }
 
     public long getID() { return ID; }
@@ -119,6 +126,16 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public void reconnect(UArea area, UContainer container) {
         this.location = container;
         contents.reconnect(area, this);
+        icon().setEntity(this);
+    }
+
+    public Icon icon() {
+        if (icon == null) {
+            icon = iconCzar.getIconByName(name);
+            if (icon != null)
+                icon.setEntity(this);
+        }
+        return icon;
     }
 
     public void closeOut() {
@@ -130,47 +147,15 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         equipped = false;
     }
 
-    public void SetupColors() {
-        int[] thecolor = new int[]{color[0], color[1], color[2]};
-        for (int i=0;i<3;i++) {
-            if (colorvariance[i] > 0)
-                thecolor[i] += (random.nextInt(colorvariance[i]) - colorvariance[i]/2);
-        }
-        setGlyphColor(new UColor(thecolor[0],thecolor[1],thecolor[2]));
-    }
-
-    public void setDisplayFields(String thename, char theglyph, UColor thecolor, boolean addOutline) {
-        setName(thename);
-        setGlyph(theglyph);
-        setGlyphColor(thecolor);
-        setGlyphOutline(addOutline);
-    }
-
-    public int glyphOffsetX() { return 0; }
-    public int glyphOffsetY() { return 0; }
-
-    public UColor getGlyphColor() {
-        return glyphColor;
-    }
-
-    public Icon icon() { return getIcon(); }
     public String name() { return name; }
-    public int value() { return value; }
-    public int weight() { return weight; }
+    public int value() { return value + contents.value(); }
+    public int weight() { return weight + contents.weight(); }
 
     public ArrayList<String> UIdetails(String context) {
         ArrayList<String> d = new ArrayList<>();
         d.add("Weight " + Integer.toString(weight()));
         d.add("Value " + Integer.toString(value()));
         return d;
-    }
-
-    public boolean drawGlyphOutline() {
-        if (isGlyphOutline())
-            return true;
-        if (commander.config.isOutlineThings())
-            return true;
-        return false;
     }
 
     public void moveToCell(int x, int y) {
@@ -236,8 +221,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
 
             return clone;
         } catch (CloneNotSupportedException e) {
-            System.out.println(" Cloning not allowed. ");
-            return this;
+            throw new RuntimeException(e);
         }
     }
 
@@ -302,20 +286,8 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public String getCategory() { return category; }
     public void setCategory(String _category) { category = _category; }
 
-    //The camera class will call this, and tell where in screen coords to draw it.
-    public void render(URenderer renderer, int x, int y, UColor light, float vis){
-        char icon = getGlyph();
-        UColor color = new UColor(this.getGlyphColor());
-        if (this.drawGlyphOutline()) {
-            renderer.drawTileOutline(icon, x + glyphOffsetX(), y + glyphOffsetY(), UColor.COLOR_BLACK);
-        }
-        color.illuminateWith(light, vis);
-        renderer.drawTile(icon, x + glyphOffsetX(), y + glyphOffsetY(), color);
-    }
-
     public void emote(String text) { emote(text, null); }
     public void emote(String text, UColor color) {
-
         commander.printScrollIfSeen(this, text, color);
     }
 
@@ -378,14 +350,6 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         this.type = type;
     }
 
-    public char getGlyph() {
-        return glyph;
-    }
-
-    public void setGlyph(char glyph) {
-        this.glyph = glyph;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -424,63 +388,27 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public void setEquipSlotCount(int i) { equipSlotCount = i; }
     public boolean isEquipped() { return equipped; }
     public void setEquipped(boolean b) { equipped = b; }
-
-    public int[] getColor() {
-        return color;
-    }
-
-    public void setColor(int[] color) {
-        this.color = color;
-    }
-
-    public int[] getColorvariance() {
-        return colorvariance;
-    }
-
-    public void setColorvariance(int[] colorvariance) {
-        this.colorvariance = colorvariance;
-    }
-
     public String getGetFailMsg() {
         return getFailMsg;
     }
-
     public void setGetFailMsg(String getFailMsg) {
         this.getFailMsg = getFailMsg;
     }
-
-    public void setGlyphColor(UColor glyphColor) {
-        this.glyphColor = glyphColor;
-    }
-
-    public boolean isGlyphOutline() {
-        return glyphOutline;
-    }
-
-    public void setGlyphOutline(boolean glyphOutline) {
-        this.glyphOutline = glyphOutline;
-    }
-
     public Icon getIcon() {
         return icon;
     }
-
     public void setIcon(Icon icon) {
         this.icon = icon;
     }
-
     public UContainer getLocation() {
         return location;
     }
-
     public void setLocation(UContainer location) {
         this.location = location;
     }
-
     public UCollection getContents() {
         return contents;
     }
-
     public void setContents(UCollection contents) {
         this.contents = contents;
     }

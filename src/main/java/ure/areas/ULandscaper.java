@@ -1,8 +1,11 @@
 package ure.areas;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.actors.UActor;
 import ure.actors.UActorCzar;
+import ure.math.URandom;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.ui.ULight;
@@ -16,7 +19,7 @@ import ure.things.UThingCzar;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
 
 /**
  * ULandscaper is a grab bag of tools for creating and populating UAreas.
@@ -45,12 +48,14 @@ public abstract class ULandscaper {
 
     @Inject
     @JsonIgnore
-    protected Random random;
+    public URandom random;
 
     @JsonIgnore
     USimplexNoise simplexNoise = new USimplexNoise();
 
     protected String floorterrain = "rock";
+
+    private Log log = LogFactory.getLog(ULandscaper.class);
 
     /**
      * This field will be use to match the proper ULandscaper subclass when deserializing.  It will need
@@ -59,16 +64,140 @@ public abstract class ULandscaper {
     protected String type = "";
 
     /**
-     * Room is used by shapers to track and dig rooms.  It represents a room location in a shape.
+     * Room is used by shapers to dig rooms.  It represents a room location in a shape.
      * Walls and doors are outside of this square.
      */
     public class Room {
-        int x,y,width,height;
+        public int x,y,width,height;
+        public boolean isHallway;
         public Room(int x, int y, int width, int height) {
             this.x=x;
             this.y=y;
             this.width=width;
             this.height=height;
+        }
+        public Room(int width, int height) {
+            this.width=width;
+            this.height=height;
+            this.x=-1;
+            this.y=-1;
+        }
+        public Face[] faces() {
+            Face[] faces = new Face[4];
+            faces[0] = new Face(x,y-1,width,0,-1);
+            faces[1] = new Face(x+width,y,height,1,0);
+            faces[2] = new Face(x,y+height,width,0,1);
+            faces[3] = new Face(x-1,y,height,-1,0);
+            return faces;
+        }
+        public void rotate() {
+            int tmp = width;
+            width = height;
+            height = tmp;
+        }
+        public void print(Shape space) { print(space, false); }
+        public void print(Shape space, boolean rounded) {
+            for (int xi=0;xi<width;xi++) {
+                for (int yi = 0;yi < height;yi++) {
+                    if (!rounded || !(xi==0 || xi==width-1) || !(yi==0 || yi==height-1))
+                        space.set(x + xi, y + yi);
+                }
+            }
+        }
+        public void punchDoors(Shape space) { punchDoors(space, false); }
+        public void punchDoors(Shape space, boolean punchAll) {
+            for (Face face : faces()) {
+                face.punchDoors(space, punchAll);
+            }
+        }
+
+    }
+
+    /**
+     * Face is used to dig away from rooms.
+     */
+    public class Face {
+        public int x,y,length;
+        int facex,facey;
+        public Face(int x, int y, int length, int facex, int facey) {
+            this.x = x;
+            this.y = y;
+            this.length = length;
+            this.facex = facex;
+            this.facey = facey;
+        }
+
+        /**
+         * Try to add the room somewhere along me.
+         * If we can, record the room's xy and return it, else return null.
+         */
+        public Room addRoom(Room room, Shape space) {
+            ArrayList<Integer> spaces = new ArrayList<>();
+            for (int i=-(room.width-3);i<length-3;i++) {
+                boolean blocked = false;
+                for (int cx=-1;cx<room.width+1;cx++) {
+                    for (int cy=0;cy<room.height+2;cy++) {
+                        int tx = transX(cx+i,cy);
+                        int ty = transY(cx+i,cy);
+                        if (space.value(tx,ty) || !space.isValidXY(tx,ty)) {
+                            blocked = true;
+                            break;
+                        }
+                    }
+                    if (blocked) break;
+                }
+                if (!blocked) spaces.add(i);
+            }
+            if (spaces.size() == 0) return null;
+            int i = (int)random.member((List)spaces);
+            room.x = transX(i,1);
+            room.y = transY(i, 1);
+            if (facey == -1) {
+                room.y -= room.height-1;
+            } else if (facex == -1) {
+                room.rotate();
+                room.x -= room.width-1;
+            } else if (facex == 1) {
+                room.rotate();
+            }
+            return room;
+        }
+
+        /**
+         * Translate coordinates from my relative space to absolute space.
+         */
+        public int transX(int dx, int dy) {
+            if (facey == -1 || facey == 1) {
+                return x + dx;
+            } else if (facex == 1) {
+                return x + dy;
+            } else {
+                return x - dy;
+            }
+        }
+        public int transY(int dx, int dy) {
+            if (facey == -1) {
+                return y - dy;
+            } else if (facey == 1) {
+                return y + dy;
+            } else {
+                return y + dx;
+            }
+        }
+
+        /**
+         * Punch a doorhole somewhere along us, if possible.
+         */
+        public void punchDoors(Shape space) { punchDoors(space, false); }
+        public void punchDoors(Shape space, boolean punchAll) {
+            for (int i : random.seq(length)) {
+                int fx = x + (i*Math.abs(facey));
+                int fy = y + (i*Math.abs(facex));
+                if (space.value(fx+facex,fy+facey) && space.value(fx-facex,fy-facey)) {
+                    space.set(fx,fy);
+                    if (!punchAll) return;
+                }
+            }
         }
     }
 
@@ -176,9 +305,7 @@ public abstract class ULandscaper {
      * character of the area you produce.
      * @param area
      */
-    public void buildArea(UArea area, int level, String[] tags) {
-        System.out.println("Default landscaper cannot build areas!");
-    }
+    public abstract void buildArea(UArea area, int level, String[] tags);
 
     /**
      * Fill a rectangle from x1,y1 to x2,y2 with the given terrain.
@@ -200,15 +327,34 @@ public abstract class ULandscaper {
      * Convenience random numbers.
      */
     public int rand(int max) {
-        return random.nextInt(max);
+        return random.i(max);
     }
     public float randf(float max) {
-        return random.nextFloat() * max;
+        return random.f(max);
     }
     public float randf() {
-        return random.nextFloat();
+        return random.f();
     }
 
+    /**
+     * Make a new room either small, big or hallway.
+     */
+    public Room randomRoom(float smallChance, int smallmin, int smallmax,
+                           float bigChance, int bigmin, int bigmax,
+                           float hallChance, int halllengthmin, int halllengthmax, int hallwidthmin, int hallwidthmax) {
+        float rtype = random.f();
+        if (rtype < smallChance)
+            return new Room(0,0,random.i(1+smallmax-smallmin)+smallmin, random.i(1+smallmax-smallmin)+smallmin);
+        else if (rtype < (bigChance+smallChance))
+            return new Room(0,0,random.i(1+bigmax-bigmin)+bigmin, random.i(1+bigmax-bigmin)+bigmin);
+        else {
+            Room r = new Room(0, 0, random.i(1+halllengthmax - halllengthmin) + halllengthmin, random.i(1+hallwidthmax - hallwidthmin) + hallwidthmin);
+            r.isHallway = true;
+            if (random.f() > 0.5f)
+                r.rotate();
+            return r;
+        }
+    }
     /**
      * Scatter a number of random things through the area, onto certain terrains.
      *
@@ -221,7 +367,7 @@ public abstract class ULandscaper {
         while (numberToScatter > 0) {
             numberToScatter--;
             UCell cell = randomCell(area, terrains);
-            String name = things[random.nextInt(things.length)];
+            String name = things[random.i(things.length)];
             UThing thing = thingCzar.getThingByName(name);
             thing.moveToCell(area, cell.x, cell.y);
         }
@@ -294,7 +440,7 @@ public abstract class ULandscaper {
         UCell cell = null;
         boolean match = false;
         while (cell == null || !match) {
-            cell = area.cellAt(random.nextInt(area.xsize), random.nextInt(area.ysize));
+            cell = area.cellAt(random.i(area.xsize), random.i(area.ysize));
             match = cellHasTerrain(area, cell, terrains);
         }
         return cell;
@@ -319,7 +465,7 @@ public abstract class ULandscaper {
         UCell cell = null;
         boolean match = false;
         while (cell == null || !match) {
-            cell = area.cellAt(random.nextInt(area.xsize), random.nextInt(area.ysize));
+            cell = area.cellAt(random.i(area.xsize), random.i(area.ysize));
             match = cell.willAcceptThing(thing);
         }
         return cell;
@@ -331,8 +477,9 @@ public abstract class ULandscaper {
     public UCell getRandomSpawn(UArea area, UThing thing, int x1, int y1, int x2, int y2) {
         UCell cell = null;
         boolean match = false;
+        int iter = 0;
         while (cell == null || !match) {
-            cell = area.cellAt(x1+random.nextInt(x2-x1),y1+random.nextInt(y2-y1));
+            cell = area.cellAt(x1+random.i(x2-x1),y1+random.i(y2-y1));
             if (cell != null) {
                 match = cell.willAcceptThing(thing);
                 if (match && !cell.terrain().isSpawnok())
@@ -340,6 +487,9 @@ public abstract class ULandscaper {
                 if (match && !thing.canSpawnOnTerrain(cell.terrain().getName()))
                     match = false;
             }
+            iter++;
+            if (iter > 10000)
+                return null;
         }
         return cell;
     }
@@ -368,7 +518,6 @@ public abstract class ULandscaper {
             int x = rand(x2-x1)+x1;
             int y = rand(y2-y1)+y1;
             if (!rectHasTerrain(area, x, y, x+w, y+h, terrains)) {
-                System.out.println("found area without at " + Integer.toString(x) + "," + Integer.toString(y));
                 return area.cellAt(x,y);
             }
         }
@@ -399,7 +548,8 @@ public abstract class ULandscaper {
                     if ((neighbors[0][1] && neighbors[2][1] && !neighbors[1][0] && !neighbors[1][2]) ||
                         !neighbors[0][1] && !neighbors[2][1] && neighbors[1][0] && neighbors[1][2]) {
                         if (neighborCount <= 5) {
-                            area.setTerrain(x,y,doorTerrain);
+                            if (random.f() < doorChance)
+                                area.setTerrain(x,y,doorTerrain);
                         }
                     }
                 }
@@ -407,13 +557,14 @@ public abstract class ULandscaper {
         }
     }
 
+
     public void simplexScatterTerrain(UArea area, String terrain, String[] targets, float threshold, float scatterChance, float[] noiseScales) {
         for (int x=0;x<area.xsize;x++) {
             for (int y=0;y<area.ysize;y++) {
                 if (cellHasTerrain(area, area.cellAt(x,y), targets)) {
                     float sample = simplexNoise.multi(x, y, noiseScales);
                     if (sample > threshold) {
-                        if (random.nextFloat() <= scatterChance) {
+                        if (random.f() <= scatterChance) {
                             area.setTerrain(x, y, terrain);
                         }
                     }
@@ -428,7 +579,7 @@ public abstract class ULandscaper {
                 if (cellHasTerrain(area, area.cellAt(x,y), targets)) {
                     float sample = simplexNoise.multi(x, y, noiseScales);
                     if (sample > threshold) {
-                        if (random.nextFloat() <= scatterChance) {
+                        if (random.f() <= scatterChance) {
                             if (!isNearA(area,x,y,thing,separateBy)) {
                                 UThing thingobj = thingCzar.getThingByName(thing);
                                 thingobj.moveToCell(area, x, y);
@@ -469,7 +620,7 @@ public abstract class ULandscaper {
         float fillratio = -1f;
         int tries = 0;
         while ((fillratio < 0.25f) && (tries < 8)) {
-            System.out.println("SCAPER: shapeCaves attempt " + Integer.toString(tries));
+            log.debug("shapeCaves attempt " + Integer.toString(tries));
             tries++;
 
             // Fill with initial noise, minus a horizontal gap (to promote connectedness later)
@@ -526,9 +677,9 @@ public abstract class ULandscaper {
     public Shape shapeOddBlob(int xsize, int ysize, int parts, float twist) {
         Shape mask = new Shape(xsize,ysize);
         for (int i=0;i<parts;i++) {
-            float xprop = 0.3f + random.nextFloat()*0.7f - twist;
-            float yprop = 0.3f + random.nextFloat()*0.7f - twist;
-            if (random.nextFloat() > 0.5f) {
+            float xprop = 0.3f + random.f(0.7f)- twist;
+            float yprop = 0.3f + random.f(0.7f) - twist;
+            if (random.f() > 0.5f) {
                 float tmp = xprop;
                 xprop = yprop;
                 yprop = tmp;
@@ -536,8 +687,8 @@ public abstract class ULandscaper {
             Shape oval = shapeOval((int)(xsize * xprop), (int)(ysize * yprop));
             int xvar = (int)(xsize*(1f-xprop))+1;
             int yvar = (int)(ysize*(1f-yprop))+1;
-            int xoff = random.nextInt(xvar) - (xvar/2);
-            int yoff = random.nextInt(yvar) - (yvar/2);
+            int xoff = random.i(xvar) - (xvar/2);
+            int yoff = random.i(yvar) - (yvar/2);
             mask.maskWith(oval, Shape.MASK_OR, xoff, yoff);
         }
         mask.smooth(5, 2);
@@ -548,19 +699,19 @@ public abstract class ULandscaper {
     // TODO: variable width
     public Shape shapeRoad(int xsize, int ysize, float width, float twist, float twistmax) {
         Shape mask = new Shape(xsize, ysize);
-        int edge = random.nextInt(4);
+        int edge = random.i(4);
         float startx, starty, dx, dy, ctwist;
         if (edge == 0) {
-            starty = 0f;  startx = (float)(random.nextInt(xsize));
+            starty = 0f;  startx = (float)(random.i(xsize));
             dx = 0f ; dy = 1f;
         } else if (edge == 1) {
-            starty = (float)ysize; startx = (float)(random.nextInt(xsize));
+            starty = (float)ysize; startx = (float)(random.i(xsize));
             dx = 0f; dy = -1f;
         } else if (edge == 2) {
-            startx = 0f; starty = (float)(random.nextInt(ysize));
+            startx = 0f; starty = (float)(random.i(ysize));
             dx = 1f; dy = 0f;
         } else {
-            startx = (float)xsize; starty = (float)(random.nextInt(ysize));
+            startx = (float)xsize; starty = (float)(random.i(ysize));
             dx = -1f; dy = 0f;
         }
         ctwist = 0f;
@@ -569,7 +720,7 @@ public abstract class ULandscaper {
             mask.fillRect((int)startx, (int)starty, (int)(startx+width), (int)(starty+width));
             startx += dx;
             starty += dy;
-            if (random.nextFloat() < twist) {
+            if (random.f() < twist) {
                 if (dx == 0) {
                     startx += ctwist;
                 }
@@ -580,7 +731,7 @@ public abstract class ULandscaper {
             if (startx >= xsize || startx < 0 || starty >= ysize || starty < 0) {
                 hitedge = true;
             }
-            ctwist = ctwist + random.nextFloat() * twist - (twist/2f);
+            ctwist = ctwist + random.f(twist) - (twist/2f);
             if (ctwist > twistmax) ctwist = twistmax;
             if (ctwist < -twistmax) ctwist = -twistmax;
         }
@@ -655,10 +806,9 @@ public abstract class ULandscaper {
         int tries = 200;
         while (tries > 0) {
             tries--;
-            int x = random.nextInt(area.xsize);
-            int y = random.nextInt(area.ysize);
+            int x = random.i(area.xsize);
+            int y = random.i(area.ysize);
             if (canFitBoxAt(area, x, y, width, height, floorTerrains)) {
-                System.out.println("found a box");
                 int[] coords = new int[2];
                 coords[0] = x;
                 coords[1] = y;
@@ -681,7 +831,7 @@ public abstract class ULandscaper {
         drawRect(area, wallt, x, y, (x+w)-1, (y+h)-1);
     }
 
-    public void buildComplex(UArea area, int x1, int y1, int x2, int y2, String floort, String wallt, String[] drawoverts, int roomsizeMin, int roomsizeMax, float hallChance, int hallwidth, int roomsmax, int minroomarea) {
+    public void buildComplex(UArea area, int x1, int y1, int x2, int y2, String floort, String wallt, String[] drawoverts, int roomsizeMin, int roomsizeMax, float hallChance, int hallwidth, int roomsmax, int minroomarea, ArrayList<Room> roomsReturn) {
         ArrayList<int[]> rooms = new ArrayList<int[]>();
         boolean addExteriorDoors = true;
         boolean addExteriorWindows = true;
@@ -691,6 +841,7 @@ public abstract class ULandscaper {
         int firsty = y1 + (y2-y1)/2;
         buildRoom(area, firstx,firsty,firstw,firsth, floort, wallt);
         rooms.add(new int[]{firstx,firsty,firstw,firsth});
+        roomsReturn.add(new Room(firstx,firsty,firstw,firsth));
         boolean done = false;
         int fails = 0;
         while (!done && (fails < rooms.size()*6) && (rooms.size() < roomsmax)) {
@@ -780,6 +931,7 @@ public abstract class ULandscaper {
                 }
                 buildRoom(area, newroom[0],newroom[1],newroom[2],newroom[3],floort,wallt);
                 rooms.add(newroom);
+                roomsReturn.add(new Room(newroom[0],newroom[1],newroom[2],newroom[3]));
                 int doorstyle = rand(2);
                 if (doorstyle == 0) {
                     int mid = doormin;
@@ -795,14 +947,14 @@ public abstract class ULandscaper {
                         }
                     }
                 }
-                System.out.println("CARTO : made new room " + Integer.toString(newroom[2]) + " by " + Integer.toString(newroom[3]));
+                log.debug("made new room " + Integer.toString(newroom[2]) + " by " + Integer.toString(newroom[3]));
                 fails = 0;
             } else {
                 fails++;
             }
         }
         for (int[] room : rooms) {
-            DecorateRoom(area, room);
+            DecorateRoom(area, new int[]{room[0]+1,room[1]+1,room[2]-2,room[3]-2});
         }
         if (addExteriorDoors && rooms.size() > 1) {
             for (int i = 0;i < rand(rooms.size()/2) + 2;i++) {
@@ -822,13 +974,21 @@ public abstract class ULandscaper {
         }
     }
 
-    void DecorateRoom(UArea area, int[] room) {
+    public void DecorateRoom(UArea area, int[] room) {
         int x1 = room[0];
         int y1 = room[1];
         int w = room[2];
         int h = room[3];
-        if (randf() < 0.2f) {
+        if (randf() < 0.1f) {
             fillRect(area, "carvings", x1+2,y1+2,x1+w-3,y1+h-3);
+        }
+        if (randf() < 0.5f) {
+            ULight light = new ULight(UColor.LIGHTGRAY, 20, 20);
+            if (randf() < 0.0f)
+                light.setFlicker(ULight.FLICKER_FRITZ, 1f, 1f, 0);
+            light.makeAmbient(w,h);
+            light.setPermanent(true);
+            light.moveTo(area,x1,y1);
         }
     }
 
@@ -840,7 +1000,7 @@ public abstract class ULandscaper {
             for (String name: thenames) {
                 names.add(name);
             }
-            System.out.println("SCAPER: got " + Integer.toString(names.size()) + " actor types to scatter");
+            log.debug("got " + Integer.toString(names.size()) + " actor types to scatter");
             if (names.size() < 1)
                 return;
         }
@@ -850,17 +1010,18 @@ public abstract class ULandscaper {
             if (names.size() == 1)
                 name = names.get(0);
             else
-                name = names.get(random.nextInt(names.size()));
+                name = names.get(random.i(names.size()));
             UActor actor = actorCzar.getActorByName(name);
             UCell dest = getRandomSpawn(area, actor, x1, y1, x2, y2);
-            actor.moveToCell(area, dest.x, dest.y);
+            if (dest != null)
+                actor.moveToCell(area, dest.x, dest.y);
         }
     }
 
     public void scatterThingsByTags(UArea area, int x1, int y1, int x2, int y2, String[] tags, int level, int amount) {
         ArrayList<String> names = new ArrayList<>();
         for (String tag : tags) {
-            System.out.println("get names for " + tag);
+            log.debug("get names for " + tag);
             String[] thenames = thingCzar.getThingsByTag(tag,level);
             for (String name: thenames) {
                 names.add(name);
@@ -872,7 +1033,7 @@ public abstract class ULandscaper {
             if (names.size() == 1)
                 name = names.get(0);
             else
-                name = names.get(random.nextInt(names.size()));
+                name = names.get(random.i(names.size()));
             UThing thing = thingCzar.getThingByName(name);
             UCell dest = getRandomSpawn(area, thing, x1, y1, x2, y2);
             thing.moveToCell(area, dest.x, dest.y);

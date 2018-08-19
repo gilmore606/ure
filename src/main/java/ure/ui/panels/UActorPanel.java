@@ -1,11 +1,12 @@
 package ure.ui.panels;
 
 import com.google.common.eventbus.Subscribe;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.actors.UActor;
 import ure.actors.UPlayer;
 import ure.math.UColor;
 import ure.math.UPath;
-import ure.render.URenderer;
 import ure.sys.events.PlayerChangedAreaEvent;
 import ure.sys.events.TimeTickEvent;
 
@@ -16,6 +17,8 @@ public class UActorPanel extends UPanel {
 
     ArrayList<UActor> actors;
 
+    private Log log = LogFactory.getLog(UActorPanel.class);
+
     public UActorPanel(int _pixelw, int _pixelh, int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
         super(_pixelw,_pixelh,_padx,_pady,_fgColor,_bgColor,_borderColor);
         bus.register(this);
@@ -24,12 +27,14 @@ public class UActorPanel extends UPanel {
 
     public void updateActors(UPlayer player) {
         actors.clear();
-        for (UActor actor : player.area().getActors()) {
-            if ((actor != player) && player.canSee(actor)) {
-                actors.add(actor);
+        if (!hidden) {
+            for (UActor actor : player.area().getActors()) {
+                if ((actor != player) && player.canSee(actor)) {
+                    actors.add(actor);
+                }
             }
-        }
         sortActors(player);
+        }
     }
 
     public void sortActors(UPlayer player) {
@@ -62,7 +67,7 @@ public class UActorPanel extends UPanel {
     public void drawActor(UActor actor, int pos) {
         int entryHeight = commander.config.getTileHeight() * 3;
         if (actor.getIcon() == null)
-            System.out.println("*** BUG: actor " + actor.getName() + " had null getIcon() at actorpanel");  // this only seems to happen on game reload at first frame when camera is moved into area
+            log.error("*** BUG: actor " + actor.getName() + " had null getIcon() at actorpanel");  // this only seems to happen on game reload at first frame when camera is moved into area
         else
             actor.getIcon().draw(padX, padY + (pos * entryHeight));
         renderer.drawString(padX + commander.config.getTileWidth() * 2, padY + (pos * entryHeight), fgColor, actor.getName());
@@ -71,7 +76,8 @@ public class UActorPanel extends UPanel {
 
     @Subscribe
     public void hearPlayerChangedArea(PlayerChangedAreaEvent event) {
-        updateActors((UPlayer)commander.player());
+        if (!hidden)
+            updateActors((UPlayer)commander.player());
     }
 
     @Subscribe

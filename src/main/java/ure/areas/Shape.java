@@ -1,5 +1,6 @@
 package ure.areas;
 
+import ure.math.URandom;
 import ure.sys.Injector;
 import ure.things.UThing;
 import ure.things.UThingCzar;
@@ -19,7 +20,7 @@ import java.util.Random;
 public class Shape {
 
     @Inject
-    Random random;
+    URandom random;
 
     @Inject
     UThingCzar thingCzar;
@@ -130,7 +131,7 @@ public class Shape {
     public Shape noiseWipe(float density) {
         for (int x=0;x<xsize;x++) {
             for (int y = 0;y < ysize;y++) {
-                if (random.nextFloat() < density) write(x, y, true);
+                if (random.f() < density) write(x, y, true);
                 else write(x, y, false);
             }
         }
@@ -253,7 +254,7 @@ public class Shape {
         for (int x=0;x<xsize;x++)
             for (int y=0;y<ysize;y++)
                 if (value(x,y))
-                    if (density >= 1f || random.nextFloat() < density)
+                    if (density >= 1f || random.f() < density)
                         area.setTerrain(x+xoffset,y+yoffset,terrain);
     }
 
@@ -344,7 +345,7 @@ public class Shape {
         for (int x=0;x<xsize;x++) {
             for (int y = 0;y < ysize;y++)
                 if (value(x, y))
-                    if (random.nextFloat() > density)
+                    if (random.f() > density)
                         clear(x, y);
         }
         return this;
@@ -359,7 +360,7 @@ public class Shape {
             for (int y = 0;y < ysize;y++)
                 if (value(x, y)) {
                     writeBuffer(x, y, true);
-                    int radius = (minspace + random.nextInt(maxspace - minspace)) / 2;
+                    int radius = (minspace + random.i(maxspace - minspace)) / 2;
                     for (int dx = -radius;dx < radius;dx++)
                         for (int dy = -radius;dy < radius;dy++)
                             if (!valueBuffer(x + dx, y + dy))
@@ -379,7 +380,7 @@ public class Shape {
                         int n = neighbors(x,y);
                         if (n >= threshold) {
                             writeBuffer(x,y,true);
-                        } else if (random.nextFloat() < (1f - rot)) {
+                        } else if (random.f() < (1f - rot)) {
                             writeBuffer(x,y,true);
                         } else {
                             writeBuffer(x,y,false);
@@ -467,6 +468,32 @@ public class Shape {
     }
 
     /**
+     * Prune dead-end one space hallways
+     */
+    public Shape pruneDeadEnds() {
+        clearBuffer();
+        int passes = 20;
+        for (int i=0;i<passes;i++) {
+            boolean killedone = false;
+            for (int x=0;x<xsize;x++) {
+                for (int y=0;y<ysize;y++) {
+                    if (value(x,y)) {
+                        int n = neighborsPrime(x, y);
+                        if (n <= 1) {
+                            writeBuffer(x, y, false);
+                            killedone = true;
+                        } else
+                            writeBuffer(x,y,true);
+                    }
+                }
+            }
+            printBuffer();
+            if (!killedone) return this;
+        }
+        return this;
+    }
+
+    /**
      * Pick N random cells of a certain value
      */
     public int[] randomCell(boolean val) { return randomCells(val,1)[0]; }
@@ -479,7 +506,7 @@ public class Shape {
                     cells.add(new int[]{x,y});
         while (n > 0 && cells.size() > 0) {
             n--;
-            int i = random.nextInt(cells.size());
+            int i = random.i(cells.size());
             results[n] = cells.get(i);
             cells.remove(i);
         }
@@ -609,4 +636,5 @@ public class Shape {
         }
         return !blocked;
     }
+
 }

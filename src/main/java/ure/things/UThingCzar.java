@@ -1,6 +1,8 @@
 package ure.things;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 
@@ -11,6 +13,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Set;
 
 public class UThingCzar {
 
@@ -20,6 +23,8 @@ public class UThingCzar {
     ObjectMapper objectMapper;
     @Inject
     UCommander commander;
+
+    private Log log = LogFactory.getLog(UThingCzar.class);
 
     public UThingCzar() {
         Injector.getAppComponent().inject(this);
@@ -38,7 +43,7 @@ public class UThingCzar {
                     for (UThing thing : thingObjs) {
                         thing.initializeAsTemplate();
                         thingsByName.put(thing.name, thing);
-                        System.out.println("THINGCZAR: loaded " + thing.getName());
+                        log.debug("loaded " + thing.getName());
                     }
                 } catch (IOException io) {
                     io.printStackTrace();
@@ -79,4 +84,6 @@ public class UThingCzar {
         }
         return pile;
     }
+
+    public Set<String> getAllThings() { return thingsByName.keySet(); }
 }

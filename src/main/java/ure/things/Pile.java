@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.ui.modals.HearModalQuantity;
 import ure.ui.modals.UModalQuantity;
 
+import java.util.ArrayList;
+
 public class Pile extends UThing implements HearModalQuantity {
 
     public static final String TYPE = "pile";
@@ -39,7 +41,7 @@ public class Pile extends UThing implements HearModalQuantity {
     public void moveTo(UContainer container) {
         super.moveTo(container);
         if (container.things() != null) {
-            for (UThing thing : container.things()) {
+            for (UThing thing : (ArrayList<UThing>)container.things().clone()) {
                 if (thing != this && thing instanceof Pile) {
                     if (thing.name.equals(name)) {
                         count += ((Pile) thing).getCount();

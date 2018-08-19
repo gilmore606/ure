@@ -4,10 +4,8 @@ import ure.areas.UArea;
 import ure.commands.UCommand;
 import ure.editors.glyphed.GlyphedModal;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.GLKey;
 import ure.ui.RexFile;
-import ure.ui.USpeaker;
 
 import java.io.File;
 
@@ -22,6 +20,9 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
     String[] options;
     int cursor;
 
+    double lastActiveTime;
+    int hideSeconds = 10;
+
     public UModalTitleScreen(int cellwidth, int cellheight, HearModalTitleScreen _callback, String _callbackContext, UColor _bgColor, UArea _area) {
         super(_callback,_callbackContext,_bgColor);
         setDimensions(cellwidth,cellheight);
@@ -32,20 +33,30 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         options = new String[]{"Continue", "New World", "VaultEd", "GlyphEd", "Credits", "Quit"};
         File file = new File(commander.savePath() + "player");
         if (!file.isFile())
-            options = new String[]{"New World", "Credits", "Quit"};
+            options = new String[]{"New World", "VaultEd", "GlyphEd", "Credits", "Quit"};
         cursor = 0;
         commander.speaker.playBGM(commander.config.getTitleMusic());
+        lastActiveTime = System.currentTimeMillis();
     }
 
     @Override
     public void drawContent() {
-        cursor = mouseToSelection(options.length, 13, cursor);
-        drawTitleSplash();
-        if (alpha >= 1f) {
-            drawString(titleMsg, cellw/2 - (textWidthInCells(titleMsg)/2), 11);
-            for (int i = 0;i < options.length;i++) {
-                drawString(options[i], 15, 13 + i, (i == cursor) ? null : UColor.COLOR_GRAY, (i == cursor) ? commander.config.getHiliteColor() : null);
+        if ((System.currentTimeMillis() - lastActiveTime) < hideSeconds*1000) {
+            cursor = mouseToSelection(options.length, 13, cursor);
+            drawTitleSplash();
+            if (alpha >= 1f) {
+                drawString(titleMsg, cellw / 2 - (textWidthInCells(titleMsg) / 2), 11);
+                for (int i = 0;i < options.length;i++) {
+                    drawString(options[i], 15, 13 + i, (i == cursor) ? null : UColor.GRAY, (i == cursor) ? commander.config.getHiliteColor() : null);
+                }
             }
+        }
+    }
+
+    @Override
+    public void drawFrame() {
+        if ((System.currentTimeMillis() - lastActiveTime) < hideSeconds*1000) {
+            super.drawFrame();
         }
     }
 
@@ -57,6 +68,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
 
     @Override
     public void hearCommand(UCommand command, GLKey k) {
+        lastActiveTime = System.currentTimeMillis();
         if (alpha < 1f) {
             alpha = 1f;
         } else if (command != null) {
@@ -71,6 +83,10 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
     }
     @Override
     public void mouseClick() {
+        if (System.currentTimeMillis() - lastActiveTime > hideSeconds*1000) {
+            lastActiveTime = System.currentTimeMillis();
+            return;
+        }
         if (alpha < 1f)
             alpha = 1f;
         else
@@ -87,6 +103,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
             commander.showModal(smodal);
         } else if (options[cursor].equals("Credits")) {
             UModalNotify nmodal = new UModalNotify("URE: the unRoguelike Engine\n \nSpunky - metaprogramming, persistence, rendering\nMoycakes - OpenGL\nKapho - QA, content\nGilmore - misc", null, 1, 1);
+            nmodal.setTitle("credits");
             commander.showModal(nmodal);
         } else if (options[cursor].equals("VaultEd")) {
             commander.launchVaulted();

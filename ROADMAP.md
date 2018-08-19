@@ -8,29 +8,31 @@ roguelike.  Here's our intended roadmap of feature additions that will get us to
 ## 0.8
 - ~~keybinds.txt support~~
 - ~~Particle system~~
-- Vault stamping support in Landscaper
-- JSON configuration of main window layout, with resize support
 - ~~better Landscaper generic method tools~~
 - ~~Guava event bus~~
-
-## 0.9
-- Audio : ~~ogg playback, background music loop/crossfade, stereo SFX position~~, ambient sounds, streaming
+~~ogg playback, background music loop/crossfade, stereo SFX position~~
 - ~~improved A* pathing~~
 - ~~Main Menu modal with gamesave manager and title screen~~
 - ~~ActorPanel UI display~~
-- Actor AI behavior set
+
+## 0.9
+- ~~Audio : ambient sounds, streaming~~
+- ~~resize support~~
+- ~~TrueType font support / separate text and glyph fonts~~
+- ~~Map modal~~
+- ~~Equipment~~
 
 ## 1.0
-- TrueType font support / separate text and glyph fonts, specified at runtime
-- Camera zoom
-- Map modal
 - RexPaint entity sprites for UI display
 - Status effects
+- Actor AI behavior set
+- Vault stamping support in Landscaper
+- JSON configuration of main window layout
 
 ## 1.1+
 - Fluid/fire/gas cell simulation
-- RexPaint images embedded in terrain/vaults
-
+- RexPaint images in terrain/vaults
+- Camera zoom
 - Actor conversation trees / quests
 - Object materials and composition
 

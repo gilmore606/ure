@@ -7,6 +7,7 @@ import ure.actors.UActor;
 import ure.actors.UNPC;
 import ure.math.UColor;
 import ure.math.UPath;
+import ure.math.URandom;
 import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
@@ -27,7 +28,7 @@ public abstract class UBehavior implements Cloneable {
 
     @Inject
     @JsonIgnore
-    Random random;
+    URandom random;
 
     @Inject
     @JsonIgnore
@@ -46,7 +47,7 @@ public abstract class UBehavior implements Cloneable {
         Injector.getAppComponent().inject(this);
         currentUrgency = 0f;
         currentStatus = "";
-        currentStatusColor = UColor.COLOR_GRAY;
+        currentStatusColor = UColor.GRAY;
     }
     public UBehavior(String type) {
         this();
@@ -75,8 +76,8 @@ public abstract class UBehavior implements Cloneable {
     public UAction getAction(UNPC actor) {
         currentStatus = "";
         currentUrgency = 0f;
-        currentStatusColor = UColor.COLOR_GRAY;
-        if (random.nextFloat() > freq) return null;
+        currentStatusColor = UColor.GRAY;
+        if (random.f() > freq) return null;
         return action(actor);
     }
 
@@ -151,11 +152,11 @@ public abstract class UBehavior implements Cloneable {
      */
     public UAction Attack(UNPC actor, UActor target) {
         currentStatus = "hostile";
-        currentStatusColor = UColor.COLOR_RED;
+        currentStatusColor = UColor.RED;
         currentUrgency = 0.8f;
         if (UPath.mdist(actor.areaX(),actor.areaY(),target.areaX(),target.areaY()) > 1)
             return Approach(actor, target);
-        actor.emote(actor.getName() + " flails ineffectually at " + target.getName() + ".", UColor.COLOR_LIGHTRED);
+        actor.emote(actor.getName() + " flails ineffectually at " + target.getName() + ".", UColor.LIGHTRED);
         return null;
     }
 

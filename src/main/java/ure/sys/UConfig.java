@@ -3,6 +3,7 @@ package ure.sys;
 import ure.areas.UArea;
 import ure.math.UColor;
 import ure.ui.UCamera;
+import ure.ui.sounds.Sound;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,16 +30,16 @@ public class UConfig {
 
     // Visuals
 
-    private int FPStarget = 30;                                 // render at this FPS
+    private int FPStarget = 30;                                 // draw at this FPS
     private int animFrameMilliseconds = 33;                     // milliseconds between animation frames
     private int screenWidth = 1400;                             // window width in pixels
     private int screenHeight = 1000;                            // window height in pixels
     private String tileFont = "/fonts/Deferral-Square.ttf";    // irrelevant for non-ascii renderer
-    private float tileFontSize = 18;
+    private float tileFontSize = 20;
     private String textFont = "/fonts/UbuntuMono-R.ttf";
     private float textFontSize = 16;
-    private int tileWidth = 18;
-    private int tileHeight = 18;
+    private int tileWidth = 20;
+    private int tileHeight = 20;
     private int textWidth = 10;
     private int textHeight = 16;
 
@@ -47,15 +48,16 @@ public class UConfig {
     private int modalFrameLine = 3;                             // thickness of pixel line around modals
     private int modalShadowStyle = UConfig.SHADOW_BLOCK;        // drop shadow style for modal popups
     private int modalPosition = UConfig.POS_CAMERA_CENTER;      // position of modal popups
+    private int modalZoomFrames = 4;                           // frames of zoom in/out animation
     private boolean wrapSelect = true;                          // wrap around when scrolling through selections
-    private int cursorBlinkSpeed = 20;
+    private int cursorBlinkSpeed = 15;
 
-    private UColor windowBgColor = UColor.COLOR_BLACK;                          // bgColor of game window
-    private UColor cameraBgColor = UColor.COLOR_BLACK;                          // bgColor of camera (for unseen territory)
+    private UColor windowBgColor = UColor.BLACK;                          // bgColor of game window
+    private UColor cameraBgColor = UColor.BLACK;                          // bgColor of camera (for unseen territory)
     private UColor modalBgColor = new UColor(0.1f,0.1f,0f);                         // bgColor of modal popups
     private UColor modalFrameColor = new UColor(0.7f,0.7f,0.1f);     // glyph color for modal popup frame glyphs
     private UColor modalShadowColor = new UColor(0f,0f,0f,0.5f);  // color (and alpha) of modal shadows
-    private UColor textColor = UColor.COLOR_OFFWHITE;                             // color for ui/scroll text
+    private UColor textColor = UColor.OFFWHITE;                             // color for ui/scroll text
     private UColor hiliteColor = new UColor(1f,1f,0.2f, 0.3f);            // color for ui selection highlighting
 
     private boolean outlineActors = true;                           // draw a black outline around Actor glyphs?
@@ -85,25 +87,29 @@ public class UConfig {
     private ArrayList<Integer> sunColorLerpMarkers;
     private HashMap<Integer,String> sunCycleMessages;
 
+    private boolean resizableWindow = true;             // Can the window be resized at all?
+    private boolean scaleContentToWindow = false;       // Do we warp our content to fit the window size, or draw it at a fixed resolution?
+
     // Audio
 
     private float volumeMaster = 1f;
-    private float volumeMusic = 0.2f;
-    private float volumeAmbient = 1f;
+    private float volumeMusic = 0.03f;
+    private float volumeAmbient = 0.4f;
     private float volumeWorld = 1f;
     private float volumeUI = 0.5f;
-    private float musicFadeTime = 2f;                   // seconds to crossfade background music
+    private float musicFadeTime = 2.5f;                   // seconds to crossfade background music
 
-    private int volumeFalloffDistance = 25;             // cells away for a sound to attenuate to -infDB
-    private String titleMusic = "sounds/ultima_towns.ogg";
+    private int volumeFalloffDistance = 40;             // cells away for a sound to attenuate to -infDB
+    private String titleMusic = "sounds/ultima_dungeon.ogg";
 
-    public String soundUImodalOpen = "sounds/echo_alert_rev.ogg";
+    public String soundUImodalOpen ="sounds/echo_alert_rev.ogg";
     public String soundUIcursorUp = "sounds/mouse_over3.wav";
     public String soundUIcursorDown = "sounds/mouse_over3.wav";
-    public String soundUIselectClose = "sounds/melodic2_click.ogg";
-    public String soundUIcancelClose = "sounds/echo_alert.ogg";
+    public String soundUIselect = "sounds/melodic2_click.ogg";
+    public String soundUIcancel = "sounds/echo_alert.ogg";
     public String soundUIkeystroke = "sounds/mouse_over3.ogg";
     public String soundUIbumpLimit = "sounds/melodic1_click.ogg";
+    public Sound soundModalOpen, soundCursorUp, soundCursorDown, soundSelect, soundCancel, soundKeystroke, soundBumpLimit;
 
     // Game functionality
 
@@ -122,6 +128,8 @@ public class UConfig {
     private int turnsPerDay = 512;                  // game turns per 24 hour day
     private int dayTimeStartOffset = 300;           // game turns to add at game start to get the 'starting daytime'
 
+    private String defaultCorpse = "corpse";        // what thing to spawn for dead actors
+    private float defaultCorpseDesaturation = 0.4f;  // how much desaturation to icons of corpses
 
     public UConfig() {
         clearSunLerps();
@@ -136,6 +144,19 @@ public class UConfig {
         AddSunLerp(20*60, 0.9f, 0.4f, 0.4f, "");
         AddSunLerp(21*60, 0.4f, 0.3f, 0.4f, "The sun sets.");
         AddSunLerp(24*60, 0.1f, 0.1f, 0.3f, "");
+    }
+
+    /**
+     * Set up things we need to set up after singleton injection is done.
+     */
+    public void initialize() {
+        soundModalOpen = new Sound(soundUImodalOpen);
+        soundCursorUp = new Sound(soundUIcursorUp);
+        soundCursorDown = new Sound(soundUIcursorDown);
+        soundSelect = new Sound(soundUIselect);
+        soundCancel = new Sound(soundUIcancel);
+        soundKeystroke = new Sound(soundUIkeystroke);
+        soundBumpLimit = new Sound(soundUIbumpLimit);
     }
 
     /**
@@ -300,10 +321,11 @@ public class UConfig {
     public int getModalPosition() {
         return modalPosition;
     }
-
     public void setModalPosition(int modalPosition) {
         this.modalPosition = modalPosition;
     }
+    public int getModalZoomFrames() { return modalZoomFrames; }
+    public void setModalZoomFrames(int i) { modalZoomFrames = i; }
 
     public boolean isWrapSelect() { return wrapSelect; }
     public void setWrapSelect(boolean wrap) { wrapSelect = wrap; }
@@ -535,6 +557,26 @@ public class UConfig {
 
     public void setTurnsPerDay(int turnsPerDay) {
         this.turnsPerDay = turnsPerDay;
+    }
+    public String getDefaultCorpse() { return defaultCorpse; }
+    public void setDefaultCorpse(String s) { defaultCorpse = s; }
+    public float getDefaultCorpseDesaturation() { return defaultCorpseDesaturation; }
+    public void setDefaultCorpseDesaturation(float f) { defaultCorpseDesaturation = f; }
+
+    public boolean isResizableWindow() {
+        return resizableWindow;
+    }
+
+    public void setResizableWindow(boolean resizableWindow) {
+        this.resizableWindow = resizableWindow;
+    }
+
+    public boolean isScaleContentToWindow() {
+        return scaleContentToWindow;
+    }
+
+    public void setScaleContentToWindow(boolean scaleContentToWindow) {
+        this.scaleContentToWindow = scaleContentToWindow;
     }
 
     public void setVolumeMaster(float v) { volumeMaster = v; }

@@ -2,9 +2,7 @@
 
   "name": "monk",
 
-  "glyph": "M",
   "description": "A somber monk clad in rough robes.",
-  "color": [240,160,70],
   "tags": [ "rock", "title" ],
   "spawnlevels": [1,4],
 
@@ -25,7 +23,7 @@
 
   "spawnwith": [
     {"name": "robe" },
-    {"oneof": ["butcher knife", "rock", "skull"] },
+    {"oneof": ["butcher knife", "small stone", "skull"] },
     {"name": "confusion helmet", "chance": 0.1 } ]
 
 }]

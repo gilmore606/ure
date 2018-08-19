@@ -2,6 +2,7 @@ package ure.sys.dagger;
 
 import dagger.Component;
 import ure.areas.*;
+import ure.mygame.MyGame;
 import ure.render.URendererOGL;
 import ure.sys.UCommander;
 import ure.actors.actions.UAction;
@@ -15,10 +16,13 @@ import ure.terrain.UTerrainCzar;
 import ure.things.SpawnItem;
 import ure.things.UThing;
 import ure.things.UThingCzar;
-import ure.ui.Icon;
+import ure.ui.Icons.Icon;
+import ure.ui.Icons.UIconCzar;
 import ure.ui.RexFile;
 import ure.ui.UCamera;
-import ure.ui.USpeaker;
+import ure.ui.ULight;
+import ure.ui.sounds.Sound;
+import ure.ui.sounds.USpeaker;
 import ure.ui.panels.ULensPanel;
 import ure.ui.panels.UPanel;
 import ure.ui.panels.UStatusPanel;
@@ -46,9 +50,11 @@ public interface AppComponent {
     void inject(UTerrainCzar czar);
     void inject(UThingCzar czar);
     void inject(UActorCzar czar);
+    void inject(UIconCzar czar);
     void inject(UCartographer cartographer);
     void inject(UCommander cmdr);
     void inject(ExampleGame game);
+    void inject(MyGame mygame);
     void inject(UAction act);
     void inject(UThing thingi);
     void inject(UArea uarea);
@@ -71,4 +77,6 @@ public interface AppComponent {
     void inject(RexFile rexfile);
     void inject(Shape shape);
     void inject(SpawnItem item);
+    void inject(ULight lit);
+    void inject(Sound snd);
 }

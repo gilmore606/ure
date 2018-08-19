@@ -1,6 +1,7 @@
 package ure.things;
 
 import ure.actors.UActor;
+import ure.areas.UCell;
 import ure.math.UColor;
 import ure.areas.UArea;
 import ure.ui.ULight;
@@ -26,11 +27,16 @@ public class Lightsource extends UThing {
     protected int lightflickeroffset;
     protected boolean spawnOn = false;
     protected boolean switchable = false;
+    protected boolean litWhenUnequipped = true;
+    protected boolean junkOnEmpty = true;
     protected float sparkrate = 0f;
     protected int[] onglyphcolor;
+    protected UColor glyphColorSaved;
     protected String isOnMsg = "It's on.";
     protected String isOffMsg = "It's off.";
     protected char onglyph = 0;
+    protected int fuel = -1;
+    protected int lastBurnTurn;
 
     protected boolean on;
 
@@ -42,15 +48,27 @@ public class Lightsource extends UThing {
         super.initializeAsTemplate();
     }
 
+    @Override
+    public void initializeAsCloneFrom(UThing template) {
+        lastBurnTurn = commander.turnCounter;
+    }
+
+    public void addFuel(int fuel) {
+        this.fuel += fuel;
+        on();
+    }
+
     void makeLight() {
         if (isLightcolorUseGlyph()) {
-            SetupColors();
-            setLight(new ULight(getGlyphColor(), getLightrange(), getLightfalloff()));
+            if (icon().getFgColor() == null)
+                setLight(new ULight(UColor.WHITE, getLightrange(), getLightfalloff()));
+            else
+                setLight(new ULight(icon().getFgColor(), getLightrange(), getLightfalloff()));
         } else {
             setLight(new ULight(new UColor(lightcolor[0], lightcolor[1], lightcolor[2]), getLightrange(), getLightfalloff()));
         }
         if (getLightflicker() > 0)
-            getLight().setFlicker(getLightflicker(), getLightflickerspeed(), getLightflickerintensity(), random.nextInt(getLightflickeroffset()));
+            getLight().setFlicker(getLightflicker(), getLightflickerspeed(), getLightflickerintensity(), random.i(getLightflickeroffset()));
     }
 
     public boolean on() {
@@ -58,32 +76,76 @@ public class Lightsource extends UThing {
             return false;
         if (getLight() == null)
             makeLight();
+        if (fuel == 0)
+            return false;
         if (isSpawnOn() && !isSwitchable())
             setOn(true);
         return isOn();
     }
 
+    public boolean lightIsVisible() {
+        if (on()) {
+            if (location instanceof UActor) {
+                if (equipped || litWhenUnequipped)
+                    return true;
+                else
+                    return false;
+            } else if (location instanceof UCell) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void deployLight() {
+        if (lightIsVisible())
+            getLight().moveTo(area(), areaX(), areaY());
+        else
+            getLight().removeFromArea();
+    }
+
+    @Override
+    public void reconnect(UArea area, UContainer container) {
+        super.reconnect(area, container);
+        deployLight();
+    }
+
+    @Override
+    public boolean tryEquip(UActor actor) {
+        if (super.tryEquip(actor)) {
+            deployLight();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean tryUnequip(UActor actor) {
+        if (super.tryUnequip(actor)) {
+            deployLight();
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void moveToCell(UArea area, int x, int y) {
         super.moveToCell(area, x, y);
-        if (on()) {
-            getLight().moveTo(area, x, y);
-        }
+        if (on())
+            deployLight();
     }
 
     @Override
     public void moveTo(UContainer container) {
         super.moveTo(container);
-        if (on()) {
-                getLight().moveTo(area(), areaX(), areaY());
-        }
+        if (on())
+            deployLight();
     }
 
     @Override
     public void notifyMove() {
-        if (on()) {
-            getLight().moveTo(area(), areaX(), areaY());
-        }
+        if (on())
+            deployLight();
     }
 
     @Override
@@ -101,8 +163,11 @@ public class Lightsource extends UThing {
     public void turnOn() {
         if (!on()) {
             setOn(true);
-            if (getLocation() != null) {
-                getLight().moveTo(area(), areaX(), areaY());
+            if (getLocation() != null)
+                deployLight();
+            if (onglyphcolor != null) {
+                glyphColorSaved = icon().fgColor;
+                icon.setFgColor(new UColor(onglyphcolor[0],onglyphcolor[1],onglyphcolor[2]));
             }
         }
     }
@@ -110,6 +175,8 @@ public class Lightsource extends UThing {
     public void turnOff() {
         setOn(false);
         getLight().removeFromArea();
+        if (glyphColorSaved != null && onglyphcolor != null)
+            icon.setFgColor(glyphColorSaved);
     }
 
     @Override
@@ -121,10 +188,13 @@ public class Lightsource extends UThing {
 
     @Override
     public float useFrom(UActor actor) {
-        if (!isOn())
+        if (!isOn()) {
+            if (!litWhenUnequipped && !equipped)
+                tryEquip(actor);
             turnOn();
-        else
+        } else {
             turnOff();
+        }
         return 0.5f;
     }
 
@@ -138,12 +208,6 @@ public class Lightsource extends UThing {
             return d;
     }
 
-    @Override
-    public char getGlyph() {
-        if (isOn() && onglyph != 0)
-            return onglyph;
-        return super.getGlyph();
-    }
     public int[] getLightcolor() {
         return lightcolor;
     }
@@ -219,10 +283,11 @@ public class Lightsource extends UThing {
     public boolean isSwitchable() {
         return switchable;
     }
-
     public void setSwitchable(boolean switchable) {
         this.switchable = switchable;
     }
+    public boolean isLitWhenUnequipped() { return litWhenUnequipped; }
+    public void setLitWhenUnequipped(boolean b) { litWhenUnequipped = b; }
 
     public boolean isOn() {
         return on;
@@ -246,20 +311,31 @@ public class Lightsource extends UThing {
     public String getIsOffMsg() { return isOffMsg; }
     public int[] getOnglyphcolor() { return onglyphcolor; }
     public void setOnglyphcolor(int[] i) { onglyphcolor = i; }
+    public UColor getGlyphColorSaved() { return glyphColorSaved; }
+    public void setGlyphColorSaved(UColor c) { glyphColorSaved = c; }
     public char getOnglyph() { return onglyph; }
     public void setOnglyph(char c) { onglyph = c; }
     public float getSparkrate() { return sparkrate; }
     public void setSparkrate(float r) { sparkrate = r; }
+    public int getFuel() { return fuel; }
+    public void setFuel(int i) { fuel = i; }
 
     @Override
     public void animationTick() {
-        if (random.nextFloat() < sparkrate) {
-            if (random.nextFloat() < 0.3f) {
-                area().addParticle(new ParticleSpark(areaX() - 1 + random.nextInt(3),
-                        areaY() - 1 + random.nextInt(3),
-                        UColor.COLOR_YELLOW, 8 + random.nextInt(10), 0.3f + random.nextFloat() * 0.4f));
-            } else {
-                area().addParticle(new ParticleSpark(areaX(), areaY() - (random.nextInt(2)),  UColor.COLOR_YELLOW, 8 + random.nextInt(10), 0.6f));
+        if (fuel > 0) {
+            if (isOn())
+                fuel = Math.max(0, fuel - (commander.turnCounter - lastBurnTurn));
+            lastBurnTurn = commander.turnCounter;
+            if (fuel == 0) {
+                turnOff();
+                if (junkOnEmpty) junk();
+            }
+        }
+        if (on()) {
+            if (random.f() < sparkrate) {
+                area().addParticle(new ParticleSpark(areaX(), areaY(),
+                        UColor.YELLOW, 8 + random.i(10), 0.3f + random.f(0.4f)));
+
             }
         }
     }
