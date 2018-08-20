@@ -458,8 +458,10 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     letActorsAct();
                     killActors();
                 }
+                modalCamera.renderLights();
             } else {
                 consumeKeyFromBuffer();
+                modalCamera.renderLights();
             }
         }
     }

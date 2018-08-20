@@ -173,7 +173,7 @@ public class UCamera extends View implements UAnimator {
     public int getWidthInCells() { return columns; }
     public int getHeightInCells() { return rows; }
 
-    void renderLights() {
+    public void renderLights() {
         for (int i = 0; i< columns; i++) {
             for (int j = 0; j< rows; j++) {
                 lightcells[i][j].wipe();
@@ -516,7 +516,7 @@ public class UCamera extends View implements UAnimator {
     @Override
     public void draw() {
 
-        renderLights();
+        //renderLights();
 
         // Render Cells.
         for (int col=0; col<columns; col++) {
