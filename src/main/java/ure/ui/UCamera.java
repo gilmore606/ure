@@ -51,6 +51,8 @@ public class UCamera extends View implements UAnimator {
 
     private Log log = LogFactory.getLog(UCamera.class);
 
+    private UShadowLine shadowLine;
+
     private class UShadow {
         float start, end;
         public UShadow(float thes, float thee) {
@@ -73,6 +75,9 @@ public class UCamera extends View implements UAnimator {
         LinkedList<UShadow> _shadows;
         public UShadowLine() {
             _shadows = new LinkedList<UShadow>();
+        }
+        public void reset() {
+            _shadows.clear();
         }
         public void add(UShadow shadow) {
             int index = 0;
@@ -119,6 +124,7 @@ public class UCamera extends View implements UAnimator {
     public UCamera(int x, int y, int width, int height) {
         Injector.getAppComponent().inject(this);
         visibilitySources = new HashSet<>();
+        shadowLine = new UShadowLine();
         setBounds(x, y, width, height);
         setupGrid();
     }
@@ -273,7 +279,7 @@ public class UCamera extends View implements UAnimator {
             return 1.0f;
         if (!isValidCell(col, row))
             return 0f;
-        return lightcells[col][row].visibility();
+        return lightcells[col][row].visibility;
     }
 
     void setVisibilityAt(int col, int row, float vis) {
@@ -305,7 +311,7 @@ public class UCamera extends View implements UAnimator {
         else if (light.type == ULight.POINT) isAmbient = false;
         if (projectVisibility || !isAmbient) {
             for (int octant = 0;octant < 8;octant++) {
-                UShadowLine line = new UShadowLine();
+                shadowLine.reset();
                 boolean fullShadow = false;
                 int row = 0;
                 boolean inFrame = true;
@@ -326,12 +332,12 @@ public class UCamera extends View implements UAnimator {
                                 } else {
                                     UShadow projection = new UShadow(0f, 0f);
                                     projection.projectTile(row, col);
-                                    boolean visible = !line.isInShadow(projection);
+                                    boolean visible = !shadowLine.isInShadow(projection);
                                     if (visible) {
                                         projectToCell(dx, dy, light, projectVisibility, 1f);
                                         if (area.blocksLight(dx + leftEdge, dy + topEdge)) {
-                                            line.add(projection);
-                                            fullShadow = line.isFullShadow();
+                                            shadowLine.add(projection);
+                                            fullShadow = shadowLine.isFullShadow();
                                         }
                                     }
                                 }
@@ -605,7 +611,7 @@ public class UCamera extends View implements UAnimator {
             visThreshold = -1f;
         for (int col = leftEdge; col< rightEdge; col++) {
             for (int row = topEdge; row< bottomEdge; row++) {
-                if (area.isValidXY(col,row) && lightcells[col- leftEdge][row- topEdge].visibility() > visThreshold)
+                if (area.isValidXY(col,row) && lightcells[col- leftEdge][row- topEdge].visibility > visThreshold)
                     area.cellAt(col,row).animationTick();
             }
         }

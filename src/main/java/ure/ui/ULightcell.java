@@ -15,7 +15,7 @@ import java.util.HashMap;
 
 public class ULightcell {
     public int x,y;
-    float visibility;
+    public float visibility;
     float sunBrightness;
     float sunBuffer;
     float cloudPattern;
@@ -46,10 +46,6 @@ public class ULightcell {
 
     public void setVisibility(float thevis) {
         visibility = thevis;
-    }
-
-    public float visibility() {
-        return visibility;
     }
 
     public void setSunBrightness(float thebri) {
