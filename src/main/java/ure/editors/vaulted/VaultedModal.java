@@ -137,6 +137,11 @@ public class VaultedModal extends UModal implements HearModalGetString {
 
     }
 
+    @Override
+    public void mouseClick() { }
+    @Override
+    public void mouseRightClick() { }
+
     void move(int dx, int dy) {
         int x = commander.player().areaX() + dx;
         int y = commander.player().areaY() + dy;
@@ -169,8 +174,8 @@ public class VaultedModal extends UModal implements HearModalGetString {
     void cropToCorner() {
         int xsize = commander.player().areaX()+1;
         int ysize = commander.player().areaY()+1;
-        area.cropSize(xsize,ysize);
         vaultSet.vaultAt(cursor).cropSize(xsize,ysize);
+        area.cropSize(xsize,ysize);
         saveVault();
     }
 

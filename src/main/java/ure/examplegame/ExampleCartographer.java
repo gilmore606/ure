@@ -17,7 +17,7 @@ public class ExampleCartographer extends UCartographer {
                     new ExampleRegionForest(
                             "forest",
                             "Mystic Forest",
-                            new ULandscaper[]{new ExampleForestScaper()},
+                            new ULandscaper[]{new ExampleComplexScaper()},
                             new String[]{"start"},
                             100,
                             100,

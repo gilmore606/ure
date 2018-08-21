@@ -60,7 +60,7 @@ public class VaultedArea extends UArea {
             resize(vault.getCols(), vault.getRows());
         for (int x=0;x<vault.getCols();x++) {
             for (int y=0;y<vault.getRows();y++) {
-                setTerrain(x,y,vault.terrainCharAt(x,y));
+                setTerrain(x,y,vault.terrainAt(x,y));
             }
         }
         commander.player().moveToCell(this, 1,1);
@@ -78,15 +78,14 @@ public class VaultedArea extends UArea {
     }
 
     public void saveVault(UVault vault) {
-        log.info("Saving vault...");
-        String[] tlines = new String[ysize];
-        for (int y=0; y<vault.getRows();y++) {
-            String line = "";
-            for (int x=0;x<vault.getCols();x++) {
+        log.info("Saving vault " + vault.getName() + " to vaultset...");
+        String[][] tlines = new String[xsize][ysize];
+        for (int x=0; x<vault.getCols();x++) {
+            for (int y=0;y<vault.getRows();y++) {
                 UTerrain t = terrainAt(x,y);
-                line += t.getFilechar();
+                if (t == null) tlines[x][y] = "null";
+                else tlines[x][y] = t.getName();
             }
-            tlines[y] = line;
         }
         vault.setTerrain(tlines);
     }

@@ -984,8 +984,10 @@ public abstract class ULandscaper {
         }
         if (randf() < 0.5f) {
             ULight light = new ULight(UColor.LIGHTGRAY, 20, 20);
-            if (randf() < 0.0f)
+            if (randf() < 0.1f) {
                 light.setFlicker(ULight.FLICKER_FRITZ, 1f, 1f, 0);
+                light.setColor(UColor.YELLOW);
+            }
             light.makeAmbient(w,h);
             light.setPermanent(true);
             light.moveTo(area,x1,y1);

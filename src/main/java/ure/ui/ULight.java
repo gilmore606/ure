@@ -48,6 +48,9 @@ public class ULight {
     @JsonIgnore
     UArea area;
 
+    @JsonIgnore
+    int fritzFrames;
+
     public int x,y;
     public int type = 0;
     public int width,height;
@@ -185,10 +188,11 @@ public class ULight {
         return i;
     }
     float intensityFlickerFritz(int time) {
-        if (random.f() < 0.02f)
-            return 1f;
+        if (fritzFrames > 0)
+            return random.f() * 0.2f + 0.3f;
         return 0f;
     }
+
     float intensityFlickerBlink(int time) {
         return 0f;
     }
@@ -212,6 +216,15 @@ public class ULight {
         }
     }
 
+    public void animationTick() {
+        if (fritzFrames > 0)
+            fritzFrames--;
+        if (flickerStyle == FLICKER_FRITZ) {
+            if (random.f() < 0.02f) {
+                fritzFrames += 1+random.i(3);
+            }
+        }
+    }
 
     public UColor getColor() {
         return color;

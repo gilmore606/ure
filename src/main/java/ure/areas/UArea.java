@@ -480,6 +480,9 @@ public class UArea implements Serializable {
             if (particle.isFizzled())
                 fizzleParticle(particle);
         }
+        for (ULight light : lights) {
+            light.animationTick();
+        }
     }
 
 

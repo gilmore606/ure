@@ -1,6 +1,7 @@
 package ure.sys.dagger;
 
 import dagger.Component;
+import ure.actors.SpawnActor;
 import ure.areas.*;
 import ure.mygame.MyGame;
 import ure.render.URendererOGL;
@@ -77,6 +78,7 @@ public interface AppComponent {
     void inject(RexFile rexfile);
     void inject(Shape shape);
     void inject(SpawnItem item);
+    void inject(SpawnActor actor);
     void inject(ULight lit);
     void inject(Sound snd);
 }

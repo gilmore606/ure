@@ -9,6 +9,10 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * SpawnItem represents a single item to spawn, either a specific named item, one of several, or selected from
+ * given tags and levels.
+ */
 public class SpawnItem {
 
     @Inject
