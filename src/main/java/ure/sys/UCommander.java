@@ -674,7 +674,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     public void launchVaulted() {
         File dirfile = new File(config.getResourcePath() + "vaults/");
-        ArrayList<String> filelist = new ArrayList<>();
+        ArrayList<String> filelist = new ArrayList<String>();
         for (String filename : dirfile.list()) {
             if (filename.endsWith(".json")) {
                 printScroll("found " + filename);
@@ -682,9 +682,9 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             }
         }
         filelist.add("<new vaultSet>");
-
+        String[] filearray = new String[filelist.size()];
         UModalStringPick spmodal = new UModalStringPick("Select vaultSet to edit:", UColor.BLACK, 0, 0,
-                filelist, true, this, "vaulted-pickfile");
+                filelist.toArray(filearray), true, this, "vaulted-pickfile");
         printScroll("Launching VaultEd...");
         showModal(spmodal);
 

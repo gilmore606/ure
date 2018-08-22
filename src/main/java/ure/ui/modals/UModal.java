@@ -9,6 +9,7 @@ import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
 import ure.ui.Icons.Icon;
 import ure.ui.Icons.UIconCzar;
+import ure.ui.RexFile;
 import ure.ui.sounds.Sound;
 import ure.ui.sounds.USpeaker;
 import ure.ui.View;
@@ -49,7 +50,6 @@ public class UModal extends View implements UAnimator {
     public int ypos = 0;
     public int mousex, mousey;
     public UColor bgColor;
-    HashMap<String,TextFrag> texts;
     public boolean dismissed;
     int dismissFrames = 0;
     int dismissFrameEnd = 0;
@@ -57,21 +57,127 @@ public class UModal extends View implements UAnimator {
     int zoomDir = 0;
     float zoom = 1f;
     String title;
+    ArrayList<Widget> widgets;
+    Widget focusWidget;
 
-    class TextFrag {
-        String name;
-        String text;
-        int row;
-        int col;
-        UColor color;
-
-        public TextFrag(String tname, String ttext, int trow, int tcol, UColor tcolor) {
-            name = tname;
-            text = ttext;
-            row = trow;
-            col = tcol;
-            color = tcolor;
+    public class Widget {
+        int x,y,w,h;
+        boolean focusable = false;
+        boolean focused = false;
+        boolean hidden = false;
+        public void setDimensions(int x, int y, int w, int h) {
+            this.x=x; this.y=y; this.w = w; this.h=h;
         }
+        public void draw() { }
+        public void mouseInside(int mousex, int mousey, UModal modal) { }
+        public void mouseClick(int mousex, int mousey, UModal modal) { }
+        public void mouseRightClick(int mousex, int mousey, UModal modal) { }
+        public void hearCommand(UCommand command, GLKey k, UModal modal) { }
+    }
+
+    public class WidgetText extends Widget {
+        String[] lines;
+        UColor color;
+        public WidgetText(int x, int y, String text) {
+            lines = splitLines(text);
+            setDimensions(x,y,longestLine(lines), lines.length);
+        }
+        @Override
+        public void draw() {
+            for (int i=0;i<lines.length;i++)
+                drawString(lines[i],x,y+i,color);
+        }
+    }
+
+    public class WidgetRexImage extends Widget {
+        RexFile image;
+        float alpha = 1f;
+        public WidgetRexImage(int x, int y, String filename) {
+            image = new RexFile(commander.config.getResourcePath() + filename);
+            setDimensions(x,y,image.width,image.height);
+        }
+        @Override
+        public void draw() {
+            image.draw(renderer, alpha, x*gw()+xpos,y*gh()+ypos);
+        }
+    }
+
+    public class WidgetListVert extends Widget {
+        String[] options;
+        int selection;
+        public WidgetListVert(int x, int y, String[] options) {
+            this.options = options;
+            focusable = true;
+            setDimensions(x,y,longestLine(options),options.length);
+        }
+        @Override
+        public void draw() {
+            for (int i=0;i<options.length;i++) {
+                drawString(options[i], x, y+i, (i == selection) ? null : UColor.GRAY, (i == selection && focused) ? config.getHiliteColor() : null);
+            }
+        }
+        @Override
+        public void mouseInside(int mousex, int mousey, UModal modal) {
+            selection = Math.max(0,Math.min(options.length-1,mousey));
+        }
+        @Override
+        public void mouseClick(int mousex, int mousey, UModal modal) {
+            mouseInside(mousex,mousey,modal);
+        }
+        @Override
+        public void hearCommand(UCommand c, GLKey k, UModal modal) {
+            if (c != null) {
+                if (c.id.equals("MOVE_N")) selection = cursorMove(selection, -1, options.length);
+                else if (c.id.equals("MOVE_S")) selection = cursorMove(selection, 1, options.length);
+                else if (c.id.equals("PASS")) modal.widgetClick(this, 0, selection);
+            }
+        }
+        public String choice() { return options[selection]; }
+    }
+
+    public class WidgetChoices extends Widget {
+        String[] choices;
+        int[] positions;
+        int selection;
+        public WidgetChoices(int x, int y, String[] choices) {
+            this.choices = choices;
+            focusable = true;
+            int pos = 0;
+            positions = new int[choices.length];
+            for (int i=0;i<choices.length;i++) {
+                positions[i] = pos;
+                pos += textWidth(choices[i]) + 1;
+            }
+            setDimensions(x,y,pos-1,1);
+        }
+        @Override
+        public void draw() {
+            for (int i=0;i<choices.length;i++) {
+                drawString(choices[i],x+positions[i], y, (i == selection) ? null : UColor.GRAY, (i == selection && focused) ? config.getHiliteColor() : null);
+            }
+        }
+        @Override
+        public void mouseInside(int mousex, int mousey, UModal modal) {
+            selection = 0;
+            for (int i=1;i<choices.length;i++) {
+                if (mousex <= positions[i] && mousex > positions[i-1]) {
+                    selection = i;
+                }
+            }
+        }
+        @Override
+        public void mouseClick(int mousex, int mousey, UModal modal) {
+            mouseInside(mousex,mousey,modal);
+        }
+        @Override
+        public void hearCommand(UCommand c, GLKey k, UModal modal) {
+            if (c != null) {
+                if (c.id.equals("MOVE_W")) selection = cursorMove(selection, -1, choices.length);
+                else if (c.id.equals("MOVE_E")) selection = cursorMove(selection, 1, choices.length);
+                else if (c.id.equals("PASS")) modal.widgetClick(this, positions[selection], 0);
+            }
+        }
+        public String choice() { return choices[selection]; }
     }
 
     public UModal(HearModal _callback, String _callbackContext, UColor _bgColor) {
@@ -82,6 +188,7 @@ public class UModal extends View implements UAnimator {
             bgColor = config.getModalBgColor();
         else
             bgColor = _bgColor;
+        widgets = new ArrayList<>();
     }
 
     public void onOpen() {
@@ -114,12 +221,34 @@ public class UModal extends View implements UAnimator {
         xpos = (screenw - (cellw * gw())) / 2;
         ypos = (screenh - (cellh * gh())) / 2;
     }
+
+    public void sizeToWidgets() {
+        int dimx = 0;
+        int dimy = 0;
+        for (Widget widget : widgets) {
+            dimx = Math.max(dimx, widget.x + widget.w);
+            dimy = Math.max(dimy, widget.y + widget.h);
+        }
+        setDimensions(dimx,dimy);
+    }
     public void setChildPosition(int x, int y, UModal parent) {
         xpos = x*gw() + parent.xpos;
         ypos = y*gh() + parent.ypos;
     }
 
     public void setTitle(String s) { title = s; }
+
+    public void addWidget(Widget widget) {
+        widgets.add(widget);
+        if (focusWidget == null && widget.focusable) {
+            focusWidget = widget;
+            widget.focused = true;
+        }
+    }
+    public void addCenteredWidget(Widget widget) {
+        widget.x = (cellw / 2 - (widget.w / 2));
+        addWidget(widget);
+    }
 
     @Override
     public void draw() {
@@ -131,7 +260,10 @@ public class UModal extends View implements UAnimator {
     }
 
     public void drawContent() {
-        commander.printScroll("Hit any key to continue...");
+        for (Widget widget : widgets) {
+            if (!widget.hidden)
+                widget.draw();
+        }
     }
 
     public void drawIcon(Icon icon, int x, int y) {
@@ -207,7 +339,9 @@ public class UModal extends View implements UAnimator {
     public int rely(int y)  { return (y * config.getTileHeight()) + ypos; }
 
     public void hearCommand(UCommand command, GLKey k) {
-        dismiss();
+        if (focusWidget != null) {
+            focusWidget.hearCommand(command, k, this);
+        }
     }
 
     public void dismiss() {
@@ -219,16 +353,6 @@ public class UModal extends View implements UAnimator {
         dismissed = true;
         dismissFrameEnd = 0;
         speaker.playUI(config.soundCancel);
-    }
-
-    public void addText(String name, String text, int row, int col) {
-        addTextFrag(new TextFrag(name, text, row, col, UColor.WHITE));
-    }
-    public void addText(String name, String text, int row, int col, UColor color) {
-        addTextFrag(new TextFrag(name, text, row, col, color));
-    }
-    void addTextFrag(TextFrag frag) {
-        texts.put(frag.name, frag);
     }
 
     public void animationTick() {
@@ -253,6 +377,16 @@ public class UModal extends View implements UAnimator {
     void updateMouse() {
         mousex = (commander.mouseX() - xpos) / gw();
         mousey = (commander.mouseY() - ypos) / gh();
+        for (Widget widget : widgets) {
+            if (mousex >= widget.x && mousey >= widget.y && mousex < widget.x + widget.w && mousey < widget.y + widget.h) {
+                widget.mouseInside(mousex - widget.x, mousey - widget.y, this);
+                if (widget.focusable) {
+                    if (focusWidget != null) focusWidget.focused = false;
+                    focusWidget = widget;
+                    widget.focused = true;
+                }
+            }
+        }
     }
 
     int mouseToSelection(int menusize, int yoffset, int selection) { return mouseToSelection(menusize,yoffset,selection,0,1000); }
@@ -271,11 +405,23 @@ public class UModal extends View implements UAnimator {
         return mousesel;
     }
     public void mouseClick() {
-        dismiss();
+        for (Widget widget : widgets) {
+            if (mousex >= widget.x && mousey >= widget.y && mousex < widget.x + widget.w && mousey < widget.y + widget.h) {
+                widget.mouseClick(mousex - widget.x, mousey - widget.y, this);
+                widgetClick(widget, mousex - widget.x, mousey - widget.y);
+            }
+        }
     }
     public void mouseRightClick() {
-        escape();
+        for (Widget widget : widgets) {
+            if (mousex >= widget.x && mousey >= widget.y && mousex < widget.x + widget.w && mousey < widget.y + widget.h) {
+                widget.mouseRightClick(mousex - widget.x, mousey - widget.y, this);
+                widgetRightClick(widget, mousex - widget.x, mousey - widget.y);
+            }
+        }
     }
+    public void widgetClick(Widget widget, int x, int y) { }
+    public void widgetRightClick(Widget widget, int x, int y) { }
 
     public String[] splitLines(String text) {
         if (text == null) return null;

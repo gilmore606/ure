@@ -784,9 +784,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     }
 
     void doReload() {
-        ArrayList<String> choices = new ArrayList<>();
-        choices.add("Yes"); choices.add("No");
-        UModalChoices m = new UModalChoices("Reload all icons? \nYou will lose any unsaved changes.", choices, 1, 1, true, null, this, "reload");
+        UModalChoices m = new UModalChoices("Reload all icons? \nYou will lose any unsaved changes.", new String[]{"Yes", "No"},true, null, this, "reload");
         commander.showModal(m);
     }
 
@@ -799,9 +797,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     }
 
     void doQuit() {
-        ArrayList<String> choices = new ArrayList<>();
-        choices.add("Yes"); choices.add("No");
-        UModalChoices m = new UModalChoices("Quit? \nYou will lose any unsaved changes.", choices, 1, 1, true, null, this, "quit");
+        UModalChoices m = new UModalChoices("Quit? \nYou will lose any unsaved changes.", new String[]{"Yes", "No"}, true, null, this, "quit");
         commander.showModal(m);
     }
 
@@ -830,7 +826,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     }
 
     void selectType() {
-        UModalStringPick modal = new UModalStringPick(null, null, 0, 0, iconTypes, true, this, "type");
+        UModalStringPick modal = new UModalStringPick(null, null, 0, 0, iconTypes.toArray(new String[iconTypes.size()]), true, this, "type");
         modal.setChildPosition(4,19+gridposy, this);
         commander.showModal(modal);
     }

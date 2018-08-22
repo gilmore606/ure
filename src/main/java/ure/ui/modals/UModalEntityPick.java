@@ -220,7 +220,7 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
                 ArrayList<String> verbs = new ArrayList<>();
                 for (String v : contextActions.keySet())
                     verbs.add(v);
-                UModalStringPick smodal = new UModalStringPick(thing.getName() + ":",null,0,0, verbs, true, this, "contextaction");
+                UModalStringPick smodal = new UModalStringPick(thing.getName() + ":",null,0,0, verbs.toArray(new String[verbs.size()]), true, this, "contextaction");
                 smodal.setChildPosition(5,3+selection, this);
                 commander.showModal(smodal);
             }

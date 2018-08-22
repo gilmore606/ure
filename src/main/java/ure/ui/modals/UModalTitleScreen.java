@@ -11,14 +11,14 @@ import java.io.File;
 
 public class UModalTitleScreen extends UModal implements HearModalGetString {
 
-    RexFile logoSplash;
-    float alpha;
+    WidgetRexImage logoWidget;
+    WidgetText titleWidget;
+    WidgetListVert menuWidget;
+
     int fakeTickCount;
     UArea area;
 
     String titleMsg = "Example Quest : Curse of the Feature Creep";
-    String[] options;
-    int cursor;
 
     double lastActiveTime;
     int hideSeconds = 10;
@@ -26,31 +26,27 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
     public UModalTitleScreen(int cellwidth, int cellheight, HearModalTitleScreen _callback, String _callbackContext, UColor _bgColor, UArea _area) {
         super(_callback,_callbackContext,_bgColor);
         setDimensions(cellwidth,cellheight);
-        logoSplash = new RexFile(commander.config.getResourcePath() + "ure_logo.xp");
-        alpha = 0f;
-        fakeTickCount = 0;
-        area = _area;
-        options = new String[]{"Continue", "New World", "VaultEd", "GlyphEd", "Credits", "Quit"};
+        logoWidget = new WidgetRexImage(0,0,"ure_logo.xp");
+        logoWidget.alpha = 0f;
+        addCenteredWidget(logoWidget);
+        titleWidget = new WidgetText(0,11,titleMsg);
+        titleWidget.hidden = true;
+        addCenteredWidget(titleWidget);
+
+        String[] options;
         File file = new File(commander.savePath() + "player");
         if (!file.isFile())
             options = new String[]{"New World", "VaultEd", "GlyphEd", "Credits", "Quit"};
-        cursor = 0;
+        else
+            options = new String[]{"Continue", "New World", "VaultEd", "GlyphEd", "Credits", "Quit"};
+        menuWidget = new WidgetListVert(0,13,options);
+        menuWidget.hidden = true;
+        addCenteredWidget(menuWidget);
+
+        fakeTickCount = 0;
+        area = _area;
         commander.speaker.playBGM(commander.config.getTitleMusic());
         lastActiveTime = System.currentTimeMillis();
-    }
-
-    @Override
-    public void drawContent() {
-        if ((System.currentTimeMillis() - lastActiveTime) < hideSeconds*1000) {
-            cursor = mouseToSelection(options.length, 13, cursor);
-            drawTitleSplash();
-            if (alpha >= 1f) {
-                drawString(titleMsg, cellw / 2 - (textWidthInCells(titleMsg) / 2), 11);
-                for (int i = 0;i < options.length;i++) {
-                    drawString(options[i], 15, 13 + i, (i == cursor) ? null : UColor.GRAY, (i == cursor) ? commander.config.getHiliteColor() : null);
-                }
-            }
-        }
     }
 
     @Override
@@ -60,59 +56,54 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         }
     }
 
-    public void drawTitleSplash() {
-        int xp = (cellw / 2)  - (logoSplash.width / 2);
-        int yp = -2;
-        logoSplash.draw(renderer, alpha, xp * gw() + xpos, yp * gh() + ypos);
-    }
-
     @Override
-    public void hearCommand(UCommand command, GLKey k) {
-        lastActiveTime = System.currentTimeMillis();
-        if (alpha < 1f) {
-            alpha = 1f;
-        } else if (command != null) {
-            if (command.id.equals("MOVE_N")) {
-                cursor = cursorMove(cursor, -1, options.length);
-            } else if (command.id.equals("MOVE_S")) {
-                cursor = cursorMove(cursor, 1, options.length);
-            } else if (command.id.equals("PASS")) {
-                pickSelection();
-            }
+    public void drawContent() {
+        if ((System.currentTimeMillis() - lastActiveTime) < hideSeconds*1000) {
+            super.drawContent();
         }
     }
     @Override
+    public void hearCommand(UCommand command, GLKey k) {
+        lastActiveTime = System.currentTimeMillis();
+        if (logoWidget.alpha < 1f) {
+            logoWidget.alpha = 1f;
+        }
+        super.hearCommand(command, k);
+    }
+    @Override
     public void mouseClick() {
+        if (logoWidget.alpha < 1f)
+            logoWidget.alpha = 1f;
         if (System.currentTimeMillis() - lastActiveTime > hideSeconds*1000) {
             lastActiveTime = System.currentTimeMillis();
             return;
         }
-        if (alpha < 1f)
-            alpha = 1f;
-        else
-            pickSelection();
+        super.mouseClick();
+    }
+    @Override
+    public void widgetClick(Widget widget, int x, int y) {
+        if (widget == menuWidget) {
+            pickSelection(menuWidget.choice());
+        }
     }
 
-    @Override
-    public void mouseRightClick() { }
-
-    void pickSelection() {
-        if (options[cursor].equals("New World")) {
+    void pickSelection(String option) {
+        if (option.equals("New World")) {
             UModalGetString smodal = new UModalGetString("Name your character:", 20, true,
                     null, this, "name-new-world");
             commander.showModal(smodal);
-        } else if (options[cursor].equals("Credits")) {
+        } else if (option.equals("Credits")) {
             UModalNotify nmodal = new UModalNotify("URE: the unRoguelike Engine\n \nSpunky - metaprogramming, persistence, rendering\nMoycakes - OpenGL\nKapho - QA, content\nGilmore - misc", null, 1, 1);
             nmodal.setTitle("credits");
             commander.showModal(nmodal);
-        } else if (options[cursor].equals("VaultEd")) {
+        } else if (option.equals("VaultEd")) {
             commander.launchVaulted();
-        } else if (options[cursor].equals("GlyphEd")) {
+        } else if (option.equals("GlyphEd")) {
             GlyphedModal modal = new GlyphedModal();
             commander.showModal(modal);
         } else {
             dismiss();
-            ((HearModalTitleScreen) callback).hearModalTitleScreen(options[cursor], null);
+            ((HearModalTitleScreen) callback).hearModalTitleScreen(option, null);
         }
     }
 
@@ -127,8 +118,12 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
     public void animationTick() {
         super.animationTick();
         area.animationTick();
-        alpha += 0.02f;
-        if (alpha >1f) alpha = 1f;
+        logoWidget.alpha += 0.02f;
+        if (logoWidget.alpha >1f) {
+            logoWidget.alpha = 1f;
+            titleWidget.hidden = false;
+            menuWidget.hidden = false;
+        }
         fakeTickCount++;
         if (fakeTickCount > 20) {
             fakeTickCount = 0;

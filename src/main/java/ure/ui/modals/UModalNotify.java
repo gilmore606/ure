@@ -1,30 +1,29 @@
 package ure.ui.modals;
 
+import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.GLKey;
 
 public class UModalNotify extends UModal {
 
-    String text;
-    String[] textlines;
     int xpad,ypad;
 
     public UModalNotify(String text, UColor bgColor, int xpad, int ypad) {
         super(null, "", bgColor);
-        this.text = text;
-        textlines = splitLines(text);
         this.xpad = xpad;
         this.ypad = ypad;
-        int width = longestLine(textlines);
-        setDimensions(width + xpad*2, ypad*2 + textlines.length);
-        if (bgColor == null)
-            bgColor = config.getModalBgColor();
-        setBgColor(bgColor);
+        WidgetText widget = new WidgetText(xpad,ypad,text);
+        setDimensions(widget.w + xpad, widget.h + ypad);
+        addCenteredWidget(widget);
     }
 
     @Override
-    public void drawContent() {
-        drawStrings(textlines, xpad, ypad);
+    public void mouseClick() {
+        dismiss();
     }
-
+    @Override
+    public void hearCommand(UCommand command, GLKey k) {
+        dismiss();
+    }
 }

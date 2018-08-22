@@ -12,34 +12,22 @@ import java.util.ArrayList;
  */
 public class UModalChoices extends UModal {
 
-    ArrayList<String> choices;
-    int escapeChoice;
     boolean escapable;
-    String[] prompt;
-    int selection = 0;
-    int hiliteX, hiliteY, hiliteW, hiliteH;
     UColor tempHiliteColor;
     UColor flashColor;
 
-    public UModalChoices(String _prompt, ArrayList<String> _choices, int _escapeChoice, int _defaultChoice,
+    WidgetText headerWidget;
+    WidgetChoices choicesWidget;
+
+    public UModalChoices(String _prompt, String[] _choices,
                          boolean _escapable, UColor bgColor, HearModalChoices _callback, String _callbackContext) {
         super(_callback, _callbackContext, bgColor);
-        prompt = splitLines(_prompt);
-        choices = _choices;
-        escapeChoice = _escapeChoice;
+        headerWidget = new WidgetText(0,0, _prompt);
+        choicesWidget = new WidgetChoices(0, headerWidget.h + 1, _choices);
+        addWidget(headerWidget);
+        addWidget(choicesWidget);
+        sizeToWidgets();
         escapable = _escapable;
-        selection = _defaultChoice;
-        int width = longestLine(prompt);
-        int height = 2;
-        if (prompt != null)
-            height += prompt.length;
-        int cwidth = 0;
-        for (String choice : choices) {
-            cwidth = (textWidth(choice) + 1);
-        }
-        if (cwidth > width)
-            width = cwidth;
-        setDimensions(width, height);
         dismissFrameEnd = 8;
         tempHiliteColor = config.getHiliteColor();
         flashColor = new UColor(config.getHiliteColor());
@@ -47,42 +35,14 @@ public class UModalChoices extends UModal {
     }
 
     @Override
-    public void drawContent() {
-        drawStrings(prompt, 0, 0);
-        int xtab = 0;
-        int drawSelection = 0;
-        for (String choice : choices) {
-            int oldxtab = xtab;
-            drawString(choice, xtab, cellh-1, (selection == drawSelection) ? null : UColor.GRAY, (selection == drawSelection) ? tempHiliteColor : null);
-            xtab += textWidth(choice) + 1;
-            drawSelection++;
-            if (mousex < xtab && mousex >= oldxtab && mousey > 0 && mousey <= cellh)
-                selection = drawSelection-1;
-        }
+    public void widgetClick(Widget widget, int mousex, int mousey) {
+        if (widget == choicesWidget)
+            pickSelection(choicesWidget.choice());
     }
 
-    @Override
-    public void hearCommand(UCommand command, GLKey k) {
-        if (command != null) {
-            if (command.id.equals("MOVE_W") || command.id.equals("MOVE_N"))
-                selection = cursorMove(selection, -1, choices.size());
-            if (command.id.equals("MOVE_E") || command.id.equals("MOVE_S"))
-                selection = cursorMove(selection, 1, choices.size());
-            if (command.id.equals("PASS"))
-                pickSelection();
-            if (command.id.equals("ESC") && escapable) {
-                escape();
-            }
-        }
-    }
-    @Override
-    public void mouseClick() {
-        pickSelection();
-    }
-
-    public void pickSelection() {
+    public void pickSelection(String selection) {
         dismiss();
-        ((HearModalChoices)callback).hearModalChoices(callbackContext, choices.get(selection));
+        ((HearModalChoices)callback).hearModalChoices(callbackContext, selection);
     }
 
     @Override
