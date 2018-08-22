@@ -180,6 +180,23 @@ public class UModal extends View implements UAnimator {
         public String choice() { return choices[selection]; }
     }
 
+    public class WidgetHSlider extends Widget {
+        int value, valuemax;
+        int length;
+        public WidgetHSlider(int x, int y, int length, int value, int valuemax, boolean showNumber) {
+            setDimensions(x,y,length + (showNumber ? 3 : 0),1);
+            focusable = true;
+            this.value = value;
+            this.valuemax = valuemax;
+            this.length = length;
+        }
+        @Override
+        public void draw() {
+            renderer.drawRectBorder(x*gw(),y*gh(), length*gw(),gh(),1,UColor.BLACK, config.getHiliteColor());
+            renderer.drawRect(x*gw(), y*gh(), (int)((length*gw()) * (float)value/(float)valuemax), gh(), config.getHiliteColor());
+        }
+    }
+
     public UModal(HearModal _callback, String _callbackContext, UColor _bgColor) {
         Injector.getAppComponent().inject(this);
         callback = _callback;
