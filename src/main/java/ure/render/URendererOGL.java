@@ -339,6 +339,9 @@ public class URendererOGL implements URenderer {
             glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, mode.width(), mode.height(), mode.refreshRate());
         } else {
             glfwSetWindowMonitor(window, 0, 0, 0, config.getScreenWidth(), config.getScreenHeight(), GLFW_DONT_CARE);
+            glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_TRUE);
+            glfwSetWindowAttrib(window, GLFW_RESIZABLE, config.isResizableWindow() ? GLFW_TRUE : GLFW_FALSE);
+            glfwSetWindowAttrib(window, GLFW_VISIBLE, GLFW_TRUE);
         }
     }
 
