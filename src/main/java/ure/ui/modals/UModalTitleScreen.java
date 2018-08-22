@@ -94,7 +94,8 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
             UModalGetString smodal = new UModalGetString("Name your character:", 20,this, "name-new-world");
             commander.showModal(smodal);
         } else if (option.equals("Credits")) {
-            UModalNotify nmodal = new UModalNotify("URE: the unRoguelike Engine\n \nSpunky - metaprogramming, persistence, rendering\nMoycakes - OpenGL\nKapho - QA, content\nGilmore - misc", 1, 1);
+            UModalNotify nmodal = new UModalNotify("URE: the unRoguelike Engine\n \nSpunky - metaprogramming, persistence, rendering\nMoycakes - OpenGL\nKapho - QA, content\nGilmore - misc");
+            nmodal.setPad(2,2);
             nmodal.setTitle("credits");
             commander.showModal(nmodal);
         } else if (option.equals("VaultEd")) {

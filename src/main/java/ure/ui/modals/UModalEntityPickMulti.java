@@ -13,9 +13,7 @@ public class UModalEntityPickMulti extends UModal {
 
     String[] prompt;
     UColor bgColor, hiliteColor;
-    int xpad,ypad;
     boolean showDetail;
-    boolean escapable;
     int selection = 0;
     int listWidth = 0;
     int width = 0;
@@ -23,11 +21,9 @@ public class UModalEntityPickMulti extends UModal {
     ArrayList<Entity> entities;
     ArrayList<Boolean> selectedEntities;
 
-    public UModalEntityPickMulti(String _prompt, int _xpad, int _ypad, ArrayList<Entity> _entities, boolean _showDetail, HearModalEntityPickMulti _callback, String _callbackContext) {
+    public UModalEntityPickMulti(String _prompt, ArrayList<Entity> _entities, boolean _showDetail, HearModalEntityPickMulti _callback, String _callbackContext) {
         super(_callback, _callbackContext);
         prompt = splitLines(_prompt);
-        xpad = _xpad;
-        ypad = _ypad;
         entities = _entities;
         showDetail = _showDetail;
         selectedEntities = new ArrayList<>();
@@ -48,7 +44,7 @@ public class UModalEntityPickMulti extends UModal {
         }
         width = listWidth + 1 + (showDetail ? 10 : 0);
         width = Math.max(width, longestLine(prompt));
-        setDimensions(width + xpad, height + ypad);
+        setDimensions(width, height);
         if (bgColor == null)
             bgColor = config.getModalBgColor();
         setBgColor(bgColor);
@@ -58,22 +54,22 @@ public class UModalEntityPickMulti extends UModal {
     @Override
     public void drawContent() {
         selection = mouseToSelection(entities.size(), prompt.length+1, selection);
-        drawStrings(prompt, xpad, ypad);
+        drawStrings(prompt, 0, 0);
         int y = 0;
         for (Entity entity: entities) {
             int liney = y+prompt.length+1;
-            drawIcon(entity.icon(), xpad+1, liney+ypad);
+            drawIcon(entity.icon(), 1, liney);
             String n = entity.getName();
             UColor textColor = UColor.GRAY;
             if (selectedEntities.get(y)) {
                 textColor = null;
-                drawTile(config.getUiCheckGlyph().charAt(0), xpad+2, liney+ypad, hiliteColor);
+                drawTile(config.getUiCheckGlyph().charAt(0), 2, liney, hiliteColor);
             }
-            drawString(n, xpad+3, liney+ypad, textColor, (y == selection) ? hiliteColor : null);
+            drawString(n, 3, liney, textColor, (y == selection) ? hiliteColor : null);
             y++;
         }
         if (showDetail) {
-            showDetail(entities.get(selection), listWidth+1+xpad, prompt.length+ypad+1);
+            showDetail(entities.get(selection), listWidth+1, prompt.length+1);
         }
     }
 

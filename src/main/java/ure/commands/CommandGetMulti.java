@@ -33,7 +33,7 @@ public class CommandGetMulti extends UCommand implements HearModalEntityPickMult
             ArrayList<Entity> entities = new ArrayList<>();
             for (UThing thing : gettables)
                 entities.add((Entity)thing);
-            UModalEntityPickMulti modal = new UModalEntityPickMulti(getDialog, 0, 0, entities, true, this, "get");
+            UModalEntityPickMulti modal = new UModalEntityPickMulti(getDialog, entities, true, this, "get");
             commander.showModal(modal);
         }
     }

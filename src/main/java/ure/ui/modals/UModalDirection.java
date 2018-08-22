@@ -14,7 +14,6 @@ public class UModalDirection extends UModal {
 
     String prompt;
     boolean acceptNull;
-    boolean escapable;
 
     int cellx, celly;
 

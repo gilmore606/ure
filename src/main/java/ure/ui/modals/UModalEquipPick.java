@@ -10,19 +10,15 @@ import java.util.ArrayList;
 public class UModalEquipPick extends UModal {
 
     UColor bgColor;
-    int xpad, ypad;
     ArrayList<UThing> things;
     UThing equipped;
     boolean showDetail;
-    boolean escapable;
     int textWidth = 0;
     int selection = 0;
     UColor tempHiliteColor, flashColor;
 
-    public UModalEquipPick(int _xpad, int _ypad, ArrayList<UThing> _things, UThing _equipped, boolean _showDetail, HearModalEquipPick _callback, String _callbackContext) {
+    public UModalEquipPick(ArrayList<UThing> _things, UThing _equipped, boolean _showDetail, HearModalEquipPick _callback, String _callbackContext) {
         super(_callback, _callbackContext);
-        xpad = _xpad;
-        ypad = _ypad;
         things = _things;
         equipped = _equipped;
         showDetail = _showDetail;
@@ -39,7 +35,7 @@ public class UModalEquipPick extends UModal {
             width += 10;
             height = Math.max(height, 12);
         }
-        setDimensions(width + 2 + xpad, height);
+        setDimensions(width + 2, height);
         if (bgColor == null)
             bgColor = config.getModalBgColor();
         setBgColor(bgColor);
@@ -58,25 +54,25 @@ public class UModalEquipPick extends UModal {
 
     @Override
     public void drawContent() {
-        selection = mouseToSelection(things.size(), ypad, selection);
+        selection = mouseToSelection(things.size(), 0, selection);
         int y = 0;
         for (UThing thing : things) {
             String n;
             if (thing == null) {
                 n = "<nothing>";
             } else {
-                drawIcon(thing.getIcon(), 1, y + ypad);
+                drawIcon(thing.getIcon(), 1, y);
                 n = thing.getName();
             }
             if (thing == equipped)
-                drawTile(config.getUiCheckGlyph().charAt(0), 2, y+ypad, config.getHiliteColor());
-            drawString(n, 3, y+ypad, (y == selection || thing == equipped )? null : UColor.GRAY, (y == selection) ? tempHiliteColor : null);
+                drawTile(config.getUiCheckGlyph().charAt(0), 2, y, config.getHiliteColor());
+            drawString(n, 3, y, (y == selection || thing == equipped )? null : UColor.GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
         if (showDetail) {
-            showDetail(equipped, xpad+textWidth, ypad);
+            showDetail(equipped, textWidth, 0);
             if (things.get(selection) != equipped)
-                showDetail(things.get(selection), xpad+textWidth, ypad+5);
+                showDetail(things.get(selection), textWidth, 5);
         }
     }
 

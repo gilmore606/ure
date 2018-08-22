@@ -13,19 +13,15 @@ import java.util.ArrayList;
 
 public class UModalEquipment extends UModal implements HearModalEquipPick {
 
-    int xpad,ypad;
     int width,height;
-    boolean escapable = true;
     ArrayList<Bodypart> slotsBodyparts;
     ArrayList<UThing> slotsThings;
     ArrayList<UThing> possible;
 
     int selection;
 
-    public UModalEquipment(int _xpad, int _ypad, UActor actor) {
+    public UModalEquipment(UActor actor) {
         super(null, "");
-        xpad = _xpad;
-        ypad = _ypad;
         height = 0;
         slotsBodyparts = new ArrayList<>();
         slotsThings = new ArrayList<>();
@@ -49,7 +45,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
         }
         width = longestpart + 1 + longestthing + 1 + Math.max(longestthing, 12);
         height = Math.max(slotsThings.size(), 7);
-        setDimensions(width+xpad*2,height+ypad*2);
+        setDimensions(width,height);
     }
 
     void fillSlots(UActor actor) {
@@ -77,33 +73,33 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
     @Override
     public void drawContent() {
         int oldselection = selection;
-        selection = mouseToSelection(slotsThings.size(), ypad, selection);
+        selection = mouseToSelection(slotsThings.size(), 0, selection);
         if (selection != oldselection) updatePossible();
         Bodypart lastpart = null;
         for (int i=0;i<slotsThings.size();i++) {
             Bodypart part = slotsBodyparts.get(i);
             if (part != lastpart) {
-                drawString(part.equipUIstring(), 0+xpad, i+ypad, null, null);
+                drawString(part.equipUIstring(), 0, i, null, null);
             }
             lastpart = part;
             UThing thing = slotsThings.get(i);
             if (thing != null) {
-                drawIcon(thing.getIcon(), 7+xpad, i+ypad);
-                drawString(thing.getName(), 8+xpad, i+ypad, i == selection ? null : UColor.GRAY, i == selection ? config.getHiliteColor() : null);
+                drawIcon(thing.getIcon(), 7, i);
+                drawString(thing.getName(), 8, i, i == selection ? null : UColor.GRAY, i == selection ? config.getHiliteColor() : null);
             } else {
                 if (i == selection) {
-                    drawString("        ", 8+xpad, i+ypad, null, config.getHiliteColor());
+                    drawString("        ", 8, i, null, config.getHiliteColor());
                 }
             }
         }
         int detailX = 17;
         UThing thing = slotsThings.get(selection);
-        showDetail(thing, detailX+xpad, ypad);
+        showDetail(thing, detailX, 0);
         int i=0;
         for (UThing poss : possible) {
             if (poss != null) {
                 if (!poss.equipped) {
-                    drawString(poss.getName(), detailX + xpad, ypad + i + 5, UColor.GRAY);
+                    drawString(poss.getName(), detailX, i + 5, UColor.GRAY);
                     i++;
                 }
             }
@@ -132,7 +128,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
     public void selectSlot() {
         updatePossible();
         if (possible.size() > 0) {
-            UModalEquipPick emodal = new UModalEquipPick(1, 1, possible, slotsThings.get(selection), true, this, "equip");
+            UModalEquipPick emodal = new UModalEquipPick(possible, slotsThings.get(selection), true, this, "equip");
             emodal.setChildPosition(6,selection,this);
             commander.showModal(emodal);
         }

@@ -67,7 +67,8 @@ public class BehaviorTalker extends UBehavior {
     @Override
     public float interactionFrom(UNPC actor, UActor interactor) {
         String text = actor.getDescription() + "\n \n\"" + responseTo(actor, interactor) + "\"";
-        UModalNotify nmodal = new UModalNotify(text, 1, 1);
+        UModalNotify nmodal = new UModalNotify(text);
+        nmodal.setPad(1,1);
         commander.showModal(nmodal);
         return 0.5f;
     }

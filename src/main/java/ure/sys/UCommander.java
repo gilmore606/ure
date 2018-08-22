@@ -683,7 +683,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
         filelist.add("<new vaultSet>");
         String[] filearray = new String[filelist.size()];
-        UModalStringPick spmodal = new UModalStringPick("Select vaultSet to edit:", 0, 0,
+        UModalStringPick spmodal = new UModalStringPick("Select vaultSet to edit:",
                 filelist.toArray(filearray), this, "vaulted-pickfile");
         printScroll("Launching VaultEd...");
         showModal(spmodal);

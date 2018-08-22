@@ -11,7 +11,6 @@ public class UModalGetString extends UModal {
 
     String[] prompt;
     String input;
-    boolean escapable;
     int maxlength;
     int fieldY;
 

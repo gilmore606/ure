@@ -6,9 +6,6 @@ import ure.sys.GLKey;
 
 public class UModalQuantity extends UModal {
 
-    String[] prompt;
-    boolean escapable;
-
     int min, max, count;
     int numberX;
     int barwidth;

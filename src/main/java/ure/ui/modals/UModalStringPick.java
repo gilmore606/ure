@@ -8,22 +8,14 @@ import java.util.ArrayList;
 
 public class UModalStringPick extends UModal {
 
-    int xpad, ypad;
-    boolean escapable;
-    int textWidth = 0;
-    int selection = 0;
-    int headerHeight = 0;
     UColor tempHiliteColor, flashColor;
 
     WidgetText headerWidget;
     WidgetListVert choicesWidget;
 
-    public UModalStringPick(String _header, int _xpad, int _ypad, String[] _choices,
+    public UModalStringPick(String _header, String[] _choices,
                             HearModalStringPick _callback, String _callbackContext) {
         super(_callback, _callbackContext);
-
-        xpad = _xpad;
-        ypad = _ypad;
 
         headerWidget = new WidgetText(0,0,_header);
         addWidget(headerWidget);

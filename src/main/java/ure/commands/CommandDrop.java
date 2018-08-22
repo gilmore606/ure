@@ -31,7 +31,7 @@ public class CommandDrop extends UCommand implements HearModalEntityPick {
         Iterator<UThing> i = player.iterator();
         while (i.hasNext())
             things.add((Entity)i.next());
-        UModalEntityPick modal = new UModalEntityPick(dropDialog, 0, 0, things,
+        UModalEntityPick modal = new UModalEntityPick(dropDialog, things,
                 true, true, false, this, "drop");
         commander.showModal(modal);
         // player.doAction(new UActionDrop(player));

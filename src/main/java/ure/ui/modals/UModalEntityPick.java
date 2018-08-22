@@ -15,12 +15,9 @@ import java.util.HashMap;
 public class UModalEntityPick extends UModal implements HearModalStringPick {
 
     String header;
-    UColor bgColor;
-    int xpad, ypad;
     ArrayList<Entity> entities;
     ArrayList<String> displaynames;
     boolean showDetail;
-    boolean escapable;
     boolean categorize;
     boolean selectForVerbs;
     ArrayList<String> categories;
@@ -36,12 +33,10 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
 
     private Log log = LogFactory.getLog(UModalEntityPick.class);
 
-    public UModalEntityPick(String _header, int _xpad, int _ypad, ArrayList<Entity> _entities,
+    public UModalEntityPick(String _header, ArrayList<Entity> _entities,
                             boolean _showDetail, boolean _categorize, boolean _selectForVerbs, HearModalEntityPick _callback, String _callbackContext) {
         super(_callback, _callbackContext);
         header = _header;
-        xpad = _xpad;
-        ypad = _ypad;
         entities = _entities;
         if (!_categorize) displaynames = deDupeEntities(entities);
         showDetail =  _showDetail;
@@ -154,30 +149,30 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
 
     @Override
     public void drawContent() {
-        selection = mouseToSelection(shownEntities().size(), 2+ypad, selection, 0, 12);
+        selection = mouseToSelection(shownEntities().size(), 2, selection, 0, 12);
         int oldCategory = selectionCategory;
         if (categorize) {
-            selectionCategory = mouseToSelection(categoryLists.size(), 9+ypad, selectionCategory, 3 + textWidth, 100);
+            selectionCategory = mouseToSelection(categoryLists.size(), 9, selectionCategory, 3 + textWidth, 100);
             if (selectionCategory != oldCategory) selection = 0;
         }
         if (header != null)
-            drawString(header, xpad, ypad);
+            drawString(header, 0, 0);
         int y = 0;
         for (Entity entity : shownEntities()) {
-            drawIcon(entity.icon(), 1+xpad, y + 2+ypad);
+            drawIcon(entity.icon(), 1, y + 2);
             String n = entity.name();
             if (categorize)
                 n = (categoryItemNames.get(selectionCategory)).get(y);
-            drawString(n, 3+xpad, y + 2+ypad, y == selection ? null : UColor.GRAY, (y == selection) ? tempHiliteColor : null);
+            drawString(n, 3, y + 2, y == selection ? null : UColor.GRAY, (y == selection) ? tempHiliteColor : null);
             y++;
         }
-        if (showDetail) showDetail(shownEntities().get(selection),4+textWidth+xpad,2+ypad);
+        if (showDetail) showDetail(shownEntities().get(selection),4+textWidth,2);
         if (categorize && !dismissed) {
             int caty = 7;
             if (!showDetail) caty = 1;
             int i =0;
             for (String cat : categories) {
-                drawString(cat, 4+textWidth+xpad, 2+caty+i+ypad, (i == selectionCategory) ? null : UColor.GRAY,
+                drawString(cat, 4+textWidth, 2+caty+i, (i == selectionCategory) ? null : UColor.GRAY,
                         (i == selectionCategory) ? tempHiliteColor : null);
                 i++;
             }
@@ -216,7 +211,7 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
                 ArrayList<String> verbs = new ArrayList<>();
                 for (String v : contextActions.keySet())
                     verbs.add(v);
-                UModalStringPick smodal = new UModalStringPick(thing.getName() + ":",0,0, verbs.toArray(new String[verbs.size()]), this, "contextaction");
+                UModalStringPick smodal = new UModalStringPick(thing.getName() + ":", verbs.toArray(new String[verbs.size()]), this, "contextaction");
                 smodal.setChildPosition(5,3+selection, this);
                 commander.showModal(smodal);
             }

@@ -7,14 +7,10 @@ import ure.sys.GLKey;
 
 public class UModalNotify extends UModal {
 
-    int xpad,ypad;
-
-    public UModalNotify(String text, int xpad, int ypad) {
+    public UModalNotify(String text) {
         super(null, "");
-        this.xpad = xpad;
-        this.ypad = ypad;
         WidgetText widget = new WidgetText(xpad,ypad,text);
-        setDimensions(widget.w + xpad, widget.h + ypad);
+        setDimensions(widget.w, widget.h);
         addCenteredWidget(widget);
     }
 

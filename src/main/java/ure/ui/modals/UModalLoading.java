@@ -7,7 +7,6 @@ import ure.sys.GLKey;
 public class UModalLoading extends UModal {
 
     String text;
-    int xpad,ypad;
 
     public UModalLoading() {
         super(null, "");
@@ -15,8 +14,7 @@ public class UModalLoading extends UModal {
         this.xpad = 1;
         this.ypad = 1;
         this.escapable = false;
-        setDimensions(text.length() + xpad, ypad + 1);
-        setBgColor(commander.config.getModalBgColor());
+        setDimensions(text.length(), 1);
     }
 
     @Override

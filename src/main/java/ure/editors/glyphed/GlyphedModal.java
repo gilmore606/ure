@@ -792,7 +792,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
         writeJson(terrainIcons, "terrain-icons.json");
         writeJson(thingIcons, "thing-icons.json");
         writeJson(actorIcons, "actor-icons.json");
-        UModalNotify m = new UModalNotify("Saved all changes!", 0, 0);
+        UModalNotify m = new UModalNotify("Saved all changes!");
         commander.showModal(m);
     }
 
@@ -826,7 +826,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     }
 
     void selectType() {
-        UModalStringPick modal = new UModalStringPick(null, 0, 0, iconTypes.toArray(new String[iconTypes.size()]), this, "type");
+        UModalStringPick modal = new UModalStringPick(null, iconTypes.toArray(new String[iconTypes.size()]), this, "type");
         modal.setChildPosition(4,19+gridposy, this);
         commander.showModal(modal);
     }

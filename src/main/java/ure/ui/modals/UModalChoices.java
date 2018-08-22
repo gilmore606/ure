@@ -12,7 +12,6 @@ import java.util.ArrayList;
  */
 public class UModalChoices extends UModal {
 
-    boolean escapable;
     UColor tempHiliteColor;
     UColor flashColor;
 
