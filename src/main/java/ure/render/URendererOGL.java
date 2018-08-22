@@ -71,6 +71,9 @@ public class URendererOGL implements URenderer {
 
     private Log log = LogFactory.getLog(URendererOGL.class);
 
+    private int[] windowX = new int[1];
+    private int[] windowY = new int[1];
+
     public URendererOGL() {
         Injector.getAppComponent().inject(this);
         xf = BufferUtils.createDoubleBuffer(1);
@@ -336,12 +339,13 @@ public class URendererOGL implements URenderer {
     public void toggleFullscreen() {
         if (glfwGetWindowMonitor(window) == 0) {
             GLFWVidMode mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+            glfwGetWindowPos(window, windowX, windowY);
             glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, mode.width(), mode.height(), mode.refreshRate());
         } else {
             glfwSetWindowMonitor(window, 0, 0, 0, config.getScreenWidth(), config.getScreenHeight(), GLFW_DONT_CARE);
             glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_TRUE);
             glfwSetWindowAttrib(window, GLFW_RESIZABLE, config.isResizableWindow() ? GLFW_TRUE : GLFW_FALSE);
-            glfwSetWindowAttrib(window, GLFW_VISIBLE, GLFW_TRUE);
+            glfwSetWindowPos(window, windowX[0], windowY[0]);
         }
     }
 
