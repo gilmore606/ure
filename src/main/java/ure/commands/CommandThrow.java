@@ -32,8 +32,8 @@ public class CommandThrow extends UCommand implements HearModalEntityPick, HearM
         Iterator<UThing> i = player.iterator();
         while (i.hasNext())
             things.add((Entity)i.next());
-        UModalEntityPick modal = new UModalEntityPick(throwDialogMsg, null, 0, 0, things,
-                true, true, true,false, this, "throw");
+        UModalEntityPick modal = new UModalEntityPick(throwDialogMsg, 0, 0, things,
+                true, true, false, this, "throw");
         commander.showModal(modal);
     }
 

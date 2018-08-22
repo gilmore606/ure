@@ -23,14 +23,13 @@ public class UModalEntityPickMulti extends UModal {
     ArrayList<Entity> entities;
     ArrayList<Boolean> selectedEntities;
 
-    public UModalEntityPickMulti(String _prompt, UColor _bgColor, int _xpad, int _ypad, ArrayList<Entity> _entities, boolean _showDetail, boolean _escapable, HearModalEntityPickMulti _callback, String _callbackContext) {
-        super(_callback, _callbackContext, _bgColor);
+    public UModalEntityPickMulti(String _prompt, int _xpad, int _ypad, ArrayList<Entity> _entities, boolean _showDetail, HearModalEntityPickMulti _callback, String _callbackContext) {
+        super(_callback, _callbackContext);
         prompt = splitLines(_prompt);
         xpad = _xpad;
         ypad = _ypad;
         entities = _entities;
         showDetail = _showDetail;
-        escapable = _escapable;
         selectedEntities = new ArrayList<>();
         for (int i=0;i<entities.size();i++) {
             selectedEntities.add(false);

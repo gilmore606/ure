@@ -27,7 +27,7 @@ public abstract class CommandUseVerb extends UCommand implements HearModalEntity
         if (targets.size() < 1) commander.printScroll(noTargetsMsg);
         else if (targets.size() == 1) doExecute(player, (UThing)targets.get(0));
         else {
-            UModalEntityPick modal = new UModalEntityPick(whichDialog, null, 0, 0, targets, true, true, false, false, this, verb);
+            UModalEntityPick modal = new UModalEntityPick(whichDialog, 0, 0, targets, true, true, false, this, verb);
             commander.showModal(modal);
         }
     }

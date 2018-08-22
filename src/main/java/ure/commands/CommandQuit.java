@@ -18,7 +18,7 @@ public class CommandQuit extends UCommand implements HearModalChoices {
 
     @Override
     public void execute(UPlayer player) {
-        UModalChoices modal = new UModalChoices(quitConfirmMsg, new String[]{"Yes", "No"}, true, null, this, "quit");
+        UModalChoices modal = new UModalChoices(quitConfirmMsg, new String[]{"Yes", "No"},  this, "quit");
         commander.showModal(modal);
     }
 

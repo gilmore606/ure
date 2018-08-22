@@ -18,9 +18,9 @@ public class UModalStringPick extends UModal {
     WidgetText headerWidget;
     WidgetListVert choicesWidget;
 
-    public UModalStringPick(String _header, UColor _bgColor, int _xpad, int _ypad, String[] _choices,
-                            boolean _escapable, HearModalStringPick _callback, String _callbackContext) {
-        super(_callback, _callbackContext, _bgColor);
+    public UModalStringPick(String _header, int _xpad, int _ypad, String[] _choices,
+                            HearModalStringPick _callback, String _callbackContext) {
+        super(_callback, _callbackContext);
 
         xpad = _xpad;
         ypad = _ypad;
@@ -30,7 +30,6 @@ public class UModalStringPick extends UModal {
         choicesWidget = new WidgetListVert(0, headerWidget.h+1, _choices);
         addWidget(choicesWidget);
         sizeToWidgets();
-        escapable = _escapable;
         tempHiliteColor = commander.config.getHiliteColor();
         flashColor = new UColor(commander.config.getHiliteColor());
         flashColor.setAlpha(1f);

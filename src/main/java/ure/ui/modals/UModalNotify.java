@@ -9,8 +9,8 @@ public class UModalNotify extends UModal {
 
     int xpad,ypad;
 
-    public UModalNotify(String text, UColor bgColor, int xpad, int ypad) {
-        super(null, "", bgColor);
+    public UModalNotify(String text, int xpad, int ypad) {
+        super(null, "");
         this.xpad = xpad;
         this.ypad = ypad;
         WidgetText widget = new WidgetText(xpad,ypad,text);

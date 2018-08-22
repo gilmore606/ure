@@ -145,7 +145,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
         area = cartographer.getTitleArea();
         camera.moveTo(area, 50, 50);
         commander.config.setVisibilityEnable(false);
-        commander.showModal(new UModalTitleScreen(35, 20, this, "start", new UColor(0.07f,0.07f,0.07f), area));
+        commander.showModal(new UModalTitleScreen(35, 20, this, "start", area));
 
     }
 

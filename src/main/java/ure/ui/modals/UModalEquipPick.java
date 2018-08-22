@@ -19,14 +19,13 @@ public class UModalEquipPick extends UModal {
     int selection = 0;
     UColor tempHiliteColor, flashColor;
 
-    public UModalEquipPick(UColor _bgColor, int _xpad, int _ypad, ArrayList<UThing> _things, UThing _equipped, boolean _showDetail, boolean _escapable, HearModalEquipPick _callback, String _callbackContext) {
-        super(_callback, _callbackContext, _bgColor);
+    public UModalEquipPick(int _xpad, int _ypad, ArrayList<UThing> _things, UThing _equipped, boolean _showDetail, HearModalEquipPick _callback, String _callbackContext) {
+        super(_callback, _callbackContext);
         xpad = _xpad;
         ypad = _ypad;
         things = _things;
         equipped = _equipped;
         showDetail = _showDetail;
-        escapable = _escapable;
         textWidth = 0;
         for (UThing thing : things) {
             if (thing != null) {

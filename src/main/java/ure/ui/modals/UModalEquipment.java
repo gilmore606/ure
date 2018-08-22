@@ -22,8 +22,8 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
 
     int selection;
 
-    public UModalEquipment(UColor _bgColor, int _xpad, int _ypad, UActor actor) {
-        super(null, "", _bgColor);
+    public UModalEquipment(int _xpad, int _ypad, UActor actor) {
+        super(null, "");
         xpad = _xpad;
         ypad = _ypad;
         height = 0;
@@ -132,7 +132,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
     public void selectSlot() {
         updatePossible();
         if (possible.size() > 0) {
-            UModalEquipPick emodal = new UModalEquipPick(null, 1, 1, possible, slotsThings.get(selection), true, true, this, "equip");
+            UModalEquipPick emodal = new UModalEquipPick(1, 1, possible, slotsThings.get(selection), true, this, "equip");
             emodal.setChildPosition(6,selection,this);
             commander.showModal(emodal);
         }

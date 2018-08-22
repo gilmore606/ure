@@ -50,7 +50,8 @@ public class UModal extends View implements UAnimator {
     public int ypos = 0;
     public int mousex, mousey;
     public UColor bgColor;
-    public boolean dismissed;
+    public boolean escapable = true;
+    public boolean dismissed = false;
     int dismissFrames = 0;
     int dismissFrameEnd = 0;
     int zoomFrame = 0;
@@ -192,19 +193,16 @@ public class UModal extends View implements UAnimator {
         }
         @Override
         public void draw() {
-            renderer.drawRectBorder(x*gw(),y*gh(), length*gw(),gh(),1,UColor.BLACK, config.getHiliteColor());
+            renderer.drawRectBorder(xpos + x*gw(),ypos + y*gh(), length*gw(),gh(),1,UColor.BLACK, config.getHiliteColor());
             renderer.drawRect(x*gw(), y*gh(), (int)((length*gw()) * (float)value/(float)valuemax), gh(), config.getHiliteColor());
         }
     }
 
-    public UModal(HearModal _callback, String _callbackContext, UColor _bgColor) {
+    public UModal(HearModal _callback, String _callbackContext) {
         Injector.getAppComponent().inject(this);
         callback = _callback;
         callbackContext = _callbackContext;
-        if (_bgColor == null)
-            bgColor = config.getModalBgColor();
-        else
-            bgColor = _bgColor;
+        bgColor = config.getModalBgColor();
         widgets = new ArrayList<>();
     }
 
@@ -356,6 +354,11 @@ public class UModal extends View implements UAnimator {
     public int rely(int y)  { return (y * config.getTileHeight()) + ypos; }
 
     public void hearCommand(UCommand command, GLKey k) {
+        if (command != null)
+            if (command.id.equals("ESC") && escapable) {
+                escape();
+                return;
+            }
         if (focusWidget != null) {
             focusWidget.hearCommand(command, k, this);
         }

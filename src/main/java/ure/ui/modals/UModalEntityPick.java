@@ -36,16 +36,15 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
 
     private Log log = LogFactory.getLog(UModalEntityPick.class);
 
-    public UModalEntityPick(String _header, UColor _bgColor, int _xpad, int _ypad, ArrayList<Entity> _entities,
-                            boolean _showDetail, boolean _escapable, boolean _categorize, boolean _selectForVerbs, HearModalEntityPick _callback, String _callbackContext) {
-        super(_callback, _callbackContext, _bgColor);
+    public UModalEntityPick(String _header, int _xpad, int _ypad, ArrayList<Entity> _entities,
+                            boolean _showDetail, boolean _categorize, boolean _selectForVerbs, HearModalEntityPick _callback, String _callbackContext) {
+        super(_callback, _callbackContext);
         header = _header;
         xpad = _xpad;
         ypad = _ypad;
         entities = _entities;
         if (!_categorize) displaynames = deDupeEntities(entities);
         showDetail =  _showDetail;
-        escapable = _escapable;
         categorize = _categorize;
         selectForVerbs = _selectForVerbs;
         if (categorize)
@@ -73,9 +72,6 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
         }
         height = Math.max(height, listsize+1);
         setDimensions(width + 1 + xpad*2, height + 1 + ypad*2);
-        if (bgColor == null)
-            bgColor = commander.config.getModalBgColor();
-        setBgColor(bgColor);
         tempHiliteColor = commander.config.getHiliteColor();
         flashColor = new UColor(commander.config.getHiliteColor());
         flashColor.setAlpha(1f);
@@ -220,7 +216,7 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
                 ArrayList<String> verbs = new ArrayList<>();
                 for (String v : contextActions.keySet())
                     verbs.add(v);
-                UModalStringPick smodal = new UModalStringPick(thing.getName() + ":",null,0,0, verbs.toArray(new String[verbs.size()]), true, this, "contextaction");
+                UModalStringPick smodal = new UModalStringPick(thing.getName() + ":",0,0, verbs.toArray(new String[verbs.size()]), this, "contextaction");
                 smodal.setChildPosition(5,3+selection, this);
                 commander.showModal(smodal);
             }

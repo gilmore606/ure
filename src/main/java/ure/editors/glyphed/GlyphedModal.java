@@ -67,7 +67,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     private Log log = LogFactory.getLog(GlyphedModal.class);
 
     public GlyphedModal() {
-        super(null, "", null);
+        super(null, "");
         setDimensions(46,36);
         terrains = terrainCzar.getAllTerrainTemplates();
         makeRefIcon();
@@ -784,7 +784,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     }
 
     void doReload() {
-        UModalChoices m = new UModalChoices("Reload all icons? \nYou will lose any unsaved changes.", new String[]{"Yes", "No"},true, null, this, "reload");
+        UModalChoices m = new UModalChoices("Reload all icons? \nYou will lose any unsaved changes.", new String[]{"Yes", "No"},this, "reload");
         commander.showModal(m);
     }
 
@@ -792,12 +792,12 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
         writeJson(terrainIcons, "terrain-icons.json");
         writeJson(thingIcons, "thing-icons.json");
         writeJson(actorIcons, "actor-icons.json");
-        UModalNotify m = new UModalNotify("Saved all changes!", null, 0, 0);
+        UModalNotify m = new UModalNotify("Saved all changes!", 0, 0);
         commander.showModal(m);
     }
 
     void doQuit() {
-        UModalChoices m = new UModalChoices("Quit? \nYou will lose any unsaved changes.", new String[]{"Yes", "No"}, true, null, this, "quit");
+        UModalChoices m = new UModalChoices("Quit? \nYou will lose any unsaved changes.", new String[]{"Yes", "No"}, this, "quit");
         commander.showModal(m);
     }
 
@@ -826,7 +826,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
     }
 
     void selectType() {
-        UModalStringPick modal = new UModalStringPick(null, null, 0, 0, iconTypes.toArray(new String[iconTypes.size()]), true, this, "type");
+        UModalStringPick modal = new UModalStringPick(null, 0, 0, iconTypes.toArray(new String[iconTypes.size()]), this, "type");
         modal.setChildPosition(4,19+gridposy, this);
         commander.showModal(modal);
     }

@@ -21,11 +21,9 @@ public class UModalGetString extends UModal {
     UColor fieldColor;
     UColor cursorColor;
 
-    public UModalGetString(String _prompt, int _maxlength, boolean _escapable,
-                           UColor bgColor, HearModalGetString _callback, String _callbackContext) {
-        super(_callback, _callbackContext, bgColor);
+    public UModalGetString(String _prompt, int _maxlength, HearModalGetString _callback, String _callbackContext) {
+        super(_callback, _callbackContext);
         prompt = splitLines(_prompt);
-        escapable = _escapable;
         input = "";
         maxlength = _maxlength;
         int width = longestLine(prompt);

@@ -9,11 +9,9 @@ public class UModalMap extends UModal {
     UArea area;
 
     public UModalMap(UArea area, int width, int height) {
-        super(null, "", null);
+        super(null, "");
         this.area = area;
         setDimensions(width, height);
-        if (bgColor == null) bgColor = config.getModalBgColor();
-        setBgColor(bgColor);
     }
 
     @Override

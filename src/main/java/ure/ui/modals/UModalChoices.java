@@ -19,15 +19,13 @@ public class UModalChoices extends UModal {
     WidgetText headerWidget;
     WidgetChoices choicesWidget;
 
-    public UModalChoices(String _prompt, String[] _choices,
-                         boolean _escapable, UColor bgColor, HearModalChoices _callback, String _callbackContext) {
-        super(_callback, _callbackContext, bgColor);
+    public UModalChoices(String _prompt, String[] _choices, HearModalChoices _callback, String _callbackContext) {
+        super(_callback, _callbackContext);
         headerWidget = new WidgetText(0,0, _prompt);
         choicesWidget = new WidgetChoices(0, headerWidget.h + 1, _choices);
         addWidget(headerWidget);
         addWidget(choicesWidget);
         sizeToWidgets();
-        escapable = _escapable;
         dismissFrameEnd = 8;
         tempHiliteColor = config.getHiliteColor();
         flashColor = new UColor(config.getHiliteColor());

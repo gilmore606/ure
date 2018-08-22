@@ -14,7 +14,7 @@ public class UModalURESplash extends UModal {
     float fadetick = 0.02f;
 
     public UModalURESplash() {
-        super(null, "", UColor.BLACK);
+        super(null, "");
         logo = new RexFile(commander.config.getResourcePath() + "ure_logo.xp");
         alpha = 0f;
     }

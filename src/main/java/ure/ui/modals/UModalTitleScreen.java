@@ -23,15 +23,17 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
     double lastActiveTime;
     int hideSeconds = 10;
 
-    public UModalTitleScreen(int cellwidth, int cellheight, HearModalTitleScreen _callback, String _callbackContext, UColor _bgColor, UArea _area) {
-        super(_callback,_callbackContext,_bgColor);
+    public UModalTitleScreen(int cellwidth, int cellheight, HearModalTitleScreen _callback, String _callbackContext, UArea _area) {
+        super(_callback,_callbackContext);
         setDimensions(cellwidth,cellheight);
+        escapable = false;
         logoWidget = new WidgetRexImage(0,0,"ure_logo.xp");
         logoWidget.alpha = 0f;
         addCenteredWidget(logoWidget);
         titleWidget = new WidgetText(0,11,titleMsg);
         titleWidget.hidden = true;
         addCenteredWidget(titleWidget);
+        setBgColor(new UColor(0.07f,0.07f,0.07f));
 
         String[] options;
         File file = new File(commander.savePath() + "player");
@@ -89,11 +91,10 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
 
     void pickSelection(String option) {
         if (option.equals("New World")) {
-            UModalGetString smodal = new UModalGetString("Name your character:", 20, true,
-                    null, this, "name-new-world");
+            UModalGetString smodal = new UModalGetString("Name your character:", 20,this, "name-new-world");
             commander.showModal(smodal);
         } else if (option.equals("Credits")) {
-            UModalNotify nmodal = new UModalNotify("URE: the unRoguelike Engine\n \nSpunky - metaprogramming, persistence, rendering\nMoycakes - OpenGL\nKapho - QA, content\nGilmore - misc", null, 1, 1);
+            UModalNotify nmodal = new UModalNotify("URE: the unRoguelike Engine\n \nSpunky - metaprogramming, persistence, rendering\nMoycakes - OpenGL\nKapho - QA, content\nGilmore - misc", 1, 1);
             nmodal.setTitle("credits");
             commander.showModal(nmodal);
         } else if (option.equals("VaultEd")) {

@@ -21,11 +21,10 @@ public class UModalDirection extends UModal {
     String glyphs = "^>v<";
     UColor glyphColor;
 
-    public UModalDirection(String _prompt, boolean _acceptNull, int cellx, int celly, boolean _escapable, HearModalDirection _callback, String _callbackContext) {
-        super(_callback, _callbackContext, null);
+    public UModalDirection(String _prompt, boolean _acceptNull, int cellx, int celly, HearModalDirection _callback, String _callbackContext) {
+        super(_callback, _callbackContext);
         prompt = _prompt;
         acceptNull = _acceptNull;
-        escapable = _escapable;
         this.cellx = cellx;
         this.celly = celly;
         setDimensions(3,3);

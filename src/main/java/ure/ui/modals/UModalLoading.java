@@ -10,10 +10,11 @@ public class UModalLoading extends UModal {
     int xpad,ypad;
 
     public UModalLoading() {
-        super(null, "", UColor.BLACK);
+        super(null, "");
         this.text = "Loading...";
         this.xpad = 1;
         this.ypad = 1;
+        this.escapable = false;
         setDimensions(text.length() + xpad, ypad + 1);
         setBgColor(commander.config.getModalBgColor());
     }

@@ -107,8 +107,7 @@ public class Stairs extends UTerrain implements HearModalChoices {
     public void askConfirm() {
         String confirmMsg = "Travel to " + commander.cartographer.describeLabel(label) + "?";
         confirmMsg = walkmsg + "\n" + confirmMsg;
-        UModalChoices modal = new UModalChoices(confirmMsg, new String[]{"Yes","No"},true,
-                null, this, "travel");
+        UModalChoices modal = new UModalChoices(confirmMsg, new String[]{"Yes","No"},this, "travel");
         commander.showModal(modal);
     }
 
