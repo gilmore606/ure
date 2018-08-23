@@ -9,12 +9,15 @@ import ure.ui.modals.UModal;
 public class WidgetListVert extends Widget {
     String[] options;
     Icon[] optionIcons;
+    boolean[] lit;
     int iconSpace = 1;
-    int selection;
+    public int selection;
 
     public WidgetListVert(UModal modal, int x, int y, String[] options) {
         super(modal);
         this.options = options;
+        lit = new boolean[options.length];
+        for (int i=0;i<options.length;i++) { lit[i] = false; }
         focusable = true;
         setDimensions(x, y, modal.longestLine(options), options.length);
     }
@@ -28,7 +31,7 @@ public class WidgetListVert extends Widget {
         for (int i = 0;i < options.length;i++) {
             if (optionIcons != null)
                 modal.drawIcon(optionIcons[i], x, y + i);
-            modal.drawString(options[i], x + (optionIcons == null ? 0 : iconSpace + 1), y + i, (i == selection) ? null : UColor.GRAY, (i == selection && focused) ? modal.config.getHiliteColor() : null);
+            modal.drawString(options[i], x + (optionIcons == null ? 0 : iconSpace + 1), y + i, (i == selection) || lit[i] ? null : UColor.GRAY, (i == selection && focused) ? modal.config.getHiliteColor() : null);
         }
     }
 
@@ -38,17 +41,22 @@ public class WidgetListVert extends Widget {
     }
 
     @Override
-    public void mouseClick(int mousex, int mousey) {
-        mouseInside(mousex, mousey);
-    }
-
-    @Override
     public void hearCommand(UCommand c, GLKey k) {
         if (c != null) {
-            if (c.id.equals("MOVE_N")) selection = modal.cursorMove(selection, -1, options.length);
-            else if (c.id.equals("MOVE_S")) selection = modal.cursorMove(selection, 1, options.length);
-            else if (c.id.equals("PASS")) modal.widgetClick(this, 0, selection);
+            if (c.id.equals("MOVE_N")) selection = cursorMove(selection, -1, options.length);
+            else if (c.id.equals("MOVE_S")) selection = cursorMove(selection, 1, options.length);
         }
+        super.hearCommand(c, k);
+    }
+
+    public void lightOption(int i) {
+        lit[i] = true;
+    }
+    public void toggleOption(int i) {
+        lit[i] = !lit[i];
+    }
+    public void dimOption(int i) {
+        lit[i] = false;
     }
 
     public String choice() {

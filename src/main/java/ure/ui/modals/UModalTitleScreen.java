@@ -88,7 +88,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         super.mouseClick();
     }
     @Override
-    public void widgetClick(Widget widget, int x, int y) {
+    public void pressWidget(Widget widget) {
         if (widget == menuWidget) {
             pickSelection(menuWidget.choice());
         }

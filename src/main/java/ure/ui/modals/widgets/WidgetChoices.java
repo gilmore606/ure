@@ -50,17 +50,14 @@ public class WidgetChoices extends Widget {
             }
         }
     }
-    @Override
-    public void mouseClick(int mousex, int mousey) {
-        mouseInside(mousex,mousey);
-    }
+
     @Override
     public void hearCommand(UCommand c, GLKey k) {
         if (c != null) {
-            if (c.id.equals("MOVE_W")) selection = modal.cursorMove(selection, -1, choices.length);
-            else if (c.id.equals("MOVE_E")) selection = modal.cursorMove(selection, 1, choices.length);
-            else if (c.id.equals("PASS")) modal.widgetClick(this, positions[selection], 0);
+            if (c.id.equals("MOVE_W")) selection = cursorMove(selection, -1, choices.length);
+            else if (c.id.equals("MOVE_E")) selection = cursorMove(selection, 1, choices.length);
         }
+        super.hearCommand(c, k);
     }
     public String choice() { return choices[selection]; }
 }

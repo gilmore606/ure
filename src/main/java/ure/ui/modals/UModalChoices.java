@@ -37,7 +37,7 @@ public class UModalChoices extends UModal {
     }
 
     @Override
-    public void widgetClick(Widget widget, int mousex, int mousey) {
+    public void pressWidget(Widget widget) {
         if (widget == choicesWidget)
             pickSelection(choicesWidget.choice());
     }

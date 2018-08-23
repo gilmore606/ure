@@ -4,6 +4,11 @@ import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.sys.Entity;
 import ure.sys.GLKey;
+import ure.ui.Icons.Icon;
+import ure.ui.modals.widgets.WidgetButton;
+import ure.ui.modals.widgets.WidgetEntityDetail;
+import ure.ui.modals.widgets.WidgetListVert;
+import ure.ui.modals.widgets.WidgetText;
 
 import java.util.ArrayList;
 
@@ -11,86 +16,62 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class UModalEntityPickMulti extends UModal {
 
-    String[] prompt;
-    UColor bgColor, hiliteColor;
-    boolean showDetail;
     int selection = 0;
-    int listWidth = 0;
-    int width = 0;
-    int height = 0;
     ArrayList<Entity> entities;
     ArrayList<Boolean> selectedEntities;
 
+    WidgetText headerWidget;
+    WidgetListVert listWidget;
+    WidgetEntityDetail detailWidget;
+    WidgetButton okButton;
+    WidgetButton allButton;
+
     public UModalEntityPickMulti(String _prompt, ArrayList<Entity> _entities, boolean _showDetail, HearModalEntityPickMulti _callback, String _callbackContext) {
         super(_callback, _callbackContext);
-        prompt = splitLines(_prompt);
         entities = _entities;
-        showDetail = _showDetail;
         selectedEntities = new ArrayList<>();
         for (int i=0;i<entities.size();i++) {
             selectedEntities.add(false);
-            String n = entities.get(i).getName();
-            int len = textWidth(n);
-            if (len > listWidth) listWidth = len;
+        }
+        String[] names = new String[entities.size()];
+        Icon[] icons = new Icon[entities.size()];
+        int i = 0;
+        for (Entity e : entities) {
+            names[i] = e.name();
+            icons[i] = e.icon();
+            i++;
         }
 
-        height = Math.max(entities.size() + prompt.length + 1, (showDetail ? 7 : 2));
-        if (prompt != null) {
-            height += prompt.length;
-            for (String line : prompt) {
-                if (line.length()/2 > listWidth)
-                    listWidth = line.length()/2;
-            }
+        headerWidget = new WidgetText(this,0,0,_prompt);
+        listWidget = new WidgetListVert(this, 0, headerWidget.h + 1, names);
+        listWidget.addIcons(icons);
+        okButton = new WidgetButton(this, 0, headerWidget.h + listWidget.h + 2, "[ OK ]", null);
+        allButton = new WidgetButton(this, okButton.w + 1, okButton.y, "[ Take all ]", null);
+        addWidget(headerWidget);
+        addWidget(listWidget);
+        addWidget(okButton);
+        addWidget(allButton);
+        if (_showDetail) {
+            detailWidget = new WidgetEntityDetail(this, listWidget.w + 1, headerWidget.h + 1);
+            addWidget(detailWidget);
         }
-        width = listWidth + 1 + (showDetail ? 10 : 0);
-        width = Math.max(width, longestLine(prompt));
-        setDimensions(width, height);
-        if (bgColor == null)
-            bgColor = config.getModalBgColor();
-        setBgColor(bgColor);
-        hiliteColor = config.getHiliteColor();
-    }
-
-    @Override
-    public void drawContent() {
-        selection = mouseToSelection(entities.size(), prompt.length+1, selection);
-        drawStrings(prompt, 0, 0);
-        int y = 0;
-        for (Entity entity: entities) {
-            int liney = y+prompt.length+1;
-            drawIcon(entity.icon(), 1, liney);
-            String n = entity.getName();
-            UColor textColor = UColor.GRAY;
-            if (selectedEntities.get(y)) {
-                textColor = null;
-                drawTile(config.getUiCheckGlyph().charAt(0), 2, liney, hiliteColor);
-            }
-            drawString(n, 3, liney, textColor, (y == selection) ? hiliteColor : null);
-            y++;
-        }
-        if (showDetail) {
-            showDetail(entities.get(selection), listWidth+1, prompt.length+1);
-        }
+        sizeToWidgets();
     }
 
     @Override
     public void hearCommand(UCommand command, GLKey k) {
         if (command != null) {
-            if (command.id.equals("MOVE_N")) {
-                selection = cursorMove(selection, -1, entities.size());
-            } else if (command.id.equals("MOVE_S")) {
-                selection = cursorMove(selection, 1, entities.size());
-            } else if (command.id.equals("PASS")) {
+            if (command.id.equals("PASS")) {
                 selectEntity();
-            } else if (command.id.equals("ESC") && escapable) {
-                escape();
             }
         } else if (k.k == GLFW_KEY_ENTER || k.k == GLFW_KEY_KP_ENTER) {
             completeSelection();
         } else if (k.k == GLFW_KEY_A && k.shift) {
             selectAll();
         }
+        super.hearCommand(command, k);
     }
+
     @Override
     public void mouseClick() { selectEntity(); }
 

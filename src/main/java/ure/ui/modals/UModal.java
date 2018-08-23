@@ -19,6 +19,8 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
+
 /**
  * UModal intercepts player commands and (probably) draws UI in response, and returns a value to
  * a callback when it wants to (i.e. when the user is finished).
@@ -43,8 +45,8 @@ public class UModal extends View implements UAnimator {
     @Inject
     public ObjectMapper objectMapper;
 
-    HearModal callback;
-    String callbackContext;
+    public HearModal callback;
+    public String callbackContext;
     public int cellw = 0;
     public int cellh = 0;
     public int xpad = 0;
@@ -63,6 +65,7 @@ public class UModal extends View implements UAnimator {
     String title;
     ArrayList<Widget> widgets;
     Widget focusWidget;
+    ArrayList<Widget> widgetsFocusable;
 
     public UModal(HearModal _callback, String _callbackContext) {
         Injector.getAppComponent().inject(this);
@@ -70,6 +73,7 @@ public class UModal extends View implements UAnimator {
         callbackContext = _callbackContext;
         bgColor = config.getModalBgColor();
         widgets = new ArrayList<>();
+        widgetsFocusable = new ArrayList<>();
     }
 
     public void onOpen() {
@@ -130,6 +134,8 @@ public class UModal extends View implements UAnimator {
             focusWidget = widget;
             widget.focused = true;
         }
+        if (widget.focusable)
+            widgetsFocusable.add(widget);
     }
     public void addCenteredWidget(Widget widget) {
         centerWidget(widget);
@@ -224,14 +230,63 @@ public class UModal extends View implements UAnimator {
     public int rely(int y)  { return (y * config.getTileHeight()) + ypos; }
 
     public void hearCommand(UCommand command, GLKey k) {
-        if (command != null)
+        if (command != null) {
             if (command.id.equals("ESC") && escapable) {
                 escape();
                 return;
+            } else if (command.id.equals("PASS")) {
+                pressWidget(focusWidget);
+                return;
             }
+        }
+        if (k.k == GLFW_KEY_TAB) {
+            if (k.shift)
+                focusPreviousWidget();
+            else
+                focusNextWidget();
+            return;
+        }
         if (focusWidget != null) {
             focusWidget.hearCommand(command, k);
         }
+    }
+
+    void focusNextWidget() {
+        if (widgetsFocusable.size() == 0) return;
+        if (widgetsFocusable.size() == 1) focusToWidget(widgetsFocusable.get(0));
+        int focusi = -1;
+        for (int i=0;i<widgetsFocusable.size();i++) {
+            if (focusWidget == widgetsFocusable.get(i))
+                focusi = i;
+        }
+        focusi++;
+        if (focusi >= widgetsFocusable.size()) {
+            if (config.isWrapSelect()) focusi = 0;
+            else focusi = widgetsFocusable.size() - 1;
+        }
+        focusToWidget(widgetsFocusable.get(focusi));
+    }
+
+    void focusPreviousWidget() {
+        if (widgetsFocusable.size() == 0) return;
+        if (widgetsFocusable.size() == 1) focusToWidget(widgetsFocusable.get(0));
+        int focusi = -1;
+        for (int i=0;i<widgetsFocusable.size();i++) {
+            if (focusWidget == widgetsFocusable.get(i))
+                focusi = i;
+        }
+        focusi--;
+        if (focusi < 0) {
+            if (config.isWrapSelect()) focusi = widgetsFocusable.size() - 1;
+            else focusi = 0;
+        }
+        focusToWidget(widgetsFocusable.get(focusi));
+    }
+
+    void focusToWidget(Widget widget) {
+        if (focusWidget != null) focusWidget.focused = false;
+        widget.focused = true;
+        focusWidget = widget;
     }
 
     public void dismiss() {
@@ -271,9 +326,7 @@ public class UModal extends View implements UAnimator {
             if (mousex >= widget.x && mousey >= widget.y && mousex < widget.x + widget.w && mousey < widget.y + widget.h) {
                 widget.mouseInside(mousex - widget.x, mousey - widget.y);
                 if (widget.focusable) {
-                    if (focusWidget != null) focusWidget.focused = false;
-                    focusWidget = widget;
-                    widget.focused = true;
+                    focusToWidget(widget);
                 }
             }
         }
@@ -298,7 +351,7 @@ public class UModal extends View implements UAnimator {
         for (Widget widget : widgets) {
             if (mousex >= widget.x && mousey >= widget.y && mousex < widget.x + widget.w && mousey < widget.y + widget.h) {
                 widget.mouseClick(mousex - widget.x, mousey - widget.y);
-                widgetClick(widget, mousex - widget.x, mousey - widget.y);
+                pressWidget(widget);
             }
         }
     }
@@ -306,12 +359,13 @@ public class UModal extends View implements UAnimator {
         for (Widget widget : widgets) {
             if (mousex >= widget.x && mousey >= widget.y && mousex < widget.x + widget.w && mousey < widget.y + widget.h) {
                 widget.mouseRightClick(mousex - widget.x, mousey - widget.y);
-                widgetRightClick(widget, mousex - widget.x, mousey - widget.y);
             }
         }
     }
-    public void widgetClick(Widget widget, int x, int y) { }
-    public void widgetRightClick(Widget widget, int x, int y) { }
+
+    public void pressWidget(Widget widget) {
+
+    }
 
     public String[] splitLines(String text) {
         if (text == null) return null;
