@@ -22,6 +22,8 @@ public class UModalStringPick extends UModal {
         choicesWidget = new WidgetListVert(0, headerWidget.h+1, _choices);
         addWidget(choicesWidget);
         sizeToWidgets();
+        centerWidget(headerWidget);
+        centerWidget(choicesWidget);
         tempHiliteColor = commander.config.getHiliteColor();
         flashColor = new UColor(commander.config.getHiliteColor());
         flashColor.setAlpha(1f);

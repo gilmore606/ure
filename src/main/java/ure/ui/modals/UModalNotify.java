@@ -9,9 +9,9 @@ public class UModalNotify extends UModal {
 
     public UModalNotify(String text) {
         super(null, "");
-        WidgetText widget = new WidgetText(xpad,ypad,text);
-        setDimensions(widget.w, widget.h);
-        addCenteredWidget(widget);
+        WidgetText widget = new WidgetText(0,0,text);
+        addWidget(widget);
+        sizeToWidgets();
     }
 
     @Override

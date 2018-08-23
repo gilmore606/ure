@@ -25,6 +25,8 @@ public class UModalChoices extends UModal {
         addWidget(headerWidget);
         addWidget(choicesWidget);
         sizeToWidgets();
+        centerWidget(headerWidget);
+        centerWidget(choicesWidget);
         dismissFrameEnd = 8;
         tempHiliteColor = config.getHiliteColor();
         flashColor = new UColor(config.getHiliteColor());

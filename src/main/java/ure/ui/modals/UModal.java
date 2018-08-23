@@ -107,16 +107,21 @@ public class UModal extends View implements UAnimator {
 
     public class WidgetListVert extends Widget {
         String[] options;
+        Icon[] optionIcons;
+        int iconSpace = 1;
         int selection;
         public WidgetListVert(int x, int y, String[] options) {
             this.options = options;
             focusable = true;
             setDimensions(x,y,longestLine(options),options.length);
         }
+        public void addIcons(Icon[] icons) { optionIcons = icons; }
         @Override
         public void draw() {
             for (int i=0;i<options.length;i++) {
-                drawString(options[i], x, y+i, (i == selection) ? null : UColor.GRAY, (i == selection && focused) ? config.getHiliteColor() : null);
+                if (optionIcons != null)
+                    drawIcon(optionIcons[i], x, y+i);
+                drawString(options[i], x + (optionIcons == null ? 0 : iconSpace + 1), y+i, (i == selection) ? null : UColor.GRAY, (i == selection && focused) ? config.getHiliteColor() : null);
             }
         }
         @Override
@@ -140,12 +145,19 @@ public class UModal extends View implements UAnimator {
 
     public class WidgetChoices extends Widget {
         String[] choices;
+        Icon[] icons;
+        int iconSpace = 1;
         int[] positions;
         int selection;
         public WidgetChoices(int x, int y, String[] choices) {
             this.choices = choices;
             focusable = true;
-            int pos = 0;
+            this.x = x;
+            this.y = y;
+            calcPositions();
+        }
+        void calcPositions() {
+            int pos=0;
             positions = new int[choices.length];
             for (int i=0;i<choices.length;i++) {
                 positions[i] = pos;
@@ -153,10 +165,16 @@ public class UModal extends View implements UAnimator {
             }
             setDimensions(x,y,pos-1,1);
         }
+        public void addIcons(Icon[] icons) {
+            this.icons = icons;
+            calcPositions();
+        }
         @Override
         public void draw() {
             for (int i=0;i<choices.length;i++) {
-                drawString(choices[i],x+positions[i], y, (i == selection) ? null : UColor.GRAY, (i == selection && focused) ? config.getHiliteColor() : null);
+                if (icons != null)
+                    drawIcon(icons[i], x+positions[i], y);
+                drawString(choices[i],x+positions[i]+(icons == null ? 0 : iconSpace), y, (i == selection) ? null : UColor.GRAY, (i == selection && focused) ? config.getHiliteColor() : null);
             }
         }
         @Override
@@ -181,6 +199,19 @@ public class UModal extends View implements UAnimator {
             }
         }
         public String choice() { return choices[selection]; }
+    }
+
+    public class WidgetYesNo extends WidgetChoices {
+        public WidgetYesNo(int x, int y) {
+            super(x, y, new String[]{"Yes", "No"});
+            Icon yes = new Icon();
+            yes.setGlyph(8730);
+            yes.setFgColor(UColor.GREEN);
+            Icon no = new Icon();
+            no.setGlyph(120);
+            no.setFgColor(UColor.RED);
+            addIcons(new Icon[]{yes, no});
+        }
     }
 
     public class WidgetHSlider extends Widget {
@@ -268,8 +299,11 @@ public class UModal extends View implements UAnimator {
         }
     }
     public void addCenteredWidget(Widget widget) {
-        widget.x = (cellw / 2 - (widget.w / 2));
+        centerWidget(widget);
         addWidget(widget);
+    }
+    public void centerWidget(Widget widget) {
+        widget.x = (cellw / 2 - (widget.w / 2));
     }
 
     @Override
@@ -348,10 +382,6 @@ public class UModal extends View implements UAnimator {
             renderer.drawString(_xpos+gw(),_ypos-(int)(gh()*1.5f), bgColor, title);
         }
 
-    }
-
-    int textWidthInCells(String string) {
-        return renderer.textWidth(string) / gw() + 1;
     }
 
     /**

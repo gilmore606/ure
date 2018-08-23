@@ -33,6 +33,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         titleWidget = new WidgetText(0,11,titleMsg);
         titleWidget.hidden = true;
         addCenteredWidget(titleWidget);
+
         setBgColor(new UColor(0.07f,0.07f,0.07f));
 
         String[] options;

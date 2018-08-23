@@ -12,6 +12,7 @@ public class UModalMap extends UModal {
         super(null, "");
         this.area = area;
         setDimensions(width, height);
+        setPad(1,1);
     }
 
     @Override
