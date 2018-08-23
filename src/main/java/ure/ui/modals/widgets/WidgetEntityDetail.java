@@ -20,7 +20,7 @@ public class WidgetEntityDetail extends Widget {
     }
 
     @Override
-    public void draw() {
+    public void drawMe() {
         if (entity != null) {
             if (entity.icon() != null)
                 drawIcon(entity.icon(), 0, 0);

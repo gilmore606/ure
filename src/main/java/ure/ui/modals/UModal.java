@@ -57,6 +57,7 @@ public class UModal extends View implements UAnimator {
     public UColor bgColor;
     public boolean escapable = true;
     public boolean dismissed = false;
+    public boolean drawWidgets = false;
     int dismissFrames = 0;
     int dismissFrameEnd = 0;
     int zoomFrame = 0;
@@ -130,6 +131,7 @@ public class UModal extends View implements UAnimator {
 
     public void addWidget(Widget widget) {
         widgets.add(widget);
+        addChild(widget);
         if (focusWidget == null && widget.focusable) {
             focusWidget = widget;
             widget.focused = true;
@@ -150,15 +152,16 @@ public class UModal extends View implements UAnimator {
         if (cellw > 0 && cellh > 0) {
             drawFrame();
         }
-        if (zoom >= 1f)
+        if (zoom >= 1f) {
+            drawWidgets = true;
             drawContent();
+        } else {
+            drawWidgets = false;
+        }
     }
 
     public void drawContent() {
-        for (Widget widget : widgets) {
-            if (!widget.hidden)
-                widget.draw();
-        }
+        ;
     }
 
     public void drawIcon(Icon icon, int x, int y) {
@@ -289,12 +292,20 @@ public class UModal extends View implements UAnimator {
         focusWidget.gainFocus();
     }
 
+    void destroyWidgets() {
+        for (Widget widget : widgets) {
+            removeChild(widget);
+        }
+    }
+
     public void dismiss() {
         speaker.playUI(config.soundSelect);
+        destroyWidgets();
         dismissed = true;
     }
 
     public void escape() {
+        destroyWidgets();
         dismissed = true;
         dismissFrameEnd = 0;
         speaker.playUI(config.soundCancel);

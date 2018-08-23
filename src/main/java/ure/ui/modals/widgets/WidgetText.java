@@ -12,7 +12,7 @@ public class WidgetText extends Widget {
         setDimensions(x,y,modal.longestLine(lines), lines.length);
     }
     @Override
-    public void draw() {
+    public void drawMe() {
         for (int i=0;i<lines.length;i++)
             modal.drawString(lines[i],x,y+i,color);
     }

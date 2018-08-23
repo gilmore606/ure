@@ -18,7 +18,7 @@ public class WidgetButton extends Widget {
     }
 
     @Override
-    public void draw() {
+    public void drawMe() {
         if (icon != null)
             drawIcon(icon, 0, 0);
         drawString(label, (icon == null) ? 0 : 1, 0, null, focused ? modal.config.getHiliteColor() : null);

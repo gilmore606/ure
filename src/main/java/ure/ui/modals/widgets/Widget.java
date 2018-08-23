@@ -4,10 +4,11 @@ import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.sys.GLKey;
 import ure.ui.Icons.Icon;
+import ure.ui.View;
 import ure.ui.modals.UModal;
 import ure.ui.sounds.Sound;
 
-public class Widget {
+public class Widget extends View {
 
     UModal modal;
     public int x,y,w,h;
@@ -31,7 +32,15 @@ public class Widget {
         focused = true;
     }
 
-    public void draw() { }
+    public void draw() {
+        if (!hidden && modal.drawWidgets)
+            drawMe();
+    }
+
+    public void drawMe() {
+
+    }
+
     public void mouseInside(int mousex, int mousey) { }
     public void mouseClick(int mousex, int mousey) { }
     public void mouseRightClick(int mousex, int mousey) { }

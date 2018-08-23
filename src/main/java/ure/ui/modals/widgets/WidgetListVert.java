@@ -27,7 +27,7 @@ public class WidgetListVert extends Widget {
     }
 
     @Override
-    public void draw() {
+    public void drawMe() {
         for (int i = 0;i < options.length;i++) {
             if (optionIcons != null)
                 modal.drawIcon(optionIcons[i], x, y + i);

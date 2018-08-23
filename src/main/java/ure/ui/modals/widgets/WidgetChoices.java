@@ -34,7 +34,7 @@ public class WidgetChoices extends Widget {
         calcPositions();
     }
     @Override
-    public void draw() {
+    public void drawMe() {
         for (int i=0;i<choices.length;i++) {
             if (icons != null)
                 modal.drawIcon(icons[i], x+positions[i], y);

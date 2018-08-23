@@ -13,7 +13,7 @@ public class WidgetRexImage extends Widget {
         setDimensions(x,y,image.width,image.height);
     }
     @Override
-    public void draw() {
+    public void drawMe() {
         image.draw(modal.renderer, alpha, x*modal.gw()+modal.xpos,y*modal.gh()+modal.ypos);
     }
 }

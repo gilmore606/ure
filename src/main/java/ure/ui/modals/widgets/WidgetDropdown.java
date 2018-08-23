@@ -23,7 +23,7 @@ public class WidgetDropdown extends Widget {
     }
 
     @Override
-    public void draw() {
+    public void drawMe() {
         if (!focused) {
             drawString(options[selection], 0, 0, UColor.GRAY);
         }
