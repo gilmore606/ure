@@ -284,9 +284,9 @@ public class UModal extends View implements UAnimator {
     }
 
     void focusToWidget(Widget widget) {
-        if (focusWidget != null) focusWidget.focused = false;
-        widget.focused = true;
+        if (focusWidget != null) focusWidget.loseFocus();
         focusWidget = widget;
+        focusWidget.gainFocus();
     }
 
     public void dismiss() {

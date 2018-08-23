@@ -23,6 +23,14 @@ public class Widget {
         this.x=x; this.y=y; this.w = w; this.h=h;
     }
 
+    public void loseFocus() {
+        focused = false;
+    }
+
+    public void gainFocus() {
+        focused = true;
+    }
+
     public void draw() { }
     public void mouseInside(int mousex, int mousey) { }
     public void mouseClick(int mousex, int mousey) { }
