@@ -31,7 +31,7 @@ public class WidgetListVert extends Widget {
         for (int i = 0;i < options.length;i++) {
             if (optionIcons != null)
                 modal.drawIcon(optionIcons[i], x, y + i);
-            modal.drawString(options[i], x + (optionIcons == null ? 0 : iconSpace + 1), y + i, (i == selection) || lit[i] ? null : UColor.GRAY, (i == selection && focused) ? modal.config.getHiliteColor() : null);
+            modal.drawString(options[i], x + (optionIcons == null ? 0 : iconSpace + 1), y + i, lit[i] || (i == selection && focused) ? null : UColor.GRAY, (i == selection && focused) ? modal.config.getHiliteColor() : null);
         }
     }
 
@@ -57,6 +57,12 @@ public class WidgetListVert extends Widget {
     }
     public void dimOption(int i) {
         lit[i] = false;
+    }
+    public boolean lit(int i) {
+        return lit[i];
+    }
+    public void lightAll() {
+        for (int i=0;i<options.length;i++) lit[i] = true;
     }
 
     public String choice() {

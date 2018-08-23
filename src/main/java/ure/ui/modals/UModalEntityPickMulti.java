@@ -5,10 +5,7 @@ import ure.math.UColor;
 import ure.sys.Entity;
 import ure.sys.GLKey;
 import ure.ui.Icons.Icon;
-import ure.ui.modals.widgets.WidgetButton;
-import ure.ui.modals.widgets.WidgetEntityDetail;
-import ure.ui.modals.widgets.WidgetListVert;
-import ure.ui.modals.widgets.WidgetText;
+import ure.ui.modals.widgets.*;
 
 import java.util.ArrayList;
 
@@ -59,46 +56,27 @@ public class UModalEntityPickMulti extends UModal {
     }
 
     @Override
-    public void hearCommand(UCommand command, GLKey k) {
-        if (command != null) {
-            if (command.id.equals("PASS")) {
-                selectEntity();
-            }
-        } else if (k.k == GLFW_KEY_ENTER || k.k == GLFW_KEY_KP_ENTER) {
-            completeSelection();
-        } else if (k.k == GLFW_KEY_A && k.shift) {
-            selectAll();
+    public void pressWidget(Widget widget) {
+        if (widget == allButton) {
+            selectChoices(entities);
+        } else if (widget == okButton) {
+            selectChoices(collectChoices());
+        } else if (widget == listWidget) {
+            listWidget.toggleOption(listWidget.selection);
         }
-        super.hearCommand(command, k);
     }
 
-    @Override
-    public void mouseClick() { selectEntity(); }
-
-    void selectEntity() {
-        selectedEntities.set(selection, !selectedEntities.get(selection));
+    ArrayList<Entity> collectChoices() {
+        ArrayList<Entity> choices = new ArrayList<>();
+        for (int i=0;i<entities.size();i++) {
+            if (listWidget.lit(i))
+                choices.add(entities.get(i));
+        }
+        return choices;
     }
 
-    void completeSelection() {
+    void selectChoices(ArrayList<Entity> choices) {
         dismiss();
-        ArrayList<Entity> selected = new ArrayList<>();
-        int i = 0;
-        for (Entity entity : entities) {
-            if (selectedEntities.get(i))
-                selected.add(entity);
-            i++;
-        }
-        ((HearModalEntityPickMulti)callback).hearModalEntityPickMulti(callbackContext, selected);
-    }
-
-    void selectAll() {
-        boolean allAlready = true;
-        for (int i = 0;i<selectedEntities.size();i++) {
-            if (!selectedEntities.get(i))
-                allAlready = false;
-        }
-        for (int i = 0;i<selectedEntities.size();i++) {
-            selectedEntities.set(i, allAlready ? false : true);
-        }
+        ((HearModalEntityPickMulti)callback).hearModalEntityPickMulti(callbackContext, choices);
     }
 }

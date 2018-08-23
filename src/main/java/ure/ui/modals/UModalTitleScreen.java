@@ -71,22 +71,32 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
     }
     @Override
     public void hearCommand(UCommand command, GLKey k) {
-        lastActiveTime = System.currentTimeMillis();
+
         if (logoWidget.alpha < 1f) {
             logoWidget.alpha = 1f;
+            return;
         }
-        super.hearCommand(command, k);
-    }
-    @Override
-    public void mouseClick() {
-        if (logoWidget.alpha < 1f)
-            logoWidget.alpha = 1f;
         if (System.currentTimeMillis() - lastActiveTime > hideSeconds*1000) {
             lastActiveTime = System.currentTimeMillis();
             return;
         }
+        lastActiveTime = System.currentTimeMillis();
+        super.hearCommand(command, k);
+    }
+    @Override
+    public void mouseClick() {
+        if (logoWidget.alpha < 1f) {
+            logoWidget.alpha = 1f;
+            return;
+        }
+        if (System.currentTimeMillis() - lastActiveTime > hideSeconds*1000) {
+            lastActiveTime = System.currentTimeMillis();
+            return;
+        }
+        lastActiveTime = System.currentTimeMillis();
         super.mouseClick();
     }
+
     @Override
     public void pressWidget(Widget widget) {
         if (widget == menuWidget) {
