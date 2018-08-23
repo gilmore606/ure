@@ -15,7 +15,7 @@ public class CommandGetMulti extends UCommand implements HearModalEntityPickMult
     public static final String id = "GETMULTI";
 
     public static String nothingToGetMsg = "There's nothing here to get.";
-    public static String getDialog = "Get which items?\n(shift+A all, Enter confirm)";
+    public static String getDialog = "Get which items?";
 
     public CommandGetMulti() {
         super(id);
