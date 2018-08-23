@@ -4,12 +4,13 @@ import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.sys.GLKey;
+import ure.ui.modals.widgets.WidgetText;
 
 public class UModalNotify extends UModal {
 
     public UModalNotify(String text) {
         super(null, "");
-        WidgetText widget = new WidgetText(0,0,text);
+        WidgetText widget = new WidgetText(this,0,0,text);
         addWidget(widget);
         sizeToWidgets();
     }

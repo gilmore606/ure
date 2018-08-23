@@ -6,6 +6,10 @@ import ure.editors.glyphed.GlyphedModal;
 import ure.math.UColor;
 import ure.sys.GLKey;
 import ure.ui.RexFile;
+import ure.ui.modals.widgets.Widget;
+import ure.ui.modals.widgets.WidgetListVert;
+import ure.ui.modals.widgets.WidgetRexImage;
+import ure.ui.modals.widgets.WidgetText;
 
 import java.io.File;
 
@@ -27,10 +31,10 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         super(_callback,_callbackContext);
         setDimensions(cellwidth,cellheight);
         escapable = false;
-        logoWidget = new WidgetRexImage(0,0,"ure_logo.xp");
+        logoWidget = new WidgetRexImage(this,0,0,"ure_logo.xp");
         logoWidget.alpha = 0f;
         addCenteredWidget(logoWidget);
-        titleWidget = new WidgetText(0,11,titleMsg);
+        titleWidget = new WidgetText(this,0,11,titleMsg);
         titleWidget.hidden = true;
         addCenteredWidget(titleWidget);
 
@@ -42,7 +46,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
             options = new String[]{"New World", "VaultEd", "GlyphEd", "Credits", "Quit"};
         else
             options = new String[]{"Continue", "New World", "VaultEd", "GlyphEd", "Credits", "Quit"};
-        menuWidget = new WidgetListVert(0,13,options);
+        menuWidget = new WidgetListVert(this,0,13,options);
         menuWidget.hidden = true;
         addCenteredWidget(menuWidget);
 

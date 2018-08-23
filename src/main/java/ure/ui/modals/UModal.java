@@ -10,6 +10,7 @@ import ure.things.UThingCzar;
 import ure.ui.Icons.Icon;
 import ure.ui.Icons.UIconCzar;
 import ure.ui.RexFile;
+import ure.ui.modals.widgets.Widget;
 import ure.ui.sounds.Sound;
 import ure.ui.sounds.USpeaker;
 import ure.ui.View;
@@ -62,174 +63,6 @@ public class UModal extends View implements UAnimator {
     String title;
     ArrayList<Widget> widgets;
     Widget focusWidget;
-
-    public class Widget {
-        int x,y,w,h;
-        boolean focusable = false;
-        boolean focused = false;
-        boolean hidden = false;
-        public void setDimensions(int x, int y, int w, int h) {
-            this.x=x; this.y=y; this.w = w; this.h=h;
-        }
-        public void draw() { }
-        public void mouseInside(int mousex, int mousey, UModal modal) { }
-        public void mouseClick(int mousex, int mousey, UModal modal) { }
-        public void mouseRightClick(int mousex, int mousey, UModal modal) { }
-        public void hearCommand(UCommand command, GLKey k, UModal modal) { }
-    }
-
-    public class WidgetText extends Widget {
-        String[] lines;
-        UColor color;
-        public WidgetText(int x, int y, String text) {
-            lines = splitLines(text);
-            setDimensions(x,y,longestLine(lines), lines.length);
-        }
-        @Override
-        public void draw() {
-            for (int i=0;i<lines.length;i++)
-                drawString(lines[i],x,y+i,color);
-        }
-    }
-
-    public class WidgetRexImage extends Widget {
-        RexFile image;
-        float alpha = 1f;
-        public WidgetRexImage(int x, int y, String filename) {
-            image = new RexFile(commander.config.getResourcePath() + filename);
-            setDimensions(x,y,image.width,image.height);
-        }
-        @Override
-        public void draw() {
-            image.draw(renderer, alpha, x*gw()+xpos,y*gh()+ypos);
-        }
-    }
-
-    public class WidgetListVert extends Widget {
-        String[] options;
-        Icon[] optionIcons;
-        int iconSpace = 1;
-        int selection;
-        public WidgetListVert(int x, int y, String[] options) {
-            this.options = options;
-            focusable = true;
-            setDimensions(x,y,longestLine(options),options.length);
-        }
-        public void addIcons(Icon[] icons) { optionIcons = icons; }
-        @Override
-        public void draw() {
-            for (int i=0;i<options.length;i++) {
-                if (optionIcons != null)
-                    drawIcon(optionIcons[i], x, y+i);
-                drawString(options[i], x + (optionIcons == null ? 0 : iconSpace + 1), y+i, (i == selection) ? null : UColor.GRAY, (i == selection && focused) ? config.getHiliteColor() : null);
-            }
-        }
-        @Override
-        public void mouseInside(int mousex, int mousey, UModal modal) {
-            selection = Math.max(0,Math.min(options.length-1,mousey));
-        }
-        @Override
-        public void mouseClick(int mousex, int mousey, UModal modal) {
-            mouseInside(mousex,mousey,modal);
-        }
-        @Override
-        public void hearCommand(UCommand c, GLKey k, UModal modal) {
-            if (c != null) {
-                if (c.id.equals("MOVE_N")) selection = cursorMove(selection, -1, options.length);
-                else if (c.id.equals("MOVE_S")) selection = cursorMove(selection, 1, options.length);
-                else if (c.id.equals("PASS")) modal.widgetClick(this, 0, selection);
-            }
-        }
-        public String choice() { return options[selection]; }
-    }
-
-    public class WidgetChoices extends Widget {
-        String[] choices;
-        Icon[] icons;
-        int iconSpace = 1;
-        int[] positions;
-        int selection;
-        public WidgetChoices(int x, int y, String[] choices) {
-            this.choices = choices;
-            focusable = true;
-            this.x = x;
-            this.y = y;
-            calcPositions();
-        }
-        void calcPositions() {
-            int pos=0;
-            positions = new int[choices.length];
-            for (int i=0;i<choices.length;i++) {
-                positions[i] = pos;
-                pos += textWidth(choices[i]) + 1;
-            }
-            setDimensions(x,y,pos-1,1);
-        }
-        public void addIcons(Icon[] icons) {
-            this.icons = icons;
-            calcPositions();
-        }
-        @Override
-        public void draw() {
-            for (int i=0;i<choices.length;i++) {
-                if (icons != null)
-                    drawIcon(icons[i], x+positions[i], y);
-                drawString(choices[i],x+positions[i]+(icons == null ? 0 : iconSpace), y, (i == selection) ? null : UColor.GRAY, (i == selection && focused) ? config.getHiliteColor() : null);
-            }
-        }
-        @Override
-        public void mouseInside(int mousex, int mousey, UModal modal) {
-            selection = 0;
-            for (int i=1;i<choices.length;i++) {
-                if (mousex <= positions[i] && mousex > positions[i-1]) {
-                    selection = i;
-                }
-            }
-        }
-        @Override
-        public void mouseClick(int mousex, int mousey, UModal modal) {
-            mouseInside(mousex,mousey,modal);
-        }
-        @Override
-        public void hearCommand(UCommand c, GLKey k, UModal modal) {
-            if (c != null) {
-                if (c.id.equals("MOVE_W")) selection = cursorMove(selection, -1, choices.length);
-                else if (c.id.equals("MOVE_E")) selection = cursorMove(selection, 1, choices.length);
-                else if (c.id.equals("PASS")) modal.widgetClick(this, positions[selection], 0);
-            }
-        }
-        public String choice() { return choices[selection]; }
-    }
-
-    public class WidgetYesNo extends WidgetChoices {
-        public WidgetYesNo(int x, int y) {
-            super(x, y, new String[]{"Yes", "No"});
-            Icon yes = new Icon();
-            yes.setGlyph(8730);
-            yes.setFgColor(UColor.GREEN);
-            Icon no = new Icon();
-            no.setGlyph(120);
-            no.setFgColor(UColor.RED);
-            addIcons(new Icon[]{yes, no});
-        }
-    }
-
-    public class WidgetHSlider extends Widget {
-        int value, valuemax;
-        int length;
-        public WidgetHSlider(int x, int y, int length, int value, int valuemax, boolean showNumber) {
-            setDimensions(x,y,length + (showNumber ? 3 : 0),1);
-            focusable = true;
-            this.value = value;
-            this.valuemax = valuemax;
-            this.length = length;
-        }
-        @Override
-        public void draw() {
-            renderer.drawRectBorder(xpos + x*gw(),ypos + y*gh(), length*gw(),gh(),1,UColor.BLACK, config.getHiliteColor());
-            renderer.drawRect(x*gw(), y*gh(), (int)((length*gw()) * (float)value/(float)valuemax), gh(), config.getHiliteColor());
-        }
-    }
 
     public UModal(HearModal _callback, String _callbackContext) {
         Injector.getAppComponent().inject(this);
@@ -397,7 +230,7 @@ public class UModal extends View implements UAnimator {
                 return;
             }
         if (focusWidget != null) {
-            focusWidget.hearCommand(command, k, this);
+            focusWidget.hearCommand(command, k);
         }
     }
 
@@ -436,7 +269,7 @@ public class UModal extends View implements UAnimator {
         mousey = (commander.mouseY() - ypos) / gh();
         for (Widget widget : widgets) {
             if (mousex >= widget.x && mousey >= widget.y && mousex < widget.x + widget.w && mousey < widget.y + widget.h) {
-                widget.mouseInside(mousex - widget.x, mousey - widget.y, this);
+                widget.mouseInside(mousex - widget.x, mousey - widget.y);
                 if (widget.focusable) {
                     if (focusWidget != null) focusWidget.focused = false;
                     focusWidget = widget;
@@ -464,7 +297,7 @@ public class UModal extends View implements UAnimator {
     public void mouseClick() {
         for (Widget widget : widgets) {
             if (mousex >= widget.x && mousey >= widget.y && mousex < widget.x + widget.w && mousey < widget.y + widget.h) {
-                widget.mouseClick(mousex - widget.x, mousey - widget.y, this);
+                widget.mouseClick(mousex - widget.x, mousey - widget.y);
                 widgetClick(widget, mousex - widget.x, mousey - widget.y);
             }
         }
@@ -472,7 +305,7 @@ public class UModal extends View implements UAnimator {
     public void mouseRightClick() {
         for (Widget widget : widgets) {
             if (mousex >= widget.x && mousey >= widget.y && mousex < widget.x + widget.w && mousey < widget.y + widget.h) {
-                widget.mouseRightClick(mousex - widget.x, mousey - widget.y, this);
+                widget.mouseRightClick(mousex - widget.x, mousey - widget.y);
                 widgetRightClick(widget, mousex - widget.x, mousey - widget.y);
             }
         }

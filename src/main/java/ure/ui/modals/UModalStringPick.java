@@ -3,6 +3,9 @@ package ure.ui.modals;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.sys.GLKey;
+import ure.ui.modals.widgets.Widget;
+import ure.ui.modals.widgets.WidgetListVert;
+import ure.ui.modals.widgets.WidgetText;
 
 import java.util.ArrayList;
 
@@ -17,9 +20,9 @@ public class UModalStringPick extends UModal {
                             HearModalStringPick _callback, String _callbackContext) {
         super(_callback, _callbackContext);
 
-        headerWidget = new WidgetText(0,0,_header);
+        headerWidget = new WidgetText(this,0,0,_header);
         addWidget(headerWidget);
-        choicesWidget = new WidgetListVert(0, headerWidget.h+1, _choices);
+        choicesWidget = new WidgetListVert(this,0, headerWidget.h+1, _choices);
         addWidget(choicesWidget);
         sizeToWidgets();
         centerWidget(headerWidget);

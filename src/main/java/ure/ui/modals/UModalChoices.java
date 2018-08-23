@@ -3,6 +3,9 @@ package ure.ui.modals;
 import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.sys.GLKey;
+import ure.ui.modals.widgets.Widget;
+import ure.ui.modals.widgets.WidgetChoices;
+import ure.ui.modals.widgets.WidgetText;
 
 import java.util.ArrayList;
 
@@ -20,8 +23,8 @@ public class UModalChoices extends UModal {
 
     public UModalChoices(String _prompt, String[] _choices, HearModalChoices _callback, String _callbackContext) {
         super(_callback, _callbackContext);
-        headerWidget = new WidgetText(0,0, _prompt);
-        choicesWidget = new WidgetChoices(0, headerWidget.h + 1, _choices);
+        headerWidget = new WidgetText(this,0,0, _prompt);
+        choicesWidget = new WidgetChoices(this,0, headerWidget.h + 1, _choices);
         addWidget(headerWidget);
         addWidget(choicesWidget);
         sizeToWidgets();
