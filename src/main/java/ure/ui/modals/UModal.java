@@ -56,6 +56,7 @@ public class UModal extends View implements UAnimator {
     public int mousex, mousey;
     public UColor bgColor;
     public boolean escapable = true;
+    public boolean escapeOnRightClick = true;
     public boolean dismissed = false;
     public boolean drawWidgets = false;
     int dismissFrames = 0;
@@ -372,6 +373,10 @@ public class UModal extends View implements UAnimator {
         }
     }
     public void mouseRightClick() {
+        if (escapable && escapeOnRightClick) {
+            escape();
+            return;
+        }
         for (Widget widget : widgets) {
             if (mousex >= widget.x && mousey >= widget.y && mousex < widget.x + widget.w && mousey < widget.y + widget.h) {
                 widget.mouseRightClick(mousex - widget.x, mousey - widget.y);
@@ -380,6 +385,10 @@ public class UModal extends View implements UAnimator {
     }
 
     public void pressWidget(Widget widget) {
+
+    }
+
+    public void widgetChanged(Widget widget) {
 
     }
 

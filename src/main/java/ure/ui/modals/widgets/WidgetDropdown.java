@@ -44,5 +44,6 @@ public class WidgetDropdown extends Widget implements HearModalDropdown {
 
     public void hearModalDropdown(String context, int selection) {
         this.selection = selection;
+        modal.widgetChanged(this);
     }
 }

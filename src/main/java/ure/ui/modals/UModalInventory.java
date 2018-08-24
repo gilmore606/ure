@@ -1,22 +1,23 @@
 package ure.ui.modals;
 
+import ure.actors.actions.UAction;
 import ure.things.UThing;
-import ure.ui.modals.widgets.WidgetEntityDetail;
-import ure.ui.modals.widgets.WidgetListVert;
-import ure.ui.modals.widgets.WidgetSlideTabs;
+import ure.ui.modals.widgets.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class UModalInventory extends UModal {
+public class UModalInventory extends UModal implements HearModalDropdown {
 
     ArrayList<UThing> things;
     ArrayList<String> categories;
     ArrayList<ArrayList<UThing>> categoryLists;
     ArrayList<ArrayList<String>> categoryItemNames;
     int biggestCategoryLength;
+    ArrayList<UAction> contextActions;
 
     WidgetSlideTabs categoryWidget;
-    WidgetListVert listWidget;
+    WidgetThingList listWidget;
     WidgetEntityDetail detailWidget;
 
     public UModalInventory(ArrayList<UThing> things) {
@@ -24,10 +25,58 @@ public class UModalInventory extends UModal {
         this.things = things;
         Categorize();
 
-        categoryWidget = new WidgetSlideTabs(this, 0, 0, 20, categories, 0);
+        categoryWidget = new WidgetSlideTabs(this, 0, 0, 23, categories, 0);
         addWidget(categoryWidget);
 
+        listWidget = new WidgetThingList(this, 0, 2, 15, 12);
+        addWidget(listWidget);
+
+        detailWidget = new WidgetEntityDetail(this, 15, 2);
+        addWidget(detailWidget);
+
         sizeToWidgets();
+        categoryWidget.select(0);
+    }
+
+    public void widgetChanged(Widget widget) {
+        if (widget == categoryWidget) {
+            changeList(categoryLists.get(categoryWidget.selection));
+        } else if (widget == listWidget) {
+            changeDetail(listWidget.thing());
+        }
+    }
+
+    public void pressWidget(Widget widget) {
+        if (widget == listWidget) {
+            HashMap<String,UAction> actions = listWidget.thing().contextActions(commander.player());
+            if (actions != null) {
+                contextActions = new ArrayList<>();
+                String[] verbs = new String[actions.size()];
+                int i=0;
+                for (String verb : actions.keySet()) {
+                    verbs[i] = verb;
+                    i++;
+                    contextActions.add(actions.get(verb));
+                }
+                UModalDropdown drop = new UModalDropdown(verbs, 0, this, "verb");
+                drop.setChildPosition(listWidget.x + 2, listWidget.y + listWidget.selection, this);
+                commander.showModal(drop);
+            }
+        }
+    }
+
+    public void hearModalDropdown(String context, int selection) {
+        dismiss();
+        UAction action = contextActions.get(selection);
+        if (action != null)
+            commander.player().doAction(action);
+    }
+
+    void changeList(ArrayList<UThing> things) {
+        listWidget.setThings(things);
+    }
+    void changeDetail(UThing thing) {
+        detailWidget.setEntity(thing);
     }
 
     public void Categorize() {

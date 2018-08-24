@@ -33,18 +33,23 @@ public class WidgetHSlider extends Widget {
     @Override
     public void hearCommand(UCommand c, GLKey k) {
         if (c != null) {
-            if (c.id.equals("MOVE_W")) value = Math.max(valuemin, value-1);
-            else if (c.id.equals("LATCH_W")) value = Math.max(valuemin,value-10);
-            else if (c.id.equals("MOVE_S")) value = Math.max(valuemin,value-100);
-            else if (c.id.equals("MOVE_E")) value = Math.min(valuemax, value+1);
-            else if (c.id.equals("LATCH_E")) value = Math.min(valuemax, value+10);
-            else if (c.id.equals("MOVE_N")) value = Math.min(valuemax, value+100);
+            if (c.id.equals("MOVE_W")) setValue(Math.max(valuemin, value-1));
+            else if (c.id.equals("LATCH_W")) setValue(Math.max(valuemin,value-10));
+            else if (c.id.equals("MOVE_S")) setValue(Math.max(valuemin,value-100));
+            else if (c.id.equals("MOVE_E")) setValue(Math.min(valuemax, value+1));
+            else if (c.id.equals("LATCH_E")) setValue(Math.min(valuemax, value+10));
+            else if (c.id.equals("MOVE_N")) setValue(Math.min(valuemax, value+100));
         }
     }
 
     @Override
     public void mouseClick(int mousex, int mousey) {
         float frac = (float)mousePixelX() / (float)(length * gw());
-        value = valuemin + (int)((float)(valuemax - valuemin) * frac);
+        setValue(valuemin + (int)((float)(valuemax - valuemin) * frac));
+    }
+
+    void setValue(int v) {
+        value = v;
+        modal.widgetChanged(this);
     }
 }

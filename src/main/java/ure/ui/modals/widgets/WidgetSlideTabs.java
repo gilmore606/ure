@@ -11,7 +11,7 @@ public class WidgetSlideTabs extends Widget {
 
     ArrayList<String> tabs;
     int[] offsets;
-    int selection;
+    public int selection;
     int pixelpos;
     int targetpos;
     String separator = " | ";
@@ -30,9 +30,10 @@ public class WidgetSlideTabs extends Widget {
         select(selected);
     }
 
-    void select(int newselection) {
+    public void select(int newselection) {
         selection = newselection;
         targetpos = ((w*gw() - modal.renderer.textWidth(tabs.get(selection))) / 2) - offsets[selection];
+        modal.widgetChanged(this);
     }
 
     @Override
