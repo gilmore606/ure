@@ -10,11 +10,15 @@ public class WidgetText extends Widget {
     public WidgetText(UModal modal, int x, int y, String text) {
         super(modal);
         lines = modal.splitLines(text);
-        setDimensions(x,y,modal.longestLine(lines), lines.length);
+        if (lines != null)
+            setDimensions(x,y,modal.longestLine(lines), lines.length);
+        else
+            setDimensions(x,y,0,0);
     }
     @Override
     public void drawMe() {
-        for (int i=0;i<lines.length;i++)
-            modal.drawString(lines[i],x,y+i,color, highlight ? modal.config.getHiliteColor() : null);
+        if (lines != null)
+            for (int i=0;i<lines.length;i++)
+                modal.drawString(lines[i],x,y+i,color, highlight ? modal.config.getHiliteColor() : null);
     }
 }
