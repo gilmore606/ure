@@ -41,6 +41,10 @@ public class Widget extends View {
 
     }
 
+    public void animationTick() {
+
+    }
+
     public void mouseInside(int mousex, int mousey) { }
     public void mouseClick(int mousex, int mousey) { }
     public void mouseRightClick(int mousex, int mousey) { }

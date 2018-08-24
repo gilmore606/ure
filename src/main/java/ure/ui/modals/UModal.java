@@ -326,6 +326,8 @@ public class UModal extends View implements UAnimator {
                     zoom = 1f;
                 }
             }
+            for (Widget w : widgets)
+                w.animationTick();
         }
     }
 
