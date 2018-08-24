@@ -1,43 +1,48 @@
 package ure.ui.modals.widgets;
 
+import ure.commands.UCommand;
 import ure.math.UColor;
+import ure.sys.GLKey;
 import ure.ui.Icons.Icon;
+import ure.ui.modals.HearModalDropdown;
 import ure.ui.modals.UModal;
+import ure.ui.modals.UModalDropdown;
 
-public class WidgetDropdown extends Widget {
-    String[] options;
-    Icon[] optionIcons;
-    int iconSpace = 1;
+public class WidgetDropdown extends Widget implements HearModalDropdown {
+    String[] choices;
     public int selection;
 
-    public WidgetDropdown(UModal modal, int x, int y, String[] options, int selected) {
+    public WidgetDropdown(UModal modal, int x, int y, String[] choices, int selected) {
         super(modal);
-        this.options = options;
+        this.choices = choices;
         selection = selected;
         focusable = true;
-        setDimensions(x, y, modal.longestLine(options), 1);
+        setDimensions(x, y, modal.longestLine(choices), 1);
     }
 
-    public void addIcons(Icon[] icons) {
-        optionIcons = icons;
+    @Override
+    public void mouseClick(int mousex, int mousey) {
+        showDropdown();
+    }
+    @Override
+    public void hearCommand(UCommand c, GLKey k) {
+        if (c != null)
+            if (c.id.equals("PASS"))
+                showDropdown();
     }
 
     @Override
     public void drawMe() {
-        if (!focused) {
-            drawString(options[selection], 0, 0, UColor.GRAY);
-        }
+        drawString(choices[selection], 0, 0, focused ? null : UColor.GRAY, focused ? modal.config.getHiliteColor() : null);
     }
 
-    @Override
-    public void loseFocus() {
-        super.loseFocus();
-
+    void showDropdown() {
+        UModalDropdown drop = new UModalDropdown(choices, selection, this, "");
+        drop.setChildPosition(x, y-selection, modal);
+        modal.commander.showModal(drop);
     }
 
-    @Override
-    public void gainFocus() {
-        super.gainFocus();
-
+    public void hearModalDropdown(String context, int selection) {
+        this.selection = selection;
     }
 }

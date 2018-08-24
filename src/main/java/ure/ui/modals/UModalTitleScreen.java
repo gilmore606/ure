@@ -6,10 +6,7 @@ import ure.editors.glyphed.GlyphedModal;
 import ure.math.UColor;
 import ure.sys.GLKey;
 import ure.ui.RexFile;
-import ure.ui.modals.widgets.Widget;
-import ure.ui.modals.widgets.WidgetListVert;
-import ure.ui.modals.widgets.WidgetRexImage;
-import ure.ui.modals.widgets.WidgetText;
+import ure.ui.modals.widgets.*;
 
 import java.io.File;
 
@@ -54,6 +51,9 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         area = _area;
         commander.speaker.playBGM(commander.config.getTitleMusic());
         lastActiveTime = System.currentTimeMillis();
+
+        WidgetDropdown test = new WidgetDropdown(this, 2, 2, new String[]{"Tom","Dick","Harry","Misc","Hitler"}, 2);
+        addWidget(test);
     }
 
     @Override

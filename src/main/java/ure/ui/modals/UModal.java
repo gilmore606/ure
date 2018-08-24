@@ -239,7 +239,6 @@ public class UModal extends View implements UAnimator {
                 return;
             } else if (command.id.equals("PASS")) {
                 pressWidget(focusWidget);
-                return;
             }
         }
         if (k.k == GLFW_KEY_TAB) {
@@ -341,6 +340,10 @@ public class UModal extends View implements UAnimator {
                 }
             }
         }
+    }
+
+    boolean isMouseInside() {
+        return (mousex >= 0 && mousey >=0 && mousex < cellw && mousey < cellh);
     }
 
     int mouseToSelection(int menusize, int yoffset, int selection) { return mouseToSelection(menusize,yoffset,selection,0,1000); }

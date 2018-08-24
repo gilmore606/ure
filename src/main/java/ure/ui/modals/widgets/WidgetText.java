@@ -5,7 +5,8 @@ import ure.ui.modals.UModal;
 
 public class WidgetText extends Widget {
     String[] lines;
-    UColor color;
+    public UColor color;
+    public boolean highlight;
     public WidgetText(UModal modal, int x, int y, String text) {
         super(modal);
         lines = modal.splitLines(text);
@@ -14,6 +15,6 @@ public class WidgetText extends Widget {
     @Override
     public void drawMe() {
         for (int i=0;i<lines.length;i++)
-            modal.drawString(lines[i],x,y+i,color);
+            modal.drawString(lines[i],x,y+i,color, highlight ? modal.config.getHiliteColor() : null);
     }
 }
