@@ -14,6 +14,8 @@ public class View {
 
     protected int x, y, width, height;
 
+    protected boolean clipsToBounds = true;
+
     protected LinkedHashSet<View> children = new LinkedHashSet<>();
     protected WeakReference<View> parent = new WeakReference<>(null);
 
@@ -103,6 +105,22 @@ public class View {
      */
     public int getHeight() {
         return height;
+    }
+
+    /**
+     * Should this view prevent drawing outside its bounds?
+     * @return
+     */
+    public boolean clipsToBounds() {
+        return clipsToBounds;
+    }
+
+    /**
+     * Set whether this view should prevent drawing outside its bounds.
+     * @param clipsToBounds
+     */
+    public void setClipsToBounds(boolean clipsToBounds) {
+        this.clipsToBounds = clipsToBounds;
     }
 
     /**

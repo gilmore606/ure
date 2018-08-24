@@ -224,6 +224,8 @@ public class URendererOGL implements URenderer {
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
 
+        glEnable(GL_SCISSOR_TEST);
+
         //Flush a blank image to the screen quickly.
         glfwSwapBuffers(window);
 
@@ -248,9 +250,16 @@ public class URendererOGL implements URenderer {
 
     public void render(View view) {
         context = view;
+        if (view.clipsToBounds()) {
+            glScissor(view.absoluteX(), view.absoluteY(), view.getWidth(), view.getHeight());
+            log.trace("Clipping view " + view.toString() + " to " + view.absoluteX() + "," + view.absoluteY() + " " + view.getWidth() + "," + view.getHeight());
+        }
         view.draw();
         for (View child : view.children()) {
             render(child);
+        }
+        if (view.clipsToBounds()) {
+            glScissor(0,0, screenWidth, screenHeight);
         }
     }
 
