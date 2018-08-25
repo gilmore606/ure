@@ -270,6 +270,7 @@ public class UModal extends View implements UAnimator {
             else focusi = widgetsFocusable.size() - 1;
         }
         focusToWidget(widgetsFocusable.get(focusi));
+        speaker.playUI(config.soundCursorDown);
     }
 
     void focusPreviousWidget() {
@@ -286,6 +287,7 @@ public class UModal extends View implements UAnimator {
             else focusi = 0;
         }
         focusToWidget(widgetsFocusable.get(focusi));
+        speaker.playUI(config.soundCursorUp);
     }
 
     void focusToWidget(Widget widget) {

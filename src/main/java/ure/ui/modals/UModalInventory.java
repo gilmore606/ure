@@ -41,7 +41,9 @@ public class UModalInventory extends UModal implements HearModalDropdown {
 
     public void widgetChanged(Widget widget) {
         if (widget == categoryWidget) {
+            listWidget.selection = 0;
             changeList(categoryLists.get(categoryWidget.selection));
+            changeDetail((UThing)listWidget.entity());
         } else if (widget == listWidget) {
             changeDetail((UThing)listWidget.entity());
         }
