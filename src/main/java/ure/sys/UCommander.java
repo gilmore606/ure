@@ -609,7 +609,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         if (modal != null) {
             speaker.playUI(config.soundSelect);
             modalStack.push(modal);
-            modal.addChild(newmodal);
+            renderer.getRootView().addChild(newmodal);
             modal = newmodal;
         } else {
             renderer.getRootView().addChild(newmodal);
@@ -618,12 +618,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public void detachModal() {
+        renderer.getRootView().removeChild(modal);
         if (!modalStack.isEmpty()) {
             UModal oldmodal = modalStack.pop();
-            oldmodal.removeChild(modal);
             modal = oldmodal;
         } else {
-            renderer.getRootView().removeChild(modal);
             modal = null;
         }
     }

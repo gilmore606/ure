@@ -38,11 +38,9 @@ public class WidgetSlideTabs extends Widget {
     @Override
     public void drawMe() {
         for (int i=0;i<tabs.size();i++) {
-            int xp = absoluteX();
-            int yp = absoluteY();
             if (focused && i == selection)
-                modal.renderer.drawRect(xp + pixelpos + offsets[i], yp, modal.renderer.textWidth(tabs.get(i)), gh(), hiliteColor());
-            modal.renderer.drawString(xp + pixelpos + offsets[i], yp, (i == selection) ? modal.config.getTextColor() : grayColor(), tabs.get(i));
+                modal.renderer.drawRect(pixelpos + offsets[i], 0, modal.renderer.textWidth(tabs.get(i)), gh(), hiliteColor());
+            modal.renderer.drawString(pixelpos + offsets[i], 0, (i == selection) ? modal.config.getTextColor() : grayColor(), tabs.get(i));
 
         }
     }

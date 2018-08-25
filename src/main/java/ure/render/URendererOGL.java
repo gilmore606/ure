@@ -319,7 +319,11 @@ public class URendererOGL implements URenderer {
     public void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor){
         x += context.absoluteX();
         y += context.absoluteY();
-        addQuad(x, y, w, h, borderColor);
+        addQuad(x,y,w,borderThickness,borderColor);
+        addQuad(x,(y+h)-borderThickness,w,borderThickness,borderColor);
+        addQuad(x,y+borderThickness,borderThickness,(h-borderThickness*2),borderColor);
+        addQuad((x+w)-borderThickness,y+borderThickness,borderThickness,(h-borderThickness*2),borderColor);
+        //addQuad(x, y, w, h, borderColor);
         addQuad(x + borderThickness, y + borderThickness, w - borderThickness * 2, h - borderThickness * 2, bgColor);
     }
 

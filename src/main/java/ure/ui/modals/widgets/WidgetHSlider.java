@@ -24,10 +24,10 @@ public class WidgetHSlider extends Widget {
 
     @Override
     public void drawMe() {
-        modal.renderer.drawRectBorder(absoluteX(), absoluteY(), length*gw(),gh(),focused ? 2 : 1, UColor.BLACK, modal.config.getHiliteColor());
-        modal.renderer.drawRect(absoluteX(), absoluteY(), (int)((length*gw()) * (float)value/(float)valuemax), gh(), modal.config.getHiliteColor());
+        modal.renderer.drawRectBorder(0, 0, length*gw(),gh(),focused ? 2 : 1, UColor.BLACK, modal.config.getHiliteColor());
+        modal.renderer.drawRect(0, 0, (int)((length*gw()) * (float)value/(float)valuemax), gh(), modal.config.getHiliteColor());
         if (showNumber)
-            modal.drawString(Integer.toString(value), col + length + 1, row, null, focused ? modal.config.getHiliteColor() : null);
+            modal.drawString(Integer.toString(value), length + 1, 0, null, focused ? modal.config.getHiliteColor() : null);
     }
 
     @Override

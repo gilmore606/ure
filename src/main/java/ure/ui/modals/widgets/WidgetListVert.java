@@ -18,7 +18,7 @@ public class WidgetListVert extends Widget {
         lit = new boolean[options.length];
         for (int i=0;i<options.length;i++) { lit[i] = false; }
         focusable = true;
-        setDimensions(x, y, modal.longestLine(options) + 1 + iconSpace, options.length);
+        setDimensions(x, y, modal.longestLine(options), options.length);
     }
 
     public void addIcons(Icon[] icons) {

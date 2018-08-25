@@ -50,7 +50,7 @@ public class UModal extends View implements UAnimator {
     public int colpad = 0;
     public int rowpad = 0;
     public int mousex, mousey;
-    public UColor bgColor;
+    public UColor bgColor, shadowColor, frameColor;
     public boolean escapable = true;
     public boolean escapeOnRightClick = true;
     public boolean dismissed = false;
@@ -69,7 +69,9 @@ public class UModal extends View implements UAnimator {
         Injector.getAppComponent().inject(this);
         callback = _callback;
         callbackContext = _callbackContext;
-        bgColor = config.getModalBgColor();
+        bgColor = new UColor(config.getModalBgColor());
+        shadowColor = new UColor(config.getModalShadowColor());
+        frameColor = new UColor(config.getModalFrameColor());
         widgets = new ArrayList<>();
         widgetsFocusable = new ArrayList<>();
     }
@@ -77,7 +79,7 @@ public class UModal extends View implements UAnimator {
     public void onOpen() {
         if (!isChild()) {
             zoomFrame = 0;
-            zoom = 0.5f;
+            zoom = 0.2f;
             zoomDir = 1;
         }
     }
@@ -189,18 +191,20 @@ public class UModal extends View implements UAnimator {
     }
 
     public void drawFrame() {
+        bgColor.setAlpha(zoom);
+        shadowColor.setAlpha(zoom/2);
+        frameColor.setAlpha(zoom);
+        float shadowOffset = isChild() ? 0.5f : 1f;
         int _cellw = (int)(zoom * (float)(cellw + colpad *2));
         int _cellh = (int)(zoom * (float)(cellh + rowpad *2));
-        int _xpos = 0 - colpad*gw();
-        int _ypos = 0 - rowpad*gh();
+        int _xpos = (((cellw + colpad * 2)/2 - _cellw / 2) - colpad)*gw();
+        int _ypos = (((cellh + rowpad * 2)/2 - _cellh / 2) - rowpad)*gh();
         if (config.getModalShadowStyle() == UConfig.SHADOW_BLOCK) {
-            UColor shadowColor = config.getModalShadowColor();
-            renderer.drawRect(_xpos, _ypos, _cellw*gw(), _cellh*gh(), shadowColor);
+            renderer.drawRect(_xpos - gw() + ((int)(gw()*shadowOffset)), _ypos - gh() + ((int)(gh()*shadowOffset)), (_cellw+2)*gw(), (_cellh+2)*gh(), shadowColor);
         }
-        UColor color = config.getModalFrameColor();
         int border = config.getModalFrameLine();
         if (border > 0)
-            renderer.drawRectBorder(_xpos - gw(),_ypos - gh(),(_cellw+2)*gw(),(_cellh+2)*gh(),border, bgColor, color);
+            renderer.drawRectBorder(_xpos - gw(),_ypos - gh(),(_cellw+2)*gw(),(_cellh+2)*gh(),border, bgColor, frameColor);
         else
             renderer.drawRect(_xpos - gw(), _ypos - gh(),  (_cellw+2)*gw(),(_cellh+2)*gh(), bgColor);
 
@@ -208,7 +212,6 @@ public class UModal extends View implements UAnimator {
             renderer.drawRect(_xpos+gw()-5, _ypos-(int)(gh()*1.5f+3), gw()*textWidth(title)+8,gh()+6,config.getModalFrameColor());
             renderer.drawString(_xpos+gw(),_ypos-(int)(gh()*1.5f), bgColor, title);
         }
-
     }
 
     public void hearCommand(UCommand command, GLKey k) {
@@ -301,7 +304,7 @@ public class UModal extends View implements UAnimator {
             updateMouse();
             if (zoomDir != 0) {
                 zoomFrame++;
-                zoom += (0.5f / config.getModalZoomFrames());
+                zoom += (0.8f / config.getModalZoomFrames());
                 if (zoomFrame == config.getModalZoomFrames()) {
                     zoomDir = 0;
                     zoom = 1f;
