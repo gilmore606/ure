@@ -10,7 +10,7 @@ import ure.ui.sounds.USpeaker;
 import javax.inject.Inject;
 
 /**
- * UAction subclasses implement actions which Actors can perform to do arbitrary entities in the
+ * UAction subclasses implement actions which Actors can perform to do arbitrary things in the
  * game world which take up game time, may be prevented by other Actors or the world, cause events,
  * and so on.
  *

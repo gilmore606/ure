@@ -11,7 +11,7 @@ public class ExampleCartographer extends UCartographer {
         // First try to load regions from disk
         super.setupRegions();
         // If regions were loaded from disk then we shouldn't need to do anything else here.  If there weren't
-        // any to load, then we'll need to add one to get entities started.
+        // any to load, then we'll need to add one to get things started.
         if (regions.isEmpty()) {
             addRegion(
                     new ExampleRegionForest(

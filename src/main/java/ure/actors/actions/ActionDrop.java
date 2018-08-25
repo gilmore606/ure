@@ -5,7 +5,7 @@ import ure.actors.UActor;
 import ure.things.UThing;
 
 /**
- * Actor drops entity from her inventory, into her cell or a container.
+ * Actor drops thing from her inventory, into her cell or a container.
  *
  */
 public class ActionDrop extends UAction {

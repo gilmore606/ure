@@ -4,7 +4,7 @@ import ure.actors.UActor;
 
 
 /**
- * Actor interacts with an interactable terrain, entity, or actor.
+ * Actor interacts with an interactable terrain, thing, or actor.
  *
  * This will simply call the target's .interactionFrom() method.
  *

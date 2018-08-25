@@ -1,7 +1,7 @@
 package ure.things;
 
 /**
- * A entity which an actor can wield to deliver combat attacks.
+ * A thing which an actor can wield to deliver combat attacks.
  *
  */
 public class Weapon extends UThing {

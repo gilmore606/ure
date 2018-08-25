@@ -3,7 +3,7 @@ package ure.things;
 import ure.actors.UActor;
 
 /**
- * A entity which can have other entities put into it, or taken out of it.
+ * A thing which can have other things put into it, or taken out of it.
  *
  */
 public class Container extends UThing {

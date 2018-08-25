@@ -344,7 +344,7 @@ public class UArea implements Serializable {
     }
 
     /**
-     * A entity moved into one of our cells; do any bookkeeping or notification we require.
+     * A thing moved into one of our cells; do any bookkeeping or notification we require.
      *
      * @param thing
      * @param x
@@ -488,7 +488,7 @@ public class UArea implements Serializable {
 
     /**
      * Do what it takes to make this area ready for serialization.
-     * Only handle entities internal to me; the Cartographer will take care of the rest.
+     * Only handle things internal to me; the Cartographer will take care of the rest.
      *
      */
     public void freezeForPersist() {

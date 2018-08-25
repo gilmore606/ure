@@ -419,7 +419,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         statusPanel.setText("location", cartographer.describeLabel(event.destArea.getLabel()));
     }
     /**
-     * The gameLoop() runs forever (until the player exits the game).  It should be the last entity you call from
+     * The gameLoop() runs forever (until the player exits the game).  It should be the last thing you call from
      * your game's main() after everything is initialized.
      *
      */

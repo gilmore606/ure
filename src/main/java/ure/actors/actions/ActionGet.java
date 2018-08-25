@@ -5,7 +5,7 @@ import ure.actors.UPlayer;
 import ure.things.UThing;
 
 /**
- * Actor tries to pick up the entity, from the ground or a container.
+ * Actor tries to pick up the thing, from the ground or a container.
  *
  */
 public class ActionGet extends UAction {

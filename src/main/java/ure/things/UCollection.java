@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * An inventory of entities in a location (either a cell, or another entity or actor).
+ * An inventory of things in a location (either a cell, or another thing or actor).
  *
  */
 

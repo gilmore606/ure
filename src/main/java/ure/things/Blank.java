@@ -1,7 +1,7 @@
 package ure.things;
 
 /**
- * A basic entity which does nothing unusual.
+ * A basic thing which does nothing unusual.
  *
  */
 public class Blank extends UThing {

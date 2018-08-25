@@ -132,7 +132,7 @@ public class UCell implements UContainer {
     }
 
     /**
-     * Get the entity 'on top' of the pile of entities here.
+     * Get the thing 'on top' of the pile of things here.
      *
      * @return
      */
@@ -141,7 +141,7 @@ public class UCell implements UContainer {
     }
 
     /**
-     * Get all the entities here gettable by this actor.
+     * Get all the things here gettable by this actor.
      */
     public ArrayList<UThing> gettableThingsAt(UActor actor) {
         ArrayList<UThing> gettables = new ArrayList<>();
@@ -172,7 +172,7 @@ public class UCell implements UContainer {
         return false;
     }
     /**
-     * Is there any entity here named this?
+     * Is there any thing here named this?
      *
      * @param thing
      * @return

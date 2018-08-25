@@ -10,7 +10,7 @@ import ure.ui.particles.ParticleSpark;
 import java.util.ArrayList;
 
 /**
- * A entity which can project a Light into the area at its location.
+ * A thing which can project a Light into the area at its location.
  *
  */
 public class Lightsource extends UThing {

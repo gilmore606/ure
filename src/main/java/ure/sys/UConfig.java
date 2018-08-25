@@ -81,7 +81,7 @@ public class UConfig {
     private boolean seenLightGray = true;               // ignore light in seen-but-not-visible and use gray
     private float lightHueToFloors = 0.8f;              // TODO: how much color lights give to terrain
     private float lightHueToWalls = 0.8f;               // TODO: how much color lights give to walls
-    private float lightHueToThings = 0.5f;              // TODO: how much color lights give to entities
+    private float lightHueToThings = 0.5f;              // TODO: how much color lights give to things
     private float lightHueToActors = 0.4f;              // TODO: how much color lights give to actors
 
     private ArrayList<UColor> sunColorLerps;            // lerp points for sunlight color cycle
@@ -129,7 +129,7 @@ public class UConfig {
     private int turnsPerDay = 512;                  // game turns per 24 hour day
     private int dayTimeStartOffset = 300;           // game turns to add at game start to get the 'starting daytime'
 
-    private String defaultCorpse = "corpse";        // what entity to spawn for dead actors
+    private String defaultCorpse = "corpse";        // what thing to spawn for dead actors
     private float defaultCorpseDesaturation = 0.4f;  // how much desaturation to icons of corpses
 
     public UConfig() {
@@ -148,7 +148,7 @@ public class UConfig {
     }
 
     /**
-     * Set up entities we need to set up after singleton injection is done.
+     * Set up things we need to set up after singleton injection is done.
      */
     public void initialize() {
         soundModalOpen = new Sound(soundUImodalOpen);

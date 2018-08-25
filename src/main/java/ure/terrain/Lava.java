@@ -1,7 +1,7 @@
 package ure.terrain;
 
 /**
- * Lava does damage to entities that move into it.
+ * Lava does damage to things that move into it.
  */
 public class Lava extends UTerrain {
 

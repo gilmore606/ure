@@ -312,7 +312,7 @@ public class UActor extends UThing implements Interactable {
     }
 
     /**
-     * Can I see that entity from where I am (and I'm awake, and can see, etc)?
+     * Can I see that thing from where I am (and I'm awake, and can see, etc)?
      *
      */
     public boolean canSee(UThing thing) {
