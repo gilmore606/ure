@@ -9,16 +9,16 @@ import java.util.HashMap;
 
 public class UModalInventory extends UModal implements HearModalDropdown {
 
-    ArrayList<UThing> things;
-    ArrayList<String> categories;
-    ArrayList<ArrayList<UThing>> categoryLists;
-    ArrayList<ArrayList<String>> categoryItemNames;
+    private ArrayList<UThing> things;
+    private ArrayList<String> categories;
+    private ArrayList<ArrayList<UThing>> categoryLists;
+    private ArrayList<ArrayList<String>> categoryItemNames;
     int biggestCategoryLength;
-    ArrayList<UAction> contextActions;
+    private ArrayList<UAction> contextActions;
 
-    WidgetSlideTabs categoryWidget;
-    WidgetThingList listWidget;
-    WidgetEntityDetail detailWidget;
+    private WidgetSlideTabs categoryWidget;
+    private WidgetThingList listWidget;
+    private WidgetEntityDetail detailWidget;
 
     public UModalInventory(ArrayList<UThing> things) {
         super(null, "");
@@ -36,6 +36,8 @@ public class UModalInventory extends UModal implements HearModalDropdown {
 
         sizeToWidgets();
         categoryWidget.select(0);
+
+        dismissFrameEnd = 0;
     }
 
     public void widgetChanged(Widget widget) {

@@ -15,6 +15,7 @@ public class Widget extends View {
     public boolean focusable = false;
     public boolean focused = false;
     public boolean hidden = false;
+    public boolean dismissFlash = false;
 
     public Widget(UModal modal) {
         this.modal = modal;
@@ -116,5 +117,16 @@ public class Widget extends View {
     }
     public void drawTile(char glyph, int x, int y, UColor color) {
         modal.renderer.drawTile(glyph, x*gw()+pixelX(),y*gh()+pixelY(),color);
+    }
+    public UColor hiliteColor() {
+        if (modal.dismissed) {
+            if ((modal.dismissFrames / 2) % 2 == 0) {
+                return null;
+            } else {
+                return modal.config.getHiliteColor();
+            }
+        } else {
+            return modal.config.getHiliteColor();
+        }
     }
 }

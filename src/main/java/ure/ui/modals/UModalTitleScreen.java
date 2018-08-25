@@ -45,6 +45,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
             options = new String[]{"Continue", "New World", "VaultEd", "GlyphEd", "Credits", "Quit"};
         menuWidget = new WidgetListVert(this,0,13,options);
         menuWidget.hidden = true;
+        menuWidget.dismissFlash = true;
         addCenteredWidget(menuWidget);
 
         fakeTickCount = 0;

@@ -33,7 +33,7 @@ public class WidgetDropdown extends Widget implements HearModalDropdown {
 
     @Override
     public void drawMe() {
-        drawString(choices[selection], 0, 0, focused ? null : UColor.GRAY, focused ? modal.config.getHiliteColor() : null);
+        drawString(choices[selection], 0, 0, focused ? null : UColor.GRAY, focused ? hiliteColor() : null);
     }
 
     void showDropdown() {

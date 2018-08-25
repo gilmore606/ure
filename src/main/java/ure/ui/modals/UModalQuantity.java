@@ -32,6 +32,7 @@ public class UModalQuantity extends UModal {
     }
 
     public void sendInput(int value) {
+        okButton.dismissFlash = true;
         dismiss();
         ((HearModalQuantity)callback).hearModalQuantity(callbackContext, value);
     }

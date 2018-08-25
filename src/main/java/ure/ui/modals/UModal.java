@@ -59,8 +59,8 @@ public class UModal extends View implements UAnimator {
     public boolean escapeOnRightClick = true;
     public boolean dismissed = false;
     public boolean drawWidgets = false;
-    int dismissFrames = 0;
-    int dismissFrameEnd = 0;
+    public int dismissFrames = 0;
+    int dismissFrameEnd = 9;
     int zoomFrame = 0;
     int zoomDir = 0;
     float zoom = 1f;
@@ -300,7 +300,6 @@ public class UModal extends View implements UAnimator {
 
     public void dismiss() {
         speaker.playUI(config.soundSelect);
-        destroyWidgets();
         dismissed = true;
     }
 
@@ -315,6 +314,7 @@ public class UModal extends View implements UAnimator {
         if (dismissed) {
             dismissFrames++;
             if (dismissFrames > dismissFrameEnd) {
+                destroyWidgets();
                 commander.detachModal(this);
             }
         } else {

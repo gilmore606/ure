@@ -11,8 +11,6 @@ import java.util.ArrayList;
 
 public class UModalStringPick extends UModal {
 
-    UColor tempHiliteColor, flashColor;
-
     WidgetText headerWidget;
     WidgetListVert choicesWidget;
 
@@ -27,10 +25,6 @@ public class UModalStringPick extends UModal {
         sizeToWidgets();
         centerWidget(headerWidget);
         centerWidget(choicesWidget);
-        tempHiliteColor = commander.config.getHiliteColor();
-        flashColor = new UColor(commander.config.getHiliteColor());
-        flashColor.setAlpha(1f);
-        dismissFrameEnd = 8;
     }
 
     @Override
@@ -40,19 +34,8 @@ public class UModalStringPick extends UModal {
     }
 
     public void selectChoice(String choice) {
+        choicesWidget.dismissFlash = true;
         dismiss();
         ((HearModalStringPick)callback).hearModalStringPick(callbackContext, choice);
-    }
-
-    @Override
-    public void animationTick() {
-        if (dismissed) {
-            if ((dismissFrames % 2) == 0) {
-                tempHiliteColor = commander.config.getModalBgColor();
-            } else {
-                tempHiliteColor = flashColor;
-            }
-        }
-        super.animationTick();
     }
 }

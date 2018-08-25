@@ -13,6 +13,7 @@ public class UModalNotify extends UModal {
         WidgetText widget = new WidgetText(this,0,0,text);
         addWidget(widget);
         sizeToWidgets();
+        dismissFrameEnd = 0;
     }
 
     @Override

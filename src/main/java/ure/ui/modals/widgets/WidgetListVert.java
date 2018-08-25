@@ -31,7 +31,7 @@ public class WidgetListVert extends Widget {
         for (int i = 0;i < options.length;i++) {
             if (optionIcons != null)
                 modal.drawIcon(optionIcons[i], x, y + i);
-            modal.drawString(options[i], x + (optionIcons == null ? 0 : iconSpace + 1), y + i, lit[i] || (i == selection && focused) ? null : UColor.GRAY, (i == selection && focused) ? modal.config.getHiliteColor() : null);
+            modal.drawString(options[i], x + (optionIcons == null ? 0 : iconSpace + 1), y + i, lit[i] || (i == selection && focused) ? null : UColor.GRAY, (i == selection && focused) ? hiliteColor() : null);
         }
     }
 

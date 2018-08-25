@@ -42,7 +42,7 @@ public class WidgetSlideTabs extends Widget {
             int xp = (modal.xpos + x*gw());
             int yp = (modal.ypos + y*gh());
             if (focused && i == selection)
-                modal.renderer.drawRect(xp + pixelpos + offsets[i], yp, modal.renderer.textWidth(tabs.get(i)), gh(), modal.config.getHiliteColor());
+                modal.renderer.drawRect(xp + pixelpos + offsets[i], yp, modal.renderer.textWidth(tabs.get(i)), gh(), hiliteColor());
             modal.renderer.drawString(xp + pixelpos + offsets[i], yp, (i == selection) ? modal.config.getTextColor() : UColor.GRAY, tabs.get(i));
 
         }

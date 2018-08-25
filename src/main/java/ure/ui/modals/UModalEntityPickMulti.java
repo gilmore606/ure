@@ -58,8 +58,10 @@ public class UModalEntityPickMulti extends UModal {
     @Override
     public void pressWidget(Widget widget) {
         if (widget == allButton) {
+            allButton.dismissFlash = true;
             selectChoices(entities);
         } else if (widget == okButton) {
+            okButton.dismissFlash = true;
             selectChoices(collectChoices());
         } else if (widget == listWidget) {
             listWidget.toggleOption(listWidget.selection);

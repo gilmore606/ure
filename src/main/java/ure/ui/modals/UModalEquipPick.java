@@ -104,16 +104,4 @@ public class UModalEquipPick extends UModal {
             ((HearModalEquipPick) callback).hearModalEquipPick("unequip", equipped);
         }
     }
-
-    @Override
-    public void animationTick() {
-        if (dismissed) {
-            if ((dismissFrames % 2) == 0) {
-                tempHiliteColor = config.getModalBgColor();
-            } else {
-                tempHiliteColor = flashColor;
-            }
-        }
-        super.animationTick();
-    }
 }

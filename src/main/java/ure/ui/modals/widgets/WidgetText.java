@@ -19,6 +19,6 @@ public class WidgetText extends Widget {
     public void drawMe() {
         if (lines != null)
             for (int i=0;i<lines.length;i++)
-                modal.drawString(lines[i],x,y+i,color, highlight ? modal.config.getHiliteColor() : null);
+                modal.drawString(lines[i],x,y+i,color, highlight ? hiliteColor() : null);
     }
 }

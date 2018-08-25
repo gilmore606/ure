@@ -63,6 +63,7 @@ public class UModalDropdown extends UModal {
     }
 
     void select() {
+        items.get(selection).dismissFlash = true;
         dismiss();
         ((HearModalDropdown)callback).hearModalDropdown(callbackContext, selection);
     }

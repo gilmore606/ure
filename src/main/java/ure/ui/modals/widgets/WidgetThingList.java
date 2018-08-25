@@ -26,7 +26,7 @@ public class WidgetThingList extends Widget {
         for (int i=0;i<things.size();i++) {
             UThing thing = things.get(i);
             drawIcon(thing.icon(), 0, i);
-            drawString(thing.name(),  1+iconSpacing, i, (i == selection) ? null : UColor.GRAY, (i == selection && focused) ? modal.config.getHiliteColor() : null);
+            drawString(thing.name(),  1+iconSpacing, i, (i == selection) ? null : UColor.GRAY, (i == selection && focused) ? hiliteColor() : null);
         }
     }
 

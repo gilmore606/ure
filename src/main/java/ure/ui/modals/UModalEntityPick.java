@@ -221,18 +221,6 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
         }
     }
 
-    @Override
-    public void animationTick() {
-        if (dismissed) {
-            if ((dismissFrames % 2) == 0) {
-                tempHiliteColor = commander.config.getModalBgColor();
-            } else {
-                tempHiliteColor = flashColor;
-            }
-        }
-        super.animationTick();
-    }
-
     public void hearModalStringPick(String context, String selection) {
         dismiss();
         dismissFrameEnd = 0;
