@@ -73,7 +73,7 @@ public class AppModule {
     @Singleton
     public UActorCzar providesActorCzar() {
         UActorCzar czar = new UActorCzar();
-        //czar.loadActors("/actors.json"); -- can't do this here because it relies on some other things being loaded
+        //czar.loadActors("/actors.json"); -- can't do this here because it relies on some other entities being loaded
         return czar;
     }
 

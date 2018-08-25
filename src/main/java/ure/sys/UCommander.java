@@ -289,10 +289,6 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     debug_2();
                 } else if (k.k == GLFW_KEY_Q) {
                     debug();
-                } else if (k.k == GLFW_KEY_F1) {
-                    launchVaulted();
-                } else if (k.k == GLFW_KEY_F2) {
-                    showModal(new UModalURESplash());
                 }
             }
         } else if (moveLatch && config.isNethackShiftRun()) {
@@ -423,7 +419,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         statusPanel.setText("location", cartographer.describeLabel(event.destArea.getLabel()));
     }
     /**
-     * The gameLoop() runs forever (until the player exits the game).  It should be the last thing you call from
+     * The gameLoop() runs forever (until the player exits the game).  It should be the last entity you call from
      * your game's main() after everything is initialized.
      *
      */

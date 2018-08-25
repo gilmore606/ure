@@ -565,7 +565,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
 
         // Type selector
         drawString("terrain", 23, 1, glyphType == TERRAIN ? UColor.YELLOW : UColor.GRAY);
-        drawString("thing", 23,2, glyphType == THING ? UColor.YELLOW : UColor.GRAY);
+        drawString("entity", 23,2, glyphType == THING ? UColor.YELLOW : UColor.GRAY);
         drawString("actor", 23, 3, glyphType == ACTOR ? UColor.YELLOW : UColor.GRAY);
 
         // Glyph grid
@@ -790,7 +790,7 @@ public class GlyphedModal extends UModal implements HearModalChoices,HearModalSt
 
     void doSave() {
         writeJson(terrainIcons, "terrain-icons.json");
-        writeJson(thingIcons, "thing-icons.json");
+        writeJson(thingIcons, "entity-icons.json");
         writeJson(actorIcons, "actor-icons.json");
         UModalNotify m = new UModalNotify("Saved all changes!");
         commander.showModal(m);

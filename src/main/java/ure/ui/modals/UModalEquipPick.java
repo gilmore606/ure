@@ -1,18 +1,15 @@
 package ure.ui.modals;
 
-import ure.commands.UCommand;
-import ure.math.UColor;
-import ure.sys.GLKey;
 import ure.things.UThing;
 import ure.ui.modals.widgets.Widget;
 import ure.ui.modals.widgets.WidgetEntityDetail;
-import ure.ui.modals.widgets.WidgetThingList;
+import ure.ui.modals.widgets.WidgetEntityList;
 
 import java.util.ArrayList;
 
 public class UModalEquipPick extends UModal {
 
-    WidgetThingList listWidget;
+    WidgetEntityList listWidget;
     WidgetEntityDetail nowDetailWidget;
     WidgetEntityDetail pickDetailWidget;
 
@@ -20,7 +17,7 @@ public class UModalEquipPick extends UModal {
     public UModalEquipPick(ArrayList<UThing> _things, UThing _equipped, HearModalEquipPick _callback, String _callbackContext) {
         super(_callback, _callbackContext);
 
-        listWidget = new WidgetThingList(this, 0, 0, 10, _things.size());
+        listWidget = new WidgetEntityList(this, 0, 0, 10, _things.size());
         addWidget(listWidget);
 
         nowDetailWidget = new WidgetEntityDetail(this, 12, 0);
@@ -39,8 +36,8 @@ public class UModalEquipPick extends UModal {
     @Override
     public void widgetChanged(Widget widget) {
         if (widget == listWidget) {
-            if (listWidget.thing() != nowDetailWidget.entity)
-                pickDetailWidget.setEntity(listWidget.thing());
+            if (listWidget.entity() != nowDetailWidget.entity)
+                pickDetailWidget.setEntity(listWidget.entity());
             else
                 pickDetailWidget.setEntity(null);
         }
@@ -59,7 +56,7 @@ public class UModalEquipPick extends UModal {
 
     void selectEquip() {
         dismiss();
-        UThing thing = listWidget.thing();
+        UThing thing = (UThing)listWidget.entity();
         if (thing == nowDetailWidget.entity)
             dismissFrameEnd = 0;
         if (thing != null) {

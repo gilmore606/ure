@@ -356,12 +356,12 @@ public abstract class ULandscaper {
         }
     }
     /**
-     * Scatter a number of random things through the area, onto certain terrains.
+     * Scatter a number of random entities through the area, onto certain terrains.
      *
      * @param area
      * @param things Thing names to scatter.  List names more than once for more frequency.
-     * @param terrains Terrain names to receive things.
-     * @param numberToScatter Total number of things to scatter.
+     * @param terrains Terrain names to receive entities.
+     * @param numberToScatter Total number of entities to scatter.
      */
     public void scatterThings(UArea area, String[] things, String[] terrains, int numberToScatter) {
         while (numberToScatter > 0) {
@@ -374,7 +374,7 @@ public abstract class ULandscaper {
     }
 
     /**
-     * Spawn a new thing by name into the area.
+     * Spawn a new entity by name into the area.
      *
      */
     public void spawnThingAt(UArea area, int x, int y, String thing) {
@@ -458,7 +458,7 @@ public abstract class ULandscaper {
     }
 
     /**
-     * Pick a random cell that can accept this thing.
+     * Pick a random cell that can accept this entity.
      *
      */
     public UCell randomOpenCell(UArea area, UThing thing) {
@@ -472,7 +472,7 @@ public abstract class ULandscaper {
     }
 
     /**
-     * Pick a random spawn location for this thing.
+     * Pick a random spawn location for this entity.
      */
     public UCell getRandomSpawn(UArea area, UThing thing, int x1, int y1, int x2, int y2) {
         UCell cell = null;

@@ -27,7 +27,7 @@ import java.util.Iterator;
 /**
  * Created by gilmore on 6/20/2018.
  *
- * A real instance of a thing.
+ * A real instance of a entity.
  *
  */
 public abstract class UThing implements UContainer, Entity, Interactable, Cloneable {
@@ -62,7 +62,7 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     protected String dname;
     protected String plural;
     protected String type;
-    protected String description = "A thing.";
+    protected String description = "A entity.";
     protected int weight;
     protected boolean movable = true;
     protected int value;

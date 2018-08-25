@@ -93,7 +93,7 @@ public class ExampleDungeonScaper extends ULandscaper {
     }
 
     void floodRoom(RoomStruct r, UColor c, boolean walls){
-        //TODO: Perhaps add a system to add a bunch of random things to the rooms (furniture/decals/etc).
+        //TODO: Perhaps add a system to add a bunch of random entities to the rooms (furniture/decals/etc).
         if(r.entered == 0) return;
         int x, y;
         for(y = roomMultiplier * r.y; y < roomMultiplier * (r.y + r.h); y++){
@@ -105,7 +105,7 @@ public class ExampleDungeonScaper extends ULandscaper {
                         //t.fgColor.set(0, 0, 0);
                         //TODO: If not a door, make it a wall.
                         //  Currently the world starts off as walls, so it's not needed right now,
-                        //  but things *CAN* cover existing doors, so we gotta fix that.
+                        //  but entities *CAN* cover existing doors, so we gotta fix that.
                         //TODO: Add right/bottom sides of room walls too when we do this without a wall flood fill.
 
                         //if(walls) area.setTerrain(x, y, "wall");

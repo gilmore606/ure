@@ -83,7 +83,7 @@ public class Door extends UTerrain {
     }
 
     /**
-     * Override this to do things when someone opens the door.
+     * Override this to do entities when someone opens the door.
      * @param actor Can be null if the door opened by mysterious means.
      */
     public void openedBy(UActor actor, UCell cell) {
@@ -93,7 +93,7 @@ public class Door extends UTerrain {
     }
 
     /**
-     * Override this to do things when someone closes the door.
+     * Override this to do entities when someone closes the door.
      * @param actor Can be null if the door closed by mysterious means.
      * @param cell
      */

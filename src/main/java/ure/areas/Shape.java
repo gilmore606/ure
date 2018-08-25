@@ -259,7 +259,7 @@ public class Shape {
     }
 
     /**
-     * Write a thing into every true cell of this mask in the area
+     * Write a entity into every true cell of this mask in the area
      */
     public void writeThings(UArea area, String thing, int xoffset, int yoffset) {
         for (int x=0;x<xsize;x++)

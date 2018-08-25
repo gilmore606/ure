@@ -17,7 +17,7 @@ public class UModalInventory extends UModal implements HearModalDropdown {
     private ArrayList<UAction> contextActions;
 
     private WidgetSlideTabs categoryWidget;
-    private WidgetThingList listWidget;
+    private WidgetEntityList listWidget;
     private WidgetEntityDetail detailWidget;
 
     public UModalInventory(ArrayList<UThing> things) {
@@ -28,7 +28,7 @@ public class UModalInventory extends UModal implements HearModalDropdown {
         categoryWidget = new WidgetSlideTabs(this, 0, 0, 23, categories, 0);
         addWidget(categoryWidget);
 
-        listWidget = new WidgetThingList(this, 0, 2, 15, 12);
+        listWidget = new WidgetEntityList(this, 0, 2, 15, 12);
         addWidget(listWidget);
 
         detailWidget = new WidgetEntityDetail(this, 15, 2);
@@ -43,13 +43,13 @@ public class UModalInventory extends UModal implements HearModalDropdown {
         if (widget == categoryWidget) {
             changeList(categoryLists.get(categoryWidget.selection));
         } else if (widget == listWidget) {
-            changeDetail(listWidget.thing());
+            changeDetail((UThing)listWidget.entity());
         }
     }
 
     public void pressWidget(Widget widget) {
         if (widget == listWidget) {
-            HashMap<String,UAction> actions = listWidget.thing().contextActions(commander.player());
+            HashMap<String,UAction> actions = ((UThing)(listWidget.entity())).contextActions(commander.player());
             if (actions != null) {
                 contextActions = new ArrayList<>();
                 String[] verbs = new String[actions.size()];

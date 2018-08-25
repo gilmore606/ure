@@ -19,6 +19,6 @@ public class CommandEat extends CommandUseVerb {
         super(id);
         verb = "eat";
         noTargetsMsg = "You don't have anything to eat.";
-        whichDialog = "Eat which?";
+        whichDialog = "Eat what?\n ";
     }
 }

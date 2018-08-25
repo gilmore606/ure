@@ -4,9 +4,6 @@ import ure.actors.Bodypart;
 import ure.actors.UActor;
 import ure.actors.actions.ActionEquip;
 import ure.actors.actions.ActionUnequip;
-import ure.commands.UCommand;
-import ure.math.UColor;
-import ure.sys.GLKey;
 import ure.things.UThing;
 import ure.ui.modals.widgets.*;
 
@@ -19,7 +16,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
     ArrayList<UThing> possible;
 
     WidgetText partNameWidget;
-    WidgetThingList listWidget;
+    WidgetEntityList listWidget;
     WidgetEntityDetail detailWidget;
     WidgetText possibleWidget;
 
@@ -43,7 +40,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
         partNameWidget = new WidgetText(this, 0, 0, partnames);
         addWidget(partNameWidget);
 
-        listWidget = new WidgetThingList(this, partNameWidget.w + 1, 0, 10, slotsThings.size());
+        listWidget = new WidgetEntityList(this, partNameWidget.w + 1, 0, 10, slotsThings.size());
         addWidget(listWidget);
 
         detailWidget = new WidgetEntityDetail(this, listWidget.x + listWidget.w + 1, 0);
@@ -85,7 +82,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
 
     public void widgetChanged(Widget widget) {
         if (widget == listWidget) {
-            detailWidget.setEntity(listWidget.thing());
+            detailWidget.setEntity(listWidget.entity());
             updatePossible();
         }
     }
@@ -132,6 +129,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
             commander.player().doAction(new ActionEquip(commander.player(), pick));
         }
         fillSlots(commander.player());
+        listWidget.setThings(slotsThings);
         widgetChanged(listWidget);
     }
 }

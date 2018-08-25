@@ -7,7 +7,7 @@ import ure.ui.sounds.Sound;
 import java.util.ArrayList;
 
 /**
- * A thing which can be consumed by an Actor, can cause statuses, and can rot.
+ * A entity which can be consumed by an Actor, can cause statuses, and can rot.
  *
  */
 public class Food extends UThing {
