@@ -28,8 +28,9 @@ public class UModalGetString extends UModal {
         sizeToWidgets();
     }
 
-    public void pressWidget(Widget widget) {
-        if (widget == inputWidget)
+    @Override
+    public void widgetChanged(Widget widget) {
+        if (widget == inputWidget && inputWidget.hitEnter)
             sendInput();
     }
 

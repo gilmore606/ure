@@ -13,6 +13,7 @@ public class WidgetStringInput extends Widget {
     int maxlength;
     boolean blunk;
     int blinkCount = 0;
+    public boolean hitEnter = false;
 
     public WidgetStringInput(UModal modal, int x, int y, int width, String text, int maxlength) {
         super(modal);
@@ -43,7 +44,7 @@ public class WidgetStringInput extends Widget {
             } else
                 modal.speaker.playUI(modal.config.soundBumpLimit);
         } else if (k.k == GLFW_KEY_ENTER) {
-            modal.pressWidget(this);
+            hitEnter();
         } else {
             String typed = k.typed();
             if (typed != null) {
@@ -51,6 +52,11 @@ public class WidgetStringInput extends Widget {
                 modal.speaker.playUI(modal.config.soundKeystroke);
             }
         }
+    }
+
+    void hitEnter() {
+        hitEnter = true;
+        modal.widgetChanged(this);
     }
 
     @Override
