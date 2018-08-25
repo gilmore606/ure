@@ -1037,8 +1037,10 @@ public abstract class ULandscaper {
             else
                 name = names.get(random.i(names.size()));
             UThing thing = thingCzar.getThingByName(name);
-            UCell dest = getRandomSpawn(area, thing, x1, y1, x2, y2);
-            thing.moveToCell(area, dest.x, dest.y);
+            if (thing != null) {
+                UCell dest = getRandomSpawn(area, thing, x1, y1, x2, y2);
+                thing.moveToCell(area, dest.x, dest.y);
+            }
         }
     }
 

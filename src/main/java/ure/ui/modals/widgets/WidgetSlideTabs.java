@@ -26,6 +26,7 @@ public class WidgetSlideTabs extends Widget {
         }
         focusable = true;
         setDimensions(x,y,width,1);
+        setClipsToBounds(true);
         select(selected);
     }
 

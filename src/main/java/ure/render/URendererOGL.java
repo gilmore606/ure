@@ -248,7 +248,12 @@ public class URendererOGL implements URenderer {
 
     public void render(View view) {
         context = view;
+        if (view.clipsToBounds()) {
+            glScissor(view.absoluteX(), view.absoluteY(), view.getWidth(), view.getHeight());
+            glEnable(GL_SCISSOR_TEST);
+        }
         view.draw();
+        glDisable(GL_SCISSOR_TEST);
         for (View child : view.children()) {
             render(child);
         }
