@@ -21,9 +21,6 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
 
     String titleMsg = "Example Quest : Curse of the Feature Creep";
 
-    double lastActiveTime;
-    int hideSeconds = 10;
-
     public UModalTitleScreen(int cellwidth, int cellheight, HearModalTitleScreen _callback, String _callbackContext, UArea _area) {
         super(_callback,_callbackContext);
         setDimensions(cellwidth,cellheight);
@@ -51,14 +48,6 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         fakeTickCount = 0;
         area = _area;
         commander.speaker.playBGM(commander.config.getTitleMusic());
-        lastActiveTime = System.currentTimeMillis();
-    }
-
-    @Override
-    public void draw() {
-        if ((System.currentTimeMillis() - lastActiveTime) < hideSeconds*1000) {
-            super.draw();
-        }
     }
 
     @Override
@@ -68,11 +57,6 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
             logoWidget.alpha = 1f;
             return;
         }
-        if (System.currentTimeMillis() - lastActiveTime > hideSeconds*1000) {
-            lastActiveTime = System.currentTimeMillis();
-            return;
-        }
-        lastActiveTime = System.currentTimeMillis();
         super.hearCommand(command, k);
     }
     @Override
@@ -81,11 +65,6 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
             logoWidget.alpha = 1f;
             return;
         }
-        if (System.currentTimeMillis() - lastActiveTime > hideSeconds*1000) {
-            lastActiveTime = System.currentTimeMillis();
-            return;
-        }
-        lastActiveTime = System.currentTimeMillis();
         super.mouseClick();
     }
 
