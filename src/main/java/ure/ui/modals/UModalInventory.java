@@ -36,7 +36,6 @@ public class UModalInventory extends UModal implements HearModalDropdown {
 
         sizeToWidgets();
         categoryWidget.select(0);
-        setPad(1,1);
         dismissFrameEnd = 0;
     }
 

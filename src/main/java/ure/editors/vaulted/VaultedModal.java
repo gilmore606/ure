@@ -218,7 +218,7 @@ public class VaultedModal extends UModal implements HearModalGetString {
     }
 
     void renameVault() {
-        UModalGetString nmodal = new UModalGetString("Vault name:", 30, this, "rename");
+        UModalGetString nmodal = new UModalGetString("Vault name:", 15, 25, this, "rename");
         commander.showModal(nmodal);
     }
 

@@ -8,6 +8,7 @@ package ure.math;
 public class UColor {
     public float r, g, b, a;
 
+    public static UColor CLEAR = new UColor(0f,0f,0f,0f);
     public static UColor BLACK = new UColor(0f,0f,0f);
     public static UColor WHITE = new UColor(1f,1f,1f);
     public static UColor OFFWHITE = new UColor(1f,1f,0.9f);

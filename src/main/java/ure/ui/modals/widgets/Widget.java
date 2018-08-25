@@ -121,7 +121,7 @@ public class Widget extends View {
     public UColor hiliteColor() {
         if (modal.dismissed) {
             if ((modal.dismissFrames / 2) % 2 == 0) {
-                return null;
+                return UColor.CLEAR;
             } else {
                 return modal.config.getHiliteColor();
             }

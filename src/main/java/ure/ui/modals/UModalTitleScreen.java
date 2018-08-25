@@ -55,18 +55,12 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
     }
 
     @Override
-    public void drawFrame() {
+    public void draw() {
         if ((System.currentTimeMillis() - lastActiveTime) < hideSeconds*1000) {
-            super.drawFrame();
+            super.draw();
         }
     }
 
-    @Override
-    public void drawContent() {
-        if ((System.currentTimeMillis() - lastActiveTime) < hideSeconds*1000) {
-            super.drawContent();
-        }
-    }
     @Override
     public void hearCommand(UCommand command, GLKey k) {
 
@@ -104,7 +98,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
 
     void pickSelection(String option) {
         if (option.equals("New World")) {
-            UModalGetString smodal = new UModalGetString("Name your character:", 20,this, "name-new-world");
+            UModalGetString smodal = new UModalGetString("Name your character:", 15, 25,this, "name-new-world");
             commander.showModal(smodal);
         } else if (option.equals("Credits")) {
             UModalNotify nmodal = new UModalNotify("URE: the unRoguelike Engine\n \nSpunky - metaprogramming, persistence, rendering\nMoycakes - OpenGL\nKapho - QA, content\nGilmore - misc");
