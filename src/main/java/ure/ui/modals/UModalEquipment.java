@@ -53,7 +53,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
         addWidget(possibleWidget);
         possibleWidget.color = config.getTextGray();
         sizeToWidgets();
-
+        setPad(1,1);
         listWidget.setThings(slotsThings);
     }
 

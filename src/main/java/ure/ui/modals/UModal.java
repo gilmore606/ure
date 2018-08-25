@@ -192,8 +192,10 @@ public class UModal extends View implements UAnimator {
     public void drawFrame() {
         int _cellw = (int)(zoom * (float)(cellw + xpad*2));
         int _cellh = (int)(zoom * (float)(cellh + ypad*2));
-        int _xpos = xpos - xpad + 2 * (int)(0.5f * (cellw + xpad*2 - _cellw)*gw());
-        int _ypos = ypos - ypad + 2 * (int)(0.5f * (cellh + ypad*2 - _cellh)*gh());
+        int _xpos = xpos + 2 * (int)(0.5f * (cellw - _cellw)*gw());
+        _xpos -= xpad;
+        int _ypos = ypos + 2 * (int)(0.5f * (cellh - _cellh)*gh());
+        _ypos -= ypad;
         if (config.getModalShadowStyle() == UConfig.SHADOW_BLOCK) {
             UColor shadowColor = config.getModalShadowColor();
             renderer.drawRect(_xpos, _ypos, relx(_cellw+2)-_xpos, rely(_cellh+2)-_ypos, shadowColor);

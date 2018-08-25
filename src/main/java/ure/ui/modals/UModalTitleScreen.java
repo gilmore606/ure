@@ -52,9 +52,6 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         area = _area;
         commander.speaker.playBGM(commander.config.getTitleMusic());
         lastActiveTime = System.currentTimeMillis();
-
-        WidgetDropdown test = new WidgetDropdown(this, 2, 2, new String[]{"Tom","Dick","Harry","Misc","Hitler"}, 2);
-        addWidget(test);
     }
 
     @Override
@@ -111,7 +108,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
             commander.showModal(smodal);
         } else if (option.equals("Credits")) {
             UModalNotify nmodal = new UModalNotify("URE: the unRoguelike Engine\n \nSpunky - metaprogramming, persistence, rendering\nMoycakes - OpenGL\nKapho - QA, content\nGilmore - misc");
-            nmodal.setPad(2,2);
+            nmodal.setPad(1,1);
             nmodal.setTitle("credits");
             commander.showModal(nmodal);
         } else if (option.equals("VaultEd")) {
