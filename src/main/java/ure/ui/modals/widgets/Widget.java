@@ -129,4 +129,7 @@ public class Widget extends View {
             return modal.config.getHiliteColor();
         }
     }
+    public UColor grayColor() {
+        return modal.config.getTextGray();
+    }
 }

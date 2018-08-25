@@ -104,6 +104,9 @@ public class UModalInventory extends UModal implements HearModalDropdown {
             categoryItemNames.add(names);
             i++;
         }
+        for (i=0;i<categories.size();i++) {
+            categories.set(i, categories.get(i) + " (" + Integer.toString(categoryLists.get(i).size()) + ")");
+        }
     }
 
     public ArrayList<String> deDupeThings(ArrayList<UThing> sourceThings) {

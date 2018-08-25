@@ -28,7 +28,7 @@ public class WidgetEntityDetail extends Widget {
             ArrayList<String> details = entity.UIdetails(modal.callbackContext);
             int linepos = 2;
             for (String line : details) {
-                drawString(line, 0, linepos, UColor.LIGHTGRAY);
+                drawString(line, 0, linepos, grayColor());
                 linepos++;
             }
         }

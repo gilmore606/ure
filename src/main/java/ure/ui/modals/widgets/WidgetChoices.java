@@ -38,7 +38,7 @@ public class WidgetChoices extends Widget {
         for (int i=0;i<choices.length;i++) {
             if (icons != null)
                 modal.drawIcon(icons[i], x+positions[i], y);
-            modal.drawString(choices[i],x+positions[i]+(icons == null ? 0 : iconSpace), y, (i == selection) ? null : UColor.GRAY, (i == selection && focused) ? hiliteColor() : null);
+            modal.drawString(choices[i],x+positions[i]+(icons == null ? 0 : iconSpace), y, (i == selection) ? null : grayColor(), (i == selection && focused) ? hiliteColor() : null);
         }
     }
     @Override
