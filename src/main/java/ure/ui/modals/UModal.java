@@ -453,6 +453,6 @@ public class UModal extends View implements UAnimator {
     }
 
     public boolean isChild() {
-        return commander.hasChildModal();
+        return commander.isChildModal(this);
     }
 }

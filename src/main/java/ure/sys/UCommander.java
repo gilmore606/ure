@@ -654,6 +654,15 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             return false;
         return true;
     }
+    public boolean isChildModal(UModal modal) {
+        if (modalStack.isEmpty())
+            return false;
+        if (this.modal == modal)
+            return true;
+        if (modalStack.contains(modal) && modalStack.get(0) != modal)
+            return true;
+        return false;
+    }
 
     /**
      * Get the filesystem path to the current savestate (the world we're playing now), or the top level save path.
