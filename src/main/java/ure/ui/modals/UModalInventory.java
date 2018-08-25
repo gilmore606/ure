@@ -62,7 +62,7 @@ public class UModalInventory extends UModal implements HearModalDropdown {
                     contextActions.add(actions.get(verb));
                 }
                 UModalDropdown drop = new UModalDropdown(verbs, 0, this, "verb");
-                drop.setChildPosition(listWidget.x + 2, listWidget.y + listWidget.selection, this);
+                drop.setChildPosition(listWidget.col + 2, listWidget.row + listWidget.selection, this);
                 commander.showModal(drop);
             }
         }

@@ -1,20 +1,12 @@
 package ure.ui.modals;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import ure.actors.actions.UAction;
-import ure.commands.UCommand;
-import ure.math.UColor;
 import ure.sys.Entity;
-import ure.sys.GLKey;
-import ure.things.UThing;
 import ure.ui.modals.widgets.Widget;
 import ure.ui.modals.widgets.WidgetEntityDetail;
 import ure.ui.modals.widgets.WidgetEntityList;
 import ure.ui.modals.widgets.WidgetText;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class UModalEntityPick extends UModal {
 
@@ -28,11 +20,11 @@ public class UModalEntityPick extends UModal {
         headerWidget = new WidgetText(this, 0, 0, _header);
         addWidget(headerWidget);
 
-        listWidget = new WidgetEntityList(this, 0, headerWidget.h, 8, _entities.size());
+        listWidget = new WidgetEntityList(this, 0, headerWidget.cellh, 8, _entities.size());
         addWidget(listWidget);
 
         if (_showDetail) {
-            detailWidget = new WidgetEntityDetail(this, listWidget.w + 1, headerWidget.h);
+            detailWidget = new WidgetEntityDetail(this, listWidget.cellw + 1, headerWidget.cellh);
             addWidget(detailWidget);
         }
         sizeToWidgets();

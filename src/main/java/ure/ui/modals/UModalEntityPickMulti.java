@@ -1,15 +1,10 @@
 package ure.ui.modals;
 
-import ure.commands.UCommand;
-import ure.math.UColor;
 import ure.sys.Entity;
-import ure.sys.GLKey;
 import ure.ui.Icons.Icon;
 import ure.ui.modals.widgets.*;
 
 import java.util.ArrayList;
-
-import static org.lwjgl.glfw.GLFW.*;
 
 public class UModalEntityPickMulti extends UModal {
 
@@ -40,16 +35,16 @@ public class UModalEntityPickMulti extends UModal {
         }
 
         headerWidget = new WidgetText(this,0,0,_prompt);
-        listWidget = new WidgetListVert(this, 0, headerWidget.h + 1, names);
+        listWidget = new WidgetListVert(this, 0, headerWidget.cellh + 1, names);
         listWidget.addIcons(icons);
-        int buttonFloor = headerWidget.h + listWidget.h;
+        int buttonFloor = headerWidget.cellh + listWidget.cellh;
         if (_showDetail) {
-            detailWidget = new WidgetEntityDetail(this, listWidget.w + 1, headerWidget.h + 1);
+            detailWidget = new WidgetEntityDetail(this, listWidget.cellw + 1, headerWidget.cellh + 1);
             addWidget(detailWidget);
-            buttonFloor = Math.max(buttonFloor, headerWidget.h + detailWidget.h);
+            buttonFloor = Math.max(buttonFloor, headerWidget.cellh + detailWidget.cellh);
         }
         okButton = new WidgetButton(this, 0, buttonFloor + 2, "[ OK ]", null);
-        allButton = new WidgetButton(this, okButton.w + 1, okButton.y, "[ Take all ]", null);
+        allButton = new WidgetButton(this, okButton.cellw + 1, okButton.row, "[ Take all ]", null);
         addWidget(headerWidget);
         addWidget(listWidget);
         addWidget(okButton);

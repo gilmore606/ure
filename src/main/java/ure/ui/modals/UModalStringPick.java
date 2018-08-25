@@ -1,13 +1,8 @@
 package ure.ui.modals;
 
-import ure.commands.UCommand;
-import ure.math.UColor;
-import ure.sys.GLKey;
 import ure.ui.modals.widgets.Widget;
 import ure.ui.modals.widgets.WidgetListVert;
 import ure.ui.modals.widgets.WidgetText;
-
-import java.util.ArrayList;
 
 public class UModalStringPick extends UModal {
 
@@ -20,7 +15,7 @@ public class UModalStringPick extends UModal {
 
         headerWidget = new WidgetText(this,0,0,_header);
         addWidget(headerWidget);
-        choicesWidget = new WidgetListVert(this,0, headerWidget.h+1, _choices);
+        choicesWidget = new WidgetListVert(this,0, headerWidget.cellh +1, _choices);
         addWidget(choicesWidget);
         sizeToWidgets();
         centerWidget(headerWidget);

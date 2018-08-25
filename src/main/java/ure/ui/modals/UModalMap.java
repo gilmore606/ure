@@ -23,17 +23,17 @@ public class UModalMap extends UModal {
                 int areay = (int)(area.ysize*fy(y));
                 if (area.cellAt(areax,areay).isSeen()) {
                     UColor c = area.terrainAt(areax, areay).icon().bgColor();
-                    renderer.drawRect((int) (x * gw() * 0.5f) + xpos, (int) (y * gh() * 0.5f) + ypos, (int) (gw() * 0.5f), (int) (gh() * 0.5f), c);
+                    renderer.drawRect((int) (x * gw() * 0.5f) + absoluteX(), (int) (y * gh() * 0.5f) + absoluteY(), (int) (gw() * 0.5f), (int) (gh() * 0.5f), c);
                 }
             }
         }
-        commander.player().icon().draw(xpos+gw()*areaToMapX(commander.player().areaX())/2,ypos+gh()*areaToMapY(commander.player().areaY())/2);
+        commander.player().icon().draw(absoluteX()+gw()*areaToMapX(commander.player().areaX())/2,absoluteY()+gh()*areaToMapY(commander.player().areaY())/2);
         for (int x=0;x<area.xsize;x++) {
             for (int y=0;y<area.ysize;y++) {
                 Icon icon = area.cellAt(x,y).mapIcon();
                 if (icon != null) {
                     icon.setAnimate(false);
-                    icon.draw(xpos + gw() * areaToMapX(x) / 2, ypos + gh() * areaToMapY(y) / 2);
+                    icon.draw(absoluteX() + gw() * areaToMapX(x) / 2, absoluteY() + gh() * areaToMapY(y) / 2);
                     icon.setAnimate(true);
                 }
             }

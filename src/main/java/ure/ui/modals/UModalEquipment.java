@@ -40,13 +40,13 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
         partNameWidget = new WidgetText(this, 0, 0, partnames);
         addWidget(partNameWidget);
 
-        listWidget = new WidgetEntityList(this, partNameWidget.w + 1, 0, 10, slotsThings.size());
+        listWidget = new WidgetEntityList(this, partNameWidget.cellw + 1, 0, 10, slotsThings.size());
         addWidget(listWidget);
 
-        detailWidget = new WidgetEntityDetail(this, listWidget.x + listWidget.w + 1, 0);
+        detailWidget = new WidgetEntityDetail(this, listWidget.col + listWidget.cellw + 1, 0);
         addWidget(detailWidget);
 
-        possibleWidget = new WidgetText(this, detailWidget.x, detailWidget.y + detailWidget.h + 1, "");
+        possibleWidget = new WidgetText(this, detailWidget.col, detailWidget.row + detailWidget.cellh + 1, "");
         addWidget(possibleWidget);
         possibleWidget.color = config.getTextGray();
         sizeToWidgets();
@@ -95,7 +95,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
                 if (possible.get(i) == slotsThings.get(listWidget.selection))
                     possiblePos = i;
             UModalEquipPick emodal = new UModalEquipPick(possible, slotsThings.get(listWidget.selection), this, "equip");
-            emodal.setChildPosition(partNameWidget.w + listWidget.iconSpacing, listWidget.selection - possiblePos,this);
+            emodal.setChildPosition(partNameWidget.cellw + listWidget.iconSpacing, listWidget.selection - possiblePos,this);
             emodal.forceSelection(possiblePos);
             commander.showModal(emodal);
         }

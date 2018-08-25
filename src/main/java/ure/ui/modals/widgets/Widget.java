@@ -11,7 +11,7 @@ import ure.ui.sounds.Sound;
 public class Widget extends View {
 
     UModal modal;
-    public int x,y,w,h;
+    public int col, row, cellw, cellh;
     public boolean focusable = false;
     public boolean focused = false;
     public boolean hidden = false;
@@ -21,8 +21,15 @@ public class Widget extends View {
         this.modal = modal;
     }
 
-    public void setDimensions(int x, int y, int w, int h) {
-        this.x=x; this.y=y; this.w = w; this.h=h;
+    public void setDimensions(int col, int row, int cellw, int cellh) {
+        this.col = col;
+        this.row = row;
+        this.cellw = cellw;
+        this.cellh = cellh;
+        this.x = col*gw();
+        this.y = row*gh();
+        this.width = cellw*gw();
+        this.height = cellh*gh();
     }
 
     public void loseFocus() {
@@ -55,16 +62,10 @@ public class Widget extends View {
     public int gh() { return modal.config.getTileHeight(); }
 
     public int mousePixelX() {
-        return (modal.commander.mouseX() - modal.xpos) - x*gw();
+        return (modal.commander.mouseX() - absoluteX());
     }
     public int mousePixelY() {
-        return (modal.commander.mouseY() - modal.ypos) - y*gh();
-    }
-    public int pixelX() {
-        return modal.xpos + x*gw();
-    }
-    public int pixelY() {
-        return modal.ypos + y*gh();
+        return (modal.commander.mouseY() - absoluteY());
     }
 
     public int cursorMove(int cursor, int delta, int total) {
@@ -95,28 +96,28 @@ public class Widget extends View {
         return cursor;
     }
 
-    public void drawIcon(Icon icon, int x, int y) {
-        icon.draw(pixelX() + x*gw(),pixelY() + y*gh());
+    public void drawIcon(Icon icon, int col, int row) {
+        icon.draw(col*gw(),row*gh());
     }
 
-    public void drawString(String string, int x, int y) {
-        drawString(string,x,y,modal.config.getTextColor(), null);
+    public void drawString(String string, int col, int row) {
+        drawString(string,col,row,modal.config.getTextColor(), null);
     }
-    public void drawString(String string, int x, int y, UColor color) {
-        drawString(string,x,y,color, null);
+    public void drawString(String string, int col, int row, UColor color) {
+        drawString(string,col,row,color, null);
     }
-    public void drawString(String string, int x, int y, UColor color, UColor highlight) {
+    public void drawString(String string, int col, int row, UColor color, UColor highlight) {
         if (highlight != null) {
             int stringWidth = modal.renderer.textWidth(string) + 4;
-            modal.renderer.drawRect(x * gw() + pixelX() - 2, y * gh() + pixelY() - 3,
+            modal.renderer.drawRect(col*gw() - 2, row*gh() - 3,
                     stringWidth, modal.config.getTextHeight() + 4, highlight);
         }
         if (color == null)
             color = modal.config.getTextColor();
-        modal.renderer.drawString(x*gw()+pixelX(),y*gh()+pixelY(),color,string);
+        modal.renderer.drawString(col*gw(),row*gh(),color,string);
     }
-    public void drawTile(char glyph, int x, int y, UColor color) {
-        modal.renderer.drawTile(glyph, x*gw()+pixelX(),y*gh()+pixelY(),color);
+    public void drawTile(char glyph, int col, int row, UColor color) {
+        modal.renderer.drawTile(glyph, col*gw(),row*gh(),color);
     }
     public UColor hiliteColor() {
         if (modal.dismissed) {

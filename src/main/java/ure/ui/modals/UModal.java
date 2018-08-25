@@ -9,7 +9,6 @@ import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
 import ure.ui.Icons.Icon;
 import ure.ui.Icons.UIconCzar;
-import ure.ui.RexFile;
 import ure.ui.modals.widgets.Widget;
 import ure.ui.sounds.Sound;
 import ure.ui.sounds.USpeaker;
@@ -17,7 +16,6 @@ import ure.ui.View;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
 
@@ -49,10 +47,8 @@ public class UModal extends View implements UAnimator {
     public String callbackContext;
     public int cellw = 0;
     public int cellh = 0;
-    public int xpad = 0;
-    public int ypad = 0;
-    public int xpos = 0;
-    public int ypos = 0;
+    public int colpad = 0;
+    public int rowpad = 0;
     public int mousex, mousey;
     public UColor bgColor;
     public boolean escapable = true;
@@ -93,9 +89,9 @@ public class UModal extends View implements UAnimator {
         bgColor = color;
     }
 
-    public void setDimensions(int x, int y) {
-        cellw = x;
-        cellh = y;
+    public void setDimensions(int cols, int rows) {
+        cellw = cols;
+        cellh = rows;
         int screenw = 0, screenh = 0;
         if (config.getModalPosition() == UConfig.POS_WINDOW_CENTER) {
             screenw = config.getScreenWidth();
@@ -104,30 +100,31 @@ public class UModal extends View implements UAnimator {
             screenw = commander.modalCamera().getWidthInCells() * gw();
             screenh = commander.modalCamera().getHeightInCells() * gh();
         }
-
-        xpos = (screenw - (cellw * gw())) / 2;
-        ypos = (screenh - (cellh * gh())) / 2;
+        width = cellw * gw();
+        height = cellh * gh();
+        x = (screenw / 2 - (width / 2));
+        y = (screenh / 2 - (height / 2));
     }
 
     public void sizeToWidgets() {
         int dimx = 0;
         int dimy = 0;
         for (Widget widget : widgets) {
-            dimx = Math.max(dimx, widget.x + widget.w);
-            dimy = Math.max(dimy, widget.y + widget.h);
+            dimx = Math.max(dimx, widget.col + widget.cellw);
+            dimy = Math.max(dimy, widget.row + widget.cellh);
         }
         setDimensions(dimx,dimy);
     }
-    public void setChildPosition(int x, int y, UModal parent) {
-        xpos = x*gw() + parent.xpos;
-        ypos = y*gh() + parent.ypos;
+    public void setChildPosition(int col, int row, UModal parent) {
+        x = col*gw() + parent.x;
+        y = row*gh() + parent.y;
     }
 
     public void setTitle(String s) { title = s; }
 
-    public void setPad(int x, int y) {
-        xpad = x;
-        ypad = y;
+    public void setPad(int colpad, int rowpad) {
+        this.colpad = colpad;
+        this.rowpad = rowpad;
     }
 
     public void addWidget(Widget widget) {
@@ -146,7 +143,8 @@ public class UModal extends View implements UAnimator {
         addWidget(widget);
     }
     public void centerWidget(Widget widget) {
-        widget.x = (cellw / 2 - (widget.w / 2));
+        widget.col = (cellw / 2 - (widget.cellw / 2));
+        widget.setDimensions(widget.col, widget.row, widget.cellw, widget.cellh);
     }
 
     @Override
@@ -166,75 +164,52 @@ public class UModal extends View implements UAnimator {
         ;
     }
 
-    public void drawIcon(Icon icon, int x, int y) {
-        icon.draw(x*gw()+xpos,y*gh()+ypos);
+    public void drawIcon(Icon icon, int col, int row) {
+        icon.draw(col*gw(),row*gh());
     }
 
-    public void drawString(String string, int x, int y) {
-        drawString(string,x,y,config.getTextColor(), null);
+    public void drawString(String string, int col, int row) {
+        drawString(string,col,row,config.getTextColor(), null);
     }
-    public void drawString(String string, int x, int y, UColor color) {
-        drawString(string,x,y,color, null);
+    public void drawString(String string, int col, int row, UColor color) {
+        drawString(string,col,row,color, null);
     }
-    public void drawString(String string, int x, int y, UColor color, UColor highlight) {
+    public void drawString(String string, int col, int row, UColor color, UColor highlight) {
         if (highlight != null) {
             int stringWidth = renderer.textWidth(string) + 4;
-            renderer.drawRect(x * gw() + xpos - 2, y * gh() + ypos - 3,
+            renderer.drawRect(col * gw() - 2, row * gh() - 3,
                     stringWidth, config.getTextHeight() + 4, highlight);
         }
         if (color == null)
             color = config.getTextColor();
-        renderer.drawString(x*gw()+xpos,y*gh()+ypos,color,string);
+        renderer.drawString(col*gw(),row*gh(),color,string);
     }
-    public void drawTile(char glyph, int x, int y, UColor color) {
-        renderer.drawTile(glyph, x*gw()+xpos,y*gh()+ypos,color);
+    public void drawTile(char glyph, int col, int row, UColor color) {
+        renderer.drawTile(glyph, col*gw(),row*gh(),color);
     }
 
     public void drawFrame() {
-        int _cellw = (int)(zoom * (float)(cellw + xpad*2));
-        int _cellh = (int)(zoom * (float)(cellh + ypad*2));
-        int _xpos = xpos + 2 * (int)(0.5f * (cellw - _cellw)*gw());
-        _xpos -= xpad;
-        int _ypos = ypos + 2 * (int)(0.5f * (cellh - _cellh)*gh());
-        _ypos -= ypad;
+        int _cellw = (int)(zoom * (float)(cellw + colpad *2));
+        int _cellh = (int)(zoom * (float)(cellh + rowpad *2));
+        int _xpos = 0 - colpad*gw();
+        int _ypos = 0 - rowpad*gh();
         if (config.getModalShadowStyle() == UConfig.SHADOW_BLOCK) {
             UColor shadowColor = config.getModalShadowColor();
-            renderer.drawRect(_xpos, _ypos, relx(_cellw+2)-_xpos, rely(_cellh+2)-_ypos, shadowColor);
+            renderer.drawRect(_xpos, _ypos, _cellw*gw(), _cellh*gh(), shadowColor);
         }
         UColor color = config.getModalFrameColor();
         int border = config.getModalFrameLine();
         if (border > 0)
-            renderer.drawRectBorder(_xpos - gw(),_ypos - gh(),relx(_cellw+2)-_xpos,rely(_cellh+2)-_ypos,border, bgColor, color);
+            renderer.drawRectBorder(_xpos - gw(),_ypos - gh(),(_cellw+2)*gw(),(_cellh+2)*gh(),border, bgColor, color);
         else
-            renderer.drawRect(_xpos - gw(), _ypos - gh(),  relx(_cellw+2) - _xpos,rely(_cellh+2) - _ypos, bgColor);
-        String frames = config.getUiFrameGlyphs();
+            renderer.drawRect(_xpos - gw(), _ypos - gh(),  (_cellw+2)*gw(),(_cellh+2)*gh(), bgColor);
 
-        if (frames != null) {
-            renderer.drawTile(frames.charAt(0), relx(-1), rely(-1), color);
-            renderer.drawTile(frames.charAt(2), relx(_cellw), rely(-1), color);
-            renderer.drawTile(frames.charAt(4), relx(_cellw), rely(_cellh), color);
-            renderer.drawTile(frames.charAt(6), relx(-1), rely(_cellh), color);
-            for (int x = 0;x < _cellw;x++) {
-                renderer.drawTile(frames.charAt(1), relx(x), rely(-1), color);
-                renderer.drawTile(frames.charAt(5), relx(x), rely(_cellh), color);
-            }
-            for (int y = 0;y < _cellh;y++) {
-                renderer.drawTile(frames.charAt(3), relx(-1), rely(y), color);
-                renderer.drawTile(frames.charAt(7), relx(_cellw), rely(y), color);
-            }
-        }
         if (title != null && zoom >= 1f) {
             renderer.drawRect(_xpos+gw()-5, _ypos-(int)(gh()*1.5f+3), gw()*textWidth(title)+8,gh()+6,config.getModalFrameColor());
             renderer.drawString(_xpos+gw(),_ypos-(int)(gh()*1.5f), bgColor, title);
         }
 
     }
-
-    /**
-     * Convert a modal-relative cell position to an absolute screen position.
-     */
-    public int relx(int x)  { return (x * config.getTileWidth()) + xpos; }
-    public int rely(int y)  { return (y * config.getTileHeight()) + ypos; }
 
     public void hearCommand(UCommand command, GLKey k) {
         if (command != null) {
@@ -338,11 +313,11 @@ public class UModal extends View implements UAnimator {
     }
 
     void updateMouse() {
-        mousex = (commander.mouseX() - xpos) / gw();
-        mousey = (commander.mouseY() - ypos) / gh();
+        mousex = (commander.mouseX() - absoluteX()) / gw();
+        mousey = (commander.mouseY() - absoluteY()) / gh();
         for (Widget widget : widgets) {
-            if (mousex >= widget.x && mousey >= widget.y && mousex < widget.x + widget.w && mousey < widget.y + widget.h) {
-                widget.mouseInside(mousex - widget.x, mousey - widget.y);
+            if (mousex >= widget.col && mousey >= widget.row && mousex < widget.col + widget.cellw && mousey < widget.row + widget.cellh) {
+                widget.mouseInside(mousex - widget.col, mousey - widget.row);
                 if (widget.focusable) {
                     focusToWidget(widget);
                 }
@@ -371,8 +346,8 @@ public class UModal extends View implements UAnimator {
     }
     public void mouseClick() {
         for (Widget widget : widgets) {
-            if (mousex >= widget.x && mousey >= widget.y && mousex < widget.x + widget.w && mousey < widget.y + widget.h) {
-                widget.mouseClick(mousex - widget.x, mousey - widget.y);
+            if (mousex >= widget.col && mousey >= widget.row && mousex < widget.col + widget.cellw && mousey < widget.row + widget.cellh) {
+                widget.mouseClick(mousex - widget.col, mousey - widget.row);
                 pressWidget(widget);
             }
         }
@@ -383,8 +358,8 @@ public class UModal extends View implements UAnimator {
             return;
         }
         for (Widget widget : widgets) {
-            if (mousex >= widget.x && mousey >= widget.y && mousex < widget.x + widget.w && mousey < widget.y + widget.h) {
-                widget.mouseRightClick(mousex - widget.x, mousey - widget.y);
+            if (mousex >= widget.col && mousey >= widget.row && mousex < widget.col + widget.cellw && mousey < widget.row + widget.cellh) {
+                widget.mouseRightClick(mousex - widget.col, mousey - widget.row);
             }
         }
     }

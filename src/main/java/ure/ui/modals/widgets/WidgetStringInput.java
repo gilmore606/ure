@@ -26,10 +26,10 @@ public class WidgetStringInput extends Widget {
     @Override
     public void drawMe() {
         if (focused)
-            modal.renderer.drawRect(pixelX(), pixelY(), w*gw(), gh(), hiliteColor());
+            modal.renderer.drawRect(absoluteX(), absoluteY(), cellw *gw(), gh(), hiliteColor());
         drawString(text, 0, 0);
         if (blunk)
-            modal.renderer.drawRect(pixelX() + modal.renderer.stringWidth(text), pixelY() + (gh()*2)/3, modal.config.getTextWidth(), gh()/3, modal.config.getTextColor());
+            modal.renderer.drawRect(absoluteX() + modal.renderer.stringWidth(text), absoluteY() + (gh()*2)/3, modal.config.getTextWidth(), gh()/3, modal.config.getTextColor());
     }
 
     @Override

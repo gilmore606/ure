@@ -1,8 +1,5 @@
 package ure.ui.modals;
 
-import ure.commands.UCommand;
-import ure.math.UColor;
-import ure.sys.GLKey;
 import ure.ui.modals.widgets.Widget;
 import ure.ui.modals.widgets.WidgetButton;
 import ure.ui.modals.widgets.WidgetHSlider;
@@ -17,8 +14,8 @@ public class UModalQuantity extends UModal {
     public UModalQuantity(String _prompt, int _min, int _max, HearModalQuantity _callback, String _callbackContext) {
         super(_callback,_callbackContext);
         headerWidget = new WidgetText(this,0,0,_prompt);
-        sliderWidget = new WidgetHSlider(this,0,headerWidget.h+1,15, _min, _min, _max, true);
-        okButton = new WidgetButton(this, sliderWidget.w + 1, sliderWidget.y, "[ OK ]", null);
+        sliderWidget = new WidgetHSlider(this,0,headerWidget.cellh +1,15, _min, _min, _max, true);
+        okButton = new WidgetButton(this, sliderWidget.cellw + 1, sliderWidget.row, "[ OK ]", null);
         addWidget(headerWidget);
         addWidget(sliderWidget);
         addWidget(okButton);

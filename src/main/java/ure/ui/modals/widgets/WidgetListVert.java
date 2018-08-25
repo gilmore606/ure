@@ -1,7 +1,6 @@
 package ure.ui.modals.widgets;
 
 import ure.commands.UCommand;
-import ure.math.UColor;
 import ure.sys.GLKey;
 import ure.ui.Icons.Icon;
 import ure.ui.modals.UModal;
@@ -30,8 +29,8 @@ public class WidgetListVert extends Widget {
     public void drawMe() {
         for (int i = 0;i < options.length;i++) {
             if (optionIcons != null)
-                modal.drawIcon(optionIcons[i], x, y + i);
-            modal.drawString(options[i], x + (optionIcons == null ? 0 : iconSpace + 1), y + i, lit[i] || (i == selection && focused) ? null : grayColor(), (i == selection && focused) ? hiliteColor() : null);
+                drawIcon(optionIcons[i], 0, i);
+            drawString(options[i], (optionIcons == null ? 0 : iconSpace + 1), i, lit[i] || (i == selection && focused) ? null : grayColor(), (i == selection && focused) ? hiliteColor() : null);
         }
     }
 

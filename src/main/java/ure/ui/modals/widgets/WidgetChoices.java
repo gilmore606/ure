@@ -1,7 +1,6 @@
 package ure.ui.modals.widgets;
 
 import ure.commands.UCommand;
-import ure.math.UColor;
 import ure.sys.GLKey;
 import ure.ui.Icons.Icon;
 import ure.ui.modals.UModal;
@@ -16,8 +15,8 @@ public class WidgetChoices extends Widget {
         super(modal);
         this.choices = choices;
         focusable = true;
-        this.x = x;
-        this.y = y;
+        this.col = x;
+        this.row = y;
         calcPositions();
     }
     void calcPositions() {
@@ -27,7 +26,7 @@ public class WidgetChoices extends Widget {
             positions[i] = pos;
             pos += modal.textWidth(choices[i]) + 1;
         }
-        setDimensions(x,y,pos-1,1);
+        setDimensions(col, row,pos-1,1);
     }
     public void addIcons(Icon[] icons) {
         this.icons = icons;
@@ -37,8 +36,8 @@ public class WidgetChoices extends Widget {
     public void drawMe() {
         for (int i=0;i<choices.length;i++) {
             if (icons != null)
-                modal.drawIcon(icons[i], x+positions[i], y);
-            modal.drawString(choices[i],x+positions[i]+(icons == null ? 0 : iconSpace), y, (i == selection) ? null : grayColor(), (i == selection && focused) ? hiliteColor() : null);
+                drawIcon(icons[i], positions[i], 0);
+            drawString(choices[i], positions[i]+(icons == null ? 0 : iconSpace), 0, (i == selection) ? null : grayColor(), (i == selection && focused) ? hiliteColor() : null);
         }
     }
     @Override

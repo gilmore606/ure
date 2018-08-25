@@ -23,7 +23,7 @@ public class UModalEquipPick extends UModal {
         nowDetailWidget = new WidgetEntityDetail(this, 12, 0);
         addWidget(nowDetailWidget);
 
-        pickDetailWidget = new WidgetEntityDetail(this, 12, nowDetailWidget.h + 2);
+        pickDetailWidget = new WidgetEntityDetail(this, 12, nowDetailWidget.cellh + 2);
         addWidget(pickDetailWidget);
 
         sizeToWidgets();

@@ -1,7 +1,6 @@
 package ure.ui.modals.widgets;
 
 import ure.commands.UCommand;
-import ure.math.UColor;
 import ure.sys.GLKey;
 import ure.ui.modals.UModal;
 
@@ -32,15 +31,15 @@ public class WidgetSlideTabs extends Widget {
 
     public void select(int newselection) {
         selection = newselection;
-        targetpos = ((w*gw() - modal.renderer.textWidth(tabs.get(selection))) / 2) - offsets[selection];
+        targetpos = ((cellw *gw() - modal.renderer.textWidth(tabs.get(selection))) / 2) - offsets[selection];
         modal.widgetChanged(this);
     }
 
     @Override
     public void drawMe() {
         for (int i=0;i<tabs.size();i++) {
-            int xp = (modal.xpos + x*gw());
-            int yp = (modal.ypos + y*gh());
+            int xp = absoluteX();
+            int yp = absoluteY();
             if (focused && i == selection)
                 modal.renderer.drawRect(xp + pixelpos + offsets[i], yp, modal.renderer.textWidth(tabs.get(i)), gh(), hiliteColor());
             modal.renderer.drawString(xp + pixelpos + offsets[i], yp, (i == selection) ? modal.config.getTextColor() : grayColor(), tabs.get(i));

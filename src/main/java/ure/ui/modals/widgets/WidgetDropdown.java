@@ -1,9 +1,7 @@
 package ure.ui.modals.widgets;
 
 import ure.commands.UCommand;
-import ure.math.UColor;
 import ure.sys.GLKey;
-import ure.ui.Icons.Icon;
 import ure.ui.modals.HearModalDropdown;
 import ure.ui.modals.UModal;
 import ure.ui.modals.UModalDropdown;
@@ -38,7 +36,7 @@ public class WidgetDropdown extends Widget implements HearModalDropdown {
 
     void showDropdown() {
         UModalDropdown drop = new UModalDropdown(choices, selection, this, "");
-        drop.setChildPosition(x, y-selection, modal);
+        drop.setChildPosition(col, row -selection, modal);
         modal.commander.showModal(drop);
     }
 

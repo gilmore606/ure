@@ -140,4 +140,7 @@ public class View {
         // Do any drawing required for this view, then draw children
     }
 
+    public String xystr() { return "my xy is " + Integer.toString(x) + "," + Integer.toString(y); }
+    public String absxystr() { return "abs xy is " + Integer.toString(absoluteX()) + "," + Integer.toString(absoluteY()); }
+
 }
