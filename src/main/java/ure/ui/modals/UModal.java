@@ -133,13 +133,14 @@ public class UModal extends View implements UAnimator {
     public void addWidget(Widget widget) {
         widgets.add(widget);
         addChild(widget);
-        if (focusWidget == null && widget.focusable) {
-            focusWidget = widget;
-            widget.focused = true;
-        }
-        if (widget.focusable)
+        if (widget.focusable) {
             widgetsFocusable.add(widget);
+            if (focusWidget == null) {
+                focusToWidget(widget);
+            }
+        }
     }
+
     public void addCenteredWidget(Widget widget) {
         centerWidget(widget);
         addWidget(widget);
@@ -442,17 +443,6 @@ public class UModal extends View implements UAnimator {
                 drawString(line, x, y+i, c);
                 i++;
             }
-        }
-    }
-
-    public void showDetail(Entity entity, int xoff, int yoff) {
-        if (entity == null) return;
-        drawString(entity.getName(), xoff, yoff);
-        ArrayList<String> details = entity.UIdetails(callbackContext);
-        int linepos = 1;
-        for (String line : details) {
-            drawString(line, xoff, linepos+yoff, UColor.LIGHTGRAY);
-            linepos++;
         }
     }
 

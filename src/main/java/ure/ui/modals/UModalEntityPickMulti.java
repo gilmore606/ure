@@ -42,16 +42,19 @@ public class UModalEntityPickMulti extends UModal {
         headerWidget = new WidgetText(this,0,0,_prompt);
         listWidget = new WidgetListVert(this, 0, headerWidget.h + 1, names);
         listWidget.addIcons(icons);
-        okButton = new WidgetButton(this, 0, headerWidget.h + listWidget.h + 2, "[ OK ]", null);
+        int buttonFloor = headerWidget.h + listWidget.h;
+        if (_showDetail) {
+            detailWidget = new WidgetEntityDetail(this, listWidget.w + 1, headerWidget.h + 1);
+            addWidget(detailWidget);
+            buttonFloor = Math.max(buttonFloor, headerWidget.h + detailWidget.h);
+        }
+        okButton = new WidgetButton(this, 0, buttonFloor + 2, "[ OK ]", null);
         allButton = new WidgetButton(this, okButton.w + 1, okButton.y, "[ Take all ]", null);
         addWidget(headerWidget);
         addWidget(listWidget);
         addWidget(okButton);
         addWidget(allButton);
-        if (_showDetail) {
-            detailWidget = new WidgetEntityDetail(this, listWidget.w + 1, headerWidget.h + 1);
-            addWidget(detailWidget);
-        }
+
         sizeToWidgets();
     }
 
@@ -68,6 +71,11 @@ public class UModalEntityPickMulti extends UModal {
         }
     }
 
+    @Override
+    public void widgetChanged(Widget widget) {
+        if (widget == listWidget && detailWidget != null)
+            detailWidget.setEntity(entities.get(listWidget.selection));
+    }
     ArrayList<Entity> collectChoices() {
         ArrayList<Entity> choices = new ArrayList<>();
         for (int i=0;i<entities.size();i++) {

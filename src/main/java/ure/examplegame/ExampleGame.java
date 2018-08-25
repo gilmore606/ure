@@ -12,7 +12,7 @@ import ure.render.URenderer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.sys.UConfig;
-import ure.sys.UREGame;
+import ure.sys.UREgame;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.things.UThingCzar;
@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.LogManager;
 
-public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.ResolutionListener {
+public class ExampleGame implements UREgame, HearModalTitleScreen, URenderer.ResolutionListener {
 
     static UArea area;
     static UCamera camera;

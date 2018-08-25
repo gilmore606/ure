@@ -40,7 +40,7 @@ public class UConfig {
     private float textFontSize = 16;
     private int tileWidth = 20;
     private int tileHeight = 20;
-    private int textWidth = 10;
+    private int textWidth = 11;
     private int textHeight = 16;
 
     private String uiCheckGlyph = "*";                          // checkmark for UI selections

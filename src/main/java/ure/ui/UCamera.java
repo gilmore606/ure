@@ -6,7 +6,7 @@ import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.math.UColor;
-import ure.math.USimplexNoise;
+import ure.math.SimplexNoise;
 import ure.render.URenderer;
 import ure.sys.Injector;
 import ure.sys.UAnimator;
@@ -47,7 +47,7 @@ public class UCamera extends View implements UAnimator {
     public static int PINSTYLE_SCREENS = 2;
     public static int PINSTYLE_HARD = 3;
 
-    private USimplexNoise noise = new USimplexNoise();
+    private SimplexNoise noise = new SimplexNoise();
 
     private Log log = LogFactory.getLog(UCamera.class);
 

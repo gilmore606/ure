@@ -69,7 +69,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     private HashSet<UAnimator> animators;
     private ArrayList<UActor> actors;
 
-    private UREGame game;
+    private UREgame game;
     private URenderer renderer;
     private UPlayer player;
     private UScrollPanel scrollPrinter;
@@ -111,7 +111,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         bus.register(this);
     }
 
-    public void registerComponents(UREGame _game, UPlayer theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
+    public void registerComponents(UREgame _game, UPlayer theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
         game = _game;
         renderer = theRenderer;
         animators = new HashSet<UAnimator>();

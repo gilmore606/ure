@@ -19,7 +19,7 @@ public class WidgetListVert extends Widget {
         lit = new boolean[options.length];
         for (int i=0;i<options.length;i++) { lit[i] = false; }
         focusable = true;
-        setDimensions(x, y, modal.longestLine(options), options.length);
+        setDimensions(x, y, modal.longestLine(options) + 1 + iconSpace, options.length);
     }
 
     public void addIcons(Icon[] icons) {
@@ -37,14 +37,19 @@ public class WidgetListVert extends Widget {
 
     @Override
     public void mouseInside(int mousex, int mousey) {
-        selection = Math.max(0, Math.min(options.length - 1, mousey));
+        select(Math.max(0, Math.min(options.length - 1, mousey)));
+    }
+
+    void select(int newselection) {
+        selection = newselection;
+        modal.widgetChanged(this);
     }
 
     @Override
     public void hearCommand(UCommand c, GLKey k) {
         if (c != null) {
-            if (c.id.equals("MOVE_N")) selection = cursorMove(selection, -1, options.length);
-            else if (c.id.equals("MOVE_S")) selection = cursorMove(selection, 1, options.length);
+            if (c.id.equals("MOVE_N")) select(cursorMove(selection, -1, options.length));
+            else if (c.id.equals("MOVE_S")) select(cursorMove(selection, 1, options.length));
         }
         super.hearCommand(c, k);
     }
