@@ -8,17 +8,20 @@ import ure.commands.UCommand;
 import ure.math.UColor;
 import ure.sys.GLKey;
 import ure.things.UThing;
+import ure.ui.modals.widgets.*;
 
 import java.util.ArrayList;
 
 public class UModalEquipment extends UModal implements HearModalEquipPick {
 
-    int width,height;
     ArrayList<Bodypart> slotsBodyparts;
     ArrayList<UThing> slotsThings;
     ArrayList<UThing> possible;
 
-    int selection;
+    WidgetText partNameWidget;
+    WidgetThingList listWidget;
+    WidgetEntityDetail detailWidget;
+    WidgetText possibleWidget;
 
     public UModalEquipment(UActor actor) {
         super(null, "");
@@ -27,25 +30,31 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
         slotsThings = new ArrayList<>();
         possible = new ArrayList<>();
         fillSlots(actor);
-        int longestpart = 0;
-        for (int i=0;i<slotsBodyparts.size();i++) {
-            Bodypart part = slotsBodyparts.get(i);
-            if (part != null) {
-                int len = textWidth(part.equipUIstring());
-                if (len > longestpart) longestpart = len;
-            }
+
+        String partnames = "";
+        String lastname = "";
+        for (Bodypart part : slotsBodyparts) {
+            if (part.name.equals(lastname))
+                partnames += " \n";
+            else
+                partnames += part.name + " \n";
+            lastname = part.name;
         }
-        int longestthing = 0;
-        for (int i=0;i<actor.things().size();i++) {
-            UThing thing = actor.things().get(i);
-            if (thing != null) {
-                int len = textWidth(thing.name());
-                if (len > longestthing) longestthing = len;
-            }
-        }
-        width = longestpart + 1 + longestthing + 1 + Math.max(longestthing, 12);
-        height = Math.max(slotsThings.size(), 7);
-        setDimensions(width,height);
+        partNameWidget = new WidgetText(this, 0, 0, partnames);
+        addWidget(partNameWidget);
+
+        listWidget = new WidgetThingList(this, partNameWidget.w + 1, 0, 10, slotsThings.size());
+        addWidget(listWidget);
+
+        detailWidget = new WidgetEntityDetail(this, listWidget.x + listWidget.w + 1, 0);
+        addWidget(detailWidget);
+
+        possibleWidget = new WidgetText(this, detailWidget.x, detailWidget.y + detailWidget.h + 1, "");
+        addWidget(possibleWidget);
+        possibleWidget.color = config.getTextGray();
+        sizeToWidgets();
+
+        listWidget.setThings(slotsThings);
     }
 
     void fillSlots(UActor actor) {
@@ -67,82 +76,49 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
                 }
             }
         }
-        updatePossible();
     }
 
-    @Override
-    public void drawContent() {
-        int oldselection = selection;
-        selection = mouseToSelection(slotsThings.size(), 0, selection);
-        if (selection != oldselection) updatePossible();
-        Bodypart lastpart = null;
-        for (int i=0;i<slotsThings.size();i++) {
-            Bodypart part = slotsBodyparts.get(i);
-            if (part != lastpart) {
-                drawString(part.equipUIstring(), 0, i, null, null);
-            }
-            lastpart = part;
-            UThing thing = slotsThings.get(i);
-            if (thing != null) {
-                drawIcon(thing.getIcon(), 7, i);
-                drawString(thing.getName(), 8, i, i == selection ? null : UColor.GRAY, i == selection ? config.getHiliteColor() : null);
-            } else {
-                if (i == selection) {
-                    drawString("        ", 8, i, null, config.getHiliteColor());
-                }
-            }
-        }
-        int detailX = 17;
-        UThing thing = slotsThings.get(selection);
-        showDetail(thing, detailX, 0);
-        int i=0;
-        for (UThing poss : possible) {
-            if (poss != null) {
-                if (!poss.equipped) {
-                    drawString(poss.getName(), detailX, i + 5, UColor.GRAY);
-                    i++;
-                }
-            }
+    public void pressWidget(Widget widget) {
+        if (widget == listWidget) {
+            selectSlot();
         }
     }
 
-    @Override
-    public void hearCommand(UCommand command, GLKey k) {
-        if (command != null) {
-            if (command.id.equals("MOVE_N")) {
-                selection = cursorMove(selection, -1, slotsThings.size());
-            } else if (command.id.equals("MOVE_S")) {
-                selection = cursorMove(selection, 1, slotsThings.size());
-            } else if (command.id.equals("PASS")) {
-                selectSlot();
-            } else if (command.id.equals("ESC") && escapable) {
-                escape();
-            }
+    public void widgetChanged(Widget widget) {
+        if (widget == listWidget) {
+            detailWidget.setEntity(listWidget.thing());
             updatePossible();
         }
     }
 
-    @Override
-    public void mouseClick() { selectSlot(); }
-
     public void selectSlot() {
         updatePossible();
         if (possible.size() > 0) {
-            UModalEquipPick emodal = new UModalEquipPick(possible, slotsThings.get(selection), true, this, "equip");
-            emodal.setChildPosition(6,selection,this);
+            int possiblePos = 0;
+            for (int i=0;i<possible.size();i++)
+                if (possible.get(i) == slotsThings.get(listWidget.selection))
+                    possiblePos = i;
+            UModalEquipPick emodal = new UModalEquipPick(possible, slotsThings.get(listWidget.selection), this, "equip");
+            emodal.setChildPosition(partNameWidget.w + listWidget.iconSpacing, listWidget.selection - possiblePos,this);
+            emodal.forceSelection(possiblePos);
             commander.showModal(emodal);
         }
     }
 
     void updatePossible() {
         possible.clear();
+        String posstext = "";
         ArrayList<UThing> equipment = commander.player().getContents().getThings();
         for (UThing thing : equipment) {
-            if (thing.fitsOnBodypart(slotsBodyparts.get(selection).getName()))
-                if (thing == slotsThings.get(selection) || !thing.equipped)
+            if (thing.fitsOnBodypart(slotsBodyparts.get(listWidget.selection).getName()))
+                if (thing == slotsThings.get(listWidget.selection) || !thing.equipped) {
                     possible.add(thing);
+                    if (!thing.equipped)
+                        posstext += thing.name() + " \n";
+                }
         }
         possible.add(null);
+        possibleWidget.setText(posstext);
     }
 
     public void hearModalEquipPick(String context, UThing pick) {
@@ -150,12 +126,13 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
             if (pick != null)
                 commander.player().doAction(new ActionUnequip(commander.player(), pick));
         } else {
-            if (pick == slotsThings.get(selection))
+            if (pick == slotsThings.get(listWidget.selection))
                 return;
-            else if (slotsThings.get(selection) != null)
-                commander.player().doAction(new ActionUnequip(commander.player(), slotsThings.get(selection)));
+            else if (slotsThings.get(listWidget.selection) != null)
+                commander.player().doAction(new ActionUnequip(commander.player(), slotsThings.get(listWidget.selection)));
             commander.player().doAction(new ActionEquip(commander.player(), pick));
         }
         fillSlots(commander.player());
+        widgetChanged(listWidget);
     }
 }

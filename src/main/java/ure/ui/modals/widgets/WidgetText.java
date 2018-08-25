@@ -9,7 +9,7 @@ public class WidgetText extends Widget {
     public boolean highlight;
     public WidgetText(UModal modal, int x, int y, String text) {
         super(modal);
-        lines = modal.splitLines(text);
+        setText(text);
         if (lines != null)
             setDimensions(x,y,modal.longestLine(lines), lines.length);
         else
@@ -20,5 +20,9 @@ public class WidgetText extends Widget {
         if (lines != null)
             for (int i=0;i<lines.length;i++)
                 modal.drawString(lines[i],x,y+i,color, highlight ? hiliteColor() : null);
+    }
+
+    public void setText(String text) {
+        lines = modal.splitLines(text);
     }
 }

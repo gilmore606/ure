@@ -12,7 +12,7 @@ public class WidgetEntityDetail extends Widget {
 
     public WidgetEntityDetail(UModal modal, int x, int y) {
         super(modal);
-        setDimensions(x,y,8,5);
+        setDimensions(x,y,10,5);
     }
 
     public void setEntity(Entity entity) {

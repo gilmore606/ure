@@ -25,8 +25,12 @@ public class WidgetThingList extends Widget {
         if (things == null) return;
         for (int i=0;i<things.size();i++) {
             UThing thing = things.get(i);
-            drawIcon(thing.icon(), 0, i);
-            drawString(thing.name(),  1+iconSpacing, i, (i == selection) ? null : grayColor(), (i == selection && focused) ? hiliteColor() : null);
+            if (thing != null) {
+                drawIcon(thing.icon(), 0, i);
+                drawString(thing.name(), 1 + iconSpacing, i, (i == selection) ? null : grayColor(), (i == selection && focused) ? hiliteColor() : null);
+            } else {
+                drawString("        ", 1 + iconSpacing, i, (i == selection) ? null : grayColor(), (i == selection && focused) ? hiliteColor() : null);
+            }
         }
     }
 
