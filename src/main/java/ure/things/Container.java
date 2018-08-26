@@ -22,6 +22,9 @@ public class Container extends UThing {
     public boolean isUsable(UActor actor) { return true; }
 
     @Override
+    public boolean willAcceptThing(UThing thing) { return true; }
+
+    @Override
     public float useFrom(UActor actor) {
         return openFrom(actor);
     }

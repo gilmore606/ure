@@ -50,6 +50,7 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
         addWidget(possibleWidget);
         possibleWidget.color = config.getTextGray();
         sizeToWidgets();
+        listWidget.scrollable = false;
         listWidget.setThings(slotsThings);
     }
 
@@ -104,14 +105,16 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
     void updatePossible() {
         possible.clear();
         String posstext = "";
-        ArrayList<UThing> equipment = commander.player().getContents().getThings();
-        for (UThing thing : equipment) {
-            if (thing.fitsOnBodypart(slotsBodyparts.get(listWidget.selection).getName()))
-                if (thing == slotsThings.get(listWidget.selection) || !thing.equipped) {
-                    possible.add(thing);
-                    if (!thing.equipped)
-                        posstext += thing.name() + " \n";
-                }
+        if (listWidget.selection >= 0) {
+            ArrayList<UThing> equipment = commander.player().getContents().getThings();
+            for (UThing thing : equipment) {
+                if (thing.fitsOnBodypart(slotsBodyparts.get(listWidget.selection).getName()))
+                    if (thing == slotsThings.get(listWidget.selection) || !thing.equipped) {
+                        possible.add(thing);
+                        if (!thing.equipped)
+                            posstext += thing.name() + " \n";
+                    }
+            }
         }
         possible.add(null);
         possibleWidget.setText(posstext);

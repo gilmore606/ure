@@ -1,5 +1,7 @@
 package ure.ui.modals;
 
+import ure.actors.actions.ActionDrop;
+import ure.actors.actions.ActionGet;
 import ure.things.UContainer;
 import ure.things.UThing;
 import ure.ui.modals.widgets.*;
@@ -32,9 +34,21 @@ public class UModalContainer extends UModal {
         addWidget(inventoryWidget);
 
         sizeToWidgets();
+        updateLists();
+    }
 
-        bagWidget.setThings(container.things());
-        inventoryWidget.setThings(commander.player().things());
+    void updateLists() {
+        bagWidget.setThings(filterMovables(container.things()));
+        inventoryWidget.setThings(filterMovables(commander.player().things()));
+    }
+    ArrayList<UThing> filterMovables(ArrayList<UThing> source) {
+        ArrayList<UThing> things = new ArrayList<>();
+        for (UThing thing : source) {
+            if (!thing.equipped && thing != container) {
+                things.add(thing);
+            }
+        }
+        return things;
     }
 
     public void widgetChanged(Widget widget) {
@@ -42,6 +56,23 @@ public class UModalContainer extends UModal {
             detailWidget.setEntity(bagWidget.entity());
         } else if (widget == inventoryWidget) {
             detailWidget.setEntity(inventoryWidget.entity());
+        }
+    }
+
+    public void pressWidget(Widget widget) {
+        if (widget == inventoryWidget) {
+            UThing dropThing = (UThing)inventoryWidget.entity();
+            commander.player().doAction(new ActionDrop(commander.player(), dropThing, container));
+            updateLists();
+        } else if (widget == bagWidget) {
+            UThing getThing = (UThing)bagWidget.entity();
+            commander.player().doAction(new ActionGet(commander.player(), getThing));
+            updateLists();
+        } else if (widget == takeAllButton) {
+            for (UThing thing : bagWidget.getThings()) {
+                commander.player().doAction(new ActionGet(commander.player(), thing));
+            }
+            updateLists();
         }
     }
 }

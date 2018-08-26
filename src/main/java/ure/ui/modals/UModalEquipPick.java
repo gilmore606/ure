@@ -18,6 +18,7 @@ public class UModalEquipPick extends UModal {
         super(_callback, _callbackContext);
 
         listWidget = new WidgetEntityList(this, 0, 0, 10, _things.size());
+        listWidget.scrollable = false;
         addWidget(listWidget);
 
         nowDetailWidget = new WidgetEntityDetail(this, 12, 0);

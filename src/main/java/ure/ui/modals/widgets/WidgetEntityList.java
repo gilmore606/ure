@@ -15,6 +15,7 @@ public class WidgetEntityList extends Widget {
     public int selection;
     public int pageOffset;
     boolean upArrow,downArrow;
+    public boolean scrollable = true;
 
     public WidgetEntityList(UModal modal, int x, int y, int width, int height) {
         super(modal);
@@ -32,19 +33,19 @@ public class WidgetEntityList extends Widget {
             drawTile('^', cellw / 2, 0, hiliteColor());
             upArrow = true;
         }
-        for (int i = 0;i<cellh-2;i++) {
+        for (int i = 0;i<cellh-(scrollable ? 2 : 0);i++) {
             int reali = i+pageOffset;
-            if (reali < entities.size()) {
+            if (reali < entities.size() && reali >= 0) {
                 Entity entity = entities.get(reali);
                 if (entity != null) {
-                    drawIcon(entity.icon(), 0, i+1);
-                    drawString(entity.name(), 1 + iconSpacing, i+1, (reali == selection) ? null : grayColor(), (reali == selection && focused) ? hiliteColor() : null);
+                    drawIcon(entity.icon(), 0, i+(scrollable?1:0));
+                    drawString(entity.name(), 1 + iconSpacing, i+(scrollable?1:0), (reali == selection) ? null : grayColor(), (reali == selection && focused) ? hiliteColor() : null);
                 } else {
-                    drawString("        ", 1 + iconSpacing, i+1, (reali == selection) ? null : grayColor(), (reali == selection && focused) ? hiliteColor() : null);
+                    drawString("        ", 1 + iconSpacing, i+(scrollable?1:0), (reali == selection) ? null : grayColor(), (reali == selection && focused) ? hiliteColor() : null);
                 }
             }
         }
-        if ((cellh-2 < entities.size() - pageOffset)) {
+        if (scrollable && ((cellh-2 < entities.size() - pageOffset))) {
             drawTile('v', cellw/2, cellh-1, hiliteColor());
             downArrow = true;
         }
@@ -79,8 +80,8 @@ public class WidgetEntityList extends Widget {
     @Override
     public void mouseInside(int mousex, int mousey) {
         if (entities != null) {
-            if (mousey > 0 && mousey < cellh - 1) {
-                select(Math.max(0, Math.min(entities.size() - 1, mousey + pageOffset - 1)));
+            if (mousey > 0 - (scrollable?0:1) && mousey < cellh - (scrollable?1:0)) {
+                select(Math.max(0, Math.min(entities.size() - 1, mousey + pageOffset - (scrollable?1:0))));
             } else {
                 select(-1);
             }
@@ -89,6 +90,7 @@ public class WidgetEntityList extends Widget {
 
     void select(int newselection) {
         selection = newselection;
+        boundsCheck();
         modal.widgetChanged(this);
     }
 
@@ -102,11 +104,26 @@ public class WidgetEntityList extends Widget {
     public void setEntities(ArrayList<Entity> newentities) {
         entities = newentities;
         selection = 0;
+        boundsCheck();
         modal.widgetChanged(this);
     }
     public void setThings(ArrayList<UThing> newentities) {
         entities = new ArrayList<Entity>();
         for (UThing t : newentities)
             entities.add(t);
+        boundsCheck();
+    }
+
+    void boundsCheck() {
+        if (selection > entities.size() - 1)
+            selection = entities.size() - 1;
+    }
+
+    public ArrayList<UThing> getThings() {
+        ArrayList<UThing> things = new ArrayList<>();
+        for (Entity t : entities) {
+            things.add((UThing)t);
+        }
+        return things;
     }
 }
