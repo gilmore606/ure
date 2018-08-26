@@ -69,10 +69,21 @@ public class UModalInventory extends UModal implements HearModalDropdown {
     }
 
     public void hearModalDropdown(String context, int selection) {
-        dismiss();
         UAction action = contextActions.get(selection);
-        if (action != null)
+        if (action != null) {
             commander.player().doAction(action);
+            things = commander.player().things();
+            int oldcategories = categoryLists.size();
+            Categorize();
+            if (categoryLists.size() != oldcategories) {
+                removeWidget(categoryWidget);
+                categoryWidget = new WidgetSlideTabs(this, 0, 0, 23, categories, 0);
+                addWidget(categoryWidget);
+                categoryWidget.select(categoryLists.size() - 1);
+            }
+            changeList(categoryLists.get(categoryWidget.selection));
+            changeDetail((UThing)listWidget.entity());
+        }
     }
 
     void changeList(ArrayList<UThing> things) {
@@ -87,14 +98,16 @@ public class UModalInventory extends UModal implements HearModalDropdown {
         categoryLists = new ArrayList<>();
         categoryItemNames = new ArrayList<>();
         for (UThing thing : things) {
-            String cat = thing.getCategory();
-            if (categories.contains(cat)) {
-                categoryLists.get(categories.indexOf(cat)).add(thing);
-            } else {
-                categories.add(cat);
-                ArrayList<UThing> newList = new ArrayList<>();
-                newList.add(thing);
-                categoryLists.add(newList);
+            if (!thing.equipped) {
+                String cat = thing.getCategory();
+                if (categories.contains(cat)) {
+                    categoryLists.get(categories.indexOf(cat)).add(thing);
+                } else {
+                    categories.add(cat);
+                    ArrayList<UThing> newList = new ArrayList<>();
+                    newList.add(thing);
+                    categoryLists.add(newList);
+                }
             }
         }
         int i = 0;

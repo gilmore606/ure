@@ -151,6 +151,12 @@ public class UModal extends View implements UAnimator {
             }
         }
     }
+    public void removeWidget(Widget widget) {
+        widgets.remove(widget);
+        removeChild(widget);
+        if (focusWidget == widget)
+            focusWidget = null;
+    }
 
     public void addCenteredWidget(Widget widget) {
         centerWidget(widget);
