@@ -506,6 +506,15 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
                 }
             }
         }
+        if (!(this instanceof Container)) {
+            for (UThing t : actor.things()) {
+                if (t instanceof Container) {
+                    if (((Container) t).willAcceptThing(this)) {
+                        actions.put("put in " + t.name(), new ActionDrop(actor, this, t));
+                    }
+                }
+            }
+        }
         return actions;
     }
 
