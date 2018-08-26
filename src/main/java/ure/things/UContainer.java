@@ -1,6 +1,7 @@
 package ure.things;
 
 import ure.areas.UArea;
+import ure.sys.Entity;
 import ure.things.UThing;
 
 import java.util.ArrayList;

@@ -45,7 +45,8 @@ public class WidgetEntityList extends Widget {
 
     @Override
     public void mouseInside(int mousex, int mousey) {
-        select(Math.max(0, Math.min(entities.size() - 1, mousey)));
+        if (entities != null)
+            select(Math.max(0, Math.min(entities.size() - 1, mousey)));
     }
 
     void select(int newselection) {

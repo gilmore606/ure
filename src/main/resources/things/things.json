@@ -20,6 +20,14 @@
     "value": 10
   },
   {
+    "name": "nylon backpack",
+    "type": "container",
+    "category": "gear",
+    "description": "A nylon stiff-frame backpack.",
+    "weight": 3,
+    "value": 25
+  },
+  {
     "name": "trucker hat",
     "type": "clothing",
     "category": "gear",
