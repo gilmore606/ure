@@ -11,18 +11,17 @@ import ure.render.URenderer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.sys.UConfig;
-import ure.sys.UREGame;
+import ure.sys.UREgame;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
 import ure.ui.View;
-import ure.ui.panels.UActorPanel;
 import ure.ui.panels.UScrollPanel;
 import ure.ui.panels.UStatusPanel;
 
 import javax.inject.Inject;
 
-public class MyGame implements UREGame {
+public class MyGame implements UREgame {
 
     static UArea area;
     static UCamera camera;

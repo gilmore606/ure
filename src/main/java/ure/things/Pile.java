@@ -56,7 +56,7 @@ public class Pile extends UThing implements HearModalQuantity {
     public boolean tryDrop(UContainer dest) {
         if (count <= 1)
             return super.tryDrop(dest);
-        UModalQuantity qmodal = new UModalQuantity("Drop how many of your " + name() + "?", 1, count, true, null, this, "drop");
+        UModalQuantity qmodal = new UModalQuantity("Drop how many of your " + name() + "?", 1, count,  this, "drop");
         commander.showModal(qmodal);
         dropdest = dest;
         return false;

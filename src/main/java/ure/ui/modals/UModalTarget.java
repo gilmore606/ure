@@ -21,7 +21,7 @@ public class UModalTarget extends UModal {
 
     public UModalTarget(String _prompt, HearModalTarget _callback, String _callbackContext,
                         ArrayList<Entity> _targets, boolean _shiftFree, boolean _visibleOnly) {
-        super(_callback, _callbackContext, null);
+        super(_callback, _callbackContext);
         prompt = _prompt;
         targets = _targets;
         shiftFree = _shiftFree;

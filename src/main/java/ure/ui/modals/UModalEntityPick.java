@@ -1,121 +1,49 @@
 package ure.ui.modals;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import ure.actors.actions.UAction;
-import ure.commands.UCommand;
-import ure.math.UColor;
 import ure.sys.Entity;
-import ure.sys.GLKey;
-import ure.things.UThing;
+import ure.ui.modals.widgets.Widget;
+import ure.ui.modals.widgets.WidgetEntityDetail;
+import ure.ui.modals.widgets.WidgetEntityList;
+import ure.ui.modals.widgets.WidgetText;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class UModalEntityPick extends UModal implements HearModalStringPick {
+public class UModalEntityPick extends UModal {
 
-    String header;
-    UColor bgColor;
-    int xpad, ypad;
-    ArrayList<Entity> entities;
-    ArrayList<String> displaynames;
-    boolean showDetail;
-    boolean escapable;
-    boolean categorize;
-    boolean selectForVerbs;
-    ArrayList<String> categories;
-    ArrayList<ArrayList<Entity>> categoryLists;
-    ArrayList<ArrayList<String>> categoryItemNames;
-    int biggestCategoryLength;
-    int textWidth = 0;
-    int selection = 0;
-    int selectionCategory = 0;
-    UColor tempHiliteColor, flashColor;
+    WidgetText headerWidget;
+    WidgetEntityList listWidget;
+    WidgetEntityDetail detailWidget;
 
-    HashMap<String,UAction> contextActions;
+    public UModalEntityPick(String _header, ArrayList<Entity> _entities,
+                            boolean _showDetail, HearModalEntityPick _callback, String _callbackContext) {
+        super(_callback, _callbackContext);
+        headerWidget = new WidgetText(this, 0, 0, _header);
+        addWidget(headerWidget);
 
-    private Log log = LogFactory.getLog(UModalEntityPick.class);
+        listWidget = new WidgetEntityList(this, 0, headerWidget.cellh, 8, _entities.size());
+        listWidget.scrollable = false;
+        addWidget(listWidget);
 
-    public UModalEntityPick(String _header, UColor _bgColor, int _xpad, int _ypad, ArrayList<Entity> _entities,
-                            boolean _showDetail, boolean _escapable, boolean _categorize, boolean _selectForVerbs, HearModalEntityPick _callback, String _callbackContext) {
-        super(_callback, _callbackContext, _bgColor);
-        header = _header;
-        xpad = _xpad;
-        ypad = _ypad;
-        entities = _entities;
-        if (!_categorize) displaynames = deDupeEntities(entities);
-        showDetail =  _showDetail;
-        escapable = _escapable;
-        categorize = _categorize;
-        selectForVerbs = _selectForVerbs;
-        if (categorize)
-            Categorize();
-        int width = 0;
-        for (Entity entity : entities) {
-            int len = textWidth(entity.name());
-            if (len > width) width = len;
+        if (_showDetail) {
+            detailWidget = new WidgetEntityDetail(this, listWidget.cellw + 1, headerWidget.cellh);
+            addWidget(detailWidget);
         }
-        textWidth = width;
-        if (showDetail || categorize)
-            width += Math.max(12, width+1);
-        int height = 0;
-        if (showDetail)
-            height += 8;
-        if (categorize)
-            height += categories.size();
-        int listsize = entities.size();
-        if (categorize) {
-            listsize = 0;
-            for (ArrayList<Entity> cat : categoryLists) {
-                int len = cat.size();
-                if (len > listsize) listsize = len;
-            }
-        }
-        height = Math.max(height, listsize+1);
-        setDimensions(width + 1 + xpad*2, height + 1 + ypad*2);
-        if (bgColor == null)
-            bgColor = commander.config.getModalBgColor();
-        setBgColor(bgColor);
-        tempHiliteColor = commander.config.getHiliteColor();
-        flashColor = new UColor(commander.config.getHiliteColor());
-        flashColor.setAlpha(1f);
-        dismissFrameEnd = 8;
+        sizeToWidgets();
+        listWidget.setEntities(_entities);
+
     }
 
-    public ArrayList<Entity> shownEntities() {
-        if (categorize) {
-            return categoryLists.get(selectionCategory);
-        } else {
-            return entities;
-        }
+    @Override
+    public void widgetChanged(Widget widget) {
+        if (widget == listWidget)
+            if (detailWidget != null)
+                detailWidget.setEntity(listWidget.entity());
     }
-
-    public void Categorize() {
-        categories = new ArrayList<>();
-        categoryLists = new ArrayList<>();
-        categoryItemNames = new ArrayList<>();
-        for (Entity entity : entities) {
-            String cat = entity.getCategory();
-            if (categories.contains(cat)) {
-                categoryLists.get(categories.indexOf(cat)).add(entity);
-            } else {
-                categories.add(cat);
-                ArrayList<Entity> newList = new ArrayList<Entity>();
-                newList.add(entity);
-                categoryLists.add(newList);
-            }
-        }
-        int i = 0;
-        for (ArrayList<Entity> theList : categoryLists) {
-            if (theList.size() > biggestCategoryLength)
-                biggestCategoryLength = theList.size();
-            ArrayList<String> names = deDupeEntities(theList);
-            categoryItemNames.add(names);
-            log.debug("names " + categories.get(i) + " = " + Integer.toString(names.size()) + " items " + Integer.toString(theList.size()));
-            i++;
-        }
+    @Override
+    public void pressWidget(Widget widget) {
+        if (widget == listWidget && listWidget.entity() != null)
+            selectEntity();
     }
-
 
     public ArrayList<String> deDupeEntities(ArrayList<Entity> sourceEntities) {
         ArrayList<Entity> newent = new ArrayList<>();
@@ -156,97 +84,8 @@ public class UModalEntityPick extends UModal implements HearModalStringPick {
         return displaynames;
     }
 
-    @Override
-    public void drawContent() {
-        selection = mouseToSelection(shownEntities().size(), 2+ypad, selection, 0, 12);
-        int oldCategory = selectionCategory;
-        if (categorize) {
-            selectionCategory = mouseToSelection(categoryLists.size(), 9+ypad, selectionCategory, 3 + textWidth, 100);
-            if (selectionCategory != oldCategory) selection = 0;
-        }
-        if (header != null)
-            drawString(header, xpad, ypad);
-        int y = 0;
-        for (Entity entity : shownEntities()) {
-            drawIcon(entity.icon(), 1+xpad, y + 2+ypad);
-            String n = entity.name();
-            if (categorize)
-                n = (categoryItemNames.get(selectionCategory)).get(y);
-            drawString(n, 3+xpad, y + 2+ypad, y == selection ? null : UColor.GRAY, (y == selection) ? tempHiliteColor : null);
-            y++;
-        }
-        if (showDetail) showDetail(shownEntities().get(selection),4+textWidth+xpad,2+ypad);
-        if (categorize && !dismissed) {
-            int caty = 7;
-            if (!showDetail) caty = 1;
-            int i =0;
-            for (String cat : categories) {
-                drawString(cat, 4+textWidth+xpad, 2+caty+i+ypad, (i == selectionCategory) ? null : UColor.GRAY,
-                        (i == selectionCategory) ? tempHiliteColor : null);
-                i++;
-            }
-        }
-    }
-
-    @Override
-    public void hearCommand(UCommand command, GLKey k) {
-        if (command == null) return;
-        if (command.id.equals("MOVE_N")) {
-            selection = cursorMove(selection, -1, shownEntities().size());
-        } else if (command.id.equals("MOVE_S")) {
-            selection = cursorMove(selection, 1, shownEntities().size());
-        } else if (command.id.equals("MOVE_W")) {
-            selection = 0;
-            if (categoryLists != null)
-                selectionCategory = cursorMove(selectionCategory, -1, categoryLists.size());
-        } else if (command.id.equals("MOVE_E")) {
-            selection = 0;
-            if (categoryLists != null)
-                selectionCategory = cursorMove(selectionCategory, 1, categoryLists.size());
-        } else if (command.id.equals("PASS")) {
-            selectEntity();
-        } else if (command.id.equals("ESC") && escapable) {
-            escape();
-        }
-    }
-    @Override
-    public void mouseClick() { selectEntity(); }
-
     void selectEntity() {
-        if (selectForVerbs) {
-            UThing thing = (UThing)(shownEntities().get(selection));
-            contextActions = thing.contextActions(commander.player());
-            if (contextActions != null) {
-                ArrayList<String> verbs = new ArrayList<>();
-                for (String v : contextActions.keySet())
-                    verbs.add(v);
-                UModalStringPick smodal = new UModalStringPick(thing.getName() + ":",null,0,0, verbs, true, this, "contextaction");
-                smodal.setChildPosition(5,3+selection, this);
-                commander.showModal(smodal);
-            }
-        } else {
-            dismiss();
-            ((HearModalEntityPick) callback).hearModalEntityPick(callbackContext, shownEntities().get(selection));
-        }
-    }
-
-    @Override
-    public void animationTick() {
-        if (dismissed) {
-            if ((dismissFrames % 2) == 0) {
-                tempHiliteColor = commander.config.getModalBgColor();
-            } else {
-                tempHiliteColor = flashColor;
-            }
-        }
-        super.animationTick();
-    }
-
-    public void hearModalStringPick(String context, String selection) {
         dismiss();
-        dismissFrameEnd = 0;
-        UAction action = contextActions.get(selection);
-        if (action != null)
-            commander.player().doAction(action);
+        ((HearModalEntityPick) callback).hearModalEntityPick(callbackContext, listWidget.entity());
     }
 }

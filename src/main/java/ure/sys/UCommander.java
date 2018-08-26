@@ -69,7 +69,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     private HashSet<UAnimator> animators;
     private ArrayList<UActor> actors;
 
-    private UREGame game;
+    private UREgame game;
     private URenderer renderer;
     private UPlayer player;
     private UScrollPanel scrollPrinter;
@@ -111,7 +111,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         bus.register(this);
     }
 
-    public void registerComponents(UREGame _game, UPlayer theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
+    public void registerComponents(UREgame _game, UPlayer theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
         game = _game;
         renderer = theRenderer;
         animators = new HashSet<UAnimator>();
@@ -289,10 +289,6 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     debug_2();
                 } else if (k.k == GLFW_KEY_Q) {
                     debug();
-                } else if (k.k == GLFW_KEY_F1) {
-                    launchVaulted();
-                } else if (k.k == GLFW_KEY_F2) {
-                    showModal(new UModalURESplash());
                 }
             }
         } else if (moveLatch && config.isNethackShiftRun()) {
@@ -613,7 +609,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         if (modal != null) {
             speaker.playUI(config.soundSelect);
             modalStack.push(modal);
-            modal.addChild(newmodal);
+            renderer.getRootView().addChild(newmodal);
             modal = newmodal;
         } else {
             renderer.getRootView().addChild(newmodal);
@@ -622,12 +618,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public void detachModal() {
+        renderer.getRootView().removeChild(modal);
         if (!modalStack.isEmpty()) {
             UModal oldmodal = modalStack.pop();
-            oldmodal.removeChild(modal);
             modal = oldmodal;
         } else {
-            renderer.getRootView().removeChild(modal);
             modal = null;
         }
     }
@@ -639,6 +634,10 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             if (modalStack.contains(modal))
                 modalStack.remove(modal);
         }
+    }
+
+    public UModal modal() {
+        return modal;
     }
 
     public void wipeModals() {
@@ -659,6 +658,15 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             return false;
         return true;
     }
+    public boolean isChildModal(UModal modal) {
+        if (modalStack.isEmpty())
+            return false;
+        if (this.modal == modal)
+            return true;
+        if (modalStack.contains(modal) && modalStack.get(0) != modal)
+            return true;
+        return false;
+    }
 
     /**
      * Get the filesystem path to the current savestate (the world we're playing now), or the top level save path.
@@ -674,7 +682,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     public void launchVaulted() {
         File dirfile = new File(config.getResourcePath() + "vaults/");
-        ArrayList<String> filelist = new ArrayList<>();
+        ArrayList<String> filelist = new ArrayList<String>();
         for (String filename : dirfile.list()) {
             if (filename.endsWith(".json")) {
                 printScroll("found " + filename);
@@ -682,16 +690,16 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             }
         }
         filelist.add("<new vaultSet>");
-
-        UModalStringPick spmodal = new UModalStringPick("Select vaultSet to edit:", UColor.BLACK, 0, 0,
-                filelist, true, this, "vaulted-pickfile");
+        String[] filearray = new String[filelist.size()];
+        UModalStringPick spmodal = new UModalStringPick("Select vaultSet to edit:",
+                filelist.toArray(filearray), this, "vaulted-pickfile");
         printScroll("Launching VaultEd...");
         showModal(spmodal);
 
     }
     public void hearModalStringPick(String context, String filename) {
         if (filename.equals("<new vaultSet>")) {
-            UModalGetString fmodal = new UModalGetString("Filename?", 20, true, UColor.BLACK, this, "vaulted-newfile");
+            UModalGetString fmodal = new UModalGetString("Filename?", 15, 25, this, "vaulted-newfile");
             showModal(fmodal);
         } else {
             doLaunchVaulted(filename);

@@ -3,38 +3,46 @@ package ure.ui.modals;
 import ure.areas.UArea;
 import ure.math.UColor;
 import ure.ui.Icons.Icon;
+import ure.ui.modals.widgets.WidgetMap;
 
 public class UModalMap extends UModal {
+
+    WidgetMap mapWidget;
 
     UArea area;
 
     public UModalMap(UArea area, int width, int height) {
-        super(null, "", null);
+        super(null, "");
         this.area = area;
-        setDimensions(width, height);
-        if (bgColor == null) bgColor = config.getModalBgColor();
-        setBgColor(bgColor);
+
+        mapWidget = new WidgetMap(this, 0, 0, width, height);
+        addWidget(mapWidget);
+        sizeToWidgets();
+        setPad(1,1);
+
+        mapWidget.lookAtArea(area);
+        mapWidget.moveView(0,0);
     }
 
-    @Override
-    public void drawContent() {
+
+    public void drawContentsucks() {
         for (int x=0;x<cellw*2;x++) {
             for (int y=0;y<cellh*2;y++) {
                 int areax = (int)(area.xsize*fx(x));
                 int areay = (int)(area.ysize*fy(y));
                 if (area.cellAt(areax,areay).isSeen()) {
                     UColor c = area.terrainAt(areax, areay).icon().bgColor();
-                    renderer.drawRect((int) (x * gw() * 0.5f) + xpos, (int) (y * gh() * 0.5f) + ypos, (int) (gw() * 0.5f), (int) (gh() * 0.5f), c);
+                    renderer.drawRect((int) (x * gw() * 0.5f), (int) (y * gh() * 0.5f), (int) (gw() * 0.5f), (int) (gh() * 0.5f), c);
                 }
             }
         }
-        commander.player().icon().draw(xpos+gw()*areaToMapX(commander.player().areaX())/2,ypos+gh()*areaToMapY(commander.player().areaY())/2);
+        commander.player().icon().draw(gw()*areaToMapX(commander.player().areaX())/2,gh()*areaToMapY(commander.player().areaY())/2);
         for (int x=0;x<area.xsize;x++) {
             for (int y=0;y<area.ysize;y++) {
                 Icon icon = area.cellAt(x,y).mapIcon();
                 if (icon != null) {
                     icon.setAnimate(false);
-                    icon.draw(xpos + gw() * areaToMapX(x) / 2, ypos + gh() * areaToMapY(y) / 2);
+                    icon.draw(gw() * areaToMapX(x) / 2, gh() * areaToMapY(y) / 2);
                     icon.setAnimate(true);
                 }
             }

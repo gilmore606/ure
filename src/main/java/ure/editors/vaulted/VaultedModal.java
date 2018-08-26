@@ -30,7 +30,7 @@ public class VaultedModal extends UModal implements HearModalGetString {
     int cursor;
 
     public VaultedModal(VaultedArea edarea, String _filename) {
-        super(null, "", UColor.BLACK);
+        super(null, "");
         area = edarea;
         filename = _filename;
         setDimensions(15,30);
@@ -218,7 +218,7 @@ public class VaultedModal extends UModal implements HearModalGetString {
     }
 
     void renameVault() {
-        UModalGetString nmodal = new UModalGetString("Vault name:", 30, true, null, this, "rename");
+        UModalGetString nmodal = new UModalGetString("Vault name:", 15, 25, this, "rename");
         commander.showModal(nmodal);
     }
 

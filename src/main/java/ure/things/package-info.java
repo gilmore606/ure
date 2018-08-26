@@ -1,5 +1,5 @@
 /**
- * Thing represents a movable physical entity in the world.  It can contain other Things inside it.  The
+ * Thing represents a movable physical thing in the world.  It can contain other Things inside it.  The
  * various ThingI subclasses implement various common types of things.
  *
  * The base ThingI should not be subclassed to a new base class if you want to use the supplied Thing

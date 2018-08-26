@@ -17,6 +17,9 @@ public class View {
     protected LinkedHashSet<View> children = new LinkedHashSet<>();
     protected WeakReference<View> parent = new WeakReference<>(null);
 
+    protected boolean clipsToBounds = false;
+    protected int[] clipRectBuffer = new int[4];
+
     /**
      * Set this view's position and dimensions.
      * @param x The x coordinate for the left side of this view.
@@ -106,6 +109,15 @@ public class View {
     }
 
     /**
+     * This isn't used by the view directly, but is provided for the renderer as a place to store the clip
+     * rectangle to restore after rendering this view.  This is done to avoid allocating objects when rendering.
+     * @return the clip rect buffer
+     */
+    public int[] getClipRectBuffer() {
+        return clipRectBuffer;
+    }
+
+    /**
      * Gets this view's X position in the root view's coordinate system.
      * @return The absolute X position.
      */
@@ -137,7 +149,13 @@ public class View {
      * Draw this view.  The renderer will handle drawing any child views.
      */
     public void draw() {
-        // Do any drawing required for this view, then draw children
+        // Do any drawing required for this view
     }
+
+    public boolean clipsToBounds() { return clipsToBounds; }
+    public void setClipsToBounds(boolean clipsToBounds) { this.clipsToBounds = clipsToBounds; }
+
+    public String xystr() { return "my xy is " + Integer.toString(x) + "," + Integer.toString(y); }
+    public String absxystr() { return "abs xy is " + Integer.toString(absoluteX()) + "," + Integer.toString(absoluteY()) + " " + Integer.toString(width) + "x" + Integer.toString(height); }
 
 }

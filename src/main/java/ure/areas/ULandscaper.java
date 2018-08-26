@@ -10,7 +10,7 @@ import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.ui.ULight;
 import ure.math.UColor;
-import ure.math.USimplexNoise;
+import ure.math.SimplexNoise;
 import ure.terrain.Stairs;
 import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
@@ -51,7 +51,7 @@ public abstract class ULandscaper {
     public URandom random;
 
     @JsonIgnore
-    USimplexNoise simplexNoise = new USimplexNoise();
+    SimplexNoise simplexNoise = new SimplexNoise();
 
     protected String floorterrain = "rock";
 
@@ -1037,8 +1037,10 @@ public abstract class ULandscaper {
             else
                 name = names.get(random.i(names.size()));
             UThing thing = thingCzar.getThingByName(name);
-            UCell dest = getRandomSpawn(area, thing, x1, y1, x2, y2);
-            thing.moveToCell(area, dest.x, dest.y);
+            if (thing != null) {
+                UCell dest = getRandomSpawn(area, thing, x1, y1, x2, y2);
+                thing.moveToCell(area, dest.x, dest.y);
+            }
         }
     }
 

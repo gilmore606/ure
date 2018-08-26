@@ -17,10 +17,10 @@ public class ExampleCartographer extends UCartographer {
                     new ExampleRegionForest(
                             "forest",
                             "Mystic Forest",
-                            new ULandscaper[]{new ExampleComplexScaper()},
+                            new ULandscaper[]{new ExampleForestScaper()},
                             new String[]{"start"},
-                            100,
-                            100,
+                            150,
+                            150,
                             1,
                             "cave entrance",
                             "cave exit",

@@ -1,26 +1,24 @@
 package ure.ui.modals;
 
 import ure.commands.UCommand;
-import ure.math.UColor;
 import ure.sys.GLKey;
 
 public class UModalLoading extends UModal {
 
     String text;
-    int xpad,ypad;
 
     public UModalLoading() {
-        super(null, "", UColor.BLACK);
+        super(null, "");
         this.text = "Loading...";
-        this.xpad = 1;
-        this.ypad = 1;
-        setDimensions(text.length() + xpad, ypad + 1);
-        setBgColor(commander.config.getModalBgColor());
+        this.colpad = 1;
+        this.rowpad = 1;
+        this.escapable = false;
+        setDimensions(text.length(), 1);
     }
 
     @Override
     public void drawContent() {
-        renderer.drawString(relx(xpad/2), rely(ypad/2), commander.config.getTextColor(), text);
+        renderer.drawString(0, 0, commander.config.getTextColor(), text);
     }
 
     @Override

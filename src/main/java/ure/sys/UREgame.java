@@ -1,6 +1,6 @@
 package ure.sys;
 
-public interface UREGame {
+public interface UREgame {
 
     public void setupTitleScreen();
 

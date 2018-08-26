@@ -1,5 +1,7 @@
 package ure.examplegame;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.actors.UActorCzar;
@@ -12,7 +14,8 @@ import ure.render.URenderer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.sys.UConfig;
-import ure.sys.UREGame;
+import ure.sys.UREgame;
+import ure.sys.events.ResolutionChangedEvent;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.things.UThingCzar;
@@ -31,7 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.LogManager;
 
-public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.ResolutionListener {
+public class ExampleGame implements UREgame, HearModalTitleScreen {
 
     static UArea area;
     static UCamera camera;
@@ -40,6 +43,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
     static UScrollPanel scrollPanel;
     static ULensPanel lensPanel;
     static UActorPanel actorPanel;
+    static View rootView;
 
     @Inject
     URenderer renderer;
@@ -55,6 +59,8 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
     UActorCzar actorCzar;
     @Inject
     UCartographer cartographer;
+    @Inject
+    EventBus bus;
 
     private Log log = LogFactory.getLog(ExampleGame.class);
 
@@ -69,11 +75,13 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
         }
 
         Injector.getAppComponent().inject(this);
+        bus.register(this);
     }
 
     private void makeWindow() {
 
-        View rootView = new View();
+        rootView = new View();
+        rootView.setBounds(0, 0, config.getScreenWidth(), config.getScreenHeight());
 
         camera = new UCamera(0, 0, 1200, 800);
         camera.moveTo(area, 40,20);
@@ -114,8 +122,9 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
         scrollPanel.print("Your journey begins...");
         rootView.addChild(scrollPanel);
 
+        bus.post(new ResolutionChangedEvent(config.getScreenWidth(), config.getScreenHeight()));
+
         renderer.setRootView(rootView);
-        renderer.setResolutionListener(this);
 
         commander.setStatusPanel(statusPanel);
         commander.setScrollPanel(scrollPanel);
@@ -145,7 +154,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
         area = cartographer.getTitleArea();
         camera.moveTo(area, 50, 50);
         commander.config.setVisibilityEnable(false);
-        commander.showModal(new UModalTitleScreen(35, 20, this, "start", new UColor(0.07f,0.07f,0.07f), area));
+        commander.showModal(new UModalTitleScreen(35, 20, this, "start", area));
 
     }
 
@@ -183,6 +192,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
         scrollPanel.unHide();
         actorPanel.unHide();
         player.attachCamera(camera, config.getCameraPinStyle());
+        bus.post(new ResolutionChangedEvent(renderer.getScreenWidth(), renderer.getScreenHeight()));
     }
 
     public UPlayer makeNewPlayer(String playername) {
@@ -197,7 +207,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
         item.moveTo(player);
         item = thingCzar.getThingByName("apple");
         item.moveTo(player);
-        item = thingCzar.getThingByName("apple");
+        item = thingCzar.getThingByName("nylon backpack");
         item.moveTo(player);
         item = thingCzar.getThingByName("flashlight");
         item.moveTo(player);
@@ -225,14 +235,15 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
         return player;
     }
 
-    @Override
-    public void resolutionChanged(int width, int height) {
+    @Subscribe
+    public void resolutionChanged(ResolutionChangedEvent event) {
         // Position panels around the right/bottom edges
-        statusPanel.setPosition(width - statusPanel.getWidth(), 0); // upper right corner
-        lensPanel.setPosition(statusPanel.getX(), height - lensPanel.getHeight()); // bottom right
-        actorPanel.setBounds(statusPanel.getX(), statusPanel.getHeight() + 1, statusPanel.getWidth(), height - statusPanel.getHeight() - lensPanel.getHeight() - 2);
-        scrollPanel.setBounds(0, height - scrollPanel.getHeight(), width - statusPanel.getWidth(), scrollPanel.getHeight());
-        camera.setBounds(0, 0, width - statusPanel.getWidth(), height - scrollPanel.getHeight());
+        rootView.setBounds(0, 0, event.width, event.height);
+        statusPanel.setBounds(event.width - statusPanel.getWidth(), 0, 200, 200); // upper right corner
+        lensPanel.setBounds(statusPanel.getX(), event.height - lensPanel.getHeight(), 200, 200); // bottom right
+        actorPanel.setBounds(statusPanel.getX(), statusPanel.getHeight() + 1, statusPanel.getWidth(), event.height - statusPanel.getHeight() - lensPanel.getHeight() - 2);
+        scrollPanel.setBounds(0, event.height - scrollPanel.getHeight(), event.width - statusPanel.getWidth(), scrollPanel.getHeight());
+        camera.setBounds(0, 0, event.width - (statusPanel.hidden ? 0 : statusPanel.getWidth()), event.height - (scrollPanel.hidden ? 0 : scrollPanel.getHeight()));
         camera.setupGrid();
     }
 }

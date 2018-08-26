@@ -70,6 +70,7 @@ public class UPlayer extends UActor {
     public void reconnectThings() {
         for (UThing thing : contents.getThings()) {
             thing.setLocation(this);
+            thing.reconnect(area(), this);
         }
         if (selfLight > 0) {
             light = new ULight(selfLightColor, selfLightFalloff + selfLight, selfLight);

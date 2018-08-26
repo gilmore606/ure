@@ -1,128 +1,87 @@
 package ure.ui.modals;
 
-import ure.commands.UCommand;
-import ure.math.UColor;
 import ure.sys.Entity;
-import ure.sys.GLKey;
+import ure.ui.Icons.Icon;
+import ure.ui.modals.widgets.*;
 
 import java.util.ArrayList;
 
-import static org.lwjgl.glfw.GLFW.*;
-
 public class UModalEntityPickMulti extends UModal {
 
-    String[] prompt;
-    UColor bgColor, hiliteColor;
-    int xpad,ypad;
-    boolean showDetail;
-    boolean escapable;
     int selection = 0;
-    int listWidth = 0;
-    int width = 0;
-    int height = 0;
     ArrayList<Entity> entities;
     ArrayList<Boolean> selectedEntities;
 
-    public UModalEntityPickMulti(String _prompt, UColor _bgColor, int _xpad, int _ypad, ArrayList<Entity> _entities, boolean _showDetail, boolean _escapable, HearModalEntityPickMulti _callback, String _callbackContext) {
-        super(_callback, _callbackContext, _bgColor);
-        prompt = splitLines(_prompt);
-        xpad = _xpad;
-        ypad = _ypad;
+    WidgetText headerWidget;
+    WidgetListVert listWidget;
+    WidgetEntityDetail detailWidget;
+    WidgetButton okButton;
+    WidgetButton allButton;
+
+    public UModalEntityPickMulti(String _prompt, ArrayList<Entity> _entities, boolean _showDetail, HearModalEntityPickMulti _callback, String _callbackContext) {
+        super(_callback, _callbackContext);
         entities = _entities;
-        showDetail = _showDetail;
-        escapable = _escapable;
         selectedEntities = new ArrayList<>();
         for (int i=0;i<entities.size();i++) {
             selectedEntities.add(false);
-            String n = entities.get(i).getName();
-            int len = textWidth(n);
-            if (len > listWidth) listWidth = len;
         }
-
-        height = Math.max(entities.size() + prompt.length + 1, (showDetail ? 7 : 2));
-        if (prompt != null) {
-            height += prompt.length;
-            for (String line : prompt) {
-                if (line.length()/2 > listWidth)
-                    listWidth = line.length()/2;
-            }
-        }
-        width = listWidth + 1 + (showDetail ? 10 : 0);
-        width = Math.max(width, longestLine(prompt));
-        setDimensions(width + xpad, height + ypad);
-        if (bgColor == null)
-            bgColor = config.getModalBgColor();
-        setBgColor(bgColor);
-        hiliteColor = config.getHiliteColor();
-    }
-
-    @Override
-    public void drawContent() {
-        selection = mouseToSelection(entities.size(), prompt.length+1, selection);
-        drawStrings(prompt, xpad, ypad);
-        int y = 0;
-        for (Entity entity: entities) {
-            int liney = y+prompt.length+1;
-            drawIcon(entity.icon(), xpad+1, liney+ypad);
-            String n = entity.getName();
-            UColor textColor = UColor.GRAY;
-            if (selectedEntities.get(y)) {
-                textColor = null;
-                drawTile(config.getUiCheckGlyph().charAt(0), xpad+2, liney+ypad, hiliteColor);
-            }
-            drawString(n, xpad+3, liney+ypad, textColor, (y == selection) ? hiliteColor : null);
-            y++;
-        }
-        if (showDetail) {
-            showDetail(entities.get(selection), listWidth+1+xpad, prompt.length+ypad+1);
-        }
-    }
-
-    @Override
-    public void hearCommand(UCommand command, GLKey k) {
-        if (command != null) {
-            if (command.id.equals("MOVE_N")) {
-                selection = cursorMove(selection, -1, entities.size());
-            } else if (command.id.equals("MOVE_S")) {
-                selection = cursorMove(selection, 1, entities.size());
-            } else if (command.id.equals("PASS")) {
-                selectEntity();
-            } else if (command.id.equals("ESC") && escapable) {
-                escape();
-            }
-        } else if (k.k == GLFW_KEY_ENTER || k.k == GLFW_KEY_KP_ENTER) {
-            completeSelection();
-        } else if (k.k == GLFW_KEY_A && k.shift) {
-            selectAll();
-        }
-    }
-    @Override
-    public void mouseClick() { selectEntity(); }
-
-    void selectEntity() {
-        selectedEntities.set(selection, !selectedEntities.get(selection));
-    }
-
-    void completeSelection() {
-        dismiss();
-        ArrayList<Entity> selected = new ArrayList<>();
+        String[] names = new String[entities.size()];
+        Icon[] icons = new Icon[entities.size()];
         int i = 0;
-        for (Entity entity : entities) {
-            if (selectedEntities.get(i))
-                selected.add(entity);
+        for (Entity e : entities) {
+            names[i] = e.name();
+            icons[i] = e.icon();
             i++;
         }
-        ((HearModalEntityPickMulti)callback).hearModalEntityPickMulti(callbackContext, selected);
+
+        headerWidget = new WidgetText(this,0,0,_prompt);
+        listWidget = new WidgetListVert(this, 0, headerWidget.cellh + 1, names);
+        listWidget.addIcons(icons);
+        int buttonFloor = headerWidget.cellh + listWidget.cellh;
+        if (_showDetail) {
+            detailWidget = new WidgetEntityDetail(this, listWidget.cellw + 1, headerWidget.cellh + 1);
+            addWidget(detailWidget);
+            buttonFloor = Math.max(buttonFloor, headerWidget.cellh + detailWidget.cellh);
+        }
+        okButton = new WidgetButton(this, 0, buttonFloor + 2, "[ OK ]", null);
+        allButton = new WidgetButton(this, okButton.cellw + 1, okButton.row, "[ Take all ]", null);
+        addWidget(headerWidget);
+        addWidget(listWidget);
+        addWidget(okButton);
+        addWidget(allButton);
+
+        sizeToWidgets();
     }
 
-    void selectAll() {
-        boolean allAlready = true;
-        for (int i = 0;i<selectedEntities.size();i++) {
-            if (!selectedEntities.get(i))
-                allAlready = false;
+    @Override
+    public void pressWidget(Widget widget) {
+        if (widget == allButton) {
+            allButton.dismissFlash = true;
+            selectChoices(entities);
+        } else if (widget == okButton) {
+            okButton.dismissFlash = true;
+            selectChoices(collectChoices());
+        } else if (widget == listWidget) {
+            listWidget.toggleOption(listWidget.selection);
         }
-        for (int i = 0;i<selectedEntities.size();i++) {
-            selectedEntities.set(i, allAlready ? false : true);
+    }
+
+    @Override
+    public void widgetChanged(Widget widget) {
+        if (widget == listWidget && detailWidget != null)
+            detailWidget.setEntity(entities.get(listWidget.selection));
+    }
+    ArrayList<Entity> collectChoices() {
+        ArrayList<Entity> choices = new ArrayList<>();
+        for (int i=0;i<entities.size();i++) {
+            if (listWidget.lit(i))
+                choices.add(entities.get(i));
         }
+        return choices;
+    }
+
+    void selectChoices(ArrayList<Entity> choices) {
+        dismiss();
+        ((HearModalEntityPickMulti)callback).hearModalEntityPickMulti(callbackContext, choices);
     }
 }

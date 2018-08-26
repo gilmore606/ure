@@ -70,7 +70,7 @@ public class Icon implements Cloneable {
         this.TYPE= type;
     }
 
-    public Icon(char glyph, UColor fgColor, UColor bgColor) {
+    public Icon(int glyph, UColor fgColor, UColor bgColor) {
         this();
         this.glyph = glyph;
         this.fgColor = fgColor;

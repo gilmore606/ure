@@ -8,7 +8,7 @@ public class CommandOpen extends CommandUseVerb {
         super(id);
         verb = "open";
         noTargetsMsg = "You don't see anything to open.";
-        whichDialog = "Open what?";
+        whichDialog = "Open what?\n ";
         useOnGround = true;
     }
 }

@@ -45,10 +45,10 @@ public class CommandInteract extends UCommand implements HearModalDirection {
             else if (targetsHere.size() == 0 && targetsN.size() == 0 && targetsS.size() == 0 && targetsW.size() == 0 && targetsE.size() == 0)
                 commander.printScroll(noTargetMsg);
             else {
-                commander.showModal(new UModalDirection(askDirectionMsg, true, player.cameraX(commander.modalCamera()), player.cameraY(commander.modalCamera()), true, this, ""));
+                commander.showModal(new UModalDirection(askDirectionMsg, true, player.cameraX(commander.modalCamera()), player.cameraY(commander.modalCamera()), this, ""));
             }
         } else {
-            commander.showModal(new UModalDirection(askDirectionMsg, true, player.cameraX(commander.modalCamera()), player.cameraY(commander.modalCamera()), true, this, ""));
+            commander.showModal(new UModalDirection(askDirectionMsg, true, player.cameraX(commander.modalCamera()), player.cameraY(commander.modalCamera()), this, ""));
         }
     }
 

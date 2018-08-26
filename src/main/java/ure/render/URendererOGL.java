@@ -1,5 +1,6 @@
 package ure.render;
 
+import com.google.common.eventbus.EventBus;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joml.Matrix4f;
@@ -12,6 +13,7 @@ import ure.sys.GLKey;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.sys.UConfig;
+import ure.sys.events.ResolutionChangedEvent;
 import ure.ui.View;
 
 import javax.inject.Inject;
@@ -29,6 +31,9 @@ public class URendererOGL implements URenderer {
 
     @Inject
     UConfig config;
+
+    @Inject
+    EventBus bus;
 
     private View rootView;
     private View context;
@@ -57,7 +62,6 @@ public class URendererOGL implements URenderer {
     private FontTexture currentFont;
 
     private KeyListener keyListener;
-    private ResolutionListener resolutionListener;
 
     private DoubleBuffer xf, yf;
 
@@ -68,6 +72,19 @@ public class URendererOGL implements URenderer {
     private float verticalScaleFactor = 1f;
 
     private boolean[] keyState = new boolean[65536]; // Apparently in Java these are 16bit.
+
+    private class Rect {
+        public int x,y,width,height;
+        public void set(int x, int y, int width, int height) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+        }
+    }
+
+    // This member is just an optimization to avoid allocating objects when rendering
+    private Rect clipRect = new Rect();
 
     private Log log = LogFactory.getLog(URendererOGL.class);
 
@@ -81,6 +98,16 @@ public class URendererOGL implements URenderer {
     }
 
     // URenderer methods
+
+    @Override
+    public int getScreenWidth() {
+        return (int)(screenWidth * horizontalScaleFactor);
+    }
+
+    @Override
+    public int getScreenHeight() {
+        return (int)(screenHeight * verticalScaleFactor);
+    }
 
     @Override
     public int getMousePosX(){
@@ -120,11 +147,6 @@ public class URendererOGL implements URenderer {
     @Override
     public void setKeyListener(KeyListener listener) {
         this.keyListener = listener;
-    }
-
-    @Override
-    public void setResolutionListener(ResolutionListener listener) {
-        this.resolutionListener = listener;
     }
 
     @Override
@@ -227,6 +249,9 @@ public class URendererOGL implements URenderer {
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
 
+        // We use scissors to handle view clipping
+        glEnable(GL_SCISSOR_TEST);
+
         //Flush a blank image to the screen quickly.
         glfwSwapBuffers(window);
 
@@ -243,7 +268,6 @@ public class URendererOGL implements URenderer {
         if (rootView != null) {
             render(rootView);
         }
-        renderBuffer(); // Make sure we draw anything left in the buffer
         // Uncomment to draw the font texture over the screen for debugging purposes
         // addQuad(10, 10, tileFont.bitmapWidth, tileFont.bitmapHeight, UColor.WHITE, 0, 0, 1, 1);
         endRendering();
@@ -251,9 +275,25 @@ public class URendererOGL implements URenderer {
 
     public void render(View view) {
         context = view;
+        int[] oldScissorBox = view.getClipRectBuffer();
+        if (view.clipsToBounds()) {
+            // Flush the buffer so that our scissor rect is applied to this view only
+            renderBuffer();
+            // Remember the current scissor Rect so that we can restore it when we're done with this view and subviews.
+            // If scissors haven't been used yet this will be the screen dimensions.
+            glGetIntegerv(GL_SCISSOR_BOX, oldScissorBox);
+            setClipRectForView(view);
+            glScissor(clipRect.x, clipRect.y, clipRect.width, clipRect.height);
+        }
         view.draw();
         for (View child : view.children()) {
             render(child);
+        }
+        if (view.clipsToBounds()) {
+            // Make sure all child view are rendered before unclipping
+            renderBuffer();
+            // Restore the previous scissor box
+            glScissor(oldScissorBox[0], oldScissorBox[1], oldScissorBox[2], oldScissorBox[3]);
         }
     }
 
@@ -322,7 +362,11 @@ public class URendererOGL implements URenderer {
     public void drawRectBorder(int x, int y, int w, int h, int borderThickness, UColor bgColor, UColor borderColor){
         x += context.absoluteX();
         y += context.absoluteY();
-        addQuad(x, y, w, h, borderColor);
+        addQuad(x,y,w,borderThickness,borderColor);
+        addQuad(x,(y+h)-borderThickness,w,borderThickness,borderColor);
+        addQuad(x,y+borderThickness,borderThickness,(h-borderThickness*2),borderColor);
+        addQuad((x+w)-borderThickness,y+borderThickness,borderThickness,(h-borderThickness*2),borderColor);
+        //addQuad(x, y, w, h, borderColor);
         addQuad(x + borderThickness, y + borderThickness, w - borderThickness * 2, h - borderThickness * 2, bgColor);
     }
 
@@ -352,6 +396,8 @@ public class URendererOGL implements URenderer {
     // internals
 
     private void beginRendering() {
+        // Make sure to set our clip rect to the current screen size.  It might have changed since the last frame.
+        glScissor(0, 0, screenWidth, screenHeight);
 
         glViewport(0, 0, screenWidth, screenHeight);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -363,6 +409,7 @@ public class URendererOGL implements URenderer {
 
         glMatrixMode(GL_MODELVIEW);
         glLoadMatrixf(dummyMatrix.get(fb));
+
     }
 
     private void renderBuffer() {
@@ -394,6 +441,7 @@ public class URendererOGL implements URenderer {
     }
 
     private void endRendering() {
+        renderBuffer(); // Make sure we draw anything left in the buffer
         glFinish();
         glfwSwapBuffers(window);
 
@@ -414,9 +462,7 @@ public class URendererOGL implements URenderer {
         } else {
             matrix.setOrtho2D(0, width * horizontalScaleFactor, height * verticalScaleFactor, 0);
         }
-        if (resolutionListener != null) {
-            resolutionListener.resolutionChanged((int) (width * horizontalScaleFactor), (int) (height * verticalScaleFactor));
-        }
+        bus.post(new ResolutionChangedEvent((int)(width * horizontalScaleFactor), (int)(height * verticalScaleFactor)));
     }
 
     private void destroy(){
@@ -506,5 +552,13 @@ public class URendererOGL implements URenderer {
         verts_uv[iu++] = v + vh;
 
         tris += 2;
+    }
+
+    private void setClipRectForView(View view) {
+        // glScissor has its origin at the lower-left, so we need to translate view coordinates
+        // for that space.
+        int viewBottom = (int)((view.absoluteY() + view.getHeight()) / verticalScaleFactor);
+        int clipBottom = screenHeight - viewBottom;
+        clipRect.set((int)(view.absoluteX() / horizontalScaleFactor), clipBottom, (int)(view.getWidth() / horizontalScaleFactor), (int)(view.getHeight() / verticalScaleFactor));
     }
 }
