@@ -582,13 +582,18 @@ public class UCamera extends View implements UAnimator {
             renderer.drawRect(col * cellw, row * cellh, cellw, cellh, config.getCameraBgColor());
         }
 
+        if (vis > 0f)
+            drawCellAO(col, row);
+
         if (vis < config.getVisibilityThreshold())
             return;
+
         if (thingsAt(col,row) != null) {
             for (UThing thing : thingsAt(col,row)) {
                 thing.icon().draw(col*cellw, row*cellh, light, vis, 1f);
             }
         }
+
     }
 
     private void drawCellActor(int col, int row) {
@@ -633,6 +638,36 @@ public class UCamera extends View implements UAnimator {
                 fogcolor.setAlpha(fog * vis);
                 renderer.drawRect(col * config.getTileWidth(), row * config.getTileHeight(), config.getTileWidth(), config.getTileHeight(), fogcolor);
             }
+        }
+    }
+
+    void drawCellAO(int col, int row) {
+        if (!area.canSeeThrough(col+leftEdge,row+topEdge)) return;
+        boolean nn = !area.canSeeThrough(col+leftEdge,row+topEdge-1);
+        boolean ns = !area.canSeeThrough(col+leftEdge,row+topEdge+1);
+        boolean nw = !area.canSeeThrough(col+leftEdge-1,row+topEdge);
+        boolean ne = !area.canSeeThrough(col+leftEdge+1,row+topEdge);
+        int x = col * config.getTileWidth();
+        int y = row * config.getTileHeight();
+        int w = config.getTileWidth();
+        int h = config.getTileHeight();
+        int cw = (int)(((float)w/4f)*3f);
+        int ch = (int)(((float)h/4f)*3f);
+        if (nn) {
+            renderer.drawRect(x, y, w, h / 4, UColor.SHADE);
+            renderer.drawRect(x, y, w, 2, UColor.DARKSHADE);
+        }
+        if (ns) {
+            renderer.drawRect(x, y + ch, w, h / 4, UColor.SHADE);
+            renderer.drawRect(x, y + h - 1, w, 2, UColor.DARKSHADE);
+        }
+        if (nw) {
+            renderer.drawRect(x, y, w / 3, h, UColor.SHADE);
+            renderer.drawRect(x, y, 2, h, UColor.DARKSHADE);
+        }
+        if (ne) {
+            renderer.drawRect(x + cw, y, w / 4, h, UColor.SHADE);
+            renderer.drawRect(x + w - 1, y, 2, h, UColor.DARKSHADE);
         }
     }
 

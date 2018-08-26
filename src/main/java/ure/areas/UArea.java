@@ -274,6 +274,11 @@ public class UArea implements Serializable {
         return false;
     }
 
+    public boolean canSeeThrough(int x, int y) {
+        UTerrain t = terrainAt(x,y);
+        if (t == null) return true;
+        return !t.isOpaque();
+    }
     public UTerrain terrainAt(int x, int y) {
         if (isValidXY(x, y))
             if (getCells()[x][y] != null)
