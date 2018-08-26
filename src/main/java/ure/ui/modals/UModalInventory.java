@@ -50,7 +50,7 @@ public class UModalInventory extends UModal implements HearModalDropdown {
     }
 
     public void pressWidget(Widget widget) {
-        if (widget == listWidget) {
+        if (widget == listWidget && listWidget.entity() != null) {
             HashMap<String,UAction> actions = ((UThing)(listWidget.entity())).contextActions(commander.player());
             if (actions != null) {
                 contextActions = new ArrayList<>();
