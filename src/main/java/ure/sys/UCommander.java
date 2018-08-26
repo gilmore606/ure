@@ -287,6 +287,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     debug_1();
                 } else if (k.k == GLFW_KEY_2) {
                     debug_2();
+                } else if (k.k == GLFW_KEY_3) {
+                    debug_3();
                 } else if (k.k == GLFW_KEY_Q) {
                     debug();
                 }
@@ -369,6 +371,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     void debug_2() {
         config.setLightEnable(!config.isLightEnable());
     }
+
+    void debug_3() { config.setAmbientOcclusion(!config.isAmbientOcclusion()); }
 
     /**
      * Print a message to the scroll printer.

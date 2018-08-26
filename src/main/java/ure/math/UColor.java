@@ -11,7 +11,7 @@ public class UColor {
     public static UColor CLEAR = new UColor(0f,0f,0f,0f);
     public static UColor BLACK = new UColor(0f,0f,0f);
     public static UColor SHADE = new UColor(0f,0f,0f,0.16f);
-    public static UColor DARKSHADE = new UColor(0f,0f,0f,0.5f);
+    public static UColor DARKSHADE = new UColor(0f,0f,0f,0.4f);
     public static UColor WHITE = new UColor(1f,1f,1f);
     public static UColor OFFWHITE = new UColor(1f,1f,0.9f);
     public static UColor GRAY = new UColor(0.5f, 0.5f, 0.5f);

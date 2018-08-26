@@ -582,7 +582,7 @@ public class UCamera extends View implements UAnimator {
             renderer.drawRect(col * cellw, row * cellh, cellw, cellh, config.getCameraBgColor());
         }
 
-        if (vis > 0f)
+        if (vis > 0f && config.isAmbientOcclusion())
             drawCellAO(col, row);
 
         if (vis < config.getVisibilityThreshold())
