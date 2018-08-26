@@ -19,6 +19,7 @@ public class UColor {
     public static UColor LIGHTRED = new UColor(1f, 0.4f, 0.4f);
     public static UColor GREEN = new UColor(0f, 1f, 0f);
     public static UColor BLUE = new UColor(0f,0f,1f);
+    public static UColor LIGHTBLUE = new UColor(0.6f, 0.6f, 1f);
     public static UColor YELLOW = new UColor(1f,1f,0f);
     public static UColor MAGENTA = new UColor(1f,0f,1f);
     public static UColor CYAN = new UColor(0f,1f,1f);

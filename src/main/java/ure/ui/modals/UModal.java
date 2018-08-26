@@ -227,7 +227,7 @@ public class UModal extends View implements UAnimator {
             renderer.drawRect(_xpos - gw(), _ypos - gh(),  (_cellw+2)*gw(),(_cellh+2)*gh(), bgColor);
 
         if (title != null && zoom >= 1f) {
-            renderer.drawRect(_xpos+gw()-5, _ypos-(int)(gh()*1.5f+3), gw()*textWidth(title)+8,gh()+6,isOnTop() ? config.getModalFrameColor() : UColor.DARKGRAY);
+            renderer.drawRect(_xpos+gw()-5, _ypos-(int)(gh()*1.5f+3), gw()*textWidth(title)+8,gh()+6,isOnTop() ? config.getTextGray() : UColor.DARKGRAY);
             renderer.drawString(_xpos+gw(),_ypos-(int)(gh()*1.5f), bgColor, title);
         }
     }

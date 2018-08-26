@@ -77,6 +77,10 @@ public class UArea implements Serializable {
     protected int sunCycleLastAnnounceMarker;
     public boolean sunVisible;
 
+    protected UColor fogColor = UColor.LIGHTBLUE;
+    protected int fogDistance = 18;
+    protected int fogDistanceFull = 35;
+
     String backgroundMusic;
 
     @JsonIgnore
@@ -589,6 +593,13 @@ public class UArea implements Serializable {
     public void setSunCycleLastAnnounceMarker(int sunCycleLastAnnounceMarker) {
         this.sunCycleLastAnnounceMarker = sunCycleLastAnnounceMarker;
     }
+
+    public UColor getFogColor() { return fogColor; }
+    public void setFogColor(UColor c) { fogColor = c; }
+    public int getFogDistance() { return fogDistance; }
+    public void setFogDistance(int i) { fogDistance = i; }
+    public int getFogDistanceFull() { return fogDistanceFull; }
+    public void setFogDistanceFull(int i) { fogDistanceFull = i; }
 
     public void setBackgroundMusic(String b) { backgroundMusic = b; }
     public String getBackgroundMusic() { return backgroundMusic; }

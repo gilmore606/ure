@@ -80,6 +80,13 @@ public class UPath {
         return mdist(px,py,cx,cy);
     }
 
+    public static int distsqr(int x1, int y1, int x2, int y2) {
+        return (int)Math.pow(x2-x1,2) + (int)Math.pow(y2-y1,2);
+    }
+    public static int dist(int x1, int y1, int x2, int y2) {
+        return (int)Math.sqrt(Math.pow(x2-x1,2) + (int)Math.pow(y2-y1,2));
+    }
+
     /**
      * Utility method: Can actor see from point 1 to point 2 in area?
      *

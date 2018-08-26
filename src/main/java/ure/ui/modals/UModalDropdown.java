@@ -18,7 +18,7 @@ public class UModalDropdown extends UModal {
         items = new ArrayList<>();
         for (int i=0;i<choices.length;i++) {
             WidgetText item = new WidgetText(this, 0, i, choices[i]);
-            item.color = UColor.GRAY;
+            item.color = config.getTextGray();
             addWidget(item);
             items.add(item);
         }
@@ -55,7 +55,7 @@ public class UModalDropdown extends UModal {
     }
 
     void moveSelection(int newselection) {
-        items.get(selection).color = UColor.GRAY;
+        items.get(selection).color = config.getTextGray();
         items.get(selection).highlight = false;
         selection = newselection;
         items.get(selection).color = null;

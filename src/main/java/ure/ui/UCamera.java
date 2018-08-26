@@ -7,6 +7,7 @@ import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.math.SimplexNoise;
+import ure.math.UPath;
 import ure.render.URenderer;
 import ure.sys.Injector;
 import ure.sys.UAnimator;
@@ -540,6 +541,16 @@ public class UCamera extends View implements UAnimator {
                 drawCellParticle(col, row);
             }
         }
+        UColor fogColor = area.getFogColor();
+        int fogDistance = area.getFogDistance();
+        int fogDistanceFull = area.getFogDistanceFull();
+        if (fogColor != null) {
+            for (int col = 0;col < columns;col++) {
+                for (int row = 0;row < rows;row++) {
+                    drawCellFog(col, row, fogColor, fogDistance, fogDistanceFull);
+                }
+            }
+        }
     }
 
     private void drawCell(int col, int row) {
@@ -599,6 +610,26 @@ public class UCamera extends View implements UAnimator {
                         particle.draw(this, light, vis);
                     }
                 }
+            }
+        }
+    }
+    private void drawCellFog(int col, int row, UColor c, int distance, int distanceFull) {
+        if (commander.player() == null) return;
+        UColor light = lightAt(col,row);
+        float vis = visibilityAt(col,row);
+        if (vis > 0f) {
+            int range = (int) UPath.dist(commander.player().areaX() - leftEdge, commander.player().areaY() - topEdge, col, row);
+            if (range > distance) {
+                float fog;
+                if (range > distanceFull) {
+                    fog = 1f;
+                } else {
+                    fog = (float) (range - distance) / (float) (distanceFull - distance);
+                }
+                UColor fogcolor = new UColor(c);
+                fogcolor.illuminateWith(light, 1f);
+                fogcolor.setAlpha(fog * vis);
+                renderer.drawRect(col * config.getTileWidth(), row * config.getTileHeight(), config.getTileWidth(), config.getTileHeight(), fogcolor);
             }
         }
     }

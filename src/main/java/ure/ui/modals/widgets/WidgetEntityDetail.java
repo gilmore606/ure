@@ -13,7 +13,7 @@ public class WidgetEntityDetail extends Widget {
     public WidgetEntityDetail(UModal modal, int x, int y) {
         super(modal);
         setClipsToBounds(true);
-        setDimensions(x,y,10,5);
+        setDimensions(x,y,10,6);
     }
 
     public void setEntity(Entity entity) {

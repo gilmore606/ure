@@ -153,8 +153,8 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
 
     public ArrayList<String> UIdetails(String context) {
         ArrayList<String> d = new ArrayList<>();
-        d.add("Weight " + Integer.toString(weight()));
-        d.add("Value " + Integer.toString(value()));
+        d.add(Integer.toString(weight()) + "kg  $" + Integer.toString(value()));
+        d.add(description());
         return d;
     }
 
