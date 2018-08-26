@@ -1,10 +1,13 @@
 package ure.ui.modals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import ure.actors.UActorCzar;
 import ure.sys.*;
 import ure.commands.UCommand;
 import ure.math.UColor;
+import ure.sys.events.ResolutionChangedEvent;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
 import ure.ui.Icons.Icon;
@@ -42,6 +45,8 @@ public class UModal extends View implements UAnimator {
     public UIconCzar iconCzar;
     @Inject
     public ObjectMapper objectMapper;
+    @Inject
+    EventBus bus;
 
     public HearModal callback;
     public String callbackContext;
@@ -67,6 +72,7 @@ public class UModal extends View implements UAnimator {
 
     public UModal(HearModal _callback, String _callbackContext) {
         Injector.getAppComponent().inject(this);
+        bus.register(this);
         callback = _callback;
         callbackContext = _callbackContext;
         bgColor = new UColor(config.getModalBgColor());
@@ -96,8 +102,8 @@ public class UModal extends View implements UAnimator {
         cellh = rows;
         int screenw = 0, screenh = 0;
         if (config.getModalPosition() == UConfig.POS_WINDOW_CENTER) {
-            screenw = config.getScreenWidth();
-            screenh = config.getScreenHeight();
+            screenw = renderer.getScreenWidth();
+            screenh = renderer.getScreenHeight();
         } else {
             screenw = commander.modalCamera().getWidthInCells() * gw();
             screenh = commander.modalCamera().getHeightInCells() * gh();
@@ -117,9 +123,15 @@ public class UModal extends View implements UAnimator {
         }
         setDimensions(dimx,dimy);
     }
+
     public void setChildPosition(int col, int row, UModal parent) {
         x = col*gw() + parent.x;
         y = row*gh() + parent.y;
+    }
+
+    @Subscribe
+    public void resolutionChanged(ResolutionChangedEvent event) {
+        setDimensions(cellw, cellh);
     }
 
     public void setTitle(String s) { title = s; }

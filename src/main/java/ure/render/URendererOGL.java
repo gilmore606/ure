@@ -1,5 +1,6 @@
 package ure.render;
 
+import com.google.common.eventbus.EventBus;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joml.Matrix4f;
@@ -12,6 +13,7 @@ import ure.sys.GLKey;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.sys.UConfig;
+import ure.sys.events.ResolutionChangedEvent;
 import ure.ui.View;
 
 import javax.inject.Inject;
@@ -29,6 +31,9 @@ public class URendererOGL implements URenderer {
 
     @Inject
     UConfig config;
+
+    @Inject
+    EventBus bus;
 
     private View rootView;
     private View context;
@@ -57,7 +62,6 @@ public class URendererOGL implements URenderer {
     private FontTexture currentFont;
 
     private KeyListener keyListener;
-    private ResolutionListener resolutionListener;
 
     private DoubleBuffer xf, yf;
 
@@ -91,6 +95,16 @@ public class URendererOGL implements URenderer {
     }
 
     // URenderer methods
+
+    @Override
+    public int getScreenWidth() {
+        return (int)(screenWidth * horizontalScaleFactor);
+    }
+
+    @Override
+    public int getScreenHeight() {
+        return (int)(screenHeight * verticalScaleFactor);
+    }
 
     @Override
     public int getMousePosX(){
@@ -130,11 +144,6 @@ public class URendererOGL implements URenderer {
     @Override
     public void setKeyListener(KeyListener listener) {
         this.keyListener = listener;
-    }
-
-    @Override
-    public void setResolutionListener(ResolutionListener listener) {
-        this.resolutionListener = listener;
     }
 
     @Override
@@ -380,6 +389,9 @@ public class URendererOGL implements URenderer {
     // internals
 
     private void beginRendering() {
+        // Make sure to set our clip rect to the current screen size.  It might have changed since the last frame.
+        glScissor(0, 0, screenWidth, screenHeight);
+
         glViewport(0, 0, screenWidth, screenHeight);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -390,6 +402,7 @@ public class URendererOGL implements URenderer {
 
         glMatrixMode(GL_MODELVIEW);
         glLoadMatrixf(dummyMatrix.get(fb));
+
     }
 
     private void renderBuffer() {
@@ -442,9 +455,7 @@ public class URendererOGL implements URenderer {
         } else {
             matrix.setOrtho2D(0, width * horizontalScaleFactor, height * verticalScaleFactor, 0);
         }
-        if (resolutionListener != null) {
-            resolutionListener.resolutionChanged((int) (width * horizontalScaleFactor), (int) (height * verticalScaleFactor));
-        }
+        bus.post(new ResolutionChangedEvent((int)(width * horizontalScaleFactor), (int)(height * verticalScaleFactor)));
     }
 
     private void destroy(){

@@ -12,10 +12,6 @@ public interface URenderer {
         void keyPressed(GLKey key);
     }
 
-    interface ResolutionListener {
-        void resolutionChanged(int width, int height);
-    }
-
     enum FontType {
         TILE_FONT,
         TEXT_FONT
@@ -61,10 +57,14 @@ public interface URenderer {
     void setKeyListener(KeyListener listener);
 
     /**
-     * Set a listener for window resolution changes.
-     * @param listener
+     * Get the currentheight of the screen/window.
      */
-    void setResolutionListener(ResolutionListener listener);
+    int getScreenHeight();
+
+    /**
+     * Get the current width of the screen/window.
+     */
+    int getScreenWidth();
 
     /**
      * Repaint the game window.
