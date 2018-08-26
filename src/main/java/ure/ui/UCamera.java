@@ -510,6 +510,12 @@ public class UCamera extends View implements UAnimator {
         return total;
     }
 
+    public UColor fogAt(int col, int row) {
+        if (!isValidCell(col,row))
+            return UColor.CLEAR;
+        return lightcells[col][row].fog(commander.frameCounter);
+    }
+
     public UTerrain terrainAt(int localCol, int localRow) {
         return area.terrainAt(localCol + leftEdge, localRow + topEdge);
     }
@@ -541,14 +547,11 @@ public class UCamera extends View implements UAnimator {
                 drawCellParticle(col, row);
             }
         }
-        UColor fogColor = area.getFogColor();
         int fogDistance = area.getFogDistance();
         int fogDistanceFull = area.getFogDistanceFull();
-        if (fogColor != null) {
-            for (int col = 0;col < columns;col++) {
-                for (int row = 0;row < rows;row++) {
-                    drawCellFog(col, row, fogColor, fogDistance, fogDistanceFull);
-                }
+        for (int col = 0;col < columns;col++) {
+            for (int row = 0;row < rows;row++) {
+                drawCellFog(col, row, fogDistance, fogDistanceFull);
             }
         }
     }
@@ -613,7 +616,7 @@ public class UCamera extends View implements UAnimator {
             }
         }
     }
-    private void drawCellFog(int col, int row, UColor c, int distance, int distanceFull) {
+    private void drawCellFog(int col, int row, int distance, int distanceFull) {
         if (commander.player() == null) return;
         UColor light = lightAt(col,row);
         float vis = visibilityAt(col,row);
@@ -626,8 +629,7 @@ public class UCamera extends View implements UAnimator {
                 } else {
                     fog = (float) (range - distance) / (float) (distanceFull - distance);
                 }
-                UColor fogcolor = new UColor(c);
-                fogcolor.illuminateWith(light, 1f);
+                UColor fogcolor = fogAt(col,row);
                 fogcolor.setAlpha(fog * vis);
                 renderer.drawRect(col * config.getTileWidth(), row * config.getTileHeight(), config.getTileWidth(), config.getTileHeight(), fogcolor);
             }
