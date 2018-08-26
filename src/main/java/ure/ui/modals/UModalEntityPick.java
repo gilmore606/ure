@@ -40,7 +40,7 @@ public class UModalEntityPick extends UModal {
     }
     @Override
     public void pressWidget(Widget widget) {
-        if (widget == listWidget)
+        if (widget == listWidget && listWidget.entity() != null)
             selectEntity();
     }
 
