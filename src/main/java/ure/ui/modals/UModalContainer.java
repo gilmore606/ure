@@ -21,7 +21,6 @@ public class UModalContainer extends UModal {
     public UModalContainer(UContainer container, String header) {
         super(null, "");
         this.container = container;
-
         headerWidget = new WidgetText(this, 0, 0, header);
         addWidget(headerWidget);
         bagWidget = new WidgetEntityList(this, 0, 2, 10, 10);

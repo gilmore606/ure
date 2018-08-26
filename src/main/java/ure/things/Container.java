@@ -31,6 +31,7 @@ public class Container extends UThing {
 
     public float openFrom(UActor actor) {
         UModalContainer cmodal = new UModalContainer(this, "You open the " + name() + "...");
+        cmodal.setTitle(name());
         commander.showModal(cmodal);
         return 0f;
     }

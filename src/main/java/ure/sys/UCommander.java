@@ -636,6 +636,10 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
     }
 
+    public UModal modal() {
+        return modal;
+    }
+
     public void wipeModals() {
         while (modal != null)
             detachModal();

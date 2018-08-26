@@ -21,6 +21,7 @@ public class UModalEntityPick extends UModal {
         addWidget(headerWidget);
 
         listWidget = new WidgetEntityList(this, 0, headerWidget.cellh, 8, _entities.size());
+        listWidget.scrollable = false;
         addWidget(listWidget);
 
         if (_showDetail) {

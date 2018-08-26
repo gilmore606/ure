@@ -3,20 +3,29 @@ package ure.ui.modals;
 import ure.areas.UArea;
 import ure.math.UColor;
 import ure.ui.Icons.Icon;
+import ure.ui.modals.widgets.WidgetMap;
 
 public class UModalMap extends UModal {
+
+    WidgetMap mapWidget;
 
     UArea area;
 
     public UModalMap(UArea area, int width, int height) {
         super(null, "");
         this.area = area;
-        setDimensions(width, height);
+
+        mapWidget = new WidgetMap(this, 0, 0, width, height);
+        addWidget(mapWidget);
+        sizeToWidgets();
         setPad(1,1);
+
+        mapWidget.lookAtArea(area);
+        mapWidget.moveView(0,0);
     }
 
-    @Override
-    public void drawContent() {
+
+    public void drawContentsucks() {
         for (int x=0;x<cellw*2;x++) {
             for (int y=0;y<cellh*2;y++) {
                 int areax = (int)(area.xsize*fx(x));
