@@ -74,6 +74,7 @@ public class ExampleGame implements UREgame, HearModalTitleScreen, URenderer.Res
     private void makeWindow() {
 
         View rootView = new View();
+        rootView.setBounds(0, 0, config.getScreenWidth(), config.getScreenHeight());
 
         camera = new UCamera(0, 0, 1200, 800);
         camera.moveTo(area, 40,20);

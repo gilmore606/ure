@@ -18,6 +18,7 @@ public class View {
     protected WeakReference<View> parent = new WeakReference<>(null);
 
     protected boolean clipsToBounds = false;
+    protected int[] clipRectBuffer = new int[4];
 
     /**
      * Set this view's position and dimensions.
@@ -105,6 +106,15 @@ public class View {
      */
     public int getHeight() {
         return height;
+    }
+
+    /**
+     * This isn't used by the view directly, but is provided for the renderer as a place to store the clip
+     * rectangle to restore after rendering this view.  This is done to avoid allocating objects when rendering.
+     * @return the clip rect buffer
+     */
+    public int[] getClipRectBuffer() {
+        return clipRectBuffer;
     }
 
     /**
