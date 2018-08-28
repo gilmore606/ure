@@ -40,6 +40,8 @@ public class CommandThrow extends UCommand implements HearModalEntityPick, HearM
     public void hearModalEntityPick(String context, Entity thing) {
         if (thing != null) {
             UModalTarget modal = new UModalTarget(throwTargetDialogMsg, this, "throw", null, true, true);
+            commander.modal().escape();
+            commander.detachModal();
             commander.showModal(modal);
         }
     }

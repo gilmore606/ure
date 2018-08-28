@@ -655,19 +655,19 @@ public class UCamera extends View implements UAnimator {
         int ch = (int)(((float)h/4f)*3f);
         if (nn) {
             renderer.drawRect(x, y, w, h / 4, UColor.SHADE);
-            renderer.drawRect(x, y, w, 2, UColor.DARKSHADE);
+            renderer.drawRect(x, y, w, 3, UColor.DARKSHADE);
         }
         if (ns) {
             renderer.drawRect(x, y + ch, w, h / 4, UColor.SHADE);
-            renderer.drawRect(x, y + h - 1, w, 2, UColor.DARKSHADE);
+            renderer.drawRect(x, y + h - 3, w, 3, UColor.DARKSHADE);
         }
         if (nw) {
             renderer.drawRect(x, y, w / 3, h, UColor.SHADE);
-            renderer.drawRect(x, y, 2, h, UColor.DARKSHADE);
+            renderer.drawRect(x, y, 3, h, UColor.DARKSHADE);
         }
         if (ne) {
             renderer.drawRect(x + cw, y, w / 4, h, UColor.SHADE);
-            renderer.drawRect(x + w - 1, y, 2, h, UColor.DARKSHADE);
+            renderer.drawRect(x + w - 3, y, 3, h, UColor.DARKSHADE);
         }
     }
 
