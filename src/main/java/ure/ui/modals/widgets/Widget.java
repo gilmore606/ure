@@ -10,7 +10,7 @@ import ure.ui.sounds.Sound;
 
 public class Widget extends View {
 
-    UModal modal;
+    public UModal modal;
     public int col, row, cellw, cellh;
     public boolean focusable = false;
     public boolean focused = false;
@@ -30,6 +30,10 @@ public class Widget extends View {
         this.y = row*gh();
         this.width = cellw*gw();
         this.height = cellh*gh();
+    }
+
+    public void move(int col, int row) {
+        setDimensions(col, row, cellw, cellh);
     }
 
     public void loseFocus() {

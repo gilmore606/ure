@@ -26,18 +26,19 @@ public class UVault {
 
     }
 
-    public void initialize() {
+    public void initialize() { initialize(30,30); }
+    public void initialize(int xsize, int ysize) {
+        cols = xsize;
+        rows = ysize;
         name = "";
         tags = null;
         description = null;
-        terrain = new String[30][30];
-        for (int i=0;i<30;i++) {
-            for (int j=0;j<30;j++) {
+        terrain = new String[cols][rows];
+        for (int i=0;i<cols;i++) {
+            for (int j=0;j<rows;j++) {
                 terrain[i][j] = "null";
             }
         }
-        cols = 30;
-        rows = 30;
     }
     public int[] getLevels() {
         return levels;
@@ -57,11 +58,12 @@ public class UVault {
     public void setTerrain(String[][] _terrain) { terrain = _terrain; }
 
     public String terrainAt(int x, int y) {
+        if (terrain[x][y] == null)
+            return "null";
         return terrain[x][y];
     }
-
-    public void cropSize(int xsize, int ysize) {
-        cols = xsize;
-        rows = ysize;
+    public void setTerrainAt(int x, int y, String t) {
+        terrain[x][y] = t;
     }
+
 }

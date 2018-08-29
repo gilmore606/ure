@@ -86,4 +86,11 @@ public class UVaultSet {
             throw new RuntimeException("Couldn't persist object " + toString(), e);
         }
     }
+
+    public String[] vaultNames() {
+        String[] names = new String[vaults.length];
+        for (int i=0;i<vaults.length;i++)
+            names[i] = vaults[i].name;
+        return names;
+    }
 }

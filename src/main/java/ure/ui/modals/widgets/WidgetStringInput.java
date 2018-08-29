@@ -28,7 +28,7 @@ public class WidgetStringInput extends Widget {
         if (focused)
             modal.renderer.drawRect(0, 0, cellw *gw(), gh(), hiliteColor());
         drawString(text, 0, 0);
-        if (blunk)
+        if (blunk && focused)
             modal.renderer.drawRect(modal.renderer.stringWidth(text), (gh()*2)/3, modal.config.getTextWidth(), gh()/3, modal.config.getTextColor());
     }
 
