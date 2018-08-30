@@ -9,6 +9,7 @@ import ure.areas.UVaultSet;
 import ure.commands.CommandQuit;
 import ure.commands.UCommand;
 import ure.math.UColor;
+import ure.math.UPath;
 import ure.sys.GLKey;
 import ure.sys.LogFormatter;
 import ure.terrain.UTerrain;
@@ -126,7 +127,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
         sizeToWidgets();
         escapable = false;
         setTitle("vaultEd");
-
+        vaultedWidget.brushIcon = terrainWidget.entity().icon();
         updateVaultList();
         loadVault();
         updateLayout();
@@ -158,12 +159,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
                 vaultedWidget.paint((UTerrain) (terrainWidget.entity()));
             } else {
                 vaultedWidget.saveUndo();
-                int tooltype = 0;
-                if (tool == TOOL_BOX || tool == TOOL_CROP)
-                    tooltype = WidgetVaulted.TOOLTYPE_BOX;
-                else
-                    tooltype = WidgetVaulted.TOOLTYPE_LINE;
-                vaultedWidget.setToolStart(tooltype);
+                vaultedWidget.setToolStart(tool);
             }
         } else if (widget == vaultListWidget) {
             if (vaultListWidget.selection == vaultSet.size()) {
@@ -172,6 +168,8 @@ public class VaultedModal extends UModal implements HearModalChoices {
                 saveVault();
                 loadVault();
             }
+        } else if (widget == terrainWidget) {
+            vaultedWidget.brushIcon = terrainWidget.entity().icon();
         } else if (widget == drawButton) {
             selectTool(TOOL_DRAW);
         } else if (widget == lineButton) {
@@ -312,10 +310,16 @@ public class VaultedModal extends UModal implements HearModalChoices {
     }
 
     void doBox(int x1, int y1, int x2, int y2) {
-
+        for (int i=x1;i<=x2;i++) {
+            for (int j=y1;j<=y2;j++) {
+                vaultedWidget.paint((UTerrain)(terrainWidget.entity()), i, j);
+            }
+        }
     }
 
     void doLine(int x1, int y1, int x2, int y2) {
-
+        for (int[] point : UPath.line(x1,y1,x2,y2)) {
+            vaultedWidget.paint((UTerrain)(terrainWidget.entity()), point[0], point[1]);
+        }
     }
 }

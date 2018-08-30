@@ -2,6 +2,7 @@ package ure.editors.vaulted;
 
 import ure.areas.UVault;
 import ure.math.UColor;
+import ure.math.UPath;
 import ure.terrain.UTerrain;
 import ure.ui.Icons.Icon;
 import ure.ui.modals.UModal;
@@ -15,13 +16,11 @@ public class WidgetVaulted extends Widget {
     Icon[][] undoIcons;
     String[][] undoTerrain;
 
-    static int TOOLTYPE_BOX = 1;
-    static int TOOLTYPE_LINE = 2;
-
     int tool;
     int toolX,toolY;
     int toolFinishX,toolFinishY;
     int cursorx,cursory;
+    Icon brushIcon;
     UColor brightHilite;
 
     public WidgetVaulted(UModal modal, int x, int y, int w, int h) {
@@ -96,10 +95,11 @@ public class WidgetVaulted extends Widget {
         }
     }
 
-    public void paint(UTerrain t) {
-        if (gridTerrain[cursorx][cursory] != t.getName()) {
-            gridTerrain[cursorx][cursory] = t.getName();
-            gridIcons[cursorx][cursory] = modal.iconCzar.getIconByName(t.getName());
+    public void paint (UTerrain t) { paint(t,cursorx,cursory); }
+    public void paint(UTerrain t, int px, int py) {
+        if (gridTerrain[px][py] != t.getName()) {
+            gridTerrain[px][py] = t.getName();
+            gridIcons[px][py] = modal.iconCzar.getIconByName(t.getName());
         }
     }
 
@@ -120,16 +120,34 @@ public class WidgetVaulted extends Widget {
             }
         }
         if (focused) {
-            if (tool == TOOLTYPE_BOX || tool == TOOLTYPE_LINE) {
+            if (tool == VaultedModal.TOOL_BOX || tool == VaultedModal.TOOL_CROP) {
                 int x1 = Math.min(toolX, cursorx);
                 int x2 = Math.max(toolX, cursorx);
                 int y1 = Math.min(toolY, cursory);
                 int y2 = Math.max(toolY, cursory);
-                if (tool == TOOLTYPE_BOX) {
-                    modal.renderer.drawRectBorder(x1*gw()-2,y1*gh()-2,(x2-x1+1)*gw()+2,(y2-y1+1)*gh()+2, 4, UColor.CLEAR, UColor.YELLOW);
+                if (tool == VaultedModal.TOOL_CROP) {
+                    modal.renderer.drawRect(0, 0, x1 * gw() - 1, height, UColor.DARKERSHADE);
+                    modal.renderer.drawRect((x2 + 1) * gw(), 0, width - (x2 + 1) * gw(), height, UColor.DARKERSHADE);
+                    modal.renderer.drawRect(x1 * gw(), 0, (x2 - x1 + 1) * gw(), y1 * gh() - 1, UColor.DARKERSHADE);
+                    modal.renderer.drawRect(x1 * gw(), (y2 + 1) * gh() + 1, (x2 - x1 + 1) * gw(), height - y2 * gh() + 1, UColor.DARKERSHADE);
+                } else if (brushIcon != null) {
+                    for (int i = x1;i <= x2;i++) {
+                        for (int j = y1;j <= y2;j++) {
+                            drawIcon(brushIcon, i, j);
+                        }
+                    }
+                }
+                modal.renderer.drawRectBorder(x1 * gw() - 2, y1 * gh() - 2, (x2 - x1 + 1) * gw() + 2, (y2 - y1 + 1) * gh() + 2, 4, UColor.CLEAR, UColor.YELLOW);
+            } else if (tool == VaultedModal.TOOL_LINE) {
+                for (int[] point : UPath.line(toolX,toolY,cursorx,cursory)) {
+                    if (brushIcon != null) drawIcon(brushIcon,point[0],point[1]);
+                    modal.renderer.drawRectBorder(point[0]*gw()-2,point[1]*gh()-2,gw()+4, gh()+4, 4, UColor.CLEAR, UColor.YELLOW);
                 }
             } else {
-                modal.renderer.drawRectBorder(cursorx * gw(), cursory * gh(), gw() + 2, gh() + 2, 2, UColor.CLEAR, brightHilite);
+                if (brushIcon != null) {
+                    drawIcon(brushIcon,cursorx,cursory);
+                }
+                modal.renderer.drawRectBorder(cursorx * gw()-1, cursory * gh()-1, gw() + 2, gh() + 2, 2, UColor.CLEAR, brightHilite);
             }
         }
     }
@@ -182,15 +200,20 @@ public class WidgetVaulted extends Widget {
     }
 
     void releaseTool() {
+        if (tool == VaultedModal.TOOL_LINE) {
+            toolFinishX = cursorx;
+            toolFinishY = cursory;
+        } else {
+            int minx = Math.min(toolX, cursorx);
+            int maxx = Math.max(toolX, cursorx);
+            int miny = Math.min(toolY, cursory);
+            int maxy = Math.max(toolY, cursory);
+            toolX = minx;
+            toolY = miny;
+            toolFinishX = maxx;
+            toolFinishY = maxy;
+        }
         tool = 0;
-        int minx = Math.min(toolX, cursorx);
-        int maxx = Math.max(toolX, cursorx);
-        int miny = Math.min(toolY, cursory);
-        int maxy = Math.max(toolY, cursory);
-        toolX = minx;
-        toolY = miny;
-        toolFinishX = maxx;
-        toolFinishY = maxy;
         modal.widgetChanged(this);
     }
 }

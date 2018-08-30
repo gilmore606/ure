@@ -8,6 +8,7 @@ import ure.things.UThing;
 import ure.ui.UCamera;
 import ure.ui.ULight;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.TreeSet;
 
@@ -90,7 +91,7 @@ public class UPath {
     /**
      * Utility method: Can actor see from point 1 to point 2 in area?
      *
-     * TODO: export this to a bresenham util func
+     * TODO: export this to a bresenham util func w lambdas
      */
     public static boolean canSee(int x0, int y0, int x1, int y1, UArea area, UActor actor) {
         int dx = Math.abs(x1-x0); int dy = Math.abs(y1-y0);
@@ -114,6 +115,31 @@ public class UPath {
             }
         }
         return true;
+    }
+
+    public static ArrayList<int[]> line(int x0, int y0, int x1, int y1) {
+        ArrayList<int[]> points = new ArrayList<>();
+        int dx = Math.abs(x1-x0); int dy = Math.abs(y1-y0);
+        int sx = x0<x1 ? 1 : -1;
+        int sy = y0<y1 ? 1 : -1;
+        int err = dx-dy;
+        int e2;
+        int x = x0;
+        int y = y0;
+        while (true) {
+            points.add(new int[]{x,y});
+            if (x==x1 && y==y1) break;
+            e2 = 2*err;
+            if (e2 > -1 * dy) {
+                err -= dy;
+                x += sx;
+            }
+            if (e2 < dx) {
+                err += dx;
+                y += sy;
+            }
+        }
+        return points;
     }
 
     /**
