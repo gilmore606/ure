@@ -71,6 +71,10 @@ public class VaultedModal extends UModal implements HearModalChoices {
     WidgetRadio mirrorRadio;
     WidgetRadio rotateRadio;
 
+    WidgetListVert actorListWidget;
+    WidgetListVert thingListWidget;
+    WidgetListVert lightListWidget;
+
     boolean savedPaintUndo = false;
 
     public VaultedModal(String _filename) {
@@ -154,6 +158,13 @@ public class VaultedModal extends UModal implements HearModalChoices {
         addWidget(mirrorRadio);
         addWidget(rotateRadio);
 
+        actorListWidget = new WidgetListVert(this, 0, 0, new String[]{});
+        addWidget(actorListWidget);
+        thingListWidget = new WidgetListVert(this, 0, 0, new String[]{});
+        addWidget(thingListWidget);
+        lightListWidget = new WidgetListVert(this, 0, 0, new String[]{});
+        addWidget(lightListWidget);
+
         escapable = false;
         setTitle("vaultEd");
         vaultedWidget.brushIcon = terrainWidget.entity().icon();
@@ -187,6 +198,12 @@ public class VaultedModal extends UModal implements HearModalChoices {
         gameUniqueRadio.move(rx,ry+1);
         mirrorRadio.move(rx,ry+2);
         rotateRadio.move(rx,ry+3);
+
+        int lx = rx;
+        int ly = rotateRadio.row + rotateRadio.cellh + 1;
+        actorListWidget.move(lx,ly);
+        thingListWidget.move(lx,actorListWidget.row+actorListWidget.cellh+1);
+        lightListWidget.move(lx,thingListWidget.row+thingListWidget.cellh+1);
 
         sizeToWidgets();
     }
@@ -242,9 +259,15 @@ public class VaultedModal extends UModal implements HearModalChoices {
             confirmModal("Delete vault '" + vault.name + "' from set " + filename + "?", "delete");
         } else if (widget == quitButton) {
             confirmModal("Quit vaultEd?  Unsaved changes will be lost.", "quit");
+        } else if (widget == lightListWidget) {
+            editLight(vault.lights.get(lightListWidget.selection));
         } else {
             super.pressWidget(widget);
         }
+    }
+
+    void editLight(ULight light) {
+
     }
 
     void selectTool(int newtool) {
@@ -346,6 +369,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
         vaultedWidget.loadVault(vault);
         updateLayout();
         updateVaultList();
+        updateLightList();
         log.info("Loaded vault '" + vault.name + "' " + Integer.toString(vault.cols) + " by " + Integer.toString(vault.rows));
     }
 
@@ -392,9 +416,29 @@ public class VaultedModal extends UModal implements HearModalChoices {
         loadVault();
     }
 
+    void updateLightList() {
+        if (vault.lights == null || vault.lights.size() < 1) {
+            lightListWidget.setOptions(new String[]{});
+        } else {
+            String[] options = new String[vault.lights.size()];
+            for (int i=0;i<vault.lights.size();i++) {
+                ULight l = vault.lights.get(i);
+                if (l.type == ULight.AMBIENT) {
+                    options[i] = Integer.toString(i) + ". ambient light";
+                } else {
+                    options[i] = Integer.toString(i) + ". point light";
+                }
+            }
+            lightListWidget.setOptions(options);
+        }
+    }
+
     void doCrop(int x1, int y1, int x2, int y2) {
+        System.out.println(Integer.toString(vaultListWidget.selection));
         if (x2-x1<2 && y2-y1<2) return;
         vaultedWidget.doCrop(x1,y1,x2+1,y2+1);
+        for (ULight l : vault.lights)
+            l.moveTo(vaultedWidget.area, l.x - x1, l.y - y1);
         vault.initialize(x2-x1+1,y2-y1+1);
         saveVault();
         loadVault();
@@ -424,5 +468,6 @@ public class VaultedModal extends UModal implements HearModalChoices {
         lightRadio.on = true;
         vaultedWidget.camera.setLightEnable(true);
         selectTool(TOOL_DRAW);
+        updateLightList();
     }
 }

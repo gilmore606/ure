@@ -30,6 +30,7 @@ public class WidgetListVert extends Widget {
         optionIcons = null;
         if (selection >= options.length)
             select(options.length-1);
+        setDimensions(col, row, modal.longestLine(options) + 2, options.length);
     }
 
     @Override
