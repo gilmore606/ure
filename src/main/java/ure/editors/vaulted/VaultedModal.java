@@ -50,6 +50,8 @@ public class VaultedModal extends UModal implements HearModalChoices {
     WidgetButton lineButton;
     WidgetButton boxButton;
     WidgetButton cropButton;
+    WidgetButton actorButton;
+    WidgetButton thingButton;
 
     WidgetButton growButton;
     WidgetButton undoButton;
@@ -104,11 +106,13 @@ public class VaultedModal extends UModal implements HearModalChoices {
         vaultedWidget = new WidgetVaulted(this, 10, 7, 25,25);
         addWidget(vaultedWidget);
 
-        drawButton = new WidgetButton(this, 41, 7, "[ : draw ]", null);
+        drawButton = new WidgetButton(this, 41, 7, " ! draw ", null);
         drawButton.lit = true;
-        lineButton = new WidgetButton(this, 41, 7, "[ : line ]", null);
-        boxButton = new WidgetButton(this, 41, 8, "[ : box ]", null);
-        cropButton = new WidgetButton(this, 41, 9, "[ : crop ]", null);
+        lineButton = new WidgetButton(this, 41, 7, " / line ", null);
+        boxButton = new WidgetButton(this, 41, 8, "[] box ", null);
+        cropButton = new WidgetButton(this, 41, 9, "<> crop ", null);
+        actorButton = new WidgetButton(this, 41, 9, " @ actor ", null);
+        thingButton = new WidgetButton(this, 41, 9, " + thing ", null);
         growButton = new WidgetButton(this, 41, 10, "[ Grow ]", null);
         undoButton = new WidgetButton(this, 41, 11, "[ Undo ]", null);
         saveButton = new WidgetButton(this, 41, 12, "[ Save ]", null);
@@ -119,6 +123,8 @@ public class VaultedModal extends UModal implements HearModalChoices {
         addWidget(lineButton);
         addWidget(boxButton);
         addWidget(cropButton);
+        addWidget(actorButton);
+        addWidget(thingButton);
         addWidget(growButton);
         addWidget(undoButton);
         addWidget(saveButton);
@@ -154,12 +160,14 @@ public class VaultedModal extends UModal implements HearModalChoices {
         lineButton.move(bx, by+1);
         boxButton.move(bx, by+2);
         cropButton.move(bx, by+3);
-        growButton.move(bx, by+4);
-        undoButton.move(bx, by+5);
-        saveButton.move(bx, by+6);
-        revertButton.move(bx, by+7);
-        deleteButton.move(bx, by+8);
-        quitButton.move(bx, by+9);
+        actorButton.move(bx, by+4);
+        thingButton.move(bx, by+5);
+        growButton.move(bx, by+7);
+        undoButton.move(bx, by+8);
+        saveButton.move(bx, by+9);
+        revertButton.move(bx, by+10);
+        deleteButton.move(bx, by+11);
+        quitButton.move(bx, by+13);
 
         int rx = bx + 6;
         int ry = by;
@@ -354,8 +362,8 @@ public class VaultedModal extends UModal implements HearModalChoices {
 
     void doCrop(int x1, int y1, int x2, int y2) {
         if (x2-x1<2 && y2-y1<2) return;
-        vaultedWidget.doCrop(x1,y1,x2,y2);
-        vault.initialize(x2-x1,y2-y1);
+        vaultedWidget.doCrop(x1,y1,x2+1,y2+1);
+        vault.initialize(x2-x1+1,y2-y1+1);
         saveVault();
     }
 

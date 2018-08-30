@@ -390,14 +390,22 @@ public class UCamera extends View implements UAnimator {
             for (int ix = sx1;ix < sx1 + w;ix++) {
                 val = spreadAmbient(light, ix, sy1, 0, -1, fall);
                 projectToCell(ix, sy1, light, false, val);
+                projectToCell(ix-1, sy1, light, false, val);
+                projectToCell(ix+1,sy1,light,false,val);
                 val = spreadAmbient(light, ix, sy1 + h-1, 0, 1, fall);
                 projectToCell(ix, sy1 + h-1, light, false, val);
+                projectToCell(ix-1,sy1+h-1,light,false,val);
+                projectToCell(ix+1,sy1+h-1,light,false,val);
             }
             for (int iy = sy1;iy < sy1 + h;iy++) {
                 val = spreadAmbient(light, sx1, iy, -1, 0, fall);
                 projectToCell(sx1, iy, light, false, val);
+                projectToCell(sx1,iy-1,light,false,val);
+                projectToCell(sx1,iy+1,light,false,val);
                 val = spreadAmbient(light, sx1 + w-1, iy, 1, 0, fall);
                 projectToCell(sx1 + w-1, iy, light, false, val);
+                projectToCell(sx1+w-1,iy-1,light,false,val);
+                projectToCell(sx1+w-1,iy+1,light,false,val);
             }
         }
     }
@@ -643,10 +651,10 @@ public class UCamera extends View implements UAnimator {
 
     void drawCellAO(int col, int row) {
         if (!area.canSeeThrough(col+leftEdge,row+topEdge)) return;
-        boolean nn = !area.canSeeThrough(col+leftEdge,row+topEdge-1);
-        boolean ns = !area.canSeeThrough(col+leftEdge,row+topEdge+1);
-        boolean nw = !area.canSeeThrough(col+leftEdge-1,row+topEdge);
-        boolean ne = !area.canSeeThrough(col+leftEdge+1,row+topEdge);
+        boolean nn = !area.canSeeThrough(col+leftEdge,row+topEdge-1) || !area.terrainAt(col+leftEdge,row+topEdge-1).isPassable();
+        boolean ns = !area.canSeeThrough(col+leftEdge,row+topEdge+1) || !area.terrainAt(col+leftEdge,row+topEdge+1).isPassable();
+        boolean nw = !area.canSeeThrough(col+leftEdge-1,row+topEdge) || !area.terrainAt(col+leftEdge-1,row+topEdge).isPassable();
+        boolean ne = !area.canSeeThrough(col+leftEdge+1,row+topEdge) || !area.terrainAt(col+leftEdge+1,row+topEdge).isPassable();
         int x = col * config.getTileWidth();
         int y = row * config.getTileHeight();
         int w = config.getTileWidth();
