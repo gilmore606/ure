@@ -5,16 +5,18 @@ import ure.math.UColor;
 import ure.math.UPath;
 import ure.terrain.UTerrain;
 import ure.ui.Icons.Icon;
+import ure.ui.UCamera;
 import ure.ui.modals.UModal;
 import ure.ui.modals.widgets.Widget;
 
 public class WidgetVaulted extends Widget {
 
-    Icon[][] gridIcons;
     String[][] gridTerrain;
 
-    Icon[][] undoIcons;
     String[][] undoTerrain;
+
+    VaultedArea area;
+    UCamera camera;
 
     int tool;
     int toolX,toolY;
@@ -25,37 +27,53 @@ public class WidgetVaulted extends Widget {
 
     public WidgetVaulted(UModal modal, int x, int y, int w, int h) {
         super(modal);
+        area = new VaultedArea(w, h);
+        camera = new UCamera(x*gw(),y*gh(),w*gw(),h*gh());
+        camera.moveTo(area,w/2,h/2);
+        camera.setLightEnable(false);
+        modal.config.setVisibilityEnable(false);
         setDimensions(x,y,w,h);
         clearGrid();
+        modal.commander.addAnimator(camera);
         focusable = true;
         brightHilite = new UColor(modal.config.getHiliteColor());
         brightHilite.setAlpha(1f);
+        camera.renderLights();
+    }
+
+    void setCell(String t, int col, int row) {
+        gridTerrain[col][row] = t;
+        area.setTerrain(col,row,t);
+        camera.renderLights();
     }
 
     void clearGrid() {
-        gridIcons = new Icon[cellw][cellh];
         gridTerrain = new String[cellw][cellh];
         for (int i=0;i<cellw;i++) {
             for (int j=0;j<cellh;j++) {
-                gridTerrain[i][j] = "null";
-                gridIcons[i][j] = modal.iconCzar.getIconByName("null");
+                setCell("null", i, j);
             }
         }
     }
 
+    @Override
+    public void setDimensions(int x, int y, int w, int h) {
+        super.setDimensions(x,y,w,h);
+        area.initialize(w,h);
+        camera.resize(w*gw(),h*gh());
+        camera.moveTo(area, w/2,h/2);
+    }
+
     public void saveUndo() {
-        ((VaultedModal)modal).log.info("(saving undo buffer)");
-        if ((undoIcons == null) || (undoTerrain == null)) {
-            undoIcons = new Icon[cellw][cellh];
+        ((VaultedModal)modal).log.debug("(saving undo buffer)");
+        if (undoTerrain == null) {
             undoTerrain = new String[cellw][cellh];
         }
-        if (undoIcons.length != gridIcons.length || undoIcons[0].length != gridIcons[0].length) {
-            undoIcons = new Icon[cellw][cellh];
+        if (undoTerrain.length != gridTerrain.length || undoTerrain[0].length != gridTerrain[0].length) {
             undoTerrain = new String[cellw][cellh];
         }
         for (int i=0;i<cellw;i++) {
             for (int j=0;j<cellh;j++) {
-                undoIcons[i][j] = gridIcons[i][j];
                 undoTerrain[i][j] = gridTerrain[i][j];
             }
         }
@@ -63,15 +81,16 @@ public class WidgetVaulted extends Widget {
 
     public void undo() {
         ((VaultedModal)modal).log.info("(restoring undo buffer)");
-        Icon[][] swapi;
         String[][] swaps;
-        swapi = gridIcons;
         swaps = gridTerrain;
-        gridIcons = undoIcons;
         gridTerrain = undoTerrain;
-        undoIcons = swapi;
         undoTerrain = swaps;
         setDimensions(col,row,gridTerrain.length,gridTerrain[0].length);
+        for (int i=0;i<gridTerrain.length;i++) {
+            for (int j=0;j<gridTerrain[0].length;j++) {
+                area.setTerrain(i,j,gridTerrain[i][j]);
+            }
+        }
     }
 
     public void doCrop(int x1, int y1, int x2, int y2) {
@@ -79,15 +98,12 @@ public class WidgetVaulted extends Widget {
         int neww = x2-x1;
         int newh = y2-y1;
         String[][] oldTerrain = gridTerrain;
-        Icon[][] oldIcons = gridIcons;
         setDimensions(col,row,neww,newh);
-        gridIcons = new Icon[cellw][cellh];
         gridTerrain = new String[cellw][cellh];
         int cx = 0; int cy = 0;
         for (int i=x1;i<x2;i++) {
             cy = 0;
             for (int j=y1;j<y2;j++) {
-                gridIcons[cx][cy] = oldIcons[i][j];
                 gridTerrain[cx][cy] = oldTerrain[i][j];
                 cy++;
             }
@@ -98,8 +114,7 @@ public class WidgetVaulted extends Widget {
     public void paint (UTerrain t) { paint(t,cursorx,cursory); }
     public void paint(UTerrain t, int px, int py) {
         if (gridTerrain[px][py] != t.getName()) {
-            gridTerrain[px][py] = t.getName();
-            gridIcons[px][py] = modal.iconCzar.getIconByName(t.getName());
+            setCell(t.getName(), px, py);
         }
     }
 
@@ -114,11 +129,6 @@ public class WidgetVaulted extends Widget {
 
     @Override
     public void drawMe() {
-        for (int x=0;x<cellw;x++) {
-            for (int y=0;y<cellh;y++) {
-                drawIcon(gridIcons[x][y], x, y);
-            }
-        }
         if (focused) {
             if (tool == VaultedModal.TOOL_BOX || tool == VaultedModal.TOOL_CROP) {
                 int x1 = Math.min(toolX, cursorx);
@@ -164,11 +174,9 @@ public class WidgetVaulted extends Widget {
     public void loadVault(UVault vault) {
         setDimensions(col,row,vault.cols,vault.rows);
         gridTerrain = new String[cellw][cellh];
-        gridIcons = new Icon[cellw][cellh];
         for (int i=0;i<cellw;i++) {
             for (int j=0;j<cellh;j++) {
-                gridTerrain[i][j] = vault.terrainAt(i,j);
-                gridIcons[i][j] = modal.iconCzar.getIconByName(gridTerrain[i][j]);
+                setCell(vault.terrainAt(i,j), i,j);
             }
         }
         saveUndo();
@@ -176,18 +184,14 @@ public class WidgetVaulted extends Widget {
 
     public void grow() {
         String[][] oldTerrain = gridTerrain;
-        Icon[][] oldIcons = gridIcons;
         setDimensions(col,row,cellw+2,cellh+2);
         gridTerrain = new String[cellw][cellh];
-        gridIcons = new Icon[cellw][cellh];
         for (int x=0;x<cellw;x++) {
             for (int y=0;y<cellh;y++) {
                 if (x==0 || y==0 || x==(cellw-1) || y==(cellh-1)) {
-                    gridTerrain[x][y] = "null";
-                    gridIcons[x][y] = modal.iconCzar.getIconByName("null");
+                    setCell("null",x,y);
                 } else {
-                    gridTerrain[x][y] = oldTerrain[x-1][y-1];
-                    gridIcons[x][y] = oldIcons[x-1][y-1];
+                    setCell(oldTerrain[x-1][y-1],x,y);
                 }
             }
         }

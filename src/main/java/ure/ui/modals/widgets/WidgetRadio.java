@@ -12,6 +12,7 @@ public class WidgetRadio extends Widget {
 
     public WidgetRadio(UModal modal, int x, int y, String label, Icon offIcon, Icon onIcon, boolean on) {
         super(modal);
+        label = " " + label;
         this.label = label;
         this.on = on;
         this.offIcon = offIcon;

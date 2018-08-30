@@ -44,6 +44,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
     WidgetStringInput nameWidget;
     WidgetStringInput descWidget;
     WidgetVaulted vaultedWidget;
+    WidgetRadio lightRadio;
     WidgetEntityPalette terrainWidget;
 
     WidgetButton drawButton;
@@ -52,6 +53,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
     WidgetButton cropButton;
     WidgetButton actorButton;
     WidgetButton thingButton;
+    WidgetButton lightButton;
 
     WidgetButton growButton;
     WidgetButton undoButton;
@@ -104,15 +106,17 @@ public class VaultedModal extends UModal implements HearModalChoices {
         addWidget(terrainWidget);
 
         vaultedWidget = new WidgetVaulted(this, 10, 7, 25,25);
+        addChild(vaultedWidget.camera);
         addWidget(vaultedWidget);
 
-        drawButton = new WidgetButton(this, 41, 7, " ! draw ", null);
+        drawButton = new WidgetButton(this, 41, 7, " . draw ", null);
         drawButton.lit = true;
         lineButton = new WidgetButton(this, 41, 7, " / line ", null);
         boxButton = new WidgetButton(this, 41, 8, "[] box ", null);
         cropButton = new WidgetButton(this, 41, 9, "<> crop ", null);
         actorButton = new WidgetButton(this, 41, 9, " @ actor ", null);
         thingButton = new WidgetButton(this, 41, 9, " + thing ", null);
+        lightButton = new WidgetButton(this, 41, 9, " ! light ", null);
         growButton = new WidgetButton(this, 41, 10, "[ Grow ]", null);
         undoButton = new WidgetButton(this, 41, 11, "[ Undo ]", null);
         saveButton = new WidgetButton(this, 41, 12, "[ Save ]", null);
@@ -125,6 +129,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
         addWidget(cropButton);
         addWidget(actorButton);
         addWidget(thingButton);
+        addWidget(lightButton);
         addWidget(growButton);
         addWidget(undoButton);
         addWidget(saveButton);
@@ -134,10 +139,12 @@ public class VaultedModal extends UModal implements HearModalChoices {
 
         Icon radioOn = new Icon(9787, UColor.WHITE, null);
         Icon radioOff = new Icon(9675, UColor.GRAY, null);
+        lightRadio = new WidgetRadio(this, 0, 0, "lit", radioOff, radioOn, false);
         areaUniqueRadio = new WidgetRadio(this, 0, 0, "areaUnique", radioOff, radioOn, false);
         gameUniqueRadio = new WidgetRadio(this, 0, 0, "gameUnique", radioOff, radioOn, false);
         mirrorRadio = new WidgetRadio(this, 0, 0, "can mirror", radioOff, radioOn, false);
         rotateRadio = new WidgetRadio(this, 0, 0, "can rotate", radioOff, radioOn, false);
+        addWidget(lightRadio);
         addWidget(areaUniqueRadio);
         addWidget(gameUniqueRadio);
         addWidget(mirrorRadio);
@@ -150,24 +157,25 @@ public class VaultedModal extends UModal implements HearModalChoices {
         updateVaultList();
         loadVault();
         updateLayout();
-
     }
 
     void updateLayout() {
-        int bx = vaultedWidget.col + vaultedWidget.cellw + 1;
+        int bx = vaultedWidget.col + Math.max(vaultedWidget.cellw, 10) + 1;
         int by = 7;
+        lightRadio.move(bx-lightRadio.cellw, vaultedWidget.row-2);
         drawButton.move(bx, by);
         lineButton.move(bx, by+1);
         boxButton.move(bx, by+2);
         cropButton.move(bx, by+3);
         actorButton.move(bx, by+4);
         thingButton.move(bx, by+5);
-        growButton.move(bx, by+7);
-        undoButton.move(bx, by+8);
-        saveButton.move(bx, by+9);
-        revertButton.move(bx, by+10);
-        deleteButton.move(bx, by+11);
-        quitButton.move(bx, by+13);
+        lightButton.move(bx, by+6);
+        growButton.move(bx, by+8);
+        undoButton.move(bx, by+9);
+        saveButton.move(bx, by+10);
+        revertButton.move(bx, by+11);
+        deleteButton.move(bx, by+12);
+        quitButton.move(bx, by+14);
 
         int rx = bx + 6;
         int ry = by;
@@ -272,6 +280,8 @@ public class VaultedModal extends UModal implements HearModalChoices {
             vault.mirror = mirrorRadio.on;
         } else if (widget == rotateRadio) {
             vault.rotate = rotateRadio.on;
+        } else if (widget == lightRadio) {
+            vaultedWidget.camera.setLightEnable(lightRadio.on);
         }
     }
 
