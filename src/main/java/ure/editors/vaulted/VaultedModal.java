@@ -77,6 +77,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
             vaultSet = new UVaultSet();
             vaultSet.initialize();
             vaultSet.setFilename(filename);
+            writeFile();
         }
 
         headerWidget = new WidgetText(this,0,0,filename);
@@ -139,9 +140,11 @@ public class VaultedModal extends UModal implements HearModalChoices {
         escapable = false;
         setTitle("vaultEd");
         vaultedWidget.brushIcon = terrainWidget.entity().icon();
+        terrainNameWidget.setText(terrainWidget.entity().name());
         updateVaultList();
         loadVault();
         updateLayout();
+
     }
 
     void updateLayout() {
@@ -320,6 +323,12 @@ public class VaultedModal extends UModal implements HearModalChoices {
         log.info("Saved vault file '" + filename + "'.");
     }
 
+    void revertFile() {
+        vaultSet = commander.cartographer.loadVaultSet(filename);
+        vaultListWidget.selection = 0;
+        loadVault();
+    }
+
     void confirmModal(String query, String context) {
         UModalChoices modal = new UModalChoices(query, new String[]{"OK", "Cancel"}, this, context);
         commander.showModal(modal);
@@ -332,11 +341,15 @@ public class VaultedModal extends UModal implements HearModalChoices {
             writeFile();
         } else if (context.equals("delete") && selection.equals("OK")) {
             deleteVault();
+        } else if (context.equals("revert") && selection.equals("OK")) {
+            revertFile();
         }
     }
 
     void deleteVault() {
-
+        vaultSet.removeVault(vault);
+        vaultListWidget.selection = Math.min(vaultSet.vaults.length-1, Math.max(0,vaultListWidget.selection-1));
+        loadVault();
     }
 
     void doCrop(int x1, int y1, int x2, int y2) {

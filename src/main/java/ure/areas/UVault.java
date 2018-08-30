@@ -27,7 +27,10 @@ public class UVault {
 
     }
 
-    public void initialize() { initialize(30,30); }
+    public void initialize() {
+        name = "?";
+        initialize(6,6);
+    }
     public void initialize(int xsize, int ysize) {
         cols = xsize;
         rows = ysize;
