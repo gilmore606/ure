@@ -11,6 +11,7 @@ public class UVault {
 
     public String name;
     public String[] tags;
+    public boolean areaUnique, gameUnique;
     public String description;  // printed on room-enter trigger
 
     public int[] levels;
@@ -30,9 +31,6 @@ public class UVault {
     public void initialize(int xsize, int ysize) {
         cols = xsize;
         rows = ysize;
-        name = "";
-        tags = null;
-        description = null;
         terrain = new String[cols][rows];
         for (int i=0;i<cols;i++) {
             for (int j=0;j<rows;j++) {
@@ -40,10 +38,22 @@ public class UVault {
             }
         }
     }
+
+    public String[] getTags() { return tags; }
+    public void setTags(String[] s) { tags = s; }
+    public boolean isAreaUnique() { return areaUnique; }
+    public void setAreaUnique(boolean b) { areaUnique = b; }
+    public boolean isGameUnique() { return gameUnique; }
+    public void setGameUnique(boolean b) { gameUnique = b; }
+    public String getDescription() { return description; }
+    public void setDescription(String s) { description = s; }
+    public boolean isRotate() { return rotate; }
+    public void setRotate(boolean b) { rotate = b; }
+    public boolean isMirror() { return mirror; }
+    public void setMirror(boolean b) { mirror = b; }
     public int[] getLevels() {
         return levels;
     }
-
     public void setLevels(int[] levels) {
         this.levels = levels;
     }

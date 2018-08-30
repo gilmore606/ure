@@ -390,7 +390,7 @@ public class UModal extends View implements UAnimator {
     }
 
     public void pressWidget(Widget widget) {
-
+        widget.pressWidget();
     }
 
     public void widgetChanged(Widget widget) {

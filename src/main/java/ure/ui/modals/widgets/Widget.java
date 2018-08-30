@@ -44,6 +44,10 @@ public class Widget extends View {
         focused = true;
     }
 
+    public void pressWidget() {
+
+    }
+
     public void draw() {
         if (!hidden && modal.drawWidgets)
             drawMe();

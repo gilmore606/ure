@@ -144,7 +144,7 @@ public class WidgetVaulted extends Widget {
                     modal.renderer.drawRectBorder(point[0]*gw()-2,point[1]*gh()-2,gw()+4, gh()+4, 4, UColor.CLEAR, UColor.YELLOW);
                 }
             } else {
-                if (brushIcon != null) {
+                if (brushIcon != null && tool == VaultedModal.TOOL_DRAW) {
                     drawIcon(brushIcon,cursorx,cursory);
                 }
                 modal.renderer.drawRectBorder(cursorx * gw()-1, cursory * gh()-1, gw() + 2, gh() + 2, 2, UColor.CLEAR, brightHilite);

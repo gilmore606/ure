@@ -13,6 +13,7 @@ import ure.math.UPath;
 import ure.sys.GLKey;
 import ure.sys.LogFormatter;
 import ure.terrain.UTerrain;
+import ure.ui.Icons.Icon;
 import ure.ui.modals.*;
 import ure.ui.modals.widgets.*;
 
@@ -27,15 +28,9 @@ public class VaultedModal extends UModal implements HearModalChoices {
 
     public Log log = LogFactory.getLog(VaultedModal.class);
 
-    VaultedArea area;
-    int currentTerrain = 0;
-    int nullTerrain;
-    int[] terrainPalette;
-    String[] terrains;
     String filename;
     UVault vault;
     UVaultSet vaultSet;
-    int vaultCursor;
 
     int tool = 0;
     static int TOOL_DRAW = 0;
@@ -47,6 +42,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
     WidgetListVert vaultListWidget;
     WidgetText terrainNameWidget;
     WidgetStringInput nameWidget;
+    WidgetStringInput descWidget;
     WidgetVaulted vaultedWidget;
     WidgetEntityPalette terrainWidget;
 
@@ -61,6 +57,11 @@ public class VaultedModal extends UModal implements HearModalChoices {
     WidgetButton revertButton;
     WidgetButton deleteButton;
     WidgetButton quitButton;
+
+    WidgetRadio areaUniqueRadio;
+    WidgetRadio gameUniqueRadio;
+    WidgetRadio mirrorRadio;
+    WidgetRadio rotateRadio;
 
     boolean savedPaintUndo = false;
 
@@ -77,36 +78,36 @@ public class VaultedModal extends UModal implements HearModalChoices {
             vaultSet.initialize();
             vaultSet.setFilename(filename);
         }
-        vaultCursor = 0;
 
         headerWidget = new WidgetText(this,0,0,filename);
-        headerWidget.setDimensions(0,0,30,2);
+        headerWidget.setDimensions(0,0,10,2);
         addWidget(headerWidget);
 
         vaultListWidget = new WidgetListVert(this, 0, 3, new String[]{""});
         vaultListWidget.setDimensions(0,3,8, 20);
         addWidget(vaultListWidget);
 
-        terrainNameWidget = new WidgetText(this, 10, 4, "");
+        terrainNameWidget = new WidgetText(this, 10, 5, "");
         terrainNameWidget.color = config.getTextGray();
         addWidget(terrainNameWidget);
 
         nameWidget = new WidgetStringInput(this,10,0, 20, "", 30);
         addWidget(nameWidget);
-
-        terrainWidget = new WidgetEntityPalette(this, 10,2, 25, 2);
+        descWidget = new WidgetStringInput(this, 10, 1, 20, "", 80);
+        addWidget(descWidget);
+        terrainWidget = new WidgetEntityPalette(this, 10,3, 25, 2);
         for (UTerrain t : terrainCzar.getAllTerrainTemplates())
             terrainWidget.add(t);
         addWidget(terrainWidget);
 
-        vaultedWidget = new WidgetVaulted(this, 10, 6, 25,25);
+        vaultedWidget = new WidgetVaulted(this, 10, 7, 25,25);
         addWidget(vaultedWidget);
 
-        drawButton = new WidgetButton(this, 41, 6, "[ Tool: draw ]", null);
+        drawButton = new WidgetButton(this, 41, 7, "[ : draw ]", null);
         drawButton.lit = true;
-        lineButton = new WidgetButton(this, 41, 7, "[ Tool: line ]", null);
-        boxButton = new WidgetButton(this, 41, 8, "[ Tool: box ]", null);
-        cropButton = new WidgetButton(this, 41, 9, "[ Tool: crop ]", null);
+        lineButton = new WidgetButton(this, 41, 7, "[ : line ]", null);
+        boxButton = new WidgetButton(this, 41, 8, "[ : box ]", null);
+        cropButton = new WidgetButton(this, 41, 9, "[ : crop ]", null);
         growButton = new WidgetButton(this, 41, 10, "[ Grow ]", null);
         undoButton = new WidgetButton(this, 41, 11, "[ Undo ]", null);
         saveButton = new WidgetButton(this, 41, 12, "[ Save ]", null);
@@ -124,7 +125,17 @@ public class VaultedModal extends UModal implements HearModalChoices {
         addWidget(deleteButton);
         addWidget(quitButton);
 
-        sizeToWidgets();
+        Icon radioOn = new Icon(9787, UColor.WHITE, null);
+        Icon radioOff = new Icon(9675, UColor.GRAY, null);
+        areaUniqueRadio = new WidgetRadio(this, 0, 0, "areaUnique", radioOff, radioOn, false);
+        gameUniqueRadio = new WidgetRadio(this, 0, 0, "gameUnique", radioOff, radioOn, false);
+        mirrorRadio = new WidgetRadio(this, 0, 0, "can mirror", radioOff, radioOn, false);
+        rotateRadio = new WidgetRadio(this, 0, 0, "can rotate", radioOff, radioOn, false);
+        addWidget(areaUniqueRadio);
+        addWidget(gameUniqueRadio);
+        addWidget(mirrorRadio);
+        addWidget(rotateRadio);
+
         escapable = false;
         setTitle("vaultEd");
         vaultedWidget.brushIcon = terrainWidget.entity().icon();
@@ -135,16 +146,25 @@ public class VaultedModal extends UModal implements HearModalChoices {
 
     void updateLayout() {
         int bx = vaultedWidget.col + vaultedWidget.cellw + 1;
-        drawButton.move(bx, 6);
-        lineButton.move(bx, 7);
-        boxButton.move(bx, 8);
-        cropButton.move(bx, 9);
-        growButton.move(bx, 11);
-        undoButton.move(bx, 12);
-        saveButton.move(bx, 13);
-        revertButton.move(bx, 14);
-        deleteButton.move(bx, 15);
-        quitButton.move(bx, 16);
+        int by = 7;
+        drawButton.move(bx, by);
+        lineButton.move(bx, by+1);
+        boxButton.move(bx, by+2);
+        cropButton.move(bx, by+3);
+        growButton.move(bx, by+4);
+        undoButton.move(bx, by+5);
+        saveButton.move(bx, by+6);
+        revertButton.move(bx, by+7);
+        deleteButton.move(bx, by+8);
+        quitButton.move(bx, by+9);
+
+        int rx = bx + 6;
+        int ry = by;
+        areaUniqueRadio.move(rx,ry);
+        gameUniqueRadio.move(rx,ry+1);
+        mirrorRadio.move(rx,ry+2);
+        rotateRadio.move(rx,ry+3);
+
         sizeToWidgets();
     }
 
@@ -190,9 +210,11 @@ public class VaultedModal extends UModal implements HearModalChoices {
         } else if (widget == revertButton) {
             confirmModal("Revert all changes to '" + filename + "' vault and reload?", "revert");
         } else if (widget == deleteButton) {
-            confirmModal("Delete vault '" + vault.name + "' from vaultset?", "delete");
+            confirmModal("Delete vault '" + vault.name + "' from set " + filename + "?", "delete");
         } else if (widget == quitButton) {
             confirmModal("Quit vaultEd?  Unsaved changes will be lost.", "quit");
+        } else {
+            super.pressWidget(widget);
         }
     }
 
@@ -219,6 +241,8 @@ public class VaultedModal extends UModal implements HearModalChoices {
         } else if (widget == nameWidget) {
             vault.setName(nameWidget.text);
             updateVaultList();
+        } else if (widget == descWidget) {
+            vault.setDescription(descWidget.text);
         } else if (widget == vaultedWidget) {
             if (tool == TOOL_CROP) {
                 doCrop(vaultedWidget.toolX, vaultedWidget.toolY, vaultedWidget.toolFinishX, vaultedWidget.toolFinishY);
@@ -229,6 +253,14 @@ public class VaultedModal extends UModal implements HearModalChoices {
             } else if (tool == TOOL_LINE) {
                 doLine(vaultedWidget.toolX, vaultedWidget.toolY, vaultedWidget.toolFinishX, vaultedWidget.toolFinishY);
             }
+        } else if (widget == areaUniqueRadio) {
+            vault.areaUnique = areaUniqueRadio.on;
+        } else if (widget == gameUniqueRadio) {
+            vault.gameUnique = gameUniqueRadio.on;
+        } else if (widget == mirrorRadio) {
+            vault.mirror = mirrorRadio.on;
+        } else if (widget == rotateRadio) {
+            vault.rotate = rotateRadio.on;
         }
     }
 
@@ -253,6 +285,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
         }
         options[names.length] = "<new vault>";
         vaultListWidget.setOptions(options);
+        vaultListWidget.lightOption(vaultListWidget.selection);
     }
 
     void saveVault() {
@@ -262,8 +295,12 @@ public class VaultedModal extends UModal implements HearModalChoices {
     void loadVault() {
         vault = vaultSet.vaultAt(vaultListWidget.selection);
         vaultListWidget.dimAll();
-        vaultListWidget.lightOption(vaultListWidget.selection);
         nameWidget.text = vault.name;
+        descWidget.text = vault.description;
+        areaUniqueRadio.on = vault.areaUnique;
+        gameUniqueRadio.on = vault.gameUnique;
+        mirrorRadio.on = vault.mirror;
+        rotateRadio.on = vault.rotate;
         vaultedWidget.loadVault(vault);
         updateLayout();
         updateVaultList();
