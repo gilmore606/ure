@@ -6,6 +6,7 @@ import ure.math.UPath;
 import ure.terrain.UTerrain;
 import ure.ui.Icons.Icon;
 import ure.ui.UCamera;
+import ure.ui.ULight;
 import ure.ui.modals.UModal;
 import ure.ui.modals.widgets.Widget;
 
@@ -130,7 +131,7 @@ public class WidgetVaulted extends Widget {
     @Override
     public void drawMe() {
         if (focused) {
-            if (tool == VaultedModal.TOOL_BOX || tool == VaultedModal.TOOL_CROP) {
+            if (tool == VaultedModal.TOOL_BOX || tool == VaultedModal.TOOL_CROP || tool == VaultedModal.TOOL_LIGHT) {
                 int x1 = Math.min(toolX, cursorx);
                 int x2 = Math.max(toolX, cursorx);
                 int y1 = Math.min(toolY, cursory);
@@ -140,6 +141,8 @@ public class WidgetVaulted extends Widget {
                     modal.renderer.drawRect((x2 + 1) * gw(), 0, width - (x2 + 1) * gw(), height, UColor.DARKERSHADE);
                     modal.renderer.drawRect(x1 * gw(), 0, (x2 - x1 + 1) * gw(), y1 * gh() - 1, UColor.DARKERSHADE);
                     modal.renderer.drawRect(x1 * gw(), (y2 + 1) * gh() + 1, (x2 - x1 + 1) * gw(), height - y2 * gh() + 1, UColor.DARKERSHADE);
+                } else if (tool == VaultedModal.TOOL_LIGHT) {
+                    modal.renderer.drawRect(x1*gw(),y1*gh(),(x2-x1+1)*gw(),(y2-y1+1)*gh(),UColor.LIGHT);
                 } else if (brushIcon != null) {
                     for (int i = x1;i <= x2;i++) {
                         for (int j = y1;j <= y2;j++) {
@@ -172,6 +175,9 @@ public class WidgetVaulted extends Widget {
     }
 
     public void loadVault(UVault vault) {
+        for (ULight l : ((VaultedModal)modal).vault.lights ) {
+            l.removeFromArea();
+        }
         setDimensions(col,row,vault.cols,vault.rows);
         gridTerrain = new String[cellw][cellh];
         for (int i=0;i<cellw;i++) {
@@ -180,6 +186,10 @@ public class WidgetVaulted extends Widget {
             }
         }
         saveUndo();
+        for (ULight l : vault.lights) {
+            l.moveTo(area, l.x, l.y);
+        }
+        camera.renderLights();
     }
 
     public void grow() {
@@ -195,6 +205,10 @@ public class WidgetVaulted extends Widget {
                 }
             }
         }
+        for (ULight l : area.lights()) {
+            l.moveTo(area, l.x+1,l.y+1);
+        }
+        camera.renderLights();
     }
 
     public void setToolStart(int tool) {

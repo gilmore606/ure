@@ -1,7 +1,12 @@
 package ure.areas;
 
 import ure.actors.SpawnActor;
+import ure.actors.UActor;
 import ure.things.SpawnItem;
+import ure.things.UThing;
+import ure.ui.ULight;
+
+import java.util.ArrayList;
 
 /**
  * A vault represents a room template which can be stamped into an area by a Landscaper.
@@ -20,11 +25,14 @@ public class UVault {
     public boolean mirror = true;
 
     public String[][] terrain;
-    public SpawnItem[] things;
-    public SpawnActor[] actors;
+    public ArrayList<SpawnItem> things;
+    public ArrayList<SpawnActor> actors;
+    public ArrayList<ULight> lights;
 
     public UVault() {
-
+        things = new ArrayList<>();
+        actors = new ArrayList<>();
+        lights = new ArrayList<>();
     }
 
     public void initialize() {
@@ -69,6 +77,12 @@ public class UVault {
 
     public String[][] getTerrain() { return terrain; }
     public void setTerrain(String[][] _terrain) { terrain = _terrain; }
+    public ArrayList<SpawnItem> getThings() { return things; }
+    public void setThings(ArrayList<SpawnItem> s) { things = s; }
+    public ArrayList<SpawnActor> getActors() { return actors; }
+    public void setActors(ArrayList<SpawnActor> s) { actors = s; }
+    public ArrayList<ULight> getLights() { return lights; }
+    public void setLights(ArrayList<ULight> l) { lights = l; }
 
     public String terrainAt(int x, int y) {
         if (terrain[x][y] == null)
@@ -79,4 +93,10 @@ public class UVault {
         terrain[x][y] = t;
     }
 
+    public void addLight(ULight l, int x, int y) {
+        if (lights == null) lights = new ArrayList<>();
+        l.x = x;
+        l.y = y;
+        lights.add(l);
+    }
 }

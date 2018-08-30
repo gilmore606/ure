@@ -14,6 +14,7 @@ import ure.sys.GLKey;
 import ure.sys.LogFormatter;
 import ure.terrain.UTerrain;
 import ure.ui.Icons.Icon;
+import ure.ui.ULight;
 import ure.ui.modals.*;
 import ure.ui.modals.widgets.*;
 
@@ -37,6 +38,9 @@ public class VaultedModal extends UModal implements HearModalChoices {
     static int TOOL_LINE = 1;
     static int TOOL_BOX = 2;
     static int TOOL_CROP = 3;
+    static int TOOL_ACTOR = 4;
+    static int TOOL_THING = 5;
+    static int TOOL_LIGHT = 6;
 
     WidgetText headerWidget;
     WidgetListVert vaultListWidget;
@@ -217,6 +221,12 @@ public class VaultedModal extends UModal implements HearModalChoices {
             selectTool(TOOL_BOX);
         } else if (widget == cropButton) {
             selectTool(TOOL_CROP);
+        } else if (widget == thingButton) {
+            selectTool(TOOL_THING);
+        } else if (widget == actorButton) {
+            selectTool(TOOL_ACTOR);
+        } else if (widget == lightButton) {
+            selectTool(TOOL_LIGHT);
         } else if (widget == growButton) {
             vaultedWidget.saveUndo();
             vaultedWidget.grow();
@@ -242,6 +252,9 @@ public class VaultedModal extends UModal implements HearModalChoices {
         lineButton.lit = false;
         boxButton.lit = false;
         cropButton.lit = false;
+        thingButton.lit = false;
+        actorButton.lit = false;
+        lightButton.lit = false;
         tool = newtool;
         if (tool == TOOL_DRAW)
             drawButton.lit = true;
@@ -251,6 +264,12 @@ public class VaultedModal extends UModal implements HearModalChoices {
             boxButton.lit = true;
         else if (tool == TOOL_CROP)
             cropButton.lit = true;
+        else if (tool == TOOL_THING)
+            thingButton.lit = true;
+        else if (tool == TOOL_ACTOR)
+            actorButton.lit = true;
+        else if (tool == TOOL_LIGHT)
+            lightButton.lit = true;
     }
 
     @Override
@@ -271,6 +290,8 @@ public class VaultedModal extends UModal implements HearModalChoices {
                 doBox(vaultedWidget.toolX, vaultedWidget.toolY, vaultedWidget.toolFinishX, vaultedWidget.toolFinishY);
             } else if (tool == TOOL_LINE) {
                 doLine(vaultedWidget.toolX, vaultedWidget.toolY, vaultedWidget.toolFinishX, vaultedWidget.toolFinishY);
+            } else if (tool == TOOL_LIGHT) {
+                makeLight(vaultedWidget.toolX, vaultedWidget.toolY, vaultedWidget.toolFinishX, vaultedWidget.toolFinishY);
             }
         } else if (widget == areaUniqueRadio) {
             vault.areaUnique = areaUniqueRadio.on;
@@ -336,6 +357,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
     }
 
     void writeFile() {
+        vaultedWidget.saveVault(vault);
         vaultSet.persist(commander.config.getResourcePath() + "vaults/" + filename + ".json");
         commander.printScroll("Saved vaultset " + filename + ".json to resources.");
         log.info("Saved vault file '" + filename + "'.");
@@ -375,6 +397,8 @@ public class VaultedModal extends UModal implements HearModalChoices {
         vaultedWidget.doCrop(x1,y1,x2+1,y2+1);
         vault.initialize(x2-x1+1,y2-y1+1);
         saveVault();
+        loadVault();
+        vaultedWidget.camera.renderLights();
     }
 
     void doBox(int x1, int y1, int x2, int y2) {
@@ -389,5 +413,16 @@ public class VaultedModal extends UModal implements HearModalChoices {
         for (int[] point : UPath.line(x1,y1,x2,y2)) {
             vaultedWidget.paint((UTerrain)(terrainWidget.entity()), point[0], point[1]);
         }
+    }
+
+    void makeLight(int x1, int y1, int x2, int y2) {
+        ULight l = new ULight(UColor.WHITE, 100, 100);
+        l.makeAmbient(x2-x1+1,y2-y1+1);
+        vault.addLight(l, x1, y1);
+        l.moveTo(vaultedWidget.area, x1, y1);
+        vaultedWidget.camera.renderLights();
+        lightRadio.on = true;
+        vaultedWidget.camera.setLightEnable(true);
+        selectTool(TOOL_DRAW);
     }
 }
