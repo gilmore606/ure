@@ -228,8 +228,12 @@ public class URendererOGL implements URenderer {
         int[] width = new int[1];
         int[] height = new int[1];
         glfwGetFramebufferSize(window, width, height);
-        horizontalScaleFactor = (float) config.getScreenWidth() / (float) width[0];
-        verticalScaleFactor = (float) config.getScreenHeight() / (float) height[0];
+        // Get the window width/height
+        int[] windowWidth = new int[1];
+        int[] windowHeight = new int[1];
+        glfwGetWindowSize(window, windowWidth, windowHeight);
+        horizontalScaleFactor = (float) windowWidth[0] / (float) width[0];
+        verticalScaleFactor = (float) windowHeight[0] / (float) height[0];
         resize(width[0], height[0]);
 
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
