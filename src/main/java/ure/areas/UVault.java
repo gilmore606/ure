@@ -93,6 +93,15 @@ public class UVault {
         terrain[x][y] = t;
     }
 
+    public String[][] terrainClone() {
+        String[][] clone = new String[cols][rows];
+        for (int i=0;i<cols;i++) {
+            for (int j=0;j<rows;j++) {
+                clone[i][j] = terrain[i][j];
+            }
+        }
+        return clone;
+    }
     public void addLight(ULight l, int x, int y) {
         if (lights == null) lights = new ArrayList<>();
         l.x = x;

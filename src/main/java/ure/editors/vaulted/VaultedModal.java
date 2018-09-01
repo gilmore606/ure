@@ -225,7 +225,6 @@ public class VaultedModal extends UModal implements HearModalChoices {
             if (vaultListWidget.selection == vaultSet.size()) {
                 makeNewVault();
             } else if (vaultListWidget.selection < vaultSet.size()) {
-                saveVault();
                 loadVault();
             }
         } else if (widget == terrainWidget) {
@@ -353,10 +352,6 @@ public class VaultedModal extends UModal implements HearModalChoices {
         vaultListWidget.lightOption(vaultListWidget.selection);
     }
 
-    void saveVault() {
-        vaultedWidget.saveVault(vault);
-    }
-
     void loadVault() {
         vault = vaultSet.vaultAt(vaultListWidget.selection);
         vaultListWidget.dimAll();
@@ -367,21 +362,20 @@ public class VaultedModal extends UModal implements HearModalChoices {
         mirrorRadio.on = vault.mirror;
         rotateRadio.on = vault.rotate;
         vaultedWidget.loadVault(vault);
+        vaultListWidget.lightOption(vaultListWidget.selection);
         updateLayout();
-        updateVaultList();
+        //updateVaultList();
         updateLightList();
         log.info("Loaded vault '" + vault.name + "' " + Integer.toString(vault.cols) + " by " + Integer.toString(vault.rows));
     }
 
     void makeNewVault() {
-        saveVault();
         vaultSet.addVault();
         vaultListWidget.selection = vaultSet.size() - 1;
         loadVault();
     }
 
     void writeFile() {
-        vaultedWidget.saveVault(vault);
         vaultSet.persist(commander.config.getResourcePath() + "vaults/" + filename + ".json");
         commander.printScroll("Saved vaultset " + filename + ".json to resources.");
         log.info("Saved vault file '" + filename + "'.");
@@ -439,8 +433,6 @@ public class VaultedModal extends UModal implements HearModalChoices {
         vaultedWidget.doCrop(x1,y1,x2+1,y2+1);
         for (ULight l : vault.lights)
             l.moveTo(vaultedWidget.area, l.x - x1, l.y - y1);
-        vault.initialize(x2-x1+1,y2-y1+1);
-        saveVault();
         loadVault();
         vaultedWidget.camera.renderLights();
     }

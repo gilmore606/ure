@@ -12,8 +12,7 @@ import ure.ui.modals.widgets.Widget;
 
 public class WidgetVaulted extends Widget {
 
-    String[][] gridTerrain;
-
+    UVault vault;
     String[][] undoTerrain;
 
     VaultedArea area;
@@ -34,7 +33,6 @@ public class WidgetVaulted extends Widget {
         camera.setLightEnable(false);
         modal.config.setVisibilityEnable(false);
         setDimensions(x,y,w,h);
-        clearGrid();
         modal.commander.addAnimator(camera);
         focusable = true;
         brightHilite = new UColor(modal.config.getHiliteColor());
@@ -43,18 +41,9 @@ public class WidgetVaulted extends Widget {
     }
 
     void setCell(String t, int col, int row) {
-        gridTerrain[col][row] = t;
+        vault.terrain[col][row] = t;
         area.setTerrain(col,row,t);
         camera.renderLights();
-    }
-
-    void clearGrid() {
-        gridTerrain = new String[cellw][cellh];
-        for (int i=0;i<cellw;i++) {
-            for (int j=0;j<cellh;j++) {
-                setCell("null", i, j);
-            }
-        }
     }
 
     @Override
@@ -70,12 +59,12 @@ public class WidgetVaulted extends Widget {
         if (undoTerrain == null) {
             undoTerrain = new String[cellw][cellh];
         }
-        if (undoTerrain.length != gridTerrain.length || undoTerrain[0].length != gridTerrain[0].length) {
+        if (undoTerrain.length != vault.terrain.length || undoTerrain[0].length != vault.terrain[0].length) {
             undoTerrain = new String[cellw][cellh];
         }
         for (int i=0;i<cellw;i++) {
             for (int j=0;j<cellh;j++) {
-                undoTerrain[i][j] = gridTerrain[i][j];
+                undoTerrain[i][j] = vault.terrain[i][j];
             }
         }
     }
@@ -83,13 +72,13 @@ public class WidgetVaulted extends Widget {
     public void undo() {
         ((VaultedModal)modal).log.info("(restoring undo buffer)");
         String[][] swaps;
-        swaps = gridTerrain;
-        gridTerrain = undoTerrain;
+        swaps = vault.terrain;
+        vault.terrain = undoTerrain;
         undoTerrain = swaps;
-        setDimensions(col,row,gridTerrain.length,gridTerrain[0].length);
-        for (int i=0;i<gridTerrain.length;i++) {
-            for (int j=0;j<gridTerrain[0].length;j++) {
-                area.setTerrain(i,j,gridTerrain[i][j]);
+        setDimensions(col,row,vault.terrain.length,vault.terrain[0].length);
+        for (int i=0;i<vault.terrain.length;i++) {
+            for (int j=0;j<vault.terrain[0].length;j++) {
+                area.setTerrain(i,j,vault.terrain[i][j]);
             }
         }
     }
@@ -98,14 +87,14 @@ public class WidgetVaulted extends Widget {
         ((VaultedModal)modal).log.info("Cropping " + Integer.toString(x1) + "," + Integer.toString(y1) + " to " + Integer.toString(x2) + "," + Integer.toString(y2));
         int neww = x2-x1;
         int newh = y2-y1;
-        String[][] oldTerrain = gridTerrain;
+        String[][] oldTerrain = vault.terrainClone();
         setDimensions(col,row,neww,newh);
-        gridTerrain = new String[cellw][cellh];
+        vault.initialize(neww,newh);
         int cx = 0; int cy = 0;
         for (int i=x1;i<x2;i++) {
             cy = 0;
             for (int j=y1;j<y2;j++) {
-                gridTerrain[cx][cy] = oldTerrain[i][j];
+                setCell(oldTerrain[i][j],cx,cy);
                 cy++;
             }
             cx++;
@@ -114,7 +103,7 @@ public class WidgetVaulted extends Widget {
 
     public void paint (UTerrain t) { paint(t,cursorx,cursory); }
     public void paint(UTerrain t, int px, int py) {
-        if (gridTerrain[px][py] != t.getName()) {
+        if (vault.terrain[px][py] != t.getName()) {
             setCell(t.getName(), px, py);
         }
     }
@@ -165,21 +154,12 @@ public class WidgetVaulted extends Widget {
         }
     }
 
-    public void saveVault(UVault vault) {
-        vault.initialize(cellw,cellh);
-        for (int i=0;i<cellw;i++) {
-            for (int j=0;j<cellh;j++) {
-                vault.setTerrainAt(i,j,gridTerrain[i][j]);
-            }
-        }
-    }
-
     public void loadVault(UVault vault) {
+        this.vault = vault;
         for (ULight l : ((VaultedModal)modal).vault.lights ) {
             l.removeFromArea();
         }
         setDimensions(col,row,vault.cols,vault.rows);
-        gridTerrain = new String[cellw][cellh];
         for (int i=0;i<cellw;i++) {
             for (int j=0;j<cellh;j++) {
                 setCell(vault.terrainAt(i,j), i,j);
@@ -193,9 +173,9 @@ public class WidgetVaulted extends Widget {
     }
 
     public void grow() {
-        String[][] oldTerrain = gridTerrain;
+        String[][] oldTerrain = vault.terrain;
         setDimensions(col,row,cellw+2,cellh+2);
-        gridTerrain = new String[cellw][cellh];
+        vault.initialize(cellw,cellh);
         for (int x=0;x<cellw;x++) {
             for (int y=0;y<cellh;y++) {
                 if (x==0 || y==0 || x==(cellw-1) || y==(cellh-1)) {
