@@ -269,7 +269,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
 
     void editLight(ULight light) {
         LightEditModal modal = new LightEditModal(this, light);
-        modal.setChildPosition(vaultedWidget.col + vaultedWidget.cellw + 1, vaultedWidget.row, this);
+        modal.setChildPosition(vaultedWidget.col + vaultedWidget.cellw + 2, vaultedWidget.row-1, this);
         commander.showModal(modal);
     }
 

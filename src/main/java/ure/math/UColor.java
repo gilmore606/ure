@@ -1,5 +1,7 @@
 package ure.math;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 /**
  * UColor implements a mutable RGBA color with color and light mixing.
  * Consider the mutability carefully when passing UColor variables; a UColor you return as a state
@@ -131,9 +133,16 @@ public class UColor {
         BoundsCheck();
     }
 
+    @JsonSetter("r")
     public void setR(float f) { r = f; BoundsCheck(); }
+    @JsonSetter("g")
     public void setG(float f) { g = f; BoundsCheck(); }
+    @JsonSetter("b")
     public void setB(float f) { b = f; BoundsCheck(); }
+
+    public void setR(int i) { r = (float)i/255f; }
+    public void setG(int i) { g = (float)i/255f; }
+    public void setB(int i) { b = (float)i/255f; }
 
     /**
      * Set the color with float 0f-1f values.

@@ -10,6 +10,7 @@ public class WidgetHSlider extends Widget {
     public int value, valuemin, valuemax;
     int length;
     boolean showNumber;
+    public UColor color;
 
     public WidgetHSlider(UModal modal, int x, int y, int length, int value, int valuemin, int valuemax, boolean showNumber) {
         super(modal);
@@ -20,12 +21,13 @@ public class WidgetHSlider extends Widget {
         this.valuemax = valuemax;
         this.length = length;
         this.showNumber = showNumber;
+        color = modal.config.getHiliteColor();
     }
 
     @Override
     public void drawMe() {
         modal.renderer.drawRectBorder(0, 0, length*gw(),gh(),focused ? 2 : 1, UColor.BLACK, modal.config.getHiliteColor());
-        modal.renderer.drawRect(0, 0, (int)((length*gw()) * (float)value/(float)valuemax), gh(), modal.config.getHiliteColor());
+        modal.renderer.drawRect(0, 0, (int)((length*gw()) * (float)value/(float)valuemax), gh(), color);
         if (showNumber)
             modal.drawString(Integer.toString(value), length + 1, 0, null, focused ? modal.config.getHiliteColor() : null);
     }
