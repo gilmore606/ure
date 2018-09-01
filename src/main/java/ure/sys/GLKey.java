@@ -91,6 +91,9 @@ public class GLKey {
             case GLFW_KEY_EQUAL: return "=";
             case GLFW_KEY_SEMICOLON: return ";";
             case GLFW_KEY_APOSTROPHE: return "'";
+            case GLFW_KEY_PERIOD: return ".";
+            case GLFW_KEY_COMMA: return ",";
+            case GLFW_KEY_SLASH: return "/";
         }
         return null;
     }

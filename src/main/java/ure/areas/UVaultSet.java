@@ -70,6 +70,26 @@ public class UVaultSet {
             putVault(vaults.length, vault);
     }
 
+    public void removeVault(UVault vault) {
+        if (vaults.length <= 1)
+            return;
+        boolean found = false;
+        for (UVault v : vaults) {
+            if (v == vault)
+                found = true;
+        }
+        if (!found) return;
+        UVault[] newvaults = new UVault[vaults.length-1];
+        int i=0;
+        for (UVault v : vaults) {
+            if (v != vault) {
+                newvaults[i] = v;
+                i++;
+            }
+        }
+        vaults = newvaults;
+    }
+
     public void persist(String absoluteFilepath) {
         File file = new File(absoluteFilepath);
         try (
@@ -85,5 +105,12 @@ public class UVaultSet {
         } catch (IOException e) {
             throw new RuntimeException("Couldn't persist object " + toString(), e);
         }
+    }
+
+    public String[] vaultNames() {
+        String[] names = new String[vaults.length];
+        for (int i=0;i<vaults.length;i++)
+            names[i] = vaults[i].name;
+        return names;
     }
 }

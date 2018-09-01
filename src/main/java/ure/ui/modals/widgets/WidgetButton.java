@@ -8,12 +8,14 @@ public class WidgetButton extends Widget {
 
     public String label;
     public Icon icon;
+    public boolean lit;
 
     public WidgetButton(UModal modal, int x, int y, String label, Icon icon) {
         super(modal);
         this.label = label;
         this.icon = icon;
         focusable = true;
+        lit = false;
         setDimensions(x,y,modal.textWidth(label) + (icon == null ? 0 : 1),1);
     }
 
@@ -21,6 +23,6 @@ public class WidgetButton extends Widget {
     public void drawMe() {
         if (icon != null)
             drawIcon(icon, 0, 0);
-        drawString(label, (icon == null) ? 0 : 1, 0, null, focused ? hiliteColor() : null);
+        drawString(label, (icon == null) ? 0 : 1, 0, lit ? null : modal.config.getTextGray(), focused ? hiliteColor() : null);
     }
 }

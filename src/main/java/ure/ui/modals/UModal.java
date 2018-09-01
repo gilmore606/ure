@@ -338,11 +338,15 @@ public class UModal extends View implements UAnimator {
         mousey = (commander.mouseY() - absoluteY()) / gh();
         for (Widget widget : widgets) {
             if (mousex >= widget.col && mousey >= widget.row && mousex < widget.col + widget.cellw && mousey < widget.row + widget.cellh) {
-                widget.mouseInside(mousex - widget.col, mousey - widget.row);
-                if (widget.focusable) {
-                    focusToWidget(widget);
-                }
+                mouseInside(widget, mousex, mousey);
             }
+        }
+    }
+
+    public void mouseInside(Widget widget, int mousex, int mousey) {
+        widget.mouseInside(mousex - widget.col, mousey - widget.row);
+        if (widget.focusable && focusWidget != widget) {
+            focusToWidget(widget);
         }
     }
 
@@ -386,7 +390,7 @@ public class UModal extends View implements UAnimator {
     }
 
     public void pressWidget(Widget widget) {
-
+        widget.pressWidget();
     }
 
     public void widgetChanged(Widget widget) {

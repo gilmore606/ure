@@ -1,6 +1,7 @@
 package ure.ui.modals.widgets;
 
 import ure.commands.UCommand;
+import ure.math.UColor;
 import ure.sys.GLKey;
 import ure.ui.modals.UModal;
 
@@ -27,9 +28,11 @@ public class WidgetStringInput extends Widget {
     public void drawMe() {
         if (focused)
             modal.renderer.drawRect(0, 0, cellw *gw(), gh(), hiliteColor());
+        else if (text == null)
+            drawString("...", 0, 0, UColor.GRAY);
         drawString(text, 0, 0);
-        if (blunk)
-            modal.renderer.drawRect(modal.renderer.stringWidth(text), (gh()*2)/3, modal.config.getTextWidth(), gh()/3, modal.config.getTextColor());
+        if (blunk && focused)
+            modal.renderer.drawRect(text == null ? 0 : modal.renderer.stringWidth(text), (gh()*2)/3, modal.config.getTextWidth(), gh()/3, modal.config.getTextColor());
     }
 
     @Override

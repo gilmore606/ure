@@ -24,6 +24,14 @@ public class WidgetListVert extends Widget {
     public void addIcons(Icon[] icons) {
         optionIcons = icons;
     }
+    public void setOptions(String[] options) {
+        this.options = options;
+        lit = new boolean[options.length];
+        optionIcons = null;
+        if (selection >= options.length)
+            select(options.length-1);
+        setDimensions(col, row, modal.longestLine(options) + 2, options.length);
+    }
 
     @Override
     public void drawMe() {
@@ -68,6 +76,7 @@ public class WidgetListVert extends Widget {
     public void lightAll() {
         for (int i=0;i<options.length;i++) lit[i] = true;
     }
+    public void dimAll() { for (int i=0;i<options.length;i++) lit[i] = false; }
 
     public String choice() {
         return options[selection];

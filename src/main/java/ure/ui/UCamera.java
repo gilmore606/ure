@@ -42,6 +42,7 @@ public class UCamera extends View implements UAnimator {
     public int leftEdge, topEdge, rightEdge, bottomEdge;
     private ULightcell lightcells[][];
     private HashSet<UActor> visibilitySources;
+    private boolean lightEnable = true;
 
     public static int PINSTYLE_NONE = 0;
     public static int PINSTYLE_SOFT = 1;
@@ -127,6 +128,11 @@ public class UCamera extends View implements UAnimator {
         visibilitySources = new HashSet<>();
         shadowLine = new UShadowLine();
         setBounds(x, y, width, height);
+        setupGrid();
+    }
+
+    public void resize(int newwidth, int newheight) {
+        setBounds(x, y, newwidth, newheight);
         setupGrid();
     }
 
@@ -245,10 +251,8 @@ public class UCamera extends View implements UAnimator {
                 setVisibilityAt(col, row, 0f);
             }
         }
-        Iterator<UActor> players = visibilitySources.iterator();
-        while (players.hasNext()) {
-            renderVisibleFor(players.next());
-        }
+        for (UActor p : visibilitySources)
+            renderVisibleFor(p);
 
     }
 
@@ -390,14 +394,22 @@ public class UCamera extends View implements UAnimator {
             for (int ix = sx1;ix < sx1 + w;ix++) {
                 val = spreadAmbient(light, ix, sy1, 0, -1, fall);
                 projectToCell(ix, sy1, light, false, val);
+                projectToCell(ix-1, sy1, light, false, val);
+                projectToCell(ix+1,sy1,light,false,val);
                 val = spreadAmbient(light, ix, sy1 + h-1, 0, 1, fall);
                 projectToCell(ix, sy1 + h-1, light, false, val);
+                projectToCell(ix-1,sy1+h-1,light,false,val);
+                projectToCell(ix+1,sy1+h-1,light,false,val);
             }
             for (int iy = sy1;iy < sy1 + h;iy++) {
                 val = spreadAmbient(light, sx1, iy, -1, 0, fall);
                 projectToCell(sx1, iy, light, false, val);
+                projectToCell(sx1,iy-1,light,false,val);
+                projectToCell(sx1,iy+1,light,false,val);
                 val = spreadAmbient(light, sx1 + w-1, iy, 1, 0, fall);
                 projectToCell(sx1 + w-1, iy, light, false, val);
+                projectToCell(sx1+w-1,iy-1,light,false,val);
+                projectToCell(sx1+w-1,iy+1,light,false,val);
             }
         }
     }
@@ -490,7 +502,7 @@ public class UCamera extends View implements UAnimator {
         UColor total;
         if (!isValidCell(col,row))
             return UColor.BLACK;
-        if (!config.isLightEnable()) {
+        if (!config.isLightEnable() || !isLightEnable()) {
             total = UColor.WHITE;
         } else if (lightcells[col][row] == null) {
             log.warn("nonexistent lightcell at " + col + "," + row);
@@ -643,10 +655,11 @@ public class UCamera extends View implements UAnimator {
 
     void drawCellAO(int col, int row) {
         if (!area.canSeeThrough(col+leftEdge,row+topEdge)) return;
-        boolean nn = !area.canSeeThrough(col+leftEdge,row+topEdge-1);
-        boolean ns = !area.canSeeThrough(col+leftEdge,row+topEdge+1);
-        boolean nw = !area.canSeeThrough(col+leftEdge-1,row+topEdge);
-        boolean ne = !area.canSeeThrough(col+leftEdge+1,row+topEdge);
+        if (col+leftEdge <=0 || row+topEdge <= 0 || col+leftEdge >= area.xsize-1 || row+topEdge >= area.ysize-1) return;
+        boolean nn = !area.canSeeThrough(col+leftEdge,row+topEdge-1) || !area.terrainAt(col+leftEdge,row+topEdge-1).isPassable();
+        boolean ns = !area.canSeeThrough(col+leftEdge,row+topEdge+1) || !area.terrainAt(col+leftEdge,row+topEdge+1).isPassable();
+        boolean nw = !area.canSeeThrough(col+leftEdge-1,row+topEdge) || !area.terrainAt(col+leftEdge-1,row+topEdge).isPassable();
+        boolean ne = !area.canSeeThrough(col+leftEdge+1,row+topEdge) || !area.terrainAt(col+leftEdge+1,row+topEdge).isPassable();
         int x = col * config.getTileWidth();
         int y = row * config.getTileHeight();
         int w = config.getTileWidth();
@@ -685,4 +698,6 @@ public class UCamera extends View implements UAnimator {
         }
     }
 
+    public boolean isLightEnable() { return lightEnable; }
+    public void setLightEnable(boolean b) { lightEnable = b; }
 }

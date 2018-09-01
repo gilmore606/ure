@@ -20,18 +20,9 @@ public class VaultedArea extends UArea {
         label = "vaulted";
         resetSunColorLerps();
         addSunColorLerp(0, UColor.WHITE);
-        addSunColorLerp(24*60, UColor.WHITE);
+        addSunColorLerp(24*60-1, UColor.WHITE);
         setSunColor(1f,1f,1f);
-    }
-
-    @Override
-    public boolean willAcceptThing(UThing thing, int x, int y) {
-        if (isValidXY(x, y)) {
-            if (thing instanceof UPlayer) {
-                return true;
-            }
-        }
-        return super.willAcceptThing(thing,x,y);
+        sunVisible = true;
     }
 
     @Override
@@ -44,7 +35,7 @@ public class VaultedArea extends UArea {
 
     }
 
-    public void cropSize(int newx, int newy) {
+    public void resize(int newx, int newy) {
         UCell[][] newcells = new UCell[newx][newy];
         for (int x=0;x<newx;x++) {
             for (int y=0;y<newy;y++) {
@@ -67,7 +58,7 @@ public class VaultedArea extends UArea {
     }
 
 
-    public void resize(int newx, int newy) {
+    public void initialize(int newx, int newy) {
         xsize = newx;
         ysize = newy;
         for (int x=0;x<xsize;x++) {

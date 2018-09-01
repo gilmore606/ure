@@ -10,7 +10,7 @@ import ure.ui.sounds.Sound;
 
 public class Widget extends View {
 
-    UModal modal;
+    public UModal modal;
     public int col, row, cellw, cellh;
     public boolean focusable = false;
     public boolean focused = false;
@@ -32,12 +32,20 @@ public class Widget extends View {
         this.height = cellh*gh();
     }
 
+    public void move(int col, int row) {
+        setDimensions(col, row, cellw, cellh);
+    }
+
     public void loseFocus() {
         focused = false;
     }
 
     public void gainFocus() {
         focused = true;
+    }
+
+    public void pressWidget() {
+
     }
 
     public void draw() {
@@ -109,8 +117,8 @@ public class Widget extends View {
     public void drawString(String string, int col, int row, UColor color, UColor highlight) {
         if (highlight != null) {
             int stringWidth = modal.renderer.textWidth(string) + 4;
-            modal.renderer.drawRect(col*gw() - 2, row*gh() - 3,
-                    stringWidth, modal.config.getTextHeight() + 4, highlight);
+            modal.renderer.drawRect(col*gw() - 4, row*gh() - 3,
+                    stringWidth+4, modal.config.getTextHeight() + 5, highlight);
         }
         if (color == null)
             color = modal.config.getTextColor();

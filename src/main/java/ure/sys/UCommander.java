@@ -710,17 +710,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
     }
     void doLaunchVaulted(String filename) {
-        UArea oldarea = null;
-        if (player == null)
-            player = new UPlayer("Vault Editor Guy", null, 0, 0);
-        else
-            oldarea = player.area();
-        VaultedArea edarea = new VaultedArea(30,30);
-        player.attachCamera(modalCamera, UCamera.PINSTYLE_SOFT);
-        player.moveToCell(edarea, 2, 2);
-        postPlayerLevelportEvent(oldarea);
-        UModal edmodal = new VaultedModal(edarea, filename);
-        wipeModals();
+        UModal edmodal = new VaultedModal(filename);
         showModal(edmodal);
     }
     public void hearModalGetString(String context, String input) {
