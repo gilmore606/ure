@@ -268,7 +268,16 @@ public class VaultedModal extends UModal implements HearModalChoices {
     }
 
     void editLight(ULight light) {
+        LightEditModal modal = new LightEditModal(this, light);
+        modal.setChildPosition(vaultedWidget.col + vaultedWidget.cellw + 1, vaultedWidget.row, this);
+        commander.showModal(modal);
+    }
 
+    public void deleteLight(ULight light) {
+        light.removeFromArea();
+        vault.deleteLight(light);
+        updateLightList();
+        vaultedWidget.camera.renderLights();
     }
 
     void selectTool(int newtool) {
@@ -333,6 +342,15 @@ public class VaultedModal extends UModal implements HearModalChoices {
     @Override
     public void mouseInside(Widget widget, int mousex, int mousey) {
         super.mouseInside(widget,mousex,mousey);
+        if (widget == lightListWidget && lightListWidget.selection >= 0) {
+            ULight light = vault.lights.get(lightListWidget.selection);
+            if (light.type == ULight.AMBIENT)
+                vaultedWidget.setHighlightBox(light.x,light.y,light.width,light.height);
+            else
+                vaultedWidget.setHighlightBox(light.x,light.y,1,1);
+        } else {
+            vaultedWidget.setHighlightBox(-1, -1, -1, -1);
+        }
         if (widget == vaultedWidget) {
             if (tool == TOOL_DRAW && commander.mouseButton()) {
                 vaultedWidget.paint((UTerrain)(terrainWidget.entity()));

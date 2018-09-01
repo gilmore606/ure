@@ -24,9 +24,11 @@ public class WidgetVaulted extends Widget {
     int cursorx,cursory;
     Icon brushIcon;
     UColor brightHilite;
+    int highlightX,highlightY,highlightW,highlightH;
 
     public WidgetVaulted(UModal modal, int x, int y, int w, int h) {
         super(modal);
+        highlightX = -1;
         area = new VaultedArea(w, h);
         camera = new UCamera(x*gw(),y*gh(),w*gw(),h*gh());
         camera.moveTo(area,w/2,h/2);
@@ -152,6 +154,10 @@ public class WidgetVaulted extends Widget {
                 modal.renderer.drawRectBorder(cursorx * gw()-1, cursory * gh()-1, gw() + 2, gh() + 2, 2, UColor.CLEAR, brightHilite);
             }
         }
+        if (highlightX >= 0) {
+            modal.renderer.drawRectBorder(highlightX*gw()-1,highlightY*gh()-1,highlightW*gw()+2,highlightH*gh()+2,2,UColor.CLEAR,UColor.WHITE);
+
+        }
     }
 
     public void loadVault(UVault vault) {
@@ -213,5 +219,12 @@ public class WidgetVaulted extends Widget {
         }
         tool = 0;
         modal.widgetChanged(this);
+    }
+
+    public void setHighlightBox(int x, int y, int w, int h) {
+        highlightX = x;
+        highlightY = y;
+        highlightW = w;
+        highlightH = h;
     }
 }

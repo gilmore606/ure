@@ -108,4 +108,8 @@ public class UVault {
         l.y = y;
         lights.add(l);
     }
+
+    public void deleteLight(ULight l) {
+        lights.remove(l);
+    }
 }
