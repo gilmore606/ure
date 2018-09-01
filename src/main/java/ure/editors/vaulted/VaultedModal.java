@@ -32,6 +32,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
     String filename;
     UVault vault;
     UVaultSet vaultSet;
+    int vaultSelection;
 
     int tool = 0;
     static int TOOL_DRAW = 0;
@@ -225,6 +226,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
             if (vaultListWidget.selection == vaultSet.size()) {
                 makeNewVault();
             } else if (vaultListWidget.selection < vaultSet.size()) {
+                vaultSelection = vaultListWidget.selection;
                 loadVault();
             }
         } else if (widget == terrainWidget) {
@@ -353,7 +355,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
     }
 
     void loadVault() {
-        vault = vaultSet.vaultAt(vaultListWidget.selection);
+        vault = vaultSet.vaultAt(vaultSelection);
         vaultListWidget.dimAll();
         nameWidget.text = vault.name;
         descWidget.text = vault.description;
@@ -362,7 +364,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
         mirrorRadio.on = vault.mirror;
         rotateRadio.on = vault.rotate;
         vaultedWidget.loadVault(vault);
-        vaultListWidget.lightOption(vaultListWidget.selection);
+        vaultListWidget.lightOption(vaultSelection);
         updateLayout();
         //updateVaultList();
         updateLightList();
@@ -371,7 +373,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
 
     void makeNewVault() {
         vaultSet.addVault();
-        vaultListWidget.selection = vaultSet.size() - 1;
+        vaultListWidget.select(vaultSet.size() - 1);
         loadVault();
     }
 
@@ -383,7 +385,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
 
     void revertFile() {
         vaultSet = commander.cartographer.loadVaultSet(filename);
-        vaultListWidget.selection = 0;
+        vaultListWidget.select(0);
         loadVault();
     }
 
@@ -406,7 +408,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
 
     void deleteVault() {
         vaultSet.removeVault(vault);
-        vaultListWidget.selection = Math.min(vaultSet.vaults.length-1, Math.max(0,vaultListWidget.selection-1));
+        vaultListWidget.select(Math.min(vaultSet.vaults.length-1, Math.max(0,vaultListWidget.selection-1)));
         loadVault();
     }
 

@@ -49,9 +49,11 @@ public class WidgetListVert extends Widget {
         select(Math.max(0, Math.min(options.length - 1, mousey)));
     }
 
-    void select(int newselection) {
-        selection = newselection;
-        modal.widgetChanged(this);
+    public void select(int newselection) {
+        if (newselection != selection) {
+            selection = newselection;
+            modal.widgetChanged(this);
+        }
     }
 
     @Override
