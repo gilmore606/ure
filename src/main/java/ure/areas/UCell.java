@@ -24,7 +24,6 @@ import java.util.Iterator;
  * These are created on area creation along with a terrain.  They have no type and should
  * not need to be subclassed, however, a custom UCell class can be given to Area on creation.
  *
- * TODO: actually implement what I just said in Area
  */
 public class UCell implements UContainer {
 
@@ -40,7 +39,6 @@ public class UCell implements UContainer {
     public int x,y;
 
     protected UTerrain terrain;
-    protected float sunBrightness;
     protected UCollection contents;
     protected boolean isSeen = false;
 
@@ -229,14 +227,6 @@ public class UCell implements UContainer {
 
     public void setTerrain(UTerrain terrain) {
         this.terrain = terrain;
-    }
-
-    public float getSunBrightness() {
-        return sunBrightness;
-    }
-
-    public void setSunBrightness(float sunBrightness) {
-        this.sunBrightness = sunBrightness;
     }
 
     public UCollection getContents() {

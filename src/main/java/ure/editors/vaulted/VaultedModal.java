@@ -226,8 +226,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
             if (vaultListWidget.selection == vaultSet.size()) {
                 makeNewVault();
             } else if (vaultListWidget.selection < vaultSet.size()) {
-                vaultSelection = vaultListWidget.selection;
-                loadVault();
+                selectVault(vaultListWidget.selection);
             }
         } else if (widget == terrainWidget) {
             vaultedWidget.brushIcon = terrainWidget.entity().icon();
@@ -369,7 +368,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
         }
         options[names.length] = "<new vault>";
         vaultListWidget.setOptions(options);
-        vaultListWidget.lightOption(vaultListWidget.selection);
+        vaultListWidget.lightOption(vaultSelection);
     }
 
     void loadVault() {
@@ -389,11 +388,18 @@ public class VaultedModal extends UModal implements HearModalChoices {
         log.info("Loaded vault '" + vault.name + "' " + Integer.toString(vault.cols) + " by " + Integer.toString(vault.rows));
     }
 
+    void selectVault(int newselection) {
+        if (newselection != vaultSelection) {
+            vaultListWidget.select(newselection);
+            vaultSelection = newselection;
+            loadVault();
+        }
+    }
+
     void makeNewVault() {
         vaultSet.addVault();
         updateVaultList();
-        vaultListWidget.select(vaultSet.size() - 1);
-        loadVault();
+        selectVault(vaultSet.size() -1);
     }
 
     void writeFile() {
@@ -404,9 +410,8 @@ public class VaultedModal extends UModal implements HearModalChoices {
 
     void revertFile() {
         vaultSet = commander.cartographer.loadVaultSet(filename);
-        vaultListWidget.select(0);
         updateVaultList();
-        loadVault();
+        selectVault(0);
     }
 
     void confirmModal(String query, String context) {
@@ -429,8 +434,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
     void deleteVault() {
         vaultSet.removeVault(vault);
         updateVaultList();
-        vaultListWidget.select(Math.min(vaultSet.size()-1, Math.max(0,vaultListWidget.selection-1)));
-        loadVault();
+        selectVault(Math.min(vaultSet.size()-1, Math.max(0,vaultListWidget.selection-1)));
     }
 
     void updateLightList() {
@@ -451,7 +455,6 @@ public class VaultedModal extends UModal implements HearModalChoices {
     }
 
     void doCrop(int x1, int y1, int x2, int y2) {
-        System.out.println(Integer.toString(vaultListWidget.selection));
         if (x2-x1<2 && y2-y1<2) return;
         vaultedWidget.doCrop(x1,y1,x2+1,y2+1);
         for (ULight l : vault.lights)

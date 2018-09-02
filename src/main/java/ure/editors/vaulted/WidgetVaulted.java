@@ -10,6 +10,9 @@ import ure.ui.ULight;
 import ure.ui.modals.UModal;
 import ure.ui.modals.widgets.Widget;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 public class WidgetVaulted extends Widget {
 
     UVault vault;
@@ -162,7 +165,7 @@ public class WidgetVaulted extends Widget {
 
     public void loadVault(UVault vault) {
         this.vault = vault;
-        for (ULight l : ((VaultedModal)modal).vault.lights ) {
+        for (ULight l : (HashSet<ULight>)area.lights().clone()) {
             l.removeFromArea();
         }
         setDimensions(col,row,vault.cols,vault.rows);

@@ -22,7 +22,7 @@ public class VaultedArea extends UArea {
         addSunColorLerp(0, UColor.WHITE);
         addSunColorLerp(24*60-1, UColor.WHITE);
         setSunColor(1f,1f,1f);
-        sunVisible = true;
+        sunVisible = false;
     }
 
     @Override
