@@ -17,7 +17,7 @@ import java.util.zip.GZIPOutputStream;
 public class UVaultSet {
 
     public String filename;
-    public UVault[] vaults;
+    public ArrayList<UVault> vaults;
     public String[] tags;
     @JsonIgnore
     ObjectMapper objectMapper;
@@ -26,68 +26,39 @@ public class UVaultSet {
         vaults = null;
     }
 
-    public void setVaults(UVault[] _vaults) {
+    public void setVaults(ArrayList<UVault> _vaults) {
         vaults = _vaults;
     }
-    public UVault[] getVaults() { return vaults; }
+    public ArrayList<UVault> getVaults() { return vaults; }
     public void setTags(String[] _tags) { tags = _tags; }
     public String[] getTags() { return tags; }
     public void setFilename(String _filename) { filename = _filename; }
     public String getFilename() { return filename; }
 
-    public int size() { return vaults.length; }
+    public int size() { return vaults.size(); }
     public UVault vaultAt(int i) {
-        return vaults[i];
+        return vaults.get(i);
     }
     public void putVault(int i, UVault vault) {
-        if (vaults == null) {
-            vaults = new UVault[1];
-            vaults[0] = vault;
-        } else if (i >= vaults.length) {
-            UVault[] newVaults = new UVault[vaults.length + 1];
-            for (int n=0;n<vaults.length;n++) {
-                newVaults[n] = vaults[n];
-            }
-            newVaults[newVaults.length - 1] = vault;
-            vaults = newVaults;
-        } else {
-            vaults[i] = vault;
-        }
+        vaults.set(i, vault);
     }
     public void setObjectMapper(ObjectMapper om) { objectMapper = om; }
 
     public void initialize() {
-        vaults = null;
+        vaults = new ArrayList<>();
         addVault();
     }
 
     public void addVault() {
         UVault vault = new UVault();
         vault.initialize();
-        if (vaults == null)
-            putVault(0,vault);
-        else
-            putVault(vaults.length, vault);
+        vaults.add(vault);
     }
 
     public void removeVault(UVault vault) {
-        if (vaults.length <= 1)
+        if (vaults.size() <= 1)
             return;
-        boolean found = false;
-        for (UVault v : vaults) {
-            if (v == vault)
-                found = true;
-        }
-        if (!found) return;
-        UVault[] newvaults = new UVault[vaults.length-1];
-        int i=0;
-        for (UVault v : vaults) {
-            if (v != vault) {
-                newvaults[i] = v;
-                i++;
-            }
-        }
-        vaults = newvaults;
+        vaults.remove(vault);
     }
 
     public void persist(String absoluteFilepath) {
@@ -108,9 +79,9 @@ public class UVaultSet {
     }
 
     public String[] vaultNames() {
-        String[] names = new String[vaults.length];
-        for (int i=0;i<vaults.length;i++)
-            names[i] = vaults[i].name;
+        String[] names = new String[vaults.size()];
+        for (int i=0;i<vaults.size();i++)
+            names[i] = vaults.get(i).name;
         return names;
     }
 }

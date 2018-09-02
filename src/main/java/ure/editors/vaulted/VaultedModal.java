@@ -391,6 +391,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
 
     void makeNewVault() {
         vaultSet.addVault();
+        updateVaultList();
         vaultListWidget.select(vaultSet.size() - 1);
         loadVault();
     }
@@ -404,6 +405,7 @@ public class VaultedModal extends UModal implements HearModalChoices {
     void revertFile() {
         vaultSet = commander.cartographer.loadVaultSet(filename);
         vaultListWidget.select(0);
+        updateVaultList();
         loadVault();
     }
 
@@ -426,7 +428,8 @@ public class VaultedModal extends UModal implements HearModalChoices {
 
     void deleteVault() {
         vaultSet.removeVault(vault);
-        vaultListWidget.select(Math.min(vaultSet.vaults.length-1, Math.max(0,vaultListWidget.selection-1)));
+        updateVaultList();
+        vaultListWidget.select(Math.min(vaultSet.size()-1, Math.max(0,vaultListWidget.selection-1)));
         loadVault();
     }
 
