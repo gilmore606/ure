@@ -61,31 +61,28 @@ public class UScrollPanel extends UPanel implements UAnimator {
     }
 
     @Override
-    public void draw() {
-        if (!hidden) {
-            super.draw();
-            int i = 0;
-            boolean fade = !isMouseInside();
-            while (i < textRows) {
-                if (i < lines.size()) {
-                    UColor color = colors.get(i);
-                    float gray = 1f;
-                    if (fade) {
-                        if (i < lineFades.size())
-                            gray = lineFades.get(i);
-                        else
-                            gray = lineFades.get(lineFades.size() - 1);
-                    }
-                    gray = Math.max(gray, flashLevel);
-                    int liney = textRows - (i+1);
-                    UColor cbuf = colorBuffers.get(i);
-                    cbuf.set(color.fR(), color.fG(), color.fB());
-                    cbuf.brightenBy(gray);
-                    drawString(lines.get(i), 2, liney, cbuf);
-                    drawIcon(icons.get(i), 0, liney);
+    public void drawContent() {
+        int i = 0;
+        boolean fade = !isMouseInside();
+        while (i < textRows) {
+            if (i < lines.size()) {
+                UColor color = colors.get(i);
+                float gray = 1f;
+                if (fade) {
+                    if (i < lineFades.size())
+                        gray = lineFades.get(i);
+                    else
+                        gray = lineFades.get(lineFades.size() - 1);
                 }
-                i++;
+                gray = Math.max(gray, flashLevel);
+                int liney = textRows - (i+1);
+                UColor cbuf = colorBuffers.get(i);
+                cbuf.set(color.fR(), color.fG(), color.fB());
+                cbuf.brightenBy(gray);
+                drawString(lines.get(i), 2, liney, cbuf);
+                drawIcon(icons.get(i), 0, liney);
             }
+            i++;
         }
     }
 

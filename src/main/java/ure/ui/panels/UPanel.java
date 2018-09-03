@@ -66,7 +66,7 @@ public class UPanel extends View {
         padX = _padx;
         padY = _pady;
         fgColor = _fgColor;
-        bgColor = _bgColor;
+        bgColor = (_bgColor == null ? config.getPanelBgColor() : _bgColor);
         borderColor = _borderColor;
         hidden = true;
     }
@@ -105,8 +105,19 @@ public class UPanel extends View {
 
     public void draw() {
         // TODO : support glyph based frames same as UModal
-        if (!hidden)
-            renderer.drawRectBorder(1, 1, width - 2, height - 2, 2, bgColor, borderColor);
+        if (!hidden) {
+            drawFrame();
+            drawContent();
+        }
+    }
+
+    public void drawFrame() {
+        renderer.drawRectBorder(1, 1, width - 2, height - 2, 3, UColor.CLEAR, borderColor);
+        renderer.drawRect(0,0,width,height, bgColor);
+    }
+
+    public void drawContent() {
+
     }
 
     public void drawString(String string, int x, int y, UColor color) {
@@ -123,6 +134,13 @@ public class UPanel extends View {
 
     public int gw() { return config.getTileWidth(); }
     public int gh() { return config.getTileHeight(); }
+
+    public int mouseX() {
+        return (commander.mouseX() - absoluteX()) / gw();
+    }
+    public int mouseY() {
+        return (commander.mouseY() - absoluteY()) / gh();
+    }
 
     public boolean isMouseInside() {
         int mousex = commander.mouseX();

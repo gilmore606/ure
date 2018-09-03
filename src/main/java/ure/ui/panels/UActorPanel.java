@@ -53,14 +53,11 @@ public class UActorPanel extends UPanel {
     }
 
     @Override
-    public void draw() {
-        super.draw();
-        if (!hidden) {
-            int i = 0;
-            for (UActor actor : actors) {
-                drawActor(actor, i);
-                i++;
-            }
+    public void drawContent() {
+        int i = 0;
+        for (UActor actor : actors) {
+            drawActor(actor, i);
+            i++;
         }
     }
 

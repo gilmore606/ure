@@ -81,7 +81,7 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
 
         UColor borderColor = UColor.DARKGRAY;
 
-        statusPanel = new UStatusPanel(10, 10, config.getTextColor(), UColor.BLACK, borderColor);
+        statusPanel = new UStatusPanel(10, 10, config.getTextColor(), null, borderColor);
         statusPanel.setLayout(UPanel.XPOS_LEFT, UPanel.YPOS_TOP, 10, 0f, 10, 10, 0f, 10);
         statusPanel.addText("name", " ",0,0);
         statusPanel.addText("race", "Owl",0,1);
@@ -92,15 +92,15 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
         statusPanel.addText("lens", "", 0, 20);
         window.addPanel(statusPanel);
 
-        actorPanel = new UActorPanel(10,10,config.getTextColor(), UColor.BLACK, borderColor);
+        actorPanel = new UActorPanel(10,10,config.getTextColor(), null, borderColor);
         actorPanel.setLayout(UPanel.XPOS_LEFT, UPanel.YPOS_FIT, 10, 0f, 10, 0, 1f, 9999);
         window.addPanel(actorPanel);
 
-        lensPanel = new ULensPanel(camera, 0, 0, 12, 12, config.getTextColor(), UColor.BLACK, borderColor);
+        lensPanel = new ULensPanel(camera, 0, 0, 12, 12, config.getTextColor(), null, borderColor);
         lensPanel.setLayout(UPanel.XPOS_LEFT, UPanel.YPOS_BOTTOM, 10, 0f, 10, 6, 0f, 6);
         window.addPanel(lensPanel);
 
-        scrollPanel = new UScrollPanel(12, 12, config.getTextColor(), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
+        scrollPanel = new UScrollPanel(12, 12, config.getTextColor(), null, new UColor(0.3f,0.3f,0.3f));
         scrollPanel.setLayout(UPanel.XPOS_FIT, UPanel.YPOS_BOTTOM, 0, 1f, 9999, 4, 0.2f, 10);
         scrollPanel.addLineFade(new UColor(1.0f, 1.0f, 1.0f));
         scrollPanel.addLineFade(new UColor(0.8f, 0.8f, 0.8f));
