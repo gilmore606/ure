@@ -12,7 +12,7 @@ public class View {
     @Inject
     public URenderer renderer;
 
-    protected int x, y, width, height;
+    public int x, y, width, height;
 
     protected LinkedHashSet<View> children = new LinkedHashSet<>();
     protected WeakReference<View> parent = new WeakReference<>(null);

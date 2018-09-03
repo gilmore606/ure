@@ -12,13 +12,15 @@ public class UModalStringPick extends UModal {
     public UModalStringPick(String _header, String[] _choices,
                             HearModalStringPick _callback, String _callbackContext) {
         super(_callback, _callbackContext);
-
-        headerWidget = new WidgetText(this,0,0,_header);
-        addWidget(headerWidget);
-        choicesWidget = new WidgetListVert(this,0, headerWidget.cellh +1, _choices);
+        if (_header != null) {
+            headerWidget = new WidgetText(this, 0, 0, _header);
+            addWidget(headerWidget);
+            choicesWidget = new WidgetListVert(this, 0, headerWidget.cellh + 1, _choices);
+        } else {
+            choicesWidget = new WidgetListVert(this, 0, 0, _choices);
+        }
         addWidget(choicesWidget);
         sizeToWidgets();
-        centerWidget(headerWidget);
         centerWidget(choicesWidget);
     }
 

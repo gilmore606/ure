@@ -17,7 +17,7 @@ import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
 import ure.areas.UArea;
 import ure.areas.UCartographer;
-import ure.commands.UCommand;
+import ure.commands.*;
 import ure.math.URandom;
 import ure.sys.events.PlayerChangedAreaEvent;
 import ure.math.UColor;
@@ -98,6 +98,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     private boolean moveLatch = false;
     private int moveLatchX = 0;
     private int moveLatchY = 0;
+
+    private HashMap<String,UCommand> rightClickCommands;
 
     private UModal modal;
     private Stack<UModal> modalStack;
@@ -325,6 +327,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void mouseRightPressed() {
         if (modal != null)
             modal.mouseRightClick();
+        else
+            rightClickMenu();
     }
     public void mouseRightReleased() {
 
@@ -347,6 +351,30 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         moveLatchY = 0;
         walkDestX = -1;
         walkDestY = -1;
+    }
+
+    /**
+     * Show a context menu of commands on right-click of the camera.
+     */
+    public void rightClickMenu() {
+        rightClickCommands = new HashMap<>();
+        rightClickCommands.put("inventory", new CommandInventory());
+        rightClickCommands.put("equipment", new CommandEquipment());
+        rightClickCommands.put("use item", new CommandUse());
+        rightClickCommands.put("open container", new CommandOpen());
+        rightClickCommands.put("check map", new CommandMap());
+        rightClickCommands.put("quit game", new CommandQuit());
+
+        String[] options = new String[rightClickCommands.size()];
+        int i=0;
+        for (String s : rightClickCommands.keySet()) {
+            options[i] = s;
+            i++;
+        }
+        UModalStringPick modal = new UModalStringPick(null, options, this, "rightclick");
+        modal.setChildPosition((mouseX() - modalCamera.x)/config.getTileWidth() - 1,(mouseY() - modalCamera.y)/config.getTileHeight(),modalCamera);
+        showModal(modal);
+        modal.skipZoom();
     }
 
     /**
@@ -701,14 +729,20 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         showModal(spmodal);
 
     }
-    public void hearModalStringPick(String context, String filename) {
-        if (filename.equals("<new vaultSet>")) {
-            UModalGetString fmodal = new UModalGetString("Filename?", 15, 25, this, "vaulted-newfile");
-            showModal(fmodal);
-        } else {
-            doLaunchVaulted(filename);
+    public void hearModalStringPick(String context, String choice) {
+        if (context.equals("vaulted-pickfile")) {
+            if (choice.equals("<new vaultSet>")) {
+                UModalGetString fmodal = new UModalGetString("Filename?", 15, 25, this, "vaulted-newfile");
+                showModal(fmodal);
+            } else {
+                doLaunchVaulted(choice);
+            }
+        } else if (context.equals("rightclick")) {
+            UCommand c = rightClickCommands.get(choice);
+            c.execute(player);
         }
     }
+
     void doLaunchVaulted(String filename) {
         UModal edmodal = new VaultedModal(filename);
         showModal(edmodal);

@@ -89,6 +89,11 @@ public class UModal extends View implements UAnimator {
             zoomDir = 1;
         }
     }
+    public void skipZoom() {
+        zoomFrame = 0;
+        zoomDir = 0;
+        zoom = 1f;
+    }
 
     public int gw() { return config.getTileWidth(); }
     public int gh() { return config.getTileHeight(); }
@@ -128,7 +133,7 @@ public class UModal extends View implements UAnimator {
         setDimensions(dimx,dimy);
     }
 
-    public void setChildPosition(int col, int row, UModal parent) {
+    public void setChildPosition(int col, int row, View parent) {
         x = col*gw() + parent.x;
         y = row*gh() + parent.y;
     }
