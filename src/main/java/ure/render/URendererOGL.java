@@ -181,7 +181,8 @@ public class URendererOGL implements URenderer {
 
                 if (keyListener != null && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
                     GLKey glkey = new GLKey(key, keyState[GLFW_KEY_LEFT_SHIFT] || keyState[GLFW_KEY_RIGHT_SHIFT],
-                                                    keyState[GLFW_KEY_LEFT_CONTROL] || keyState[GLFW_KEY_RIGHT_CONTROL]);
+                                                    keyState[GLFW_KEY_LEFT_CONTROL] || keyState[GLFW_KEY_RIGHT_CONTROL],
+                                                        keyState[GLFW_KEY_LEFT_ALT] || keyState[GLFW_KEY_RIGHT_ALT]);
                     keyListener.keyPressed(glkey);
                 }
             }

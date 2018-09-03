@@ -227,6 +227,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             String keystr = line.substring(0,comma);
             boolean shiftkey = false;
             boolean ctrlkey = false;
+            boolean altkey = false;
             int plus = keystr.indexOf("+");
             if (plus > 0) {
                 String modstr = line.substring(0,plus);
@@ -234,10 +235,12 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     shiftkey = true;
                 if (modstr.equals("ctrl") || modstr.equals("CTRL") || modstr.equals("control") || modstr.equals("CONTROL"))
                     ctrlkey = true;
+                if (modstr.equals("alt") || modstr.equals("ALT"))
+                    altkey = true;
                 keystr = keystr.substring(plus+1,keystr.length());
             }
             int k = glmap.get("GLFW_KEY_" + keystr.toUpperCase());
-            GLKey glkey = new GLKey(k, shiftkey, ctrlkey);
+            GLKey glkey = new GLKey(k, shiftkey, ctrlkey, altkey);
             Class commandClass = commandMap.get(commandid);
             if (commandClass == null) {
                 log.error("ERROR - no command found for '" + commandid + "' -- check mapping file!");
@@ -290,7 +293,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                 debug_2();
             } else if (k.k == GLFW_KEY_3) {
                 debug_3();
-            } else if (k.k == GLFW_KEY_ENTER && k.shift) {
+            } else if (k.k == GLFW_KEY_ENTER && k.alt) {
                 toggleFullscreen();
             }
         } else if (moveLatch && config.isNethackShiftRun()) {
@@ -384,10 +387,6 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         speaker.playUI(config.soundModalOpen);
         attachModal(modal);
         modal.onOpen();
-    }
-
-    void debug() {
-        player.debug();
     }
 
     void debug_1() {

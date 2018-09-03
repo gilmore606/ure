@@ -149,14 +149,6 @@ public class UActor extends UThing implements Interactable {
         return null;
     }
 
-    public void debug() {
-        Lightsource torch = (Lightsource)(commander.thingCzar.getThingByName("torch"));
-        torch.setLightcolor(new int[]{random.nextInt(255),random.nextInt(255),random.nextInt(255)});
-        torch.moveToCell(area(), areaX(), areaY());
-        torch.turnOn();
-        commander.printScroll("You drop a torch.");
-    }
-
     public void moveTriggerFrom(UActor actor) {
         if (actor instanceof UPlayer) {
             aggressionFrom(actor);

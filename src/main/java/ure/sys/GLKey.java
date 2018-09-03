@@ -10,19 +10,22 @@ public class GLKey {
     public int k;
     public boolean shift;
     public boolean ctrl;
+    public boolean alt;
 
-    public GLKey(int _k, boolean _shift, boolean _ctrl) {
+    public GLKey(int _k, boolean _shift, boolean _ctrl, boolean _alt) {
         k = _k;
         shift = _shift;
         ctrl = _ctrl;
+        alt = _alt;
     }
     public GLKey(int _k) {
         k = _k;
         shift = false;
         ctrl = false;
+        alt = false;
     }
     public boolean sameKeyAs(GLKey k2) {
-        if (k2.k == k && k2.shift == shift && k2.ctrl == ctrl)
+        if (k2.k == k && k2.shift == shift && k2.ctrl == ctrl && k2.alt == alt)
             return true;
         return false;
     }
