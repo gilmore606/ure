@@ -1,5 +1,7 @@
 package ure.ui;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.actors.UActor;
@@ -13,6 +15,7 @@ import ure.sys.Injector;
 import ure.sys.UAnimator;
 import ure.sys.UCommander;
 import ure.sys.UConfig;
+import ure.sys.events.ResolutionChangedEvent;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
 import ure.ui.particles.UParticle;
@@ -33,6 +36,8 @@ public class UCamera extends View implements UAnimator {
     UConfig config;
     @Inject
     URenderer renderer;
+    @Inject
+    EventBus bus;
 
     public UArea area;
     float zoom = 1.0f;
@@ -131,6 +136,13 @@ public class UCamera extends View implements UAnimator {
         setupGrid();
     }
 
+    public void resizeView(int x, int y, int w, int h) {
+        this.x = x;
+        this.y = y;
+        resize(w,h);
+        renderLights();
+    }
+
     public void resize(int newwidth, int newheight) {
         setBounds(x, y, newwidth, newheight);
         setupGrid();
@@ -165,8 +177,8 @@ public class UCamera extends View implements UAnimator {
     public void setupGrid() {
         float cellWidth = (float)config.getTileWidth() * zoom;
         float cellHeight = (float)config.getTileHeight() * zoom;
-        columns = (int)(width / cellWidth);
-        rows = (int)(height / cellHeight);
+        columns = (int)(width / cellWidth) + 1;
+        rows = (int)(height / cellHeight) + 1;
         lightcells = new ULightcell[columns][rows];
         float[] scales = new float[]{15f,22f};
         for (int col = 0; col<columns; col++) {
@@ -187,6 +199,7 @@ public class UCamera extends View implements UAnimator {
     public int getHeightInCells() { return rows; }
 
     public void renderLights() {
+        if (area == null) return;
         for (int i = 0; i< columns; i++) {
             for (int j = 0; j< rows; j++) {
                 lightcells[i][j].wipe();

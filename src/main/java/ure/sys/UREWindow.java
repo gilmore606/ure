@@ -93,6 +93,6 @@ public class UREWindow extends View {
                 p.setBounds(px, py, pwidth, pheight);
             }
         }
-        camera.setBounds(camx1,camy1,camx2-camx1,camy2-camy1);
+        camera.resizeView(camx1,camy1,camx2-camx1,camy2-camy1);
     }
 }
