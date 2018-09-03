@@ -260,11 +260,15 @@ public class URendererOGL implements URenderer {
         //Flush a blank image to the screen quickly.
         glfwSwapBuffers(window);
 
-        tileFont = new FontTexture();
-        tileFont.loadFromTTF(config.getTileFont(), config.getTileFontSize());
+        reloadTileFont();
         textFont = new FontTexture();
         textFont.loadFromTTF(config.getTextFont(), config.getTextFontSize());
         setFont(FontType.TILE_FONT);
+    }
+
+    public void reloadTileFont() {
+        tileFont = new FontTexture();
+        tileFont.loadFromTTF(config.getTileFont(), config.getTileFontSize());
     }
 
     @Override

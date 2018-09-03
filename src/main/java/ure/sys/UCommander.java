@@ -22,6 +22,7 @@ import ure.math.URandom;
 import ure.sys.events.PlayerChangedAreaEvent;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.events.ResolutionChangedEvent;
 import ure.sys.events.TimeTickEvent;
 import ure.things.UThing;
 import ure.things.UThingCzar;
@@ -295,6 +296,10 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                 debug_3();
             } else if (k.k == GLFW_KEY_ENTER && k.alt) {
                 toggleFullscreen();
+            } else if (k.k == GLFW_KEY_EQUAL && k.alt) {
+                changeGlyphSize(1);
+            } else if (k.k == GLFW_KEY_MINUS && k.alt) {
+                changeGlyphSize(-1);
             }
         } else if (moveLatch && config.isNethackShiftRun()) {
             player.doAction(new ActionWalk(player, moveLatchX, moveLatchY));
@@ -339,6 +344,14 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         moveLatch = true;
         moveLatchX = xdir;
         moveLatchY = ydir;
+    }
+
+    void changeGlyphSize(int mod) {
+        config.setTileHeight(config.getTileHeight()+mod);
+        config.setTileWidth(config.getTileWidth()+mod);
+        config.setTileFontSize(config.getTileFontSize()+mod);
+        renderer.reloadTileFont();
+        bus.post(new ResolutionChangedEvent(renderer.getRootView().width, renderer.getRootView().height));
     }
 
     /**

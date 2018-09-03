@@ -125,4 +125,5 @@ public interface URenderer {
     int getMousePosY();
     boolean getMouseButton();
     void toggleFullscreen();
+    void reloadTileFont();
 }
