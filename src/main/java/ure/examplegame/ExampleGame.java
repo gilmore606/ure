@@ -58,7 +58,7 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
         // Set up logging before doing anything else, including dependency injection.  That way we'll
         // get proper logging for @Provides methods.
         try {
-            InputStream configInputStream = new FileInputStream(new File("logging.properties"));
+            InputStream configInputStream = ExampleGame.class.getResourceAsStream("/logging.properties");
             LogManager.getLogManager().readConfiguration(configInputStream);
         } catch (IOException ioe) {
             throw new RuntimeException("Can't configure logger", ioe);

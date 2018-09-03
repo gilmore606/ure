@@ -66,6 +66,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public UConfig config;
     @Inject
     URandom random;
+    @Inject
+    ResourceManager resourceManager;
 
     private HashSet<UAnimator> animators;
     private ArrayList<UActor> actors;
@@ -749,9 +751,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public void launchVaulted() {
-        File dirfile = new File(config.getResourcePath() + "vaults/");
-        ArrayList<String> filelist = new ArrayList<String>();
-        for (String filename : dirfile.list()) {
+        List<String> filelist = resourceManager.getResourceFiles("/vaults");
+        for (String filename : filelist) {
             if (filename.endsWith(".json")) {
                 printScroll("found " + filename);
                 filelist.add(filename.substring(0,filename.length()-5));
