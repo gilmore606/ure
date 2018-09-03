@@ -284,16 +284,14 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     command = keyBindings.get(bindkey);
             }
             hearCommand(command, k);
-            if (modal == null) {
-                if (k.k == GLFW_KEY_1) {
-                    debug_1();
-                } else if (k.k == GLFW_KEY_2) {
-                    debug_2();
-                } else if (k.k == GLFW_KEY_3) {
-                    debug_3();
-                } else if (k.k == GLFW_KEY_Q) {
-                    debug();
-                }
+            if (k.k == GLFW_KEY_1) {
+                debug_1();
+            } else if (k.k == GLFW_KEY_2) {
+                debug_2();
+            } else if (k.k == GLFW_KEY_3) {
+                debug_3();
+            } else if (k.k == GLFW_KEY_ENTER && k.shift) {
+                toggleFullscreen();
             }
         } else if (moveLatch && config.isNethackShiftRun()) {
             player.doAction(new ActionWalk(player, moveLatchX, moveLatchY));

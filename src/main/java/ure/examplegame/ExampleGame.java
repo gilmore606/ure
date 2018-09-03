@@ -53,8 +53,6 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
     UActorCzar actorCzar;
     @Inject
     UCartographer cartographer;
-    @Inject
-    EventBus bus;
 
     private Log log = LogFactory.getLog(ExampleGame.class);
 
@@ -69,7 +67,6 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
         }
 
         Injector.getAppComponent().inject(this);
-        bus.register(this);
     }
 
     private void makeWindow() {
@@ -138,11 +135,7 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
     }
 
     public void setupTitleScreen() {
-        scrollPanel.hide();
-        lensPanel.hide();
-        statusPanel.hide();
-        actorPanel.hide();
-        window.doLayout();
+        window.hidePanels();
         area = cartographer.getTitleArea();
         camera.moveTo(area, 50, 50);
         commander.config.setVisibilityEnable(false);
@@ -178,12 +171,8 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
             area = cartographer.getArea(player.getSaveAreaLabel());
         }
         commander.startGame(player, area);
-        statusPanel.unHide();
-        lensPanel.unHide();
-        scrollPanel.unHide();
-        actorPanel.unHide();
         player.attachCamera(camera, config.getCameraPinStyle());
-        window.doLayout();
+        window.showPanels();
     }
 
     public UPlayer makeNewPlayer(String playername) {
@@ -224,17 +213,5 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
         item = thingCzar.getPile("gold coins", 320);
         item.moveTo(player);
         return player;
-    }
-
-    //@Subscribe
-    public void faggotresolutionChanged(ResolutionChangedEvent event) {
-        // Position panels around the right/bottom edges
-        window.setBounds(0, 0, event.width, event.height);
-        statusPanel.setBounds(event.width - statusPanel.getWidth(), 0, 200, 200); // upper right corner
-        lensPanel.setBounds(statusPanel.getX(), event.height - lensPanel.getHeight(), 200, 200); // bottom right
-        actorPanel.setBounds(statusPanel.getX(), statusPanel.getHeight() + 1, statusPanel.getWidth(), event.height - statusPanel.getHeight() - lensPanel.getHeight() - 2);
-        scrollPanel.setBounds(0, event.height - scrollPanel.getHeight(), event.width - statusPanel.getWidth(), scrollPanel.getHeight());
-        camera.setBounds(0, 0, event.width - (statusPanel.hidden ? 0 : statusPanel.getWidth()), event.height - (scrollPanel.hidden ? 0 : scrollPanel.getHeight()));
-        camera.setupGrid();
     }
 }

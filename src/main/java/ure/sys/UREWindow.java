@@ -37,6 +37,20 @@ public class UREWindow extends View {
         addChild(panel);
     }
 
+    public void hidePanels() {
+        for (UPanel p : panels) {
+            p.hide();
+        }
+        doLayout();
+    }
+
+    public void showPanels() {
+        for (UPanel p : panels) {
+            p.unHide();
+        }
+        doLayout();
+    }
+
     @Subscribe
     public void resolutionChanged(ResolutionChangedEvent event) {
         setBounds(0,0,event.width,event.height);
