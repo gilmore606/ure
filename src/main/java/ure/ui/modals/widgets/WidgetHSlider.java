@@ -47,6 +47,7 @@ public class WidgetHSlider extends Widget {
     @Override
     public void mouseClick(int mousex, int mousey) {
         float frac = (float)mousePixelX() / (float)(length * gw());
+        frac = Math.max(0f, Math.min(1f, frac));
         setValue(valuemin + (int)((float)(valuemax - valuemin) * frac));
     }
 
