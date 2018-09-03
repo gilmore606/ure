@@ -317,7 +317,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         if (modal != null)
             modal.mouseClick();
         else
-            setAutoWalk(mouseX()/config.getTileWidth() + modalCamera.leftEdge, mouseY()/config.getTileHeight() + modalCamera.topEdge);
+            setAutoWalk((mouseX() - modalCamera.getX())/config.getTileWidth() + modalCamera.leftEdge, (mouseY() - modalCamera.getY())/config.getTileHeight() + modalCamera.topEdge);
     }
     public void mouseReleased() {
 

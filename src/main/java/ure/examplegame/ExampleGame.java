@@ -11,10 +11,7 @@ import ure.areas.UCartographer;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.render.URenderer;
-import ure.sys.Injector;
-import ure.sys.UCommander;
-import ure.sys.UConfig;
-import ure.sys.UREgame;
+import ure.sys.*;
 import ure.sys.events.ResolutionChangedEvent;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
@@ -22,10 +19,7 @@ import ure.things.UThingCzar;
 import ure.ui.*;
 import ure.ui.modals.HearModalTitleScreen;
 import ure.ui.modals.UModalTitleScreen;
-import ure.ui.panels.UActorPanel;
-import ure.ui.panels.ULensPanel;
-import ure.ui.panels.UScrollPanel;
-import ure.ui.panels.UStatusPanel;
+import ure.ui.panels.*;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -43,7 +37,7 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
     static UScrollPanel scrollPanel;
     static ULensPanel lensPanel;
     static UActorPanel actorPanel;
-    static View rootView;
+    static UREWindow window;
 
     @Inject
     URenderer renderer;
@@ -80,16 +74,15 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
 
     private void makeWindow() {
 
-        rootView = new View();
-        rootView.setBounds(0, 0, config.getScreenWidth(), config.getScreenHeight());
-
+        window = new UREWindow();
         camera = new UCamera(0, 0, 1200, 800);
         camera.moveTo(area, 40,20);
-        rootView.addChild(camera);
+        window.setCamera(camera);
 
         UColor borderColor = UColor.DARKGRAY;
 
-        statusPanel = new UStatusPanel(200, 200, 10, 10, config.getTextColor(), UColor.BLACK, borderColor);
+        statusPanel = new UStatusPanel(10, 10, config.getTextColor(), UColor.BLACK, borderColor);
+        statusPanel.setLayout(UPanel.XPOS_LEFT, UPanel.YPOS_TOP, 10, 0f, 10, 10, 0f, 10);
         statusPanel.addText("name", " ",0,0);
         statusPanel.addText("race", "Owl",0,1);
         statusPanel.addText("class", "Ornithologist",0,2);
@@ -97,34 +90,31 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
         statusPanel.addText("time", "", 0, 6);
         statusPanel.addText("location", "?", 0, 8);
         statusPanel.addText("lens", "", 0, 20);
-        statusPanel.setPosition(1200,0);
-        rootView.addChild(statusPanel);
+        window.addPanel(statusPanel);
 
-        actorPanel = new UActorPanel(200,600,10,10,config.getTextColor(), UColor.BLACK, borderColor);
-        actorPanel.setPosition(1200,200);
-        rootView.addChild(actorPanel);
+        actorPanel = new UActorPanel(10,10,config.getTextColor(), UColor.BLACK, borderColor);
+        actorPanel.setLayout(UPanel.XPOS_LEFT, UPanel.YPOS_FIT, 10, 0f, 10, 0, 1f, 9999);
+        window.addPanel(actorPanel);
 
-        lensPanel = new ULensPanel(camera, 0, 0, 200, 200, 12, 12, config.getTextColor(), UColor.BLACK, borderColor);
-        lensPanel.setPosition(1200,800);
-        rootView.addChild(lensPanel);
+        lensPanel = new ULensPanel(camera, 0, 0, 12, 12, config.getTextColor(), UColor.BLACK, borderColor);
+        lensPanel.setLayout(UPanel.XPOS_LEFT, UPanel.YPOS_BOTTOM, 10, 0f, 10, 6, 0f, 6);
+        window.addPanel(lensPanel);
 
-        scrollPanel = new UScrollPanel(1200, 200, 12, 12, config.getTextColor(), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
+        scrollPanel = new UScrollPanel(12, 12, config.getTextColor(), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
+        scrollPanel.setLayout(UPanel.XPOS_FIT, UPanel.YPOS_BOTTOM, 0, 1f, 9999, 4, 0.2f, 10);
         scrollPanel.addLineFade(new UColor(1.0f, 1.0f, 1.0f));
         scrollPanel.addLineFade(new UColor(0.8f, 0.8f, 0.8f));
         scrollPanel.addLineFade(new UColor(0.6f, 0.6f, 0.6f));
         scrollPanel.addLineFade(new UColor(0.5f, 0.5f, 0.5f));
         scrollPanel.addLineFade(new UColor(0.4f, 0.4f, 0.4f));
         scrollPanel.addLineFade(new UColor(0.3f, 0.3f, 0.3f));
-        scrollPanel.setPosition(0,800);
-        scrollPanel.setBounds(0,800,1200,200);
         scrollPanel.print("Welcome to UnRogueEngine!");
         scrollPanel.print("The universal java toolkit for roguelike games.");
         scrollPanel.print("Your journey begins...");
-        rootView.addChild(scrollPanel);
+        window.addPanel(scrollPanel);
 
-        bus.post(new ResolutionChangedEvent(config.getScreenWidth(), config.getScreenHeight()));
-
-        renderer.setRootView(rootView);
+        window.doLayout();
+        renderer.setRootView(window);
 
         commander.setStatusPanel(statusPanel);
         commander.setScrollPanel(scrollPanel);
@@ -151,11 +141,11 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
         lensPanel.hide();
         statusPanel.hide();
         actorPanel.hide();
+        window.doLayout();
         area = cartographer.getTitleArea();
         camera.moveTo(area, 50, 50);
         commander.config.setVisibilityEnable(false);
-        commander.showModal(new UModalTitleScreen(35, 20, this, "start", area));
-
+        commander.showModal(new UModalTitleScreen(22, 20, this, "start", area));
     }
 
     public void hearModalTitleScreen(String context, String optional) {
@@ -192,7 +182,7 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
         scrollPanel.unHide();
         actorPanel.unHide();
         player.attachCamera(camera, config.getCameraPinStyle());
-        bus.post(new ResolutionChangedEvent(renderer.getScreenWidth(), renderer.getScreenHeight()));
+        window.doLayout();
     }
 
     public UPlayer makeNewPlayer(String playername) {
@@ -235,10 +225,10 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
         return player;
     }
 
-    @Subscribe
-    public void resolutionChanged(ResolutionChangedEvent event) {
+    //@Subscribe
+    public void faggotresolutionChanged(ResolutionChangedEvent event) {
         // Position panels around the right/bottom edges
-        rootView.setBounds(0, 0, event.width, event.height);
+        window.setBounds(0, 0, event.width, event.height);
         statusPanel.setBounds(event.width - statusPanel.getWidth(), 0, 200, 200); // upper right corner
         lensPanel.setBounds(statusPanel.getX(), event.height - lensPanel.getHeight(), 200, 200); // bottom right
         actorPanel.setBounds(statusPanel.getX(), statusPanel.getHeight() + 1, statusPanel.getWidth(), event.height - statusPanel.getHeight() - lensPanel.getHeight() - 2);

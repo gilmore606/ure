@@ -13,8 +13,8 @@ public class UStatusPanel extends UPanel {
     int charWidth, charHeight;
     HashMap<String,TextFrag> texts;
 
-    public UStatusPanel(int pixelw, int pixelh, int padx, int pady, UColor fg, UColor bg, UColor borderc) {
-        super(pixelw,pixelh,padx,pady,fg,bg,borderc);
+    public UStatusPanel(int padx, int pady, UColor fg, UColor bg, UColor borderc) {
+        super(padx,pady,fg,bg,borderc);
         bus.register(this);
         texts = new HashMap<String,TextFrag>();
         charWidth = config.getTextWidth();

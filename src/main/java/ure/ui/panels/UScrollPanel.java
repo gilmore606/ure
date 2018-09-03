@@ -14,9 +14,7 @@ import java.util.ArrayList;
  */
 public class UScrollPanel extends UPanel implements UAnimator {
 
-    int textRows, textColumns;
-    int spacing = 1;
-    int charWidth, charHeight;
+    int textRows;
     boolean suppressDuplicates = true;
     String lastMessage;
     ArrayList<String> lines;
@@ -27,17 +25,19 @@ public class UScrollPanel extends UPanel implements UAnimator {
     float flashLevel;
     float flashDecay = 0.07f;
 
-    public UScrollPanel(int _pixelw, int _pixelh, int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
-        super(_pixelw,_pixelh,_padx,_pady,_fgColor,_bgColor,_borderColor);
+    public UScrollPanel(int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
+        super(_padx,_pady,_fgColor,_bgColor,_borderColor);
         lines = new ArrayList<>();
         icons = new ArrayList<>();
         colors = new ArrayList<>();
         colorBuffers = new ArrayList<>();
         lineFades = new ArrayList<>();
-        charWidth = commander.config.getTextWidth();
-        charHeight = commander.config.getTextHeight() + spacing;
-        textRows = (_pixelh - _pady) / charHeight - 2;
-        textColumns = (_pixelw - _padx) / charWidth;
+    }
+
+    @Override
+    public void resizeView(int x, int y, int w, int h) {
+        super.resizeView(x,y,w,h);
+        textRows = (height - padY) / config.getTileHeight();
     }
 
     public void addLineFade(UColor fade) {
@@ -63,7 +63,7 @@ public class UScrollPanel extends UPanel implements UAnimator {
     @Override
     public void draw() {
         if (!hidden) {
-            renderer.drawRectBorder(1, 1, width - 2, height - 2, 1, bgColor, borderColor);
+            super.draw();
             int i = 0;
             boolean fade = !isMouseInside();
             while (i < textRows) {
@@ -81,8 +81,8 @@ public class UScrollPanel extends UPanel implements UAnimator {
                     UColor cbuf = colorBuffers.get(i);
                     cbuf.set(color.fR(), color.fG(), color.fB());
                     cbuf.brightenBy(gray);
-                    drawString(lines.get(i), 3, liney, cbuf);
-                    drawIcon(icons.get(i), 1, liney);
+                    drawString(lines.get(i), 2, liney, cbuf);
+                    drawIcon(icons.get(i), 0, liney);
                 }
                 i++;
             }

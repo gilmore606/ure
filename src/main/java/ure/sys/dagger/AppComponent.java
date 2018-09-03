@@ -11,6 +11,7 @@ import ure.actors.UActorCzar;
 import ure.actors.behaviors.UBehavior;
 import ure.commands.UCommand;
 import ure.examplegame.ExampleGame;
+import ure.sys.UREWindow;
 import ure.terrain.Stairs;
 import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
@@ -81,4 +82,5 @@ public interface AppComponent {
     void inject(SpawnActor actor);
     void inject(ULight lit);
     void inject(Sound snd);
+    void inject(UREWindow win);
 }

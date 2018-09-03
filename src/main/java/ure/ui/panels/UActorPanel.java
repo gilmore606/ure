@@ -19,8 +19,8 @@ public class UActorPanel extends UPanel {
 
     private Log log = LogFactory.getLog(UActorPanel.class);
 
-    public UActorPanel(int _pixelw, int _pixelh, int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
-        super(_pixelw,_pixelh,_padx,_pady,_fgColor,_bgColor,_borderColor);
+    public UActorPanel(int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
+        super(_padx,_pady,_fgColor,_bgColor,_borderColor);
         bus.register(this);
         actors = new ArrayList<>();
     }
@@ -65,13 +65,13 @@ public class UActorPanel extends UPanel {
     }
 
     public void drawActor(UActor actor, int pos) {
-        int entryHeight = commander.config.getTileHeight() * 3;
+        int entryHeight = gh() * 3;
         if (actor.getIcon() == null)
             log.error("*** BUG: actor " + actor.getName() + " had null getIcon() at actorpanel");  // this only seems to happen on game reload at first frame when camera is moved into area
         else
             actor.getIcon().draw(padX, padY + (pos * entryHeight));
-        renderer.drawString(padX + commander.config.getTileWidth() * 2, padY + (pos * entryHeight), fgColor, actor.getName());
-        renderer.drawString(padX + commander.config.getTileWidth() * 2, padY + (pos * entryHeight) + commander.config.getTextHeight(), actor.UIstatusColor(), actor.UIstatus());
+        renderer.drawString(padX + gw() * 2, padY + (pos * entryHeight), fgColor, actor.getName());
+        renderer.drawString(padX + gw() * 2, padY + (pos * entryHeight) + commander.config.getTextHeight(), actor.UIstatusColor(), actor.UIstatus());
     }
 
     @Subscribe

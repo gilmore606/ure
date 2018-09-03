@@ -32,8 +32,8 @@ public class UConfig {
 
     private int FPStarget = 30;                                 // draw at this FPS
     private int animFrameMilliseconds = 33;                     // milliseconds between animation frames
-    private int screenWidth = 1400;                             // window width in pixels
-    private int screenHeight = 1000;                            // window height in pixels
+    private int screenWidth = 1000;                             // window width in pixels
+    private int screenHeight = 700;                            // window height in pixels
     private String tileFont = "/fonts/Deferral-Square.ttf";    // irrelevant for non-ascii renderer
     private float tileFontSize = 20;
     private String textFont = "/fonts/UbuntuMono-R.ttf";

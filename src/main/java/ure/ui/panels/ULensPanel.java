@@ -18,8 +18,8 @@ public class ULensPanel extends UPanel {
 
     int updateFrame = 0;
 
-    public ULensPanel(UCamera watchCamera, int cameraOffsetX, int cameraOffsetY, int _pixelw, int _pixelh, int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
-        super(_pixelw,_pixelh,_padx,_pady,_fgColor,_bgColor,_borderColor);
+    public ULensPanel(UCamera watchCamera, int cameraOffsetX, int cameraOffsetY, int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
+        super(_padx,_pady,_fgColor,_bgColor,_borderColor);
         camera = watchCamera;
         cameraX = cameraOffsetX;
         cameraY = cameraOffsetY;

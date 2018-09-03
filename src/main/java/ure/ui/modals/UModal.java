@@ -112,6 +112,10 @@ public class UModal extends View implements UAnimator {
         height = cellh * gh();
         x = (screenw / 2 - (width / 2));
         y = (screenh / 2 - (height / 2));
+        if (config.getModalPosition() == UConfig.POS_CAMERA_CENTER) {
+            x += commander.modalCamera().getX();
+            y += commander.modalCamera().getY();
+        }
     }
 
     public void sizeToWidgets() {
