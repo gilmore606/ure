@@ -231,7 +231,7 @@ public class UModal extends View implements UAnimator {
         }
         int border = config.getModalFrameLine();
         if (border > 0)
-            renderer.drawRectBorder(_xpos - gw(),_ypos - gh(),(_cellw+2)*gw(),(_cellh+2)*gh(),border, bgColor, frameColor);
+            renderer.drawRectBorder(_xpos - gw(),_ypos - gh(),(_cellw+2)*gw(),(_cellh+2)*gh(),border, bgColor, isOnTop() ? frameColor : config.getHiliteColor());
         else
             renderer.drawRect(_xpos - gw(), _ypos - gh(),  (_cellw+2)*gw(),(_cellh+2)*gh(), bgColor);
 
