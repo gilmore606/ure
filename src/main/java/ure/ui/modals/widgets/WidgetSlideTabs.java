@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class WidgetSlideTabs extends Widget {
 
-    ArrayList<String> tabs;
+    public ArrayList<String> tabs;
     int[] offsets;
     public int selection;
     int pixelpos;
@@ -17,17 +17,21 @@ public class WidgetSlideTabs extends Widget {
 
     public WidgetSlideTabs(UModal modal, int x, int y, int width, ArrayList<String> tabs, int selected) {
         super(modal);
-        this.tabs = tabs;
+        setTabs(tabs);
+        focusable = true;
+        setDimensions(x,y,width,1);
+        setClipsToBounds(true);
+        select(selected);
+    }
+
+    public void setTabs(ArrayList<String> newtabs) {
+        tabs = newtabs;
         offsets = new int[tabs.size()];
         int offmax = 0;
         for (int i=0;i<tabs.size();i++) {
             offsets[i] = offmax;
             offmax += modal.renderer.textWidth(tabs.get(i) + separator);
         }
-        focusable = true;
-        setDimensions(x,y,width,1);
-        setClipsToBounds(true);
-        select(selected);
     }
 
     public void select(int newselection) {

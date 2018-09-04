@@ -72,18 +72,24 @@ public class UModalInventory extends UModal implements HearModalDropdown {
         UAction action = contextActions.get(selection);
         if (action != null) {
             commander.player().doAction(action);
-            things = commander.player().things();
-            int oldcategories = categoryLists.size();
-            Categorize();
-            if (categoryLists.size() != oldcategories) {
-                removeWidget(categoryWidget);
-                categoryWidget = new WidgetSlideTabs(this, 0, 0, 23, categories, 0);
-                addWidget(categoryWidget);
-                categoryWidget.select(categoryLists.size() - 1);
-            }
-            changeList(categoryLists.get(categoryWidget.selection));
-            changeDetail((UThing)listWidget.entity());
+            reCategorize();
         }
+    }
+
+    public void reCategorize() {
+        things = commander.player().things();
+        int oldcategories = categoryLists.size();
+        Categorize();
+        if (categoryLists.size() != oldcategories) {
+            removeWidget(categoryWidget);
+            categoryWidget = new WidgetSlideTabs(this, 0, 0, 23, categories, 0);
+            addWidget(categoryWidget);
+            categoryWidget.select(categoryLists.size() - 1);
+        } else {
+            categoryWidget.setTabs(categories);
+        }
+        changeList(categoryLists.get(categoryWidget.selection));
+        changeDetail((UThing)listWidget.entity());
     }
 
     void changeList(ArrayList<UThing> things) {

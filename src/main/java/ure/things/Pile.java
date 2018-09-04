@@ -2,6 +2,8 @@ package ure.things;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.ui.modals.HearModalQuantity;
+import ure.ui.modals.UModal;
+import ure.ui.modals.UModalInventory;
 import ure.ui.modals.UModalQuantity;
 
 import java.util.ArrayList;
@@ -65,18 +67,19 @@ public class Pile extends UThing implements HearModalQuantity {
     public void hearModalQuantity(String callback, int dropcount) {
         if (dropcount >= count) {
             super.tryDrop(dropdest);
-            return;
+        } else {
+            try {
+                Pile leftover = (Pile) clone();
+                leftover.setCount(count - dropcount);
+                setCount(dropcount);
+                UContainer oldlocation = location;
+                super.tryDrop(dropdest);
+                leftover.moveTo(oldlocation);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        try {
-            Pile leftover = (Pile)clone();
-            leftover.setCount(count-dropcount);
-            setCount(dropcount);
-            UContainer oldlocation = location;
-            super.tryDrop(dropdest);
-            leftover.moveTo(oldlocation);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        commander.updateInventoryModal();
     }
 
     public int getCount() { return count; }

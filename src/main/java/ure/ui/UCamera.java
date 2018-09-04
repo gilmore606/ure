@@ -177,8 +177,8 @@ public class UCamera extends View implements UAnimator {
     public void setupGrid() {
         float cellWidth = (float)config.getTileWidth() * zoom;
         float cellHeight = (float)config.getTileHeight() * zoom;
-        columns = (int)(width / cellWidth) + 1;
-        rows = (int)(height / cellHeight) + 1;
+        columns = (int)(width / cellWidth);
+        rows = (int)(height / cellHeight);
         lightcells = new ULightcell[columns][rows];
         float[] scales = new float[]{15f,22f};
         for (int col = 0; col<columns; col++) {

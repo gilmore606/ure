@@ -709,6 +709,17 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         return false;
     }
 
+    public void updateInventoryModal() {
+        if (modal instanceof UModalInventory)
+            ((UModalInventory)modal).reCategorize();
+        else {
+            for (UModal m : modalStack) {
+                if (m instanceof UModalInventory)
+                    ((UModalInventory)m).reCategorize();
+            }
+        }
+    }
+
     /**
      * Get the filesystem path to the current savestate (the world we're playing now), or the top level save path.
      * @return
