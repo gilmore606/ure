@@ -490,8 +490,9 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
 
         if (isMovableBy(actor))
             actions.put("drop", new ActionDrop(actor, this));
-        if (isUsable(actor))
+        if (isUsable(actor)) {
             actions.put(useVerb(), new ActionUse(actor, this));
+        }
         if (equipSlots != null) {
             if (equipSlots[0].equals("equip")) {
                 if (equipped)
@@ -512,6 +513,13 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
                     if (((Container) t).willAcceptThing(this)) {
                         actions.put("put in " + t.name(), new ActionDrop(actor, this, t));
                     }
+                }
+            }
+        }
+        if (isUsable(actor) || equipSlots != null) {
+            if (commander.player().hotbar.size() < 10) {
+                if (!commander.player().hotbar.contains(this)) {
+                    actions.put("add to hotbar", null);
                 }
             }
         }

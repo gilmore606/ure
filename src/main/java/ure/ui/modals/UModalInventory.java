@@ -15,6 +15,7 @@ public class UModalInventory extends UModal implements HearModalDropdown {
     private ArrayList<ArrayList<String>> categoryItemNames;
     int biggestCategoryLength;
     private ArrayList<UAction> contextActions;
+    private String[] contextVerbs;
 
     private WidgetSlideTabs categoryWidget;
     private WidgetEntityList listWidget;
@@ -54,14 +55,14 @@ public class UModalInventory extends UModal implements HearModalDropdown {
             HashMap<String,UAction> actions = ((UThing)(listWidget.entity())).contextActions(commander.player());
             if (actions != null) {
                 contextActions = new ArrayList<>();
-                String[] verbs = new String[actions.size()];
+                contextVerbs = new String[actions.size()];
                 int i=0;
                 for (String verb : actions.keySet()) {
-                    verbs[i] = verb;
+                    contextVerbs[i] = verb;
                     i++;
                     contextActions.add(actions.get(verb));
                 }
-                UModalDropdown drop = new UModalDropdown(verbs, 0, this, "verb");
+                UModalDropdown drop = new UModalDropdown(contextVerbs, 0, this, "verb");
                 drop.setChildPosition(listWidget.col + 2, listWidget.row + listWidget.selection, this);
                 commander.showModal(drop);
             }
@@ -72,8 +73,10 @@ public class UModalInventory extends UModal implements HearModalDropdown {
         UAction action = contextActions.get(selection);
         if (action != null) {
             commander.player().doAction(action);
-            reCategorize();
+        } else if (contextVerbs[selection].equals("add to hotbar")) {
+            commander.player().addToHotbar((UThing)(listWidget.entity()));
         }
+        reCategorize();
     }
 
     public void reCategorize() {
