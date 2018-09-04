@@ -10,6 +10,8 @@ import ure.ui.Icons.Icon;
 import ure.ui.ULight;
 import ure.things.UThing;
 
+import java.util.ArrayList;
+
 /**
  * UPlayer implements a UActor whose actions are initiated by user input.  More than one can exist.
  *
@@ -27,6 +29,9 @@ public class UPlayer extends UActor {
     public UColor selfLightColor;
     public int selfLight;
     public int selfLightFalloff;
+
+    public ArrayList<UThing> hotbar;
+    public ArrayList<Long> hotbarIDs;
 
     @JsonIgnore
     ULight light;
@@ -50,6 +55,7 @@ public class UPlayer extends UActor {
         bodytype = "humanoid";
         body = commander.actorCzar.getNewBody(bodytype);
         hearingrange = config.getVolumeFalloffDistance();
+        hotbar = new ArrayList<>();
     }
 
     @Override
@@ -75,6 +81,20 @@ public class UPlayer extends UActor {
         if (selfLight > 0) {
             light = new ULight(selfLightColor, selfLightFalloff + selfLight, selfLight);
         }
+        hotbar = new ArrayList<>();
+        for (Long id : hotbarIDs) {
+            for (UThing t : things()) {
+                if (t.getID() == id) {
+                    hotbar.add(t);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void removeThing(UThing thing) {
+        super.removeThing(thing);
+        hotbar.remove(thing);
     }
 
     @Override
@@ -122,11 +142,19 @@ public class UPlayer extends UActor {
         saveAreaX = areaX();
         saveAreaY = areaY();
         saveTurn = commander.getTurn();
+        hotbarIDs = new ArrayList<>();
+        for (UThing t : hotbar)
+            hotbarIDs.add(t.getID());
     }
+
     public void setSaveLocation(UArea area, int x, int y) {
         saveAreaLabel = area.getLabel();
         saveAreaX = x;
         saveAreaY = y;
+    }
+
+    public void addToHotbar(UThing thing) {
+        hotbar.add(thing);
     }
 
     public void setSaveAreaLabel(String l) { saveAreaLabel = l; }
@@ -143,5 +171,6 @@ public class UPlayer extends UActor {
     public void setSelfLightColor(UColor c) { selfLightColor = c; }
     public void setSelfLight(int c) { selfLight = c; }
     public void setSelfLightFalloff(int c) { selfLightFalloff = c; }
-
+    public ArrayList<UThing> getHotbar() { return hotbar; }
+    public void setHotbar(ArrayList<UThing> al) { hotbar = al; }
 }

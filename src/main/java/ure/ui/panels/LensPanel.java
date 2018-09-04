@@ -9,7 +9,7 @@ import ure.terrain.UTerrain;
 import ure.things.UThing;
 import ure.ui.UCamera;
 
-public class ULensPanel extends UPanel {
+public class LensPanel extends UPanel {
 
     UCamera camera;
     int cameraX,cameraY;
@@ -18,7 +18,7 @@ public class ULensPanel extends UPanel {
 
     int updateFrame = 0;
 
-    public ULensPanel(UCamera watchCamera, int cameraOffsetX, int cameraOffsetY, int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
+    public LensPanel(UCamera watchCamera, int cameraOffsetX, int cameraOffsetY, int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
         super(_padx,_pady,_fgColor,_bgColor,_borderColor);
         camera = watchCamera;
         cameraX = cameraOffsetX;

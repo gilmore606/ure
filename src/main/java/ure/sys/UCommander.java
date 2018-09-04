@@ -29,11 +29,10 @@ import ure.things.UThingCzar;
 import ure.ui.Icons.Icon;
 import ure.ui.UCamera;
 import ure.ui.modals.*;
-import ure.ui.panels.UScrollPanel;
-import ure.ui.panels.UStatusPanel;
+import ure.ui.panels.ScrollPanel;
+import ure.ui.panels.StatusPanel;
 import ure.ui.sounds.Sound;
 import ure.ui.sounds.USpeaker;
-import ure.editors.vaulted.VaultedArea;
 import ure.editors.vaulted.VaultedModal;
 
 import javax.inject.Inject;
@@ -73,12 +72,12 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     private UREgame game;
     private URenderer renderer;
     private UPlayer player;
-    private UScrollPanel scrollPrinter;
+    private ScrollPanel scrollPrinter;
     private UCamera modalCamera;
 
 
-    private UScrollPanel scrollPanel;
-    private UStatusPanel statusPanel;
+    private ScrollPanel scrollPanel;
+    private StatusPanel statusPanel;
 
     public UThingCzar thingCzar;
     public UActorCzar actorCzar;
@@ -164,7 +163,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      * Register a UI component to print scroll messages.  Right now this can only be a UScrollPrinter.
      *
      */
-    public void registerScrollPrinter(UScrollPanel printer) {
+    public void registerScrollPrinter(ScrollPanel printer) {
         scrollPrinter = printer;
         addAnimator(printer);
     }
@@ -179,7 +178,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void addAnimator(UAnimator animator) { animators.add(animator); }
     public void removeAnimator(UAnimator animator) { animators.remove(animator); }
 
-    public UActor player() { return player; }
+    public UPlayer player() { return player; }
 
     /**
      * Read keybinds.txt and map keys to commands.
@@ -288,11 +287,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     command = keyBindings.get(bindkey);
             }
             hearCommand(command, k);
-            if (k.k == GLFW_KEY_1) {
+            if (k.k == GLFW_KEY_F1) {
                 debug_1();
-            } else if (k.k == GLFW_KEY_2) {
+            } else if (k.k == GLFW_KEY_F2) {
                 debug_2();
-            } else if (k.k == GLFW_KEY_3) {
+            } else if (k.k == GLFW_KEY_F3) {
                 debug_3();
             } else if (k.k == GLFW_KEY_ENTER && k.alt) {
                 toggleFullscreen();
@@ -448,11 +447,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             modal.animationTick();
     }
 
-    public void setStatusPanel(UStatusPanel panel){
+    public void setStatusPanel(StatusPanel panel){
         statusPanel = panel;
     }
 
-    public void setScrollPanel(UScrollPanel panel){
+    public void setScrollPanel(ScrollPanel panel){
         scrollPanel = panel;
     }
 

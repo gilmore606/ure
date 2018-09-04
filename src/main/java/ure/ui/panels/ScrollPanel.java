@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * TODO: flash line/panel on activity
  * TODO: filename message count since last player turn, pause for anykey if > scrollsize
  */
-public class UScrollPanel extends UPanel implements UAnimator {
+public class ScrollPanel extends UPanel implements UAnimator {
 
     int textRows;
     boolean suppressDuplicates = true;
@@ -25,7 +25,7 @@ public class UScrollPanel extends UPanel implements UAnimator {
     float flashLevel;
     float flashDecay = 0.07f;
 
-    public UScrollPanel(int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
+    public ScrollPanel(int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
         super(_padx,_pady,_fgColor,_bgColor,_borderColor);
         lines = new ArrayList<>();
         icons = new ArrayList<>();

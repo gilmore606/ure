@@ -1,7 +1,5 @@
 package ure.examplegame;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.actors.UActorCzar;
@@ -12,7 +10,6 @@ import ure.areas.UCell;
 import ure.math.UColor;
 import ure.render.URenderer;
 import ure.sys.*;
-import ure.sys.events.ResolutionChangedEvent;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.things.UThingCzar;
@@ -33,10 +30,11 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
     static UArea area;
     static UCamera camera;
     static UPlayer player;
-    static UStatusPanel statusPanel;
-    static UScrollPanel scrollPanel;
-    static ULensPanel lensPanel;
-    static UActorPanel actorPanel;
+    static StatusPanel statusPanel;
+    static HotbarPanel hotbarPanel;
+    static ScrollPanel scrollPanel;
+    static LensPanel lensPanel;
+    static ActorPanel actorPanel;
     static UREWindow window;
 
     @Inject
@@ -78,7 +76,7 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
 
         UColor borderColor = UColor.DARKGRAY;
 
-        statusPanel = new UStatusPanel(10, 10, config.getTextColor(), null, borderColor);
+        statusPanel = new StatusPanel(10, 10, config.getTextColor(), null, borderColor);
 
         statusPanel.addText("name", " ",0,0);
         statusPanel.addText("race", "Owl",0,1);
@@ -90,15 +88,16 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
         statusPanel.setLayout(UPanel.XPOS_LEFT, UPanel.YPOS_BOTTOM, 8, 0.15f, 12, 10, 0f, 10);
         window.addPanel(statusPanel);
 
-        actorPanel = new UActorPanel(10,10,config.getTextColor(), null, borderColor);
+        actorPanel = new ActorPanel(10,10,config.getTextColor(), null, borderColor);
         actorPanel.setLayout(UPanel.XPOS_LEFT, UPanel.YPOS_FIT, 8, 0.15f, 12, 1, 1f, 9999);
         window.addPanel(actorPanel);
 
-        lensPanel = new ULensPanel(camera, 0, 0, 12, 12, config.getTextColor(), null, borderColor);
+        lensPanel = new LensPanel(camera, 0, 0, 12, 12, config.getTextColor(), null, borderColor);
         lensPanel.setLayout(UPanel.XPOS_LEFT, UPanel.YPOS_TOP, 8, 0.15f, 12, 6, 0f, 6);
         window.addPanel(lensPanel);
 
-        scrollPanel = new UScrollPanel(12, 12, config.getTextColor(), null, new UColor(0.3f,0.3f,0.3f));
+
+        scrollPanel = new ScrollPanel(12, 12, config.getTextColor(), null, new UColor(0.3f,0.3f,0.3f));
         scrollPanel.setLayout(UPanel.XPOS_FIT, UPanel.YPOS_BOTTOM, 0, 1f, 9999, 2, 0.18f, 11);
         scrollPanel.addLineFade(new UColor(1.0f, 1.0f, 1.0f));
         scrollPanel.addLineFade(new UColor(0.8f, 0.8f, 0.8f));
@@ -110,6 +109,10 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
         scrollPanel.print("The universal java toolkit for roguelike games.");
         scrollPanel.print("Your journey begins...");
         window.addPanel(scrollPanel);
+
+        hotbarPanel = new HotbarPanel(config.getTextColor(), config.getPanelBgColor());
+        hotbarPanel.setLayout(UPanel.XPOS_FIT, UPanel.YPOS_TOP, 1, 1f, 9999, 2, 0f, 2);
+        window.addPanel(hotbarPanel);
 
         window.doLayout();
         renderer.setRootView(window);
@@ -189,8 +192,10 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
         item.moveTo(player);
         item = thingCzar.getThingByName("nylon backpack");
         item.moveTo(player);
+        player.addToHotbar(item);
         item = thingCzar.getThingByName("flashlight");
         item.moveTo(player);
+        player.addToHotbar(item);
         item = thingCzar.getThingByName("biscuit");
         item.moveTo(player);
         item = thingCzar.getThingByName("lantern");

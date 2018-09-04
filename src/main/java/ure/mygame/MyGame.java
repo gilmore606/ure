@@ -16,8 +16,8 @@ import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
 import ure.ui.View;
-import ure.ui.panels.UScrollPanel;
-import ure.ui.panels.UStatusPanel;
+import ure.ui.panels.ScrollPanel;
+import ure.ui.panels.StatusPanel;
 
 import javax.inject.Inject;
 
@@ -26,8 +26,8 @@ public class MyGame implements UREgame {
     static UArea area;
     static UCamera camera;
     static UPlayer player;
-    static UStatusPanel statusPanel;
-    static UScrollPanel scrollPanel;
+    static StatusPanel statusPanel;
+    static ScrollPanel scrollPanel;
 
     @Inject
     public URenderer renderer;

@@ -13,13 +13,13 @@ import ure.sys.events.TimeTickEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class UActorPanel extends UPanel {
+public class ActorPanel extends UPanel {
 
     ArrayList<UActor> actors;
 
-    private Log log = LogFactory.getLog(UActorPanel.class);
+    private Log log = LogFactory.getLog(ActorPanel.class);
 
-    public UActorPanel(int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
+    public ActorPanel(int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
         super(_padx,_pady,_fgColor,_bgColor,_borderColor);
         bus.register(this);
         actors = new ArrayList<>();

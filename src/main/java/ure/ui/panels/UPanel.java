@@ -112,7 +112,8 @@ public class UPanel extends View {
     }
 
     public void drawFrame() {
-        renderer.drawRectBorder(1, 1, width - 2, height - 2, 3, UColor.CLEAR, borderColor);
+        if (borderColor != null)
+            renderer.drawRectBorder(1, 1, width - 2, height - 2, 3, UColor.CLEAR, borderColor);
         renderer.drawRect(0,0,width,height, bgColor);
     }
 

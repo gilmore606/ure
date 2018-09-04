@@ -23,11 +23,11 @@ import ure.ui.Icons.UIconCzar;
 import ure.ui.RexFile;
 import ure.ui.UCamera;
 import ure.ui.ULight;
+import ure.ui.panels.LensPanel;
 import ure.ui.sounds.Sound;
 import ure.ui.sounds.USpeaker;
-import ure.ui.panels.ULensPanel;
 import ure.ui.panels.UPanel;
-import ure.ui.panels.UStatusPanel;
+import ure.ui.panels.StatusPanel;
 import ure.ui.modals.UModal;
 import ure.ui.particles.UParticle;
 
@@ -67,8 +67,8 @@ public interface AppComponent {
     void inject(UModal mod);
     void inject(UCommand comm);
     void inject(URendererOGL rend);
-    void inject(UStatusPanel statpan);
-    void inject(ULensPanel lenspan);
+    void inject(StatusPanel statpan);
+    void inject(LensPanel lenspan);
     void inject(ULandscaper landscape);
     void inject(URegion reg);
     void inject(UPanel pan);

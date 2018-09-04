@@ -7,13 +7,13 @@ import ure.sys.events.TimeTickEvent;
 
 import java.util.HashMap;
 
-public class UStatusPanel extends UPanel {
+public class StatusPanel extends UPanel {
 
     int textRows,textColumns;
     int charWidth, charHeight;
     HashMap<String,TextFrag> texts;
 
-    public UStatusPanel(int padx, int pady, UColor fg, UColor bg, UColor borderc) {
+    public StatusPanel(int padx, int pady, UColor fg, UColor bg, UColor borderc) {
         super(padx,pady,fg,bg,borderc);
         bus.register(this);
         texts = new HashMap<String,TextFrag>();
