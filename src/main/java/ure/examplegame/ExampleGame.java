@@ -19,8 +19,6 @@ import ure.ui.modals.UModalTitleScreen;
 import ure.ui.panels.*;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.LogManager;

@@ -25,7 +25,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         super(_callback,_callbackContext);
         setDimensions(cellwidth,cellheight);
         escapable = false;
-        logoWidget = new WidgetRexImage(this,0,0,"ure_logo.xp");
+        logoWidget = new WidgetRexImage(this,0,0,"/ure_logo.xp");
         logoWidget.alpha = 0f;
         addCenteredWidget(logoWidget);
         titleWidget = new WidgetText(this,0,11,titleMsg);

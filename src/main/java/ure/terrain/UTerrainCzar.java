@@ -54,26 +54,22 @@ public class UTerrainCzar {
     public void loadTerrains() {
         terrains = new HashMap<>();
         terrainsByName = new HashMap<>();
-        try {
-            List<String> files = resourceManager.getResourceFiles("/terrain");
-            for (String resourceName : files) {
-                if (resourceName.endsWith(".json")) {
-                    log.debug("loading " + resourceName);
-                    try {
-                        InputStream inputStream = getClass().getResourceAsStream("/terrain/" + resourceName);
-                        UTerrain[] terrainObjs = objectMapper.readValue(inputStream, UTerrain[].class);
-                        for (UTerrain terrain : terrainObjs) {
-                            terrain.initializeAsTemplate();
-                            terrains.put(terrain.getFilechar(), terrain);
-                            terrainsByName.put(terrain.getName(), terrain);
-                        }
-                    } catch (IOException io) {
-                        io.printStackTrace();
+        List<String> files = resourceManager.getResourceFiles("/terrain");
+        for (String resourceName : files) {
+            if (resourceName.endsWith(".json")) {
+                log.debug("loading " + resourceName);
+                try {
+                    InputStream inputStream = getClass().getResourceAsStream("/terrain/" + resourceName);
+                    UTerrain[] terrainObjs = objectMapper.readValue(inputStream, UTerrain[].class);
+                    for (UTerrain terrain : terrainObjs) {
+                        terrain.initializeAsTemplate();
+                        terrains.put(terrain.getFilechar(), terrain);
+                        terrainsByName.put(terrain.getName(), terrain);
                     }
+                } catch (IOException io) {
+                    io.printStackTrace();
                 }
             }
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
         }
     }
 

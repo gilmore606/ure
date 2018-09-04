@@ -4,16 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.sys.Injector;
+import ure.sys.ResourceManager;
 import ure.sys.UCommander;
 
 import javax.inject.Inject;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 public class UThingCzar {
 
@@ -23,6 +20,8 @@ public class UThingCzar {
     ObjectMapper objectMapper;
     @Inject
     UCommander commander;
+    @Inject
+    ResourceManager resourceManager;
 
     private Log log = LogFactory.getLog(UThingCzar.class);
 
@@ -32,13 +31,10 @@ public class UThingCzar {
 
     public void loadThings() {
         thingsByName = new HashMap<>();
-        File jsonDir = new File(commander.config.getResourcePath() + "things/");
-        ArrayList<File> files = new ArrayList<File>(Arrays.asList(jsonDir.listFiles()));
-        for (File resourceFile : files) {
-            String resourceName = resourceFile.getName();
-            if (resourceName.endsWith(".json")) {
+        for (String resource : resourceManager.getResourceFiles("/things")) {
+            if (resource.endsWith(".json")) {
                 try {
-                    InputStream inputStream = getClass().getResourceAsStream("/things/" + resourceName);
+                    InputStream inputStream = getClass().getResourceAsStream("/things/" + resource);
                     UThing[] thingObjs = objectMapper.readValue(inputStream, UThing[].class);
                     for (UThing thing : thingObjs) {
                         thing.initializeAsTemplate();

@@ -751,21 +751,22 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public void launchVaulted() {
-        List<String> filelist = resourceManager.getResourceFiles("/vaults");
-        for (String filename : filelist) {
+        File dirfile = new File(config.getResourcePath() + "vaults/");
+        ArrayList<String> fileList = new ArrayList<>();
+        for (String filename : dirfile.list()) {
             if (filename.endsWith(".json")) {
                 printScroll("found " + filename);
-                filelist.add(filename.substring(0,filename.length()-5));
+                fileList.add(filename.substring(0,filename.length()-5));
             }
         }
-        filelist.add("<new vaultSet>");
-        String[] filearray = new String[filelist.size()];
+        fileList.add("<new vaultSet>");
+        String[] filearray = new String[fileList.size()];
         UModalStringPick spmodal = new UModalStringPick("Select vaultSet to edit:",
-                filelist.toArray(filearray), this, "vaulted-pickfile");
+                fileList.toArray(filearray), this, "vaulted-pickfile");
         printScroll("Launching VaultEd...");
         showModal(spmodal);
-
     }
+
     public void hearModalStringPick(String context, String choice) {
         if (context.equals("vaulted-pickfile")) {
             if (choice.equals("<new vaultSet>")) {
@@ -784,6 +785,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         UModal edmodal = new VaultedModal(filename);
         showModal(edmodal);
     }
+
     public void hearModalGetString(String context, String input) {
         if (context.equals("vaulted-newfile")) {
             doLaunchVaulted(input);
