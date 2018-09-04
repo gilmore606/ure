@@ -24,7 +24,7 @@ public class HotbarPanel extends UPanel {
                 drawIcon(items.get(i).icon(), cursorx+1, cursory);
                 drawString(entry, cursorx+2, cursory, fgColor);
             }
-            cursorx += 8;
+            cursorx += 9;
             if (i == 4) {
                 cursorx = 0;
                 cursory = 1;

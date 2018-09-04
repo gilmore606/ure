@@ -39,6 +39,7 @@ public class UModalContainer extends UModal {
     void updateLists() {
         bagWidget.setThings(filterMovables(container.things()));
         inventoryWidget.setThings(filterMovables(commander.player().things()));
+        commander.updateInventoryModal();
     }
     ArrayList<UThing> filterMovables(ArrayList<UThing> source) {
         ArrayList<UThing> things = new ArrayList<>();

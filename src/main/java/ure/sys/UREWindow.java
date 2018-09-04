@@ -16,6 +16,8 @@ public class UREWindow extends View {
     UConfig config;
     @Inject
     EventBus bus;
+    @Inject
+    UCommander commander;
 
     public UCamera camera;
     public ArrayList<UPanel> panels;
@@ -55,6 +57,8 @@ public class UREWindow extends View {
     public void resolutionChanged(ResolutionChangedEvent event) {
         setBounds(0,0,event.width,event.height);
         doLayout();
+        if (commander.player() != null)
+            commander.player().updatePinnedCamera();
     }
 
     public void doLayout() {

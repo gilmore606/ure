@@ -116,21 +116,7 @@ public class UActor extends UThing implements Interactable {
         }
         super.moveToCell(thearea, destX, destY);
         // TODO: Move the following logic to UCamera
-        if (camera != null) {
-            if (getCameraPinStyle() == UCamera.PINSTYLE_HARD)
-                camera.moveTo(area(), destX, destY);
-            if (getCameraPinStyle() == UCamera.PINSTYLE_SOFT) {
-                int cameraX = Math.min(destX, thearea.xsize - camera.columns / 2);
-                int cameraY = Math.min(destY, thearea.ysize - camera.rows / 2);
-                cameraX = Math.max(camera.columns / 2, cameraX);
-                cameraY = Math.max(camera.rows / 2, cameraY);
-                camera.moveTo(area(), cameraX, cameraY);
-            }
-            // TODO: implement binding of isaac style camera move by screens
-            if (getCameraPinStyle() == UCamera.PINSTYLE_SCREENS) {
-                throw new RuntimeException("Camera.PINSTYLE_SCREENS not implemented!");
-            }
-        }
+        updatePinnedCamera();
         int moveFrames = config.getMoveAnimFrames();
         if (this instanceof UPlayer) moveFrames = config.getMoveAnimPlayerFrames();
         if (oldx >=0 && oldarea == thearea && moveFrames > 0) {
@@ -141,6 +127,24 @@ public class UActor extends UThing implements Interactable {
         }
         if (oldarea == thearea)
             thearea.cellAt(destX, destY).walkedOnBy(this);
+    }
+
+    public void updatePinnedCamera() {
+        if (camera != null) {
+            if (getCameraPinStyle() == UCamera.PINSTYLE_HARD)
+                camera.moveTo(area(), areaX(), areaY());
+            if (getCameraPinStyle() == UCamera.PINSTYLE_SOFT) {
+                int cameraX = Math.min(areaX(), area().xsize - camera.columns / 2);
+                int cameraY = Math.min(areaY(), area().ysize - camera.rows / 2);
+                cameraX = Math.max(camera.columns / 2, cameraX);
+                cameraY = Math.max(camera.rows / 2, cameraY);
+                camera.moveTo(area(), cameraX, cameraY);
+            }
+            // TODO: implement binding of isaac style camera move by screens
+            if (getCameraPinStyle() == UCamera.PINSTYLE_SCREENS) {
+                throw new RuntimeException("Camera.PINSTYLE_SCREENS not implemented!");
+            }
+        }
     }
 
     public UCell myCell() {
