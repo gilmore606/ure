@@ -11,7 +11,7 @@ public class CommandMap extends UCommand {
 
     @Override
     public void execute(UPlayer player) {
-        UModalMap modal = new UModalMap(player.area(), 40, 30);
+        UModalMap modal = new UModalMap(player.area(), commander.camera().columns-6,  commander.camera().rows-4);
         modal.setTitle(commander.cartographer.describeLabel(player.area().getLabel()));
         commander.showModal(modal);
     }

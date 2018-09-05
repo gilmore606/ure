@@ -3,11 +3,15 @@ package ure.ui.modals;
 import ure.areas.UArea;
 import ure.math.UColor;
 import ure.ui.Icons.Icon;
+import ure.ui.modals.widgets.Widget;
+import ure.ui.modals.widgets.WidgetButton;
 import ure.ui.modals.widgets.WidgetMap;
 
 public class UModalMap extends UModal {
 
     WidgetMap mapWidget;
+    WidgetButton zoomInButton, zoomOutButton;
+    WidgetButton markerButton;
 
     UArea area;
 
@@ -15,13 +19,29 @@ public class UModalMap extends UModal {
         super(null, "");
         this.area = area;
 
-        mapWidget = new WidgetMap(this, 0, 0, width, height);
+        mapWidget = new WidgetMap(this, 0, 1, width, height-3);
         addWidget(mapWidget);
+
+        zoomInButton = new WidgetButton(this, 0, 0, "[ +Zoom ]", null);
+        zoomOutButton = new WidgetButton(this, 5, 0, "[ -Zoom ]", null);
+        addWidget(zoomInButton);
+        addWidget(zoomOutButton);
+
+        markerButton = new WidgetButton(this, 12, 0, "[ Set marker ]", null);
+        addWidget(markerButton);
         sizeToWidgets();
         setPad(1,1);
 
         mapWidget.lookAtArea(area);
-        mapWidget.moveView(0,0);
+        mapWidget.moveView(commander.player().areaX(),commander.player().areaY());
+    }
+
+    @Override
+    public void pressWidget(Widget widget) {
+        if (widget == zoomInButton)
+            mapWidget.zoomIn();
+        else if (widget == zoomOutButton)
+            mapWidget.zoomOut();
     }
 
 

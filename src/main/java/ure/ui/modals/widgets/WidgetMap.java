@@ -9,6 +9,11 @@ public class WidgetMap extends Widget {
     public float zoom = 0.25f;
     public UArea area;
     public int camx,camy;
+    public int centerx,centery;
+
+    boolean dragging = false;
+    int dragStartX, dragStartY;
+    int dragCenterX, dragCenterY;
 
     public WidgetMap(UModal modal, int col, int row, int cellw, int cellh) {
         super(modal);
@@ -19,8 +24,47 @@ public class WidgetMap extends Widget {
         this.area = area;
     }
     public void moveView(int areax, int areay) {
-        camx = areax;
-        camy = areay;
+        centerx = areax;
+        centery = areay;
+        recenter();
+    }
+
+    public void recenter() {
+        camx = centerx - (int)(width/(int)(zoom*gw()))/2;
+        camy = centery - (int)(height/(int)(zoom*gh()))/2;
+    }
+
+    public void zoomIn() {
+        zoom = zoom * 1.3f;
+        recenter();
+    }
+
+    public void zoomOut() {
+        zoom = zoom * 0.7f;
+        recenter();
+    }
+
+    @Override
+    public void mouseClick(int mousex, int mousey) {
+        dragging = true;
+        dragCenterX = centerx;
+        dragCenterY = centery;
+        dragStartX = modal.commander.mouseX() - absoluteX();
+        dragStartY = modal.commander.mouseY() - absoluteY();
+    }
+
+    @Override
+    public void mouseInside(int mousex, int mousey) {
+        if (dragging) {
+            if (!modal.commander.mouseButton()) {
+                dragging = false;
+            } else {
+                int mouseX = dragStartX - (modal.commander.mouseX() - absoluteX());
+                int mouseY = dragStartY - (modal.commander.mouseY() - absoluteY());
+                moveView(dragCenterX + (mouseX / (int)(zoom*gw())),
+                        dragCenterY + (mouseY / (int)(zoom*gh())));
+            }
+        }
     }
 
     @Override
