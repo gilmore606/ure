@@ -23,7 +23,7 @@ public abstract class CommandHotbar extends UCommand {
 
     @Override
     public void execute(UPlayer player) {
-        UThing thing = player.hotbar.get(slot);
+        UThing thing = player.getHotbarItem(slot);
         if (thing != null) {
             UAction action = null;
             if (thing.isUsable(player)) {

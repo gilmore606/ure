@@ -83,9 +83,13 @@ public class UPlayer extends UActor {
         }
         hotbar = new ArrayList<>();
         for (Long id : hotbarIDs) {
-            for (UThing t : things()) {
-                if (t.getID() == id) {
-                    hotbar.add(t);
+            if (id == 0)
+                hotbar.add(null);
+            else {
+                for (UThing t : things()) {
+                    if (t.getID() == id) {
+                        hotbar.add(t);
+                    }
                 }
             }
         }
@@ -94,7 +98,7 @@ public class UPlayer extends UActor {
     @Override
     public void removeThing(UThing thing) {
         super.removeThing(thing);
-        hotbar.remove(thing);
+        removeFromHotbar(thing);
     }
 
     @Override
@@ -143,8 +147,12 @@ public class UPlayer extends UActor {
         saveAreaY = areaY();
         saveTurn = commander.getTurn();
         hotbarIDs = new ArrayList<>();
-        for (UThing t : hotbar)
-            hotbarIDs.add(t.getID());
+        for (UThing t : hotbar) {
+            if (t == null)
+                hotbarIDs.add((long)0);
+            else
+                hotbarIDs.add(t.getID());
+        }
     }
 
     public void setSaveLocation(UArea area, int x, int y) {
@@ -154,7 +162,42 @@ public class UPlayer extends UActor {
     }
 
     public void addToHotbar(UThing thing) {
-        hotbar.add(thing);
+        for (int i=0;i<10;i++) {
+            if (i < hotbar.size()) {
+                if (hotbar.get(i) == null) {
+                    hotbar.set(i, thing);
+                    return;
+                }
+            }
+        }
+        if (hotbar.size() < 10)
+            hotbar.add(thing);
+    }
+
+    public void clearHotbarSlot(int slot) {
+        if (hotbar.size() >= slot+1) {
+            hotbar.set(slot, null);
+        }
+    }
+
+    public void removeFromHotbar(UThing thing) {
+        for (int i=0;i<hotbar.size();i++) {
+            if (hotbar.get(i) == thing)
+                hotbar.set(i, null);
+        }
+    }
+
+    public boolean hasFreeHotbarSlot() {
+        if (hotbar.size() < 10) return true;
+        for (UThing t : hotbar)
+            if (t == null) return true;
+        return false;
+    }
+
+    public UThing getHotbarItem(int i) {
+        if (i < hotbar.size())
+            return hotbar.get(i);
+        return null;
     }
 
     public void setSaveAreaLabel(String l) { saveAreaLabel = l; }

@@ -192,10 +192,8 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
         item.moveTo(player);
         item = thingCzar.getThingByName("nylon backpack");
         item.moveTo(player);
-        player.addToHotbar(item);
         item = thingCzar.getThingByName("flashlight");
         item.moveTo(player);
-        player.addToHotbar(item);
         item = thingCzar.getThingByName("biscuit");
         item.moveTo(player);
         item = thingCzar.getThingByName("lantern");

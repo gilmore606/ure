@@ -75,6 +75,8 @@ public class UModalInventory extends UModal implements HearModalDropdown {
             commander.player().doAction(action);
         } else if (contextVerbs[selection].equals("add to hotbar")) {
             commander.player().addToHotbar((UThing)(listWidget.entity()));
+        } else if (contextVerbs[selection].equals("remove from hotbar")) {
+            commander.player().removeFromHotbar((UThing)(listWidget.entity()));
         }
         reCategorize();
     }

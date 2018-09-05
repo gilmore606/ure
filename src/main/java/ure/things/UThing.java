@@ -517,10 +517,13 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
             }
         }
         if (isUsable(actor) || equipSlots != null) {
-            if (commander.player().hotbar.size() < 10) {
+            if (commander.player().hasFreeHotbarSlot()) {
                 if (!commander.player().hotbar.contains(this)) {
                     actions.put("add to hotbar", null);
                 }
+            }
+            if (commander.player().hotbar.contains(this)) {
+                actions.put("remove from hotbar", null);
             }
         }
         return actions;
