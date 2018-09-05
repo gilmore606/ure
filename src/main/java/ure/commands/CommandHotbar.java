@@ -10,7 +10,7 @@ import ure.things.UThing;
 
 import java.util.HashMap;
 
-public abstract class CommandHotbar extends UCommand {
+public class CommandHotbar extends UCommand {
 
     public static String id = "H";
 

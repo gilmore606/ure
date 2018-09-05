@@ -31,6 +31,7 @@ import ure.ui.UCamera;
 import ure.ui.modals.*;
 import ure.ui.panels.ScrollPanel;
 import ure.ui.panels.StatusPanel;
+import ure.ui.panels.UPanel;
 import ure.ui.sounds.Sound;
 import ure.ui.sounds.USpeaker;
 import ure.editors.vaulted.VaultedModal;
@@ -70,10 +71,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     private ArrayList<UActor> actors;
 
     private UREgame game;
+    private UREWindow window;
     private URenderer renderer;
     private UPlayer player;
     private ScrollPanel scrollPrinter;
-    private UCamera modalCamera;
+    private UCamera camera;
 
 
     private ScrollPanel scrollPanel;
@@ -113,8 +115,9 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         bus.register(this);
     }
 
-    public void registerComponents(UREgame _game, UPlayer theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
+    public void registerComponents(UREgame _game, UREWindow _window, UPlayer theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
         game = _game;
+        window = _window;
         renderer = theRenderer;
         animators = new HashSet<UAnimator>();
         actors = new ArrayList<UActor>();
@@ -172,8 +175,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      * Register the camera to center modals on (if UConfig.modalPosition = POS_CAMERA_CENTER).
      *
      */
-    public void registerModalCamera(UCamera camera) { this.modalCamera = camera; }
-    public UCamera modalCamera() { return modalCamera; }
+    public void registerCamera(UCamera camera) { this.camera = camera; }
+    public UCamera camera() { return camera; }
 
     public void addAnimator(UAnimator animator) { animators.add(animator); }
     public void removeAnimator(UAnimator animator) { animators.remove(animator); }
@@ -323,17 +326,30 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void mousePressed() {
         if (modal != null)
             modal.mouseClick();
-        else
-            setAutoWalk((mouseX() - modalCamera.getX())/config.getTileWidth() + modalCamera.leftEdge, (mouseY() - modalCamera.getY())/config.getTileHeight() + modalCamera.topEdge);
+        else if (camera.isMouseInside())
+            setAutoWalk((mouseX() - camera.getX())/config.getTileWidth() + camera.leftEdge, (mouseY() - camera.getY())/config.getTileHeight() + camera.topEdge);
+        else {
+            for (UPanel p : window.panels) {
+                if (p.isMouseInside())
+                    p.mouseClick();
+            }
+        }
     }
+
     public void mouseReleased() {
 
     }
     public void mouseRightPressed() {
         if (modal != null)
             modal.mouseRightClick();
-        else
+        else if (camera.isMouseInside())
             rightClickMenu();
+        else {
+            for (UPanel p : window.panels) {
+                if (p.isMouseInside())
+                    p.mouseRightClick();
+            }
+        }
     }
     public void mouseRightReleased() {
 
@@ -385,7 +401,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             i++;
         }
         UModalStringPick modal = new UModalStringPick(null, options, this, "rightclick");
-        modal.setChildPosition((mouseX() - modalCamera.x)/config.getTileWidth() - 1,(mouseY() - modalCamera.y)/config.getTileHeight(),modalCamera);
+        modal.setChildPosition((mouseX() - camera.x)/config.getTileWidth() - 1,(mouseY() - camera.y)/config.getTileHeight(), camera);
         showModal(modal);
         modal.skipZoom();
     }
@@ -495,10 +511,10 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     letActorsAct();
                     killActors();
                 }
-                modalCamera.renderLights();
+                camera.renderLights();
             } else {
                 consumeKeyFromBuffer();
-                modalCamera.renderLights();
+                camera.renderLights();
             }
         }
     }

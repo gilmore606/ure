@@ -1,6 +1,7 @@
 package ure.ui;
 
 import ure.render.URenderer;
+import ure.sys.UCommander;
 
 import javax.inject.Inject;
 import java.lang.ref.WeakReference;
@@ -11,6 +12,8 @@ public class View {
 
     @Inject
     public URenderer renderer;
+    @Inject
+    public UCommander commander;
 
     public int x, y, width, height;
 
@@ -158,4 +161,12 @@ public class View {
     public String xystr() { return "my xy is " + Integer.toString(x) + "," + Integer.toString(y); }
     public String absxystr() { return "abs xy is " + Integer.toString(absoluteX()) + "," + Integer.toString(absoluteY()) + " " + Integer.toString(width) + "x" + Integer.toString(height); }
 
+    public boolean isMouseInside() {
+        int mousex = commander.mouseX();
+        int mousey = commander.mouseY();
+        if (mousex >= absoluteX() && mousex < absoluteX()+width && mousey >= absoluteY() && mousey < absoluteY()+height) {
+            return true;
+        }
+        return false;
+    }
 }

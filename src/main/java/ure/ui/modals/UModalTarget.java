@@ -2,7 +2,6 @@ package ure.ui.modals;
 
 import ure.commands.UCommand;
 import ure.math.UColor;
-import ure.render.URenderer;
 import ure.sys.Entity;
 import ure.sys.GLKey;
 
@@ -46,8 +45,8 @@ public class UModalTarget extends UModal {
     @Override
     public void drawContent() {
         commander.printScroll(prompt);
-        int camx = cellx - commander.modalCamera().leftEdge;
-        int camy = celly - commander.modalCamera().topEdge;
+        int camx = cellx - commander.camera().leftEdge;
+        int camy = celly - commander.camera().topEdge;
         renderer.drawGlyph(glyphs.charAt(0), (camx) * gw(), (camy-1)*gh(), glyphColor);
         renderer.drawGlyph(glyphs.charAt(2), (camx) * gw(), (camy+1)*gh(), glyphColor);
         renderer.drawGlyph(glyphs.charAt(3), (camx - 1) * gw(), camy * gh(), glyphColor);

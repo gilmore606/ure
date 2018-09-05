@@ -121,6 +121,14 @@ public class UPanel extends View {
 
     }
 
+    public void mouseClick() {
+
+    }
+
+    public void mouseRightClick() {
+
+    }
+
     public void drawString(String string, int x, int y, UColor color) {
         if (string != null) {
             int linex = padX + (x * gw());
@@ -143,12 +151,4 @@ public class UPanel extends View {
         return (commander.mouseY() - absoluteY()) / gh();
     }
 
-    public boolean isMouseInside() {
-        int mousex = commander.mouseX();
-        int mousey = commander.mouseY();
-        if (mousex >= absoluteX() && mousex < absoluteX()+width && mousey >= absoluteY() && mousey < absoluteY()+height) {
-            return true;
-        }
-        return false;
-    }
 }

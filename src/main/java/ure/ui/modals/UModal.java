@@ -110,16 +110,16 @@ public class UModal extends View implements UAnimator {
             screenw = renderer.getScreenWidth();
             screenh = renderer.getScreenHeight();
         } else {
-            screenw = commander.modalCamera().getWidthInCells() * gw();
-            screenh = commander.modalCamera().getHeightInCells() * gh();
+            screenw = commander.camera().getWidthInCells() * gw();
+            screenh = commander.camera().getHeightInCells() * gh();
         }
         width = cellw * gw();
         height = cellh * gh();
         x = (screenw / 2 - (width / 2));
         y = (screenh / 2 - (height / 2));
         if (config.getModalPosition() == UConfig.POS_CAMERA_CENTER) {
-            x += commander.modalCamera().getX();
-            y += commander.modalCamera().getY();
+            x += commander.camera().getX();
+            y += commander.camera().getY();
         }
     }
 
@@ -357,10 +357,6 @@ public class UModal extends View implements UAnimator {
         if (widget.focusable && focusWidget != widget) {
             focusToWidget(widget);
         }
-    }
-
-    boolean isMouseInside() {
-        return (mousex >= 0 && mousey >=0 && mousex < cellw && mousey < cellh);
     }
 
     int mouseToSelection(int menusize, int yoffset, int selection) { return mouseToSelection(menusize,yoffset,selection,0,1000); }

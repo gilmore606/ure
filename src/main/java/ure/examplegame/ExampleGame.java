@@ -119,15 +119,15 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
 
         commander.setStatusPanel(statusPanel);
         commander.setScrollPanel(scrollPanel);
-        commander.registerModalCamera(camera);
+        commander.registerCamera(camera);
     }
 
     public void startUp()  {
 
         cartographer = new ExampleCartographer();
-
-        commander.registerComponents(this, player, renderer, thingCzar, actorCzar, cartographer);
         makeWindow();
+        commander.registerComponents(this, window, player, renderer, thingCzar, actorCzar, cartographer);
+
 
         commander.registerScrollPrinter(scrollPanel);
         commander.addAnimator(camera);

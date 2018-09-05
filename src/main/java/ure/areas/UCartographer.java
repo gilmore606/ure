@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -169,7 +168,7 @@ public class UCartographer implements Runnable {
 
         addAreaToLoadQueue(label);
         waitingForLoad = true;
-        if (commander.modalCamera() != null) {
+        if (commander.camera() != null) {
             commander.showModal(new UModalLoading());
             commander.printScroll("Loading...");
         }
@@ -181,7 +180,7 @@ public class UCartographer implements Runnable {
             }
         }
         waitingForLoad = false;
-        if (commander.modalCamera() != null)
+        if (commander.camera() != null)
             commander.detachModal();
         return activeAreaNamed(label);
     }

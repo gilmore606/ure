@@ -1,5 +1,6 @@
 package ure.ui.panels;
 
+import ure.commands.CommandHotbar;
 import ure.math.UColor;
 import ure.things.UThing;
 
@@ -30,5 +31,18 @@ public class HotbarPanel extends UPanel {
                 cursory = 1;
             }
         }
+    }
+
+    @Override
+    public void mouseClick() {
+        int i = (mouseX()/9) + (mouseY()*5);
+        CommandHotbar c = new CommandHotbar("", i);
+        c.execute(commander.player());
+    }
+
+    @Override
+    public void mouseRightClick() {
+        int i = (mouseX()/9) + (mouseY()*5);
+        commander.player().clearHotbarSlot(i);
     }
 }

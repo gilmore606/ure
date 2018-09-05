@@ -48,7 +48,7 @@ public class MyGame implements UREgame {
 
     public void startUp() {
         cartographer = new ExampleCartographer();
-        commander.registerComponents(this, player, renderer, thingCzar, actorCzar, cartographer);
+        commander.registerComponents(this, null, player, renderer, thingCzar, actorCzar, cartographer);
 
         makeWindow();
 
