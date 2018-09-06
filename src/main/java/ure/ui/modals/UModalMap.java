@@ -6,11 +6,13 @@ import ure.ui.Icons.Icon;
 import ure.ui.modals.widgets.Widget;
 import ure.ui.modals.widgets.WidgetButton;
 import ure.ui.modals.widgets.WidgetMap;
+import ure.ui.modals.widgets.WidgetRadio;
 
 public class UModalMap extends UModal {
 
     WidgetMap mapWidget;
     WidgetButton zoomInButton, zoomOutButton;
+    WidgetRadio labelRadio;
     WidgetButton markerButton;
 
     UArea area;
@@ -27,8 +29,12 @@ public class UModalMap extends UModal {
         addWidget(zoomInButton);
         addWidget(zoomOutButton);
 
-        markerButton = new WidgetButton(this, 12, 0, "[ Set marker ]", null);
+        labelRadio = new WidgetRadio(this, 12, 0, "labels", new Icon(9675, UColor.GRAY, null), new Icon(9787, UColor.WHITE, null), true);
+        addWidget(labelRadio);
+
+        markerButton = new WidgetButton(this, 17, 0, "[ Set marker ]", null);
         addWidget(markerButton);
+
         sizeToWidgets();
         setPad(1,1);
 
@@ -42,43 +48,13 @@ public class UModalMap extends UModal {
             mapWidget.zoomIn();
         else if (widget == zoomOutButton)
             mapWidget.zoomOut();
+        else
+            super.pressWidget(widget);
     }
 
-
-    public void drawContentsucks() {
-        for (int x=0;x<cellw*2;x++) {
-            for (int y=0;y<cellh*2;y++) {
-                int areax = (int)(area.xsize*fx(x));
-                int areay = (int)(area.ysize*fy(y));
-                if (area.cellAt(areax,areay).isSeen()) {
-                    UColor c = area.terrainAt(areax, areay).icon().bgColor();
-                    renderer.drawRect((int) (x * gw() * 0.5f), (int) (y * gh() * 0.5f), (int) (gw() * 0.5f), (int) (gh() * 0.5f), c);
-                }
-            }
-        }
-        commander.player().icon().draw(gw()*areaToMapX(commander.player().areaX())/2,gh()*areaToMapY(commander.player().areaY())/2);
-        for (int x=0;x<area.xsize;x++) {
-            for (int y=0;y<area.ysize;y++) {
-                Icon icon = area.cellAt(x,y).mapIcon();
-                if (icon != null) {
-                    icon.setAnimate(false);
-                    icon.draw(gw() * areaToMapX(x) / 2, gh() * areaToMapY(y) / 2);
-                    icon.setAnimate(true);
-                }
-            }
-        }
-    }
-
-    int areaToMapX(int x) {
-        return (int)(((float)x/(float)area.xsize) * cellw*2);
-    }
-    int areaToMapY(int y) {
-        return (int)(((float)y/(float)area.ysize) * cellh*2);
-    }
-    float fx(int x) {
-        return (float)x/(float)(cellw*2);
-    }
-    float fy(int y) {
-        return (float)y/(float)(cellh*2);
+    @Override
+    public void widgetChanged(Widget widget) {
+        if (widget == labelRadio)
+            mapWidget.showLabels = !mapWidget.showLabels;
     }
 }

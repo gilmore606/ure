@@ -213,6 +213,12 @@ public class UCell implements UContainer {
             return terrain.icon();
         return null;
     }
+    public String mapLabel() {
+        if (!isSeen()) return null;
+        if (terrain instanceof Stairs)
+            return commander.cartographer.describeLabel(((Stairs)terrain).getLabel());
+        return "?";
+    }
 
     public void addParticle(UParticle particle) {
         particles.add(particle);
