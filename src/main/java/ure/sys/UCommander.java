@@ -72,7 +72,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     private UREgame game;
     private UREWindow window;
-    private URenderer renderer;
+    public  URenderer renderer;
     private UPlayer player;
     private ScrollPanel scrollPrinter;
     private UCamera camera;
@@ -412,7 +412,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      * @param modal
      */
     public void showModal(UModal modal) {
-        if (camera == null) return;
+        //if (camera == null) return;
         speaker.playUI(config.soundModalOpen);
         attachModal(modal);
         modal.onOpen();

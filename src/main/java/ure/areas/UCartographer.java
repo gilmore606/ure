@@ -168,10 +168,9 @@ public class UCartographer implements Runnable {
 
         addAreaToLoadQueue(label);
         waitingForLoad = true;
-        if (commander.camera() != null) {
-            commander.showModal(new UModalLoading());
-            commander.printScroll("Loading...");
-        }
+        UModalLoading loadingModal = new UModalLoading();
+        commander.showModal(loadingModal);
+        commander.renderer.render();
         while (!areaIsActive(label)) {
             try {
                 Thread.sleep(100);
@@ -180,8 +179,7 @@ public class UCartographer implements Runnable {
             }
         }
         waitingForLoad = false;
-        if (commander.camera() != null)
-            commander.detachModal();
+        commander.detachModal(loadingModal);
         return activeAreaNamed(label);
     }
 
