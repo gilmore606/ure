@@ -11,6 +11,7 @@ import ure.ui.ULight;
 import ure.things.UThing;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * UPlayer implements a UActor whose actions are initiated by user input.  More than one can exist.
@@ -32,6 +33,11 @@ public class UPlayer extends UActor {
 
     public ArrayList<UThing> hotbar;
     public ArrayList<Long> hotbarIDs;
+
+    HashMap<String,Integer> statesI;
+    HashMap<String,Float> statesF;
+    HashMap<String,Boolean> statesB;
+    HashMap<String,String> statesS;
 
     @JsonIgnore
     ULight light;
@@ -56,6 +62,10 @@ public class UPlayer extends UActor {
         body = commander.actorCzar.getNewBody(bodytype);
         hearingrange = config.getVolumeFalloffDistance();
         hotbar = new ArrayList<>();
+        statesI = new HashMap<>();
+        statesF = new HashMap<>();
+        statesB = new HashMap<>();
+        statesS = new HashMap<>();
     }
 
     @Override
@@ -200,6 +210,50 @@ public class UPlayer extends UActor {
         return null;
     }
 
+    /**
+     * Get a stored state by key.  If no stored state, store as 'def' default and return that.
+     */
+    public int getStateI(String state, int def) {
+        if (statesI.containsKey(state))
+            return statesI.get(state);
+        else
+            statesI.put(state, def);
+        return def;
+    }
+    public void setStateI(String state, int val) {
+        statesI.put(state, val);
+    }
+    public float getStateF(String state, float def) {
+        if (statesF.containsKey(state))
+            return statesF.get(state);
+        else
+            statesF.put(state, def);
+        return def;
+    }
+    public void setStateF(String state, float val) {
+        statesF.put(state, val);
+    }
+    public boolean getStateB(String state, boolean def) {
+        if (statesB.containsKey(state))
+            return statesB.get(state);
+        else
+            statesB.put(state, def);
+        return def;
+    }
+    public void setStateB(String state, boolean val) {
+        statesB.put(state, val);
+    }
+    public String getStateS(String state, String def) {
+        if (statesS.containsKey(state))
+            return statesS.get(state);
+        else
+            statesS.put(state, def);
+        return def;
+    }
+    public void setStateS(String state, String val) {
+        statesS.put(state, val);
+    }
+
     public void setSaveAreaLabel(String l) { saveAreaLabel = l; }
     public String getSaveAreaLabel() { return saveAreaLabel; }
     public void setSaveAreaX(int _x) { saveAreaX = _x; }
@@ -216,4 +270,13 @@ public class UPlayer extends UActor {
     public void setSelfLightFalloff(int c) { selfLightFalloff = c; }
     public ArrayList<UThing> getHotbar() { return hotbar; }
     public void setHotbar(ArrayList<UThing> al) { hotbar = al; }
+    public HashMap<String,Integer> getStatesI() { return statesI; }
+    public void setStatesI(HashMap<String,Integer> m) { statesI = m; }
+    public HashMap<String,Float> getStatesF() { return statesF; }
+    public void setStatesF(HashMap<String,Float> m) { statesF = m; }
+    public HashMap<String,Boolean> getStatesB() { return statesB; }
+    public void setStatesB(HashMap<String,Boolean> m) { statesB = m; }
+    public HashMap<String,String> getStatesS() { return statesS; }
+    public void setStatesS(HashMap<String,String> m) { statesS = m; }
+
 }

@@ -29,7 +29,10 @@ public class UModalMap extends UModal {
         addWidget(zoomInButton);
         addWidget(zoomOutButton);
 
-        labelRadio = new WidgetRadio(this, 12, 0, "labels", new Icon(9675, UColor.GRAY, null), new Icon(9787, UColor.WHITE, null), true);
+        mapWidget.zoom = commander.player().getStateF("map-zoom", mapWidget.zoom);
+        mapWidget.showLabels = commander.player().getStateB("map-labels", mapWidget.showLabels);
+
+        labelRadio = new WidgetRadio(this, 12, 0, "labels", new Icon(9675, UColor.GRAY, null), new Icon(9787, UColor.WHITE, null), mapWidget.showLabels);
         addWidget(labelRadio);
 
         markerButton = new WidgetButton(this, 17, 0, "[ Set marker ]", null);
@@ -40,6 +43,7 @@ public class UModalMap extends UModal {
 
         mapWidget.lookAtArea(area);
         mapWidget.moveView(commander.player().areaX(),commander.player().areaY());
+
     }
 
     @Override
@@ -56,5 +60,11 @@ public class UModalMap extends UModal {
     public void widgetChanged(Widget widget) {
         if (widget == labelRadio)
             mapWidget.showLabels = !mapWidget.showLabels;
+    }
+
+    @Override
+    public void onClose() {
+        commander.player().setStateF("map-zoom", mapWidget.zoom);
+        commander.player().setStateB("map-labels", mapWidget.showLabels);
     }
 }

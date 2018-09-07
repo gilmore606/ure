@@ -36,8 +36,13 @@ public class UModalInventory extends UModal implements HearModalDropdown {
         addWidget(detailWidget);
 
         sizeToWidgets();
-        categoryWidget.select(0);
+        categoryWidget.select(commander.player().getStateI("inv-category", 0));
         dismissFrameEnd = 0;
+    }
+
+    @Override
+    public void onClose() {
+        commander.player().setStateI("inv-category", categoryWidget.selection);
     }
 
     public void widgetChanged(Widget widget) {

@@ -13,12 +13,13 @@ public class UModalLoading extends UModal {
         this.colpad = 1;
         this.rowpad = 1;
         this.escapable = false;
-        setDimensions(text.length(), 1);
+        setDimensions(textWidth(text), 1);
+        dismissFrameEnd = 0;
     }
 
     @Override
     public void drawContent() {
-        renderer.drawString(0, 0, commander.config.getTextColor(), text);
+        drawString(text, 0, 0, config.getTextColor());
     }
 
     @Override

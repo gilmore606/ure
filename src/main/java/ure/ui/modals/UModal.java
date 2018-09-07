@@ -311,6 +311,7 @@ public class UModal extends View implements UAnimator {
     public void dismiss() {
         speaker.playUI(config.soundSelect);
         dismissed = true;
+        onClose();
     }
 
     public void escape() {
@@ -318,6 +319,11 @@ public class UModal extends View implements UAnimator {
         dismissed = true;
         dismissFrameEnd = 0;
         speaker.playUI(config.soundCancel);
+        onClose();
+    }
+
+    public void onClose() {
+
     }
 
     public void animationTick() {

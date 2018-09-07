@@ -52,6 +52,12 @@ public class UModalEquipment extends UModal implements HearModalEquipPick {
         sizeToWidgets();
         listWidget.scrollable = false;
         listWidget.setThings(slotsThings);
+        listWidget.selection = commander.player().getStateI("equip-selection", 0);
+    }
+
+    @Override
+    public void onClose() {
+        commander.player().setStateI("equip-selection", listWidget.selection);
     }
 
     void fillSlots(UActor actor) {

@@ -412,6 +412,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      * @param modal
      */
     public void showModal(UModal modal) {
+        if (camera == null) return;
         speaker.playUI(config.soundModalOpen);
         attachModal(modal);
         modal.onOpen();
@@ -664,7 +665,6 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     void attachModal(UModal newmodal) {
         if (modal != null) {
-            speaker.playUI(config.soundSelect);
             modalStack.push(modal);
             renderer.getRootView().addChild(newmodal);
             modal = newmodal;
