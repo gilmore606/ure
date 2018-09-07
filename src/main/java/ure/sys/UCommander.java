@@ -66,8 +66,6 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public UConfig config;
     @Inject
     URandom random;
-    @Inject
-    ResourceManager resourceManager;
 
     private HashSet<UAnimator> animators;
     private ArrayList<UActor> actors;
