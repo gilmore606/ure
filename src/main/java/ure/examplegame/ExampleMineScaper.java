@@ -1,8 +1,8 @@
 package ure.examplegame;
 
-import ure.areas.Shape;
+import ure.areas.gen.Shape;
 import ure.areas.UArea;
-import ure.areas.ULandscaper;
+import ure.areas.gen.ULandscaper;
 
 public class ExampleMineScaper extends ULandscaper {
 

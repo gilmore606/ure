@@ -3,7 +3,7 @@ package ure.examplegame;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.areas.UArea;
-import ure.areas.ULandscaper;
+import ure.areas.gen.ULandscaper;
 import ure.math.UColor;
 import ure.terrain.UTerrain;
 

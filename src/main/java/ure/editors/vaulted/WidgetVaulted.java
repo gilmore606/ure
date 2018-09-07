@@ -1,6 +1,6 @@
 package ure.editors.vaulted;
 
-import ure.areas.UVault;
+import ure.areas.gen.UVault;
 import ure.math.UColor;
 import ure.math.UPath;
 import ure.terrain.UTerrain;
@@ -10,7 +10,6 @@ import ure.ui.ULight;
 import ure.ui.modals.UModal;
 import ure.ui.modals.widgets.Widget;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 public class WidgetVaulted extends Widget {

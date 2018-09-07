@@ -1,4 +1,4 @@
-package ure.areas;
+package ure.areas.gen;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;

@@ -1,11 +1,10 @@
 package ure.examplegame;
 
 import ure.areas.*;
-import ure.terrain.Stairs;
-import ure.terrain.UTerrain;
+import ure.areas.gen.Shape;
+import ure.areas.gen.ULandscaper;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ExampleForestScaper extends ULandscaper {
 

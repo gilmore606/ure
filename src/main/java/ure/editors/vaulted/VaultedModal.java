@@ -3,24 +3,17 @@ package ure.editors.vaulted;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import ure.actors.UPlayer;
-import ure.areas.UVault;
-import ure.areas.UVaultSet;
-import ure.commands.CommandQuit;
-import ure.commands.UCommand;
+import ure.areas.gen.UVault;
+import ure.areas.gen.UVaultSet;
 import ure.math.UColor;
 import ure.math.UPath;
-import ure.sys.GLKey;
-import ure.sys.LogFormatter;
 import ure.terrain.UTerrain;
 import ure.ui.Icons.Icon;
 import ure.ui.ULight;
 import ure.ui.modals.*;
 import ure.ui.modals.widgets.*;
 
-import static org.lwjgl.glfw.GLFW.*;
 import javax.inject.Inject;
-import java.util.Set;
 
 public class VaultedModal extends UModal implements HearModalChoices {
 

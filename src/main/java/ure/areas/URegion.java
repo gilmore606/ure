@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.actors.UActorCzar;
+import ure.areas.gen.ULandscaper;
 import ure.math.URandom;
 import ure.sys.Injector;
 import ure.sys.UCommander;

@@ -1,4 +1,4 @@
-package ure.areas;
+package ure.areas.gen;
 
 import ure.actors.SpawnActor;
 import ure.actors.UActor;

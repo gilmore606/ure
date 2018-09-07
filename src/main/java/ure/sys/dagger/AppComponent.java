@@ -3,6 +3,8 @@ package ure.sys.dagger;
 import dagger.Component;
 import ure.actors.SpawnActor;
 import ure.areas.*;
+import ure.areas.gen.Shape;
+import ure.areas.gen.ULandscaper;
 import ure.mygame.MyGame;
 import ure.render.URendererOGL;
 import ure.sys.UCommander;

@@ -9,6 +9,7 @@ import com.google.common.eventbus.Subscribe;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import ure.areas.gen.UVaultSet;
 import ure.math.URandom;
 import ure.sys.events.PlayerChangedAreaEvent;
 import ure.sys.Injector;

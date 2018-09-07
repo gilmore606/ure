@@ -46,6 +46,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         addCenteredWidget(menuWidget);
 
         fakeTickCount = 0;
+        dismissFrameEnd = 0;
         area = _area;
         commander.speaker.playBGM(commander.config.getTitleMusic());
     }
@@ -97,7 +98,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
 
     public void hearModalGetString(String context, String input) {
         if (context.equals("name-new-world")) {
-            dismiss();
+            escape();
             ((HearModalTitleScreen) callback).hearModalTitleScreen("New World", input);
         }
     }

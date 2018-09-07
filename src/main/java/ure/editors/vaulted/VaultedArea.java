@@ -3,13 +3,11 @@ package ure.editors.vaulted;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.actors.actions.UAction;
-import ure.actors.UPlayer;
 import ure.areas.UArea;
 import ure.areas.UCell;
-import ure.areas.UVault;
+import ure.areas.gen.UVault;
 import ure.math.UColor;
 import ure.terrain.UTerrain;
-import ure.things.UThing;
 
 public class VaultedArea extends UArea {
 

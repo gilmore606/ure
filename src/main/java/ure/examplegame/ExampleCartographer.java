@@ -2,7 +2,7 @@ package ure.examplegame;
 
 import ure.areas.UArea;
 import ure.areas.UCartographer;
-import ure.areas.ULandscaper;
+import ure.areas.gen.ULandscaper;
 
 public class ExampleCartographer extends UCartographer {
 
