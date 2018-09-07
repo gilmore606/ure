@@ -64,8 +64,8 @@ public class UCartographer implements Runnable {
     protected HashMap<String,URegion> regions = new HashMap<>();
     protected String startArea;
 
-    LinkedBlockingQueue<String> loadQueue;
-    LinkedBlockingQueue<UArea> saveQueue;
+    LinkedBlockingQueue<String> loadQueue = new LinkedBlockingQueue<>();
+    LinkedBlockingQueue<UArea> saveQueue = new LinkedBlockingQueue<>();
     String loadingArea;
     UArea  savingArea;
     Thread loaderThread;
@@ -77,11 +77,6 @@ public class UCartographer implements Runnable {
     public UCartographer() {
         Injector.getAppComponent().inject(this);
         bus.register(this);
-        activeAreas = new ArrayList<UArea>();
-        closeableAreas = new ArrayList<UArea>();
-        regions = new HashMap<>();
-        loadQueue = new LinkedBlockingQueue<>();
-        saveQueue = new LinkedBlockingQueue<>();
     }
 
     /**
@@ -548,12 +543,9 @@ public class UCartographer implements Runnable {
      * Load and create a VaultSet from a serialized json file.
      */
     public UVaultSet loadVaultSet(String filename) {
-        File file = new File(commander.config.getResourcePath() + "vaults/" + filename + ".json");
-        try (
-                FileInputStream stream = new FileInputStream(file);
-                //GZIPInputStream gzip = new GZIPInputStream(stream);
-        ) {
-            UVaultSet vaultSet = objectMapper.readValue(stream, UVaultSet.class);
+        String resource = "/vaults/" + filename + ".json";
+        try {
+            UVaultSet vaultSet = objectMapper.readValue(getClass().getResourceAsStream(resource), UVaultSet.class);
             vaultSet.setObjectMapper(objectMapper);
             return vaultSet;
         }

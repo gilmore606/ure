@@ -13,6 +13,7 @@ import ure.actors.behaviors.UBehavior;
 import ure.math.URandom;
 import ure.render.URenderer;
 import ure.render.URendererOGL;
+import ure.sys.ResourceManager;
 import ure.sys.UCommander;
 import ure.actors.ActorDeserializer;
 import ure.actors.UActor;
@@ -132,5 +133,11 @@ public class AppModule {
         USpeaker s = new USpeaker();
         s.initialize();
         return s;
+    }
+
+    @Provides
+    @Singleton
+    public ResourceManager providesResourceManager() {
+        return new ResourceManager();
     }
 }

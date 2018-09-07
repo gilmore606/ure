@@ -9,7 +9,7 @@ public class WidgetRexImage extends Widget {
     public float alpha = 1f;
     public WidgetRexImage(UModal modal, int col, int row, String filename) {
         super(modal);
-        image = new RexFile(modal.commander.config.getResourcePath() + filename);
+        image = new RexFile(filename);
         setDimensions(col,row,image.width,image.height);
 
     }
