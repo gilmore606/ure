@@ -6,6 +6,7 @@ import ure.areas.gen.Shape;
 import ure.areas.gen.ULandscaper;
 import ure.areas.gen.shapers.Caves;
 import ure.areas.gen.shapers.Growdungeon;
+import ure.areas.gen.shapers.Shaper;
 import ure.ui.modals.UModal;
 import ure.ui.modals.widgets.Widget;
 import ure.ui.modals.widgets.WidgetButton;
@@ -21,7 +22,7 @@ public class LandedModal extends UModal {
     UArea area;
     Metascaper scaper;
 
-    Growdungeon shaper;
+    Shaper shaper;
 
     String floorTerrain, wallTerrain;
 
@@ -33,7 +34,7 @@ public class LandedModal extends UModal {
     public LandedModal(UArea area) {
         super(null, "");
         this.area = area;
-        this.shaper = new Growdungeon(area.xsize-2,area.ysize-2);
+        this.shaper = new Caves(area.xsize-2,area.ysize-2);
 
         regenButton = new WidgetButton(this, 0, 30, "[ Regenerate ]", null);
         addWidget(regenButton);
@@ -74,7 +75,6 @@ public class LandedModal extends UModal {
     }
 
     void regenerate() {
-        //shaper = new Caves(area.xsize,area.ysize,0.45f, 5, 2, 3);
         for (String pi : shaper.paramsI.keySet()) {
             int val = ((WidgetHSlider)(shaperWidgets.get(pi))).value;
             shaper.paramsI.put(pi, val);

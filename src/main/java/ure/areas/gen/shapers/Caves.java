@@ -2,11 +2,27 @@ package ure.areas.gen.shapers;
 
 import ure.areas.gen.Shape;
 
-public class Caves extends Shape {
+public class Caves extends Shaper {
 
-    public Caves(int xsize, int ysize, float initialDensity, int jumblePasses, int jumbleDensity, int smoothPasses) {
-        super(xsize,ysize);
+    public Caves(int xsize, int ysize) {
+        super(xsize, ysize);
+    }
 
+    @Override
+    void setupParams() {
+        addParamF("initialDensity", 0.3f, 0.45f, 0.6f);
+        addParamI("jumblePasses", 1, 5, 10);
+        addParamI("jumbleDensity", 1, 2, 5);
+        addParamI("smoothPasses", 1, 3, 6);
+    }
+
+    @Override
+    public void build() {
+        buildCaves(getParamF("initialDensity"),getParamI("jumblePasses"),getParamI("jumbleDensity"),getParamI("smoothPasses"));
+    }
+
+    public void buildCaves(float initialDensity, int jumblePasses, int jumbleDensity, int smoothPasses) {
+        clear();
         float fillratio = -1f;
         int tries = 0;
         while ((fillratio < 0.25f) && (tries < 8)) {

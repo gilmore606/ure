@@ -8,39 +8,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Growdungeon extends Shape {
-
-    public HashMap<String,Integer> paramsI;
-    public HashMap<String,Integer> paramsImin;
-    public HashMap<String,Integer> paramsImax;
-    public HashMap<String,Float> paramsF;
-    public HashMap<String,Float> paramsFmin;
-    public HashMap<String,Float> paramsFmax;
+public class Growdungeon extends Shaper {
 
     public Growdungeon(int xsize, int ysize) {
-        super(xsize, ysize);
-        paramsI = new HashMap<>();
-        paramsImin = new HashMap<>();
-        paramsImax = new HashMap<>();
-        paramsF = new HashMap<>();
-        paramsFmin = new HashMap<>();
-        paramsFmax = new HashMap<>();
-        setupParams();
+        super(xsize,ysize);
     }
 
-    public void addParamI(String name, int min, int val, int max) {
-        paramsI.put(name,val);
-        paramsImin.put(name,min);
-        paramsImax.put(name,max);
-    }
-    public void addParamF(String name, float min, float val, float max) {
-        paramsF.put(name,val);
-        paramsFmin.put(name,min);
-        paramsFmax.put(name,max);
-    }
-    public int getParamI(String param) { return paramsI.get(param); }
-    public float getParamF(String param) { return paramsF.get(param); }
 
+    @Override
     void setupParams() {
         addParamI("iterations", 1, 500, 1000);
         addParamI("roomSizeMin", 1, 3, 15);
@@ -61,6 +36,7 @@ public class Growdungeon extends Shape {
         addParamF("openChance", 0f, 0.06f, 1f);
     }
 
+    @Override
     public void build() {
         buildGrowdungeon(getParamI("iterations"), getParamI("roomSizeMin"),getParamI("roomSizeMax"),getParamI("chamberSizeMin"),getParamI("chamberSizeMax"),getParamI("hallLengthMin"),getParamI("hallLengthMax"),getParamI("hallWidth"),getParamF("roomChance"),getParamF("chamberChance"),getParamF("hallChance"),getParamI("earlyIterations"),getParamF("earlyRoomChance"),getParamF("earlyChamberChance"),getParamI("earlyHallWidth"),getParamF("roundedChance"),getParamF("openChance"));
     }
