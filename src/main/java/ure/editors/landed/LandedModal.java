@@ -6,12 +6,10 @@ import ure.areas.gen.Shape;
 import ure.areas.gen.ULandscaper;
 import ure.areas.gen.shapers.Caves;
 import ure.areas.gen.shapers.Growdungeon;
+import ure.areas.gen.shapers.Mines;
 import ure.areas.gen.shapers.Shaper;
 import ure.ui.modals.UModal;
-import ure.ui.modals.widgets.Widget;
-import ure.ui.modals.widgets.WidgetButton;
-import ure.ui.modals.widgets.WidgetHSlider;
-import ure.ui.modals.widgets.WidgetText;
+import ure.ui.modals.widgets.*;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -24,17 +22,37 @@ public class LandedModal extends UModal {
 
     Shaper shaper;
 
+    Shaper[] shapers;
+    String[] shaperNames;
+
     String floorTerrain, wallTerrain;
 
+    WidgetDropdown shaperDropdown;
     WidgetButton regenButton;
     WidgetButton quitButton;
 
     HashMap<String,Widget> shaperWidgets;
+    HashMap<String,Widget> shaperNameWidgets;
 
     public LandedModal(UArea area) {
         super(null, "");
+
+        shapers = new Shaper[]{
+                new Caves(area.xsize,area.ysize),
+                new Mines(area.xsize,area.ysize),
+                new Growdungeon(area.xsize,area.ysize)
+        };
+        shaperNames = new String[]{
+                "Caves",
+                "Mines",
+                "Growdungeon"
+        };
+
         this.area = area;
-        this.shaper = new Caves(area.xsize-2,area.ysize-2);
+        this.shaper = shapers[0];
+
+        shaperDropdown = new WidgetDropdown(this, 0, 28, shaperNames, 0);
+        addWidget(shaperDropdown);
 
         regenButton = new WidgetButton(this, 0, 30, "[ Regenerate ]", null);
         addWidget(regenButton);
@@ -42,6 +60,7 @@ public class LandedModal extends UModal {
         addWidget(quitButton);
 
         shaperWidgets = new HashMap<>();
+        shaperNameWidgets = new HashMap<>();
         makeShaperWidgets();
 
         sizeToWidgets();
@@ -54,6 +73,15 @@ public class LandedModal extends UModal {
         floorTerrain = "floor";
     }
 
+    void remakeShaperWidgets() {
+        for (Widget w : shaperWidgets.values())
+            removeWidget(w);
+        for (Widget t : shaperNameWidgets.values())
+            removeWidget(t);
+        shaperWidgets.clear();
+        shaperNameWidgets.clear();
+        makeShaperWidgets();
+    }
     void makeShaperWidgets() {
         int y = 0;
         for (String pi : shaper.paramsI.keySet()) {
@@ -61,6 +89,7 @@ public class LandedModal extends UModal {
             shaperWidgets.put(pi, w);
             addWidget(w);
             Widget t = new WidgetText(this, 0, y+1, pi);
+            shaperNameWidgets.put(pi, t);
             addWidget(t);
             y += 2;
         }
@@ -72,6 +101,19 @@ public class LandedModal extends UModal {
             regenerate();
         else if (widget == quitButton)
             quit();
+    }
+
+    @Override
+    public void widgetChanged(Widget widget) {
+        if (widget == shaperDropdown) {
+            selectShaper(shaperDropdown.selection);
+        }
+    }
+
+    void selectShaper(int selection) {
+        shaper = shapers[selection];
+        remakeShaperWidgets();
+        regenerate();
     }
 
     void regenerate() {
