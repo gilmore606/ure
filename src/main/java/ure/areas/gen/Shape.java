@@ -10,6 +10,7 @@ import ure.things.UThingCzar;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A Shapemask is a 1-bit 2D array of cells.  Landscaper methods can generate these to use for stamping terrain into areas.
@@ -34,6 +35,145 @@ public class Shape {
     public static final int MASK_AND = 1;
     public static final int MASK_XOR = 2;
     public static final int MASK_NOT = 3;
+
+    public class Room {
+        public int x,y,width,height;
+        public Room(int x, int y, int width, int height) {
+            this.x=x;
+            this.y=y;
+            this.width=width;
+            this.height=height;
+        }
+        public Room(int width, int height) {
+            this.width=width;
+            this.height=height;
+            this.x=-1;
+            this.y=-1;
+        }
+        public Face[] faces() {
+            Face[] faces = new Face[4];
+            faces[0] = new Face(x,y-1,width,0,-1);
+            faces[1] = new Face(x+width,y,height,1,0);
+            faces[2] = new Face(x,y+height,width,0,1);
+            faces[3] = new Face(x-1,y,height,-1,0);
+            return faces;
+        }
+        public void rotate() {
+            int tmp = width;
+            width = height;
+            height = tmp;
+        }
+        public void print(Shape space) { print(space, false); }
+        public void print(Shape space, boolean rounded) {
+            for (int xi=0;xi<width;xi++) {
+                for (int yi = 0;yi < height;yi++) {
+                    if (!rounded || !(xi==0 || xi==width-1) || !(yi==0 || yi==height-1))
+                        space.set(x + xi, y + yi);
+                }
+            }
+        }
+        public void punchDoors(Shape space) { punchDoors(space, false); }
+        public void punchDoors(Shape space, boolean punchAll) {
+            for (Face face : faces()) {
+                face.punchDoors(space, punchAll);
+            }
+        }
+        public boolean isHallway() {
+            if ((width*3<height) || (height*3<width))
+                return true;
+            return false;
+        }
+    }
+
+    public class Face {
+        public int x, y, length;
+        int facex, facey;
+
+        public Face(int x, int y, int length, int facex, int facey) {
+            this.x = x;
+            this.y = y;
+            this.length = length;
+            this.facex = facex;
+            this.facey = facey;
+        }
+
+        /**
+         * Try to add the room somewhere along me.
+         * If we can, record the room's xy and return it, else return null.
+         */
+        public Room addRoom(Room room, Shape space) {
+            ArrayList<Integer> spaces = new ArrayList<>();
+            for (int i = -(room.width - 3);i < length - 3;i++) {
+                boolean blocked = false;
+                for (int cx = -1;cx < room.width + 1;cx++) {
+                    for (int cy = 0;cy < room.height + 2;cy++) {
+                        int tx = transX(cx + i, cy);
+                        int ty = transY(cx + i, cy);
+                        if (space.value(tx, ty) || !space.isValidXY(tx, ty)) {
+                            blocked = true;
+                            break;
+                        }
+                    }
+                    if (blocked) break;
+                }
+                if (!blocked) spaces.add(i);
+            }
+            if (spaces.size() == 0) return null;
+            int i = (int) random.member((List) spaces);
+            room.x = transX(i, 1);
+            room.y = transY(i, 1);
+            if (facey == -1) {
+                room.y -= room.height - 1;
+            } else if (facex == -1) {
+                room.rotate();
+                room.x -= room.width - 1;
+            } else if (facex == 1) {
+                room.rotate();
+            }
+            return room;
+        }
+
+        /**
+         * Translate coordinates from my relative space to absolute space.
+         */
+        public int transX(int dx, int dy) {
+            if (facey == -1 || facey == 1) {
+                return x + dx;
+            } else if (facex == 1) {
+                return x + dy;
+            } else {
+                return x - dy;
+            }
+        }
+
+        public int transY(int dx, int dy) {
+            if (facey == -1) {
+                return y - dy;
+            } else if (facey == 1) {
+                return y + dy;
+            } else {
+                return y + dx;
+            }
+        }
+
+        /**
+         * Punch a doorhole somewhere along us, if possible.
+         */
+        public void punchDoors(Shape space) {
+            punchDoors(space, false);
+        }
+
+        public void punchDoors(Shape space, boolean punchAll) {
+            for (int i : random.seq(length)) {
+                int fx = x + (i * Math.abs(facey));
+                int fy = y + (i * Math.abs(facex));
+                if (space.value(fx + facex, fy + facey) && space.value(fx - facex, fy - facey)) {
+                    space.set(fx, fy);
+                    if (!punchAll) return;
+                }
+            }
+        }
+    }
 
     public Shape(int _xsize, int _ysize) {
         Injector.getAppComponent().inject(this);
@@ -638,4 +778,19 @@ public class Shape {
         return !blocked;
     }
 
+    public Room randomRoom(float smallChance, int smallmin, int smallmax,
+                           float bigChance, int bigmin, int bigmax,
+                           float hallChance, int halllengthmin, int halllengthmax, int hallwidthmin, int hallwidthmax) {
+        float rtype = random.f();
+        if (rtype < smallChance)
+            return new Room(0,0,random.i(1+smallmax-smallmin)+smallmin, random.i(1+smallmax-smallmin)+smallmin);
+        else if (rtype < (bigChance+smallChance))
+            return new Room(0,0,random.i(1+bigmax-bigmin)+bigmin, random.i(1+bigmax-bigmin)+bigmin);
+        else {
+            Room r = new Room(0, 0, random.i(1+halllengthmax - halllengthmin) + halllengthmin, random.i(1+hallwidthmax - hallwidthmin) + hallwidthmin);
+            if (random.f() > 0.5f)
+                r.rotate();
+            return r;
+        }
+    }
 }

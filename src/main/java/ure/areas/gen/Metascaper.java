@@ -13,7 +13,7 @@ public class Metascaper extends ULandscaper {
     }
 
     public void buildArea(UArea area, int level, String[] tags) {
-        fillRect(area, wallTerrain, 0, 0, area.xsize, area.ysize);
+        area.wipe(wallTerrain);
         shaper.writeTerrain(area, floorTerrain, 0, 0);
     }
 

@@ -512,6 +512,17 @@ public class UArea implements Serializable {
         }
     }
 
+    public void wipe(String wipeTerrain) {
+        freezeForPersist();
+        lights = new HashSet<>();
+        actors = new HashSet<>();
+        for (int i=0;i<xsize;i++) {
+            for (int j=0;j<ysize;j++) {
+                cells[i][j] = new UCell(this, i, j, terrainCzar.getTerrainByName(wipeTerrain));
+            }
+        }
+    }
+
     public String getLabel() {
         return label;
     }

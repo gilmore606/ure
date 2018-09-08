@@ -9,6 +9,8 @@ public class URandom extends Random {
         return nextInt(bound);
     }
 
+    public int i(int min, int max) { return min + nextInt(max-min+1); }
+
     public float f() { return f(1f); }
 
     public float f(float bound) {
