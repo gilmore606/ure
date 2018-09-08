@@ -1,5 +1,6 @@
 package ure.areas.gen;
 
+import org.apache.commons.logging.Log;
 import ure.areas.UArea;
 import ure.math.URandom;
 import ure.sys.Injector;
@@ -20,7 +21,7 @@ import java.util.LinkedList;
 public class Shape {
 
     @Inject
-    URandom random;
+    public URandom random;
 
     @Inject
     UThingCzar thingCzar;

@@ -182,6 +182,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     public void removeAnimator(UAnimator animator) { animators.remove(animator); }
 
     public UPlayer player() { return player; }
+    public UREgame game() { return game; }
 
     /**
      * Read keybinds.txt and map keys to commands.
@@ -462,6 +463,12 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         }
         if (modal != null)
             modal.animationTick();
+        if (!modalStack.empty()) {
+            Stack<UModal> ms = (Stack<UModal>)(modalStack.clone());
+            for (UModal m : ms) {
+                m.animationTick();
+            }
+        }
     }
 
     public void setStatusPanel(StatusPanel panel){
@@ -688,8 +695,10 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         if (this.modal == modal) {
             detachModal();
         } else {
-            if (modalStack.contains(modal))
+            if (modalStack.contains(modal)) {
                 modalStack.remove(modal);
+                renderer.getRootView().removeChild(modal);
+            }
         }
     }
 

@@ -73,7 +73,6 @@ public abstract class ULandscaper {
      */
     public class Room {
         public int x,y,width,height;
-        public boolean isHallway;
         public Room(int x, int y, int width, int height) {
             this.x=x;
             this.y=y;
@@ -113,6 +112,11 @@ public abstract class ULandscaper {
             for (Face face : faces()) {
                 face.punchDoors(space, punchAll);
             }
+        }
+        public boolean isHallway() {
+            if ((width*3<height) || (height*3<width))
+                return true;
+            return false;
         }
 
     }
@@ -353,7 +357,6 @@ public abstract class ULandscaper {
             return new Room(0,0,random.i(1+bigmax-bigmin)+bigmin, random.i(1+bigmax-bigmin)+bigmin);
         else {
             Room r = new Room(0, 0, random.i(1+halllengthmax - halllengthmin) + halllengthmin, random.i(1+hallwidthmax - hallwidthmin) + hallwidthmin);
-            r.isHallway = true;
             if (random.f() > 0.5f)
                 r.rotate();
             return r;

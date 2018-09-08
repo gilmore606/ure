@@ -140,7 +140,7 @@ public class ExampleGame implements UREgame, HearModalTitleScreen {
         area = cartographer.getTitleArea();
         camera.moveTo(area, 50, 50);
         commander.config.setVisibilityEnable(false);
-        commander.showModal(new UModalTitleScreen(22, 20, this, "start", area));
+        commander.showModal(new UModalTitleScreen(22, 22, this, "start", area));
     }
 
     public void hearModalTitleScreen(String context, String optional) {

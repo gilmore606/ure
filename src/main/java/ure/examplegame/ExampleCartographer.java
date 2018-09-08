@@ -39,9 +39,9 @@ public class ExampleCartographer extends UCartographer {
         float scapetype = random.f();
         if (scapetype < 0.2f)
             scaper = new ExampleForestScaper();
-        else if (scapetype < 0.4f)
-            scaper = new ExampleComplexScaper();
         else if (scapetype < 0.6f)
+            scaper = new ExampleComplexScaper();
+        else if (scapetype < 0.8f)
             scaper = new ExampleMineScaper();
         else
             scaper = new ExampleCaveScaper();

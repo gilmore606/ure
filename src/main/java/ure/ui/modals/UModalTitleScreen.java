@@ -3,6 +3,7 @@ package ure.ui.modals;
 import ure.areas.UArea;
 import ure.commands.UCommand;
 import ure.editors.glyphed.GlyphedModal;
+import ure.editors.landed.LandedModal;
 import ure.math.UColor;
 import ure.sys.GLKey;
 import ure.ui.RexFile;
@@ -37,9 +38,9 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         String[] options;
         File file = new File(commander.savePath() + "player");
         if (!file.isFile())
-            options = new String[]{"New World", "VaultEd", "GlyphEd", "Credits", "Quit"};
+            options = new String[]{"New World", "LandEd", "VaultEd", "GlyphEd", "Credits", "Quit"};
         else
-            options = new String[]{"Continue", "New World", "VaultEd", "GlyphEd", "Credits", "Quit"};
+            options = new String[]{"Continue", "New World", "LandEd", "VaultEd", "GlyphEd", "Credits", "Quit"};
         menuWidget = new WidgetListVert(this,0,13,options);
         menuWidget.hidden = true;
         menuWidget.dismissFlash = true;
@@ -82,9 +83,13 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
             commander.showModal(smodal);
         } else if (option.equals("Credits")) {
             UModalNotify nmodal = new UModalNotify("URE: the unRoguelike Engine\n \nSpunky - meta\nMoycakes - openGL\nKapho - QA, content\nGilmore - misc");
-            nmodal.setPad(1,1);
+            nmodal.setPad(1, 1);
             nmodal.setTitle("credits");
             commander.showModal(nmodal);
+        } else if (option.equals("LandEd")) {
+            dismiss();
+            LandedModal modal = new LandedModal(area);
+            commander.showModal(modal);
         } else if (option.equals("VaultEd")) {
             commander.launchVaulted();
         } else if (option.equals("GlyphEd")) {
