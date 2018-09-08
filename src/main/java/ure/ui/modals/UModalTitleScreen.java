@@ -11,7 +11,7 @@ import ure.ui.modals.widgets.*;
 
 import java.io.File;
 
-public class UModalTitleScreen extends UModal implements HearModalGetString {
+public class UModalTitleScreen extends UModal implements HearModalGetString, HearModalChoices {
 
     WidgetRexImage logoWidget;
     WidgetText titleWidget;
@@ -38,9 +38,9 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         String[] options;
         File file = new File(commander.savePath() + "player");
         if (!file.isFile())
-            options = new String[]{"New World", "LandEd", "VaultEd", "GlyphEd", "Credits", "Quit"};
+            options = new String[]{"New World", "Edit", "Credits", "Quit"};
         else
-            options = new String[]{"Continue", "New World", "LandEd", "VaultEd", "GlyphEd", "Credits", "Quit"};
+            options = new String[]{"Continue", "New World", "Edit", "Credits", "Quit"};
         menuWidget = new WidgetListVert(this,0,13,options);
         menuWidget.hidden = true;
         menuWidget.dismissFlash = true;
@@ -86,7 +86,17 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
             nmodal.setPad(1, 1);
             nmodal.setTitle("credits");
             commander.showModal(nmodal);
-        } else if (option.equals("LandEd")) {
+        } else if (option.equals("Edit")) {
+            UModalChoices cmodal = new UModalChoices("", new String[]{"LandEd","VaultEd","GlyphEd"}, this, "edit");
+            commander.showModal(cmodal);
+        } else {
+            dismiss();
+            ((HearModalTitleScreen) callback).hearModalTitleScreen(option, null);
+        }
+    }
+
+    public void hearModalChoices(String context, String option) {
+        if (option.equals("LandEd")) {
             dismiss();
             LandedModal modal = new LandedModal(area);
             commander.showModal(modal);
@@ -95,9 +105,6 @@ public class UModalTitleScreen extends UModal implements HearModalGetString {
         } else if (option.equals("GlyphEd")) {
             GlyphedModal modal = new GlyphedModal();
             commander.showModal(modal);
-        } else {
-            dismiss();
-            ((HearModalTitleScreen) callback).hearModalTitleScreen(option, null);
         }
     }
 

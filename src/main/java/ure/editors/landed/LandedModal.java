@@ -4,10 +4,7 @@ import ure.areas.UArea;
 import ure.areas.gen.Metascaper;
 import ure.areas.gen.Shape;
 import ure.areas.gen.ULandscaper;
-import ure.areas.gen.shapers.Caves;
-import ure.areas.gen.shapers.Growdungeon;
-import ure.areas.gen.shapers.Mines;
-import ure.areas.gen.shapers.Shaper;
+import ure.areas.gen.shapers.*;
 import ure.ui.modals.UModal;
 import ure.ui.modals.widgets.*;
 
@@ -34,18 +31,24 @@ public class LandedModal extends UModal {
     HashMap<String,Widget> shaperWidgets;
     HashMap<String,Widget> shaperNameWidgets;
 
+    boolean dragging = false;
+    int dragStartX, dragStartY;
+    int dragCenterX, dragCenterY;
+
     public LandedModal(UArea area) {
         super(null, "");
 
         shapers = new Shaper[]{
                 new Caves(area.xsize,area.ysize),
                 new Mines(area.xsize,area.ysize),
-                new Growdungeon(area.xsize,area.ysize)
+                new Growdungeon(area.xsize,area.ysize),
+                new Chambers(area.xsize,area.ysize)
         };
         shaperNames = new String[]{
                 "Caves",
                 "Mines",
-                "Growdungeon"
+                "Growdungeon",
+                "Chambers"
         };
 
         this.area = area;
@@ -107,6 +110,34 @@ public class LandedModal extends UModal {
     public void widgetChanged(Widget widget) {
         if (widget == shaperDropdown) {
             selectShaper(shaperDropdown.selection);
+        }
+    }
+
+    @Override
+    public void mouseClick() {
+        if (isMouseInside())
+            super.mouseClick();
+        else {
+            dragging = true;
+            dragCenterX = commander.camera().getCenterColumn();
+            dragCenterY = commander.camera().getCenterRow();
+            dragStartX = commander.mouseX() - absoluteX();
+            dragStartY = commander.mouseY() - absoluteY();
+        }
+    }
+
+    @Override
+    public void animationTick() {
+        super.animationTick();
+        if (dragging) {
+            if (!commander.mouseButton()) {
+                dragging = false;
+            } else {
+                int mouseX = dragStartX - (commander.mouseX() - absoluteX());
+                int mouseY = dragStartY - (commander.mouseY() - absoluteY());
+                commander.camera().moveTo(dragCenterX + (mouseX / gw()),
+                                            dragCenterY + (mouseY / gh()));
+            }
         }
     }
 
