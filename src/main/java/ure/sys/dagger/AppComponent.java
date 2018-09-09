@@ -8,6 +8,7 @@ import ure.areas.gen.ULandscaper;
 import ure.areas.gen.shapers.Shaper;
 import ure.mygame.MyGame;
 import ure.render.URendererOGL;
+import ure.sys.ResourceManager;
 import ure.sys.UCommander;
 import ure.actors.actions.UAction;
 import ure.actors.UActorCzar;
@@ -87,4 +88,5 @@ public interface AppComponent {
     void inject(Sound snd);
     void inject(UREWindow win);
     void inject(Shaper sha);
+    void inject(ResourceManager manager);
 }

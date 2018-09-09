@@ -34,7 +34,7 @@ public class UIconCzar {
         for (String resource : resourceManager.getResourceFiles("/icons")) {
             if (resource.endsWith(".json")) {
                 try {
-                    InputStream inputStream = getClass().getResourceAsStream("/icons/" + resource);
+                    InputStream inputStream = resourceManager.getResourceAsStream("/icons/" + resource);
                     Icon[] iconObjs = objectMapper.readValue(inputStream, Icon[].class);
                     for (Icon icon : iconObjs) {
                         iconsByName.put(icon.getName(), icon);

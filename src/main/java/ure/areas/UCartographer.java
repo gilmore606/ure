@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.areas.gen.UVaultSet;
 import ure.math.URandom;
+import ure.sys.ResourceManager;
 import ure.sys.events.PlayerChangedAreaEvent;
 import ure.sys.Injector;
 import ure.sys.UCommander;
@@ -59,6 +60,8 @@ public class UCartographer implements Runnable {
     protected EventBus bus;
     @Inject
     protected URandom random;
+    @Inject
+    protected ResourceManager resourceManager;
 
     protected ArrayList<UArea> activeAreas = new ArrayList<>();
     protected ArrayList<UArea> closeableAreas = new ArrayList<>();
@@ -546,7 +549,7 @@ public class UCartographer implements Runnable {
     public UVaultSet loadVaultSet(String filename) {
         String resource = "/vaults/" + filename + ".json";
         try {
-            UVaultSet vaultSet = objectMapper.readValue(getClass().getResourceAsStream(resource), UVaultSet.class);
+            UVaultSet vaultSet = objectMapper.readValue(resourceManager.getResourceAsStream(resource), UVaultSet.class);
             vaultSet.setObjectMapper(objectMapper);
             return vaultSet;
         }

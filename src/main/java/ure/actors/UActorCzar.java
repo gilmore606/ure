@@ -44,7 +44,7 @@ public class UActorCzar {
         for (String resource : fileList) {
             if (resource.endsWith(".json")) {
                 try {
-                    InputStream inputStream = getClass().getResourceAsStream("/bodies/" + resource);
+                    InputStream inputStream = resourceManager.getResourceAsStream("/bodies/" + resource);
                     Body[] bodyObjs = objectMapper.readValue(inputStream, Body[].class);
                     for (Body body : bodyObjs) {
                         bodies.put(body.getName(), body);
@@ -62,7 +62,7 @@ public class UActorCzar {
         for (String resource : fileList) {
             if (resource.endsWith(".json")) {
                 try {
-                    InputStream inputStream = getClass().getResourceAsStream("/actors/" + resource);
+                    InputStream inputStream = resourceManager.getResourceAsStream("/actors/" + resource);
                     UActor[] actorObjs = objectMapper.readValue(inputStream, UActor[].class);
                     for (UActor actor : actorObjs) {
                         actor.initializeAsTemplate();
