@@ -74,6 +74,19 @@ public class ULight {
         setFalloff(thefalloff);
     }
 
+    public ULight clone() {
+        ULight clone = new ULight(color, range, falloff);
+        clone.setFlickerStyle(flickerStyle);
+        clone.setFlickerSpeed(flickerSpeed);
+        clone.setFlickerIntensity(flickerIntensity);
+        clone.setFlickerOffset(flickerOffset);
+        clone.setPermanent(permanent);
+        clone.setType(type);
+        clone.setWidth(width);
+        clone.setHeight(height);
+        return clone;
+    }
+
     public void reconnect(UArea area) {
         this.area = area;
     }

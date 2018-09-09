@@ -48,7 +48,6 @@ public class Growdungeon extends Shaper {
                        int earlyIterations, float earlyRoomChance, float earlyChamberChance, int earlyHallWidth,
                        float roundedChance, float openChance) {
         clear();
-        ArrayList<Room> rooms = new ArrayList<>();
         Room firstroom = new Room(xsize/2-5, ysize/2-5, random.i(chamberSizeMin,chamberSizeMax), random.i(chamberSizeMin,chamberSizeMax));
         firstroom.print(this);
         rooms.add(firstroom);

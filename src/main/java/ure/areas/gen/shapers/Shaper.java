@@ -5,6 +5,7 @@ import ure.sys.Injector;
 import ure.sys.UCommander;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class Shaper extends Shape {
@@ -19,6 +20,8 @@ public abstract class Shaper extends Shape {
     public HashMap<String,Float> paramsFmin;
     public HashMap<String,Float> paramsFmax;
 
+    public ArrayList<Room> rooms;
+
     public Shaper(int xsize, int ysize) {
         super(xsize,ysize);
         Injector.getAppComponent().inject(this);
@@ -28,6 +31,7 @@ public abstract class Shaper extends Shape {
         paramsF = new HashMap<>();
         paramsFmin = new HashMap<>();
         paramsFmax = new HashMap<>();
+        rooms = new ArrayList<>();
         setupParams();
     }
 
@@ -48,4 +52,9 @@ public abstract class Shaper extends Shape {
 
     public abstract void build();
 
+    @Override
+    public Shape clear() {
+        rooms.clear();
+        return super.clear();
+    }
 }

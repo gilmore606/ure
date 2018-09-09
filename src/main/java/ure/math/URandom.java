@@ -1,5 +1,6 @@
 package ure.math;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -20,6 +21,8 @@ public class URandom extends Random {
     public Object member(List<Object> list) {
         return list.get(i(list.size()));
     }
+
+    public Object member(ArrayList<Object> list) { return list.get(i(list.size())); }
 
     public Object member(Object[] list) { return list[i(list.length)]; }
 

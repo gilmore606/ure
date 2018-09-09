@@ -5,6 +5,8 @@ import ure.areas.gen.Metascaper;
 import ure.areas.gen.Shape;
 import ure.areas.gen.ULandscaper;
 import ure.areas.gen.shapers.*;
+import ure.math.UColor;
+import ure.ui.ULight;
 import ure.ui.modals.UModal;
 import ure.ui.modals.UModalLoading;
 import ure.ui.modals.UModalTabs;
@@ -25,17 +27,24 @@ public class LandedModal extends UModalTabs {
     Shaper[] shapers;
     String[] shaperNames;
 
+    ArrayList<ULight> roomLights;
+
     WidgetRadio pruneRadio, wipeRadio, roundRadio;
     WidgetDropdown shaperDropdown;
-    WidgetButton regenButton;
-    WidgetButton quitButton;
+
 
     WidgetTerrainpick fillPicker, floorPicker, doorPicker;
     WidgetHSlider doorSlider;
 
     HashMap<String,Widget> shaperWidgets;
 
+    WidgetHSlider lightChanceSlider;
+    WidgetButton lightNewAmbient, lightNewPoint;
+    WidgetListVert lightList;
+
     WidgetSlideTabs tabSlider;
+    WidgetButton regenButton;
+    WidgetButton quitButton;
 
     boolean dragging = false;
     int dragStartX, dragStartY;
@@ -93,12 +102,22 @@ public class LandedModal extends UModalTabs {
 
         changeTab("Decorate");
 
-        doorSlider = new WidgetHSlider(this,  0, 32,"door chance", 5, 0, 0, 100, true);
+        doorSlider = new WidgetHSlider(this,  0, 32,"door chance", 6, 0, 0, 100, true);
         addWidget(doorSlider);
-        doorPicker = new WidgetTerrainpick(this, 13, 32, "type:", "door");
+        doorPicker = new WidgetTerrainpick(this, 15, 32, "type:", "door");
         addWidget(doorPicker);
 
 
+        changeTab("Lights");
+
+        lightChanceSlider = new WidgetHSlider(this, 0, 0, "room light chance", 6, 0, 0, 100, true);
+        addWidget(lightChanceSlider);
+        lightNewAmbient = new WidgetButton(this, 0, 2, "[ New Ambient ]", null);
+        addWidget(lightNewAmbient);
+        lightNewPoint = new WidgetButton(this, 12, 2, "[ New Point ]", null);
+        addWidget(lightNewPoint);
+        lightList = new WidgetListVert(this, 0, 4, new String[]{});
+        addWidget(lightList);
 
         changeTab(null);
 
@@ -111,6 +130,7 @@ public class LandedModal extends UModalTabs {
         setChildPosition(commander.camera().columns - cellw - 2, commander.camera().rows - cellh - 2, commander.camera());
 
         scaper = new Metascaper();
+        roomLights = new ArrayList<>();
 
         changeTab("Shape");
     }
@@ -157,6 +177,10 @@ public class LandedModal extends UModalTabs {
             wipeRadio.on = !wipeRadio.on;
         else if (widget == roundRadio)
             roundRadio.on = !roundRadio.on;
+        else if (widget == lightNewAmbient)
+            makeNewLight(ULight.AMBIENT);
+        else if (widget == lightNewPoint)
+            makeNewLight(ULight.POINT);
     }
 
     @Override
@@ -216,7 +240,7 @@ public class LandedModal extends UModalTabs {
             int val = ((WidgetHSlider)(shaperWidgets.get(pf))).value;
             shaper.paramsF.put(pf, ((float)val)*0.01f);
         }
-        scaper.setup(shaper, fillPicker.selection, floorPicker.selection, pruneRadio.on, wipeRadio.on, roundRadio.on, doorPicker.selection, (float)(doorSlider.value)/100f);
+        scaper.setup(shaper, fillPicker.selection, floorPicker.selection, pruneRadio.on, wipeRadio.on, roundRadio.on, doorPicker.selection, (float)(doorSlider.value)/100f, (float)(lightChanceSlider.value)/100f, roomLights);
         shaper.build();
         scaper.buildArea(area, 1, new String[]{});
 
@@ -227,5 +251,30 @@ public class LandedModal extends UModalTabs {
     void quit() {
         escape();
         commander.game().setupTitleScreen();
+    }
+
+    void makeNewLight(int type) {
+        ULight light = new ULight(UColor.WHITE, 100, 100);
+        if (type == ULight.AMBIENT) {
+            light.makeAmbient(1, 1);
+        }
+        light.setPermanent(true);
+        roomLights.add(light);
+        updateLightList();
+    }
+
+    void updateLightList() {
+        String[] lightNames = new String[roomLights.size()];
+        int i=0;
+        for (ULight l : roomLights) {
+            String n = "";
+            if (l.type == ULight.AMBIENT)
+                n = "ambient light";
+            else
+                n = "point light";
+            lightNames[i] = n;
+            i++;
+        }
+        lightList.setOptions(lightNames);
     }
 }
