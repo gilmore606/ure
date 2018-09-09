@@ -160,6 +160,7 @@ public class LandedModal extends UModal {
         lmodal.setChildPosition(2,2,commander.camera());
         commander.showModal(lmodal);
         commander.renderer.render();
+
         for (String pi : shaper.paramsI.keySet()) {
             int val = ((WidgetHSlider)(shaperWidgets.get(pi))).value;
             shaper.paramsI.put(pi, val);
@@ -170,7 +171,9 @@ public class LandedModal extends UModal {
         }
         scaper.setup(shaper, fillPicker.selection, floorTerrain);
         shaper.build();
+        shaper.wipeSmallRegions();
         scaper.buildArea(area, 1, new String[]{});
+
         commander.camera().renderLights();
         commander.detachModal(lmodal);
     }

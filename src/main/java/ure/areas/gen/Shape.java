@@ -28,6 +28,7 @@ public class Shape {
     UThingCzar thingCzar;
 
     public int xsize, ysize;
+    public int cellCount;
     public boolean[][] cells;
     boolean[][] buffer;
 
@@ -435,6 +436,12 @@ public class Shape {
         return copy;
     }
 
+    public void copyTo(Shape dest) {
+        for (int x=0;x<xsize;x++)
+            for (int y=0;y<ysize;y++)
+                dest.write(x,y,value(x,y));
+    }
+
     /**
      * Flip true-false on all cells of this mask
      */
@@ -685,24 +692,39 @@ public class Shape {
             for (int y=0;y<ysize;y++) {
                 if (value(x,y)) {
                     Shape region = copy();
-                    region.flood(x,y,false);
+                    region.cellCount = region.flood(x,y,false);
                     region.maskWith(this, MASK_XOR);
-                    maskWith(region, MASK_AND);
+                    maskWith(region, MASK_XOR);
                     regions.add(region);
                 }
             }
         }
         printBuffer();
+        System.out.println("found " + regions.size() + " regions");
         return regions;
+    }
+
+    /**
+     * Erase everything but the biggest contiguous region.
+     */
+    public void wipeSmallRegions() {
+        ArrayList<Shape> spots = regions();
+        Shape biggest = spots.get(0);
+        for (Shape spot : spots) {
+            if (spot.cellCount > biggest.cellCount)
+                biggest = spot;
+        }
+        biggest.copyTo(this);
     }
 
     /**
      * Flood-fill at x,y with val
      */
-    public Shape flood(int x, int y, boolean val) {
-        if (value(x,y) == val) return this;
+    public int flood(int x, int y, boolean val) {
+        if (value(x,y) == val) return 0;
         LinkedList<int[]> q = new LinkedList<>();
         q.push(new int[]{x,y});
+        int count = 0;
         while (!q.isEmpty()) {
             int[] n = q.pop();
             int wx = n[0];
@@ -711,11 +733,12 @@ public class Shape {
             while (value(ex,n[1]) != val) { ex++; }
             for (int i=wx+1;i<ex;i++) {
                 write(i,n[1],val);
+                count++;
                 if (value(i,n[1]-1) != val) q.push(new int[]{i,n[1]-1});
                 if (value(i,n[1]+1) != val) q.push(new int[]{i,n[1]+1});
             }
         }
-        return this;
+        return count;
     }
 
     /**
