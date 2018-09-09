@@ -1,10 +1,16 @@
 package ure.areas.gen.shapers;
 
 import ure.areas.gen.Shape;
+import ure.sys.Injector;
+import ure.sys.UCommander;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 
 public abstract class Shaper extends Shape {
+
+    @Inject
+    public UCommander commander;
 
     public HashMap<String,Integer> paramsI;
     public HashMap<String,Integer> paramsImin;
@@ -15,6 +21,7 @@ public abstract class Shaper extends Shape {
 
     public Shaper(int xsize, int ysize) {
         super(xsize,ysize);
+        Injector.getAppComponent().inject(this);
         paramsI = new HashMap<>();
         paramsImin = new HashMap<>();
         paramsImax = new HashMap<>();

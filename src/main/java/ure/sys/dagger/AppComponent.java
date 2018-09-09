@@ -5,6 +5,7 @@ import ure.actors.SpawnActor;
 import ure.areas.*;
 import ure.areas.gen.Shape;
 import ure.areas.gen.ULandscaper;
+import ure.areas.gen.shapers.Shaper;
 import ure.mygame.MyGame;
 import ure.render.URendererOGL;
 import ure.sys.UCommander;
@@ -85,4 +86,5 @@ public interface AppComponent {
     void inject(ULight lit);
     void inject(Sound snd);
     void inject(UREWindow win);
+    void inject(Shaper sha);
 }

@@ -443,6 +443,7 @@ public class UModal extends View implements UAnimator {
      * Return the length in glyph cells of this line of text.
      */
     public int textWidth(String line) {
+        if (line == null) return 0;
         return renderer.textWidth(line) / gw() + 1;
     }
 

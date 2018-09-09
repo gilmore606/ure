@@ -10,11 +10,13 @@ public class WidgetHSlider extends Widget {
     public int value, valuemin, valuemax;
     int length;
     boolean showNumber;
+    String label;
     public UColor color;
 
-    public WidgetHSlider(UModal modal, int x, int y, int length, int value, int valuemin, int valuemax, boolean showNumber) {
+    public WidgetHSlider(UModal modal, int x, int y, String label, int length, int value, int valuemin, int valuemax, boolean showNumber) {
         super(modal);
-        setDimensions(x,y,length + (showNumber ? 3 : 0),1);
+        this.label = label;
+        setDimensions(x,y,length + (showNumber ? 3 : 0) + modal.textWidth(label),1);
         focusable = true;
         this.value = value;
         this.valuemin = valuemin;
@@ -30,6 +32,7 @@ public class WidgetHSlider extends Widget {
         modal.renderer.drawRect(0, 0, (int)((length*gw()) * (float)value/(float)valuemax), gh(), color);
         if (showNumber)
             modal.drawString(Integer.toString(value), length + 1, 0, null, focused ? modal.config.getHiliteColor() : null);
+        modal.drawString(label, length + 3, 0, focused ? null : grayColor());
     }
 
     @Override

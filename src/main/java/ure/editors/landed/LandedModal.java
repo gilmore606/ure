@@ -28,8 +28,9 @@ public class LandedModal extends UModal {
     WidgetButton regenButton;
     WidgetButton quitButton;
 
+    WidgetTerrainpick fillPicker;
+
     HashMap<String,Widget> shaperWidgets;
-    HashMap<String,Widget> shaperNameWidgets;
 
     boolean dragging = false;
     int dragStartX, dragStartY;
@@ -42,17 +43,24 @@ public class LandedModal extends UModal {
                 new Caves(area.xsize,area.ysize),
                 new Mines(area.xsize,area.ysize),
                 new Growdungeon(area.xsize,area.ysize),
-                new Chambers(area.xsize,area.ysize)
+                new Chambers(area.xsize,area.ysize),
+                new Ruins(area.xsize,area.ysize),
+                new Convochain(area.xsize,area.ysize)
         };
         shaperNames = new String[]{
                 "Caves",
                 "Mines",
                 "Growdungeon",
-                "Chambers"
+                "Chambers",
+                "Ruins",
+                "Convochain"
         };
 
         this.area = area;
         this.shaper = shapers[0];
+
+        fillPicker = new WidgetTerrainpick(this, 0, 0, "fill:", "rock");
+        addWidget(fillPicker);
 
         shaperDropdown = new WidgetDropdown(this, 0, 28, shaperNames, 0);
         addWidget(shaperDropdown);
@@ -63,7 +71,6 @@ public class LandedModal extends UModal {
         addWidget(quitButton);
 
         shaperWidgets = new HashMap<>();
-        shaperNameWidgets = new HashMap<>();
         makeShaperWidgets();
 
         sizeToWidgets();
@@ -79,22 +86,22 @@ public class LandedModal extends UModal {
     void remakeShaperWidgets() {
         for (Widget w : shaperWidgets.values())
             removeWidget(w);
-        for (Widget t : shaperNameWidgets.values())
-            removeWidget(t);
         shaperWidgets.clear();
-        shaperNameWidgets.clear();
         makeShaperWidgets();
     }
     void makeShaperWidgets() {
-        int y = 0;
+        int y = 2;
         for (String pi : shaper.paramsI.keySet()) {
-            Widget w = new WidgetHSlider(this, 0, y, 8, shaper.paramsI.get(pi), shaper.paramsImin.get(pi), shaper.paramsImax.get(pi), true);
+            Widget w = new WidgetHSlider(this, 0, y, pi, 8, shaper.paramsI.get(pi), shaper.paramsImin.get(pi), shaper.paramsImax.get(pi), true);
             shaperWidgets.put(pi, w);
             addWidget(w);
-            Widget t = new WidgetText(this, 0, y+1, pi);
-            shaperNameWidgets.put(pi, t);
-            addWidget(t);
-            y += 2;
+            y += 1;
+        }
+        for (String pf : shaper.paramsF.keySet()) {
+            Widget w = new WidgetHSlider(this, 0, y, pf, 8, (int)(shaper.paramsF.get(pf)*100), (int)(shaper.paramsFmin.get(pf)*100), (int)(shaper.paramsFmax.get(pf)*100), true);
+            shaperWidgets.put(pf, w);
+            addWidget(w);
+            y += 1;
         }
     }
 
@@ -152,7 +159,11 @@ public class LandedModal extends UModal {
             int val = ((WidgetHSlider)(shaperWidgets.get(pi))).value;
             shaper.paramsI.put(pi, val);
         }
-        scaper.setup(shaper, wallTerrain, floorTerrain);
+        for (String pf : shaper.paramsF.keySet()) {
+            int val = ((WidgetHSlider)(shaperWidgets.get(pf))).value;
+            shaper.paramsF.put(pf, ((float)val)*0.01f);
+        }
+        scaper.setup(shaper, fillPicker.selection, floorTerrain);
         shaper.build();
         scaper.buildArea(area, 1, new String[]{});
         commander.camera().renderLights();
