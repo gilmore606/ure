@@ -25,6 +25,7 @@ public class LandedModal extends UModal {
 
     String floorTerrain, wallTerrain;
 
+    WidgetRadio pruneRadio, wipeRadio;
     WidgetDropdown shaperDropdown;
     WidgetButton regenButton;
     WidgetButton quitButton;
@@ -66,9 +67,14 @@ public class LandedModal extends UModal {
         shaperDropdown = new WidgetDropdown(this, 0, 28, shaperNames, 0);
         addWidget(shaperDropdown);
 
-        regenButton = new WidgetButton(this, 0, 30, "[ Regenerate ]", null);
+        pruneRadio = new WidgetRadio(this, 0, 29, "prune dead ends", null, null, true);
+        wipeRadio = new WidgetRadio(this,0,30,"wipe small regions", null, null, true);
+        addWidget(pruneRadio);
+        addWidget(wipeRadio);
+
+        regenButton = new WidgetButton(this, 0, 32, "[ Regenerate ]", null);
         addWidget(regenButton);
-        quitButton = new WidgetButton(this, 0, 31, "[ Quit ]", null);
+        quitButton = new WidgetButton(this, 0, 34, "[ Quit ]", null);
         addWidget(quitButton);
 
         shaperWidgets = new HashMap<>();
@@ -112,6 +118,10 @@ public class LandedModal extends UModal {
             regenerate();
         else if (widget == quitButton)
             quit();
+        else if (widget == pruneRadio)
+            pruneRadio.on = !pruneRadio.on;
+        else if (widget == wipeRadio)
+            wipeRadio.on = !wipeRadio.on;
     }
 
     @Override
@@ -169,9 +179,8 @@ public class LandedModal extends UModal {
             int val = ((WidgetHSlider)(shaperWidgets.get(pf))).value;
             shaper.paramsF.put(pf, ((float)val)*0.01f);
         }
-        scaper.setup(shaper, fillPicker.selection, floorTerrain);
+        scaper.setup(shaper, fillPicker.selection, floorTerrain, pruneRadio.on, wipeRadio.on);
         shaper.build();
-        shaper.wipeSmallRegions();
         scaper.buildArea(area, 1, new String[]{});
 
         commander.camera().renderLights();

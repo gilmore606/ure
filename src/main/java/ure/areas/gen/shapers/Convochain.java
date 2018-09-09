@@ -124,7 +124,6 @@ public class Convochain extends Shaper {
         for (int i=0;i<iterations;i++) {
             iterate();
         }
-        pruneDeadEnds();
     }
 
     void iterate() {

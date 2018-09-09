@@ -7,6 +7,7 @@ public class Metascaper extends ULandscaper {
     public static final String TYPE = "meta";
     Shape shaper;
     String wallTerrain, floorTerrain;
+    boolean pruneDeadEnds, wipeSmallRegions;
 
     public Metascaper() {
         super(TYPE);
@@ -14,12 +15,18 @@ public class Metascaper extends ULandscaper {
 
     public void buildArea(UArea area, int level, String[] tags) {
         area.wipe(wallTerrain);
+        if (pruneDeadEnds)
+            shaper.pruneDeadEnds();
+        if (wipeSmallRegions)
+            shaper.wipeSmallRegions();
         shaper.writeTerrain(area, floorTerrain, 1, 1);
     }
 
-    public void setup(Shape shaper, String wallTerrain, String floorTerrain) {
+    public void setup(Shape shaper, String wallTerrain, String floorTerrain, boolean pruneDeadEnds, boolean wipeSmallRegions) {
         this.shaper = shaper;
         this.wallTerrain = wallTerrain;
         this.floorTerrain = floorTerrain;
+        this.pruneDeadEnds = pruneDeadEnds;
+        this.wipeSmallRegions = wipeSmallRegions;
     }
 }

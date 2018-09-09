@@ -1,5 +1,6 @@
 package ure.ui.modals.widgets;
 
+import ure.math.UColor;
 import ure.ui.Icons.Icon;
 import ure.ui.modals.UModal;
 
@@ -17,6 +18,10 @@ public class WidgetRadio extends Widget {
         this.on = on;
         this.offIcon = offIcon;
         this.onIcon = onIcon;
+        if (offIcon == null) {
+            this.onIcon = new Icon(9787, UColor.WHITE, null);
+            this.offIcon = new Icon(9675, UColor.GRAY, null);
+        }
         focusable = true;
         setDimensions(x,y,modal.textWidth(label) + 1, 1);
     }

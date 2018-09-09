@@ -147,7 +147,6 @@ public class Ruins extends Shaper {
                 fails++;
             }
         }
-        pruneDeadEnds();
     }
 
     void buildRoom(int x, int y, int w, int h) {

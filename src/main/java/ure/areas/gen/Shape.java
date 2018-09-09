@@ -700,7 +700,6 @@ public class Shape {
             }
         }
         printBuffer();
-        System.out.println("found " + regions.size() + " regions");
         return regions;
     }
 

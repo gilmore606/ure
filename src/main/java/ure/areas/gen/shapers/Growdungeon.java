@@ -80,6 +80,5 @@ public class Growdungeon extends Shaper {
             }
             iter++;
         }
-        pruneDeadEnds();
     }
 }
