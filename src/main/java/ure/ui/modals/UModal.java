@@ -383,11 +383,15 @@ public class UModal extends View implements UAnimator {
         return mousesel;
     }
     public void mouseClick() {
+        Widget hitWidget = null;
         for (Widget widget : widgets) {
             if (mousex >= widget.col && mousey >= widget.row && mousex < widget.col + widget.cellw && mousey < widget.row + widget.cellh) {
-                widget.mouseClick(mousex - widget.col, mousey - widget.row);
-                pressWidget(widget);
+                hitWidget = widget;
             }
+        }
+        if (hitWidget != null) {
+            hitWidget.mouseClick(mousex - hitWidget.col, mousey - hitWidget.row);
+            pressWidget(hitWidget);
         }
     }
     public void mouseRightClick() {

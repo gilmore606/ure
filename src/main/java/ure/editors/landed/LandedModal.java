@@ -7,6 +7,7 @@ import ure.areas.gen.ULandscaper;
 import ure.areas.gen.shapers.*;
 import ure.ui.modals.UModal;
 import ure.ui.modals.UModalLoading;
+import ure.ui.modals.UModalTabs;
 import ure.ui.modals.widgets.*;
 
 import javax.inject.Inject;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class LandedModal extends UModal {
+public class LandedModal extends UModalTabs {
 
     UArea area;
     Metascaper scaper;
@@ -33,6 +34,8 @@ public class LandedModal extends UModal {
     WidgetHSlider doorSlider;
 
     HashMap<String,Widget> shaperWidgets;
+
+    WidgetSlideTabs tabSlider;
 
     boolean dragging = false;
     int dragStartX, dragStartY;
@@ -61,6 +64,15 @@ public class LandedModal extends UModal {
         this.area = area;
         this.shaper = shapers[0];
 
+        regenButton = new WidgetButton(this, 0, 34, "[ Regenerate ]", null);
+        addWidget(regenButton);
+        quitButton = new WidgetButton(this, 16, 34, "[ Quit ]", null);
+        addWidget(quitButton);
+
+
+
+        changeTab("Shape");
+
         fillPicker = new WidgetTerrainpick(this, 0, 0, "fill:", "rock");
         addWidget(fillPicker);
         floorPicker = new WidgetTerrainpick(this, 8, 0, "floor:", "floor");
@@ -68,6 +80,8 @@ public class LandedModal extends UModal {
 
         shaperDropdown = new WidgetDropdown(this, 0, 28, shaperNames, 0);
         addWidget(shaperDropdown);
+        shaperWidgets = new HashMap<>();
+        makeShaperWidgets();
 
         pruneRadio = new WidgetRadio(this, 0, 29, "prune dead ends", null, null, true);
         wipeRadio = new WidgetRadio(this,0,30,"wipe small regions", null, null, true);
@@ -75,18 +89,21 @@ public class LandedModal extends UModal {
         addWidget(pruneRadio);
         addWidget(wipeRadio);
         addWidget(roundRadio);
+
+
+        changeTab("Decorate");
+
         doorSlider = new WidgetHSlider(this,  0, 32,"door chance", 5, 0, 0, 100, true);
         addWidget(doorSlider);
         doorPicker = new WidgetTerrainpick(this, 13, 32, "type:", "door");
         addWidget(doorPicker);
 
-        regenButton = new WidgetButton(this, 0, 34, "[ Regenerate ]", null);
-        addWidget(regenButton);
-        quitButton = new WidgetButton(this, 0, 36, "[ Quit ]", null);
-        addWidget(quitButton);
 
-        shaperWidgets = new HashMap<>();
-        makeShaperWidgets();
+
+        changeTab(null);
+
+        tabSlider = new WidgetSlideTabs(this, 0, 36, 20, tabList(), 0);
+        addWidget(tabSlider);
 
         sizeToWidgets();
 
@@ -94,6 +111,8 @@ public class LandedModal extends UModal {
         setChildPosition(commander.camera().columns - cellw - 2, commander.camera().rows - cellh - 2, commander.camera());
 
         scaper = new Metascaper();
+
+        changeTab("Shape");
     }
 
     void remakeShaperWidgets() {
@@ -144,6 +163,8 @@ public class LandedModal extends UModal {
     public void widgetChanged(Widget widget) {
         if (widget == shaperDropdown) {
             selectShaper(shaperDropdown.selection);
+        } else if (widget == tabSlider) {
+            changeTab(tabSlider.tabs.get(tabSlider.selection));
         }
     }
 
