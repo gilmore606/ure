@@ -45,9 +45,11 @@ public class WidgetChoices extends Widget {
         selection = 0;
         for (int i=1;i<choices.length;i++) {
             if (mousex <= positions[i] && mousex > positions[i-1]) {
-                selection = i;
+                selection = i-1;
             }
         }
+        if (mousex > positions[positions.length-1])
+            selection = positions.length-1;
     }
 
     @Override

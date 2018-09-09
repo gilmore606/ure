@@ -6,6 +6,7 @@ import ure.areas.gen.Shape;
 import ure.areas.gen.ULandscaper;
 import ure.areas.gen.shapers.*;
 import ure.ui.modals.UModal;
+import ure.ui.modals.UModalLoading;
 import ure.ui.modals.widgets.*;
 
 import javax.inject.Inject;
@@ -40,12 +41,12 @@ public class LandedModal extends UModal {
         super(null, "");
 
         shapers = new Shaper[]{
-                new Caves(area.xsize,area.ysize),
-                new Mines(area.xsize,area.ysize),
-                new Growdungeon(area.xsize,area.ysize),
-                new Chambers(area.xsize,area.ysize),
-                new Ruins(area.xsize,area.ysize),
-                new Convochain(area.xsize,area.ysize)
+                new Caves(area.xsize-2,area.ysize-2),
+                new Mines(area.xsize-2,area.ysize-2),
+                new Growdungeon(area.xsize-2,area.ysize-2),
+                new Chambers(area.xsize-2,area.ysize-2),
+                new Ruins(area.xsize-2,area.ysize-2),
+                new Convochain(area.xsize-2,area.ysize-2)
         };
         shaperNames = new String[]{
                 "Caves",
@@ -155,6 +156,10 @@ public class LandedModal extends UModal {
     }
 
     void regenerate() {
+        UModalLoading lmodal = new UModalLoading();
+        lmodal.setChildPosition(2,2,commander.camera());
+        commander.showModal(lmodal);
+        commander.renderer.render();
         for (String pi : shaper.paramsI.keySet()) {
             int val = ((WidgetHSlider)(shaperWidgets.get(pi))).value;
             shaper.paramsI.put(pi, val);
@@ -167,6 +172,7 @@ public class LandedModal extends UModal {
         shaper.build();
         scaper.buildArea(area, 1, new String[]{});
         commander.camera().renderLights();
+        commander.detachModal(lmodal);
     }
 
     void quit() {

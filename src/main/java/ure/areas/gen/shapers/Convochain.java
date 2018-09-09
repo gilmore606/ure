@@ -65,7 +65,7 @@ public class Convochain extends Shaper {
         if (seedVault == null)
             seedVault = commander.cartographer.loadVaultSet("convochain");
         addParamI("sampletype", 0, 0, seedVault.size());
-        addParamI("N", 1, 3, 8);
+        addParamI("N", 2, 3, 6);
         addParamF("temperature", 0f, 1.2f, 4f);
         addParamI("iterations",1,1,10);
     }
@@ -124,6 +124,7 @@ public class Convochain extends Shaper {
         for (int i=0;i<iterations;i++) {
             iterate();
         }
+        pruneDeadEnds();
     }
 
     void iterate() {

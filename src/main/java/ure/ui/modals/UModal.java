@@ -349,6 +349,8 @@ public class UModal extends View implements UAnimator {
     }
 
     void updateMouse() {
+        if (!isOnTop())
+            return;
         mousex = (commander.mouseX() - absoluteX()) / gw();
         mousey = (commander.mouseY() - absoluteY()) / gh();
         for (Widget widget : widgets) {

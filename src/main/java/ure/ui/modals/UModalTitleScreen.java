@@ -87,7 +87,7 @@ public class UModalTitleScreen extends UModal implements HearModalGetString, Hea
             nmodal.setTitle("credits");
             commander.showModal(nmodal);
         } else if (option.equals("Edit")) {
-            UModalChoices cmodal = new UModalChoices("", new String[]{"LandEd","VaultEd","GlyphEd"}, this, "edit");
+            UModalChoices cmodal = new UModalChoices(null, new String[]{"LandEd","VaultEd","GlyphEd"}, this, "edit");
             commander.showModal(cmodal);
         } else {
             dismiss();

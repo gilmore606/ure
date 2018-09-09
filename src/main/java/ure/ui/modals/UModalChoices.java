@@ -16,14 +16,16 @@ public class UModalChoices extends UModal {
 
     public UModalChoices(String _prompt, String[] _choices, HearModalChoices _callback, String _callbackContext) {
         super(_callback, _callbackContext);
-        headerWidget = new WidgetText(this,0,0, _prompt);
-        choicesWidget = new WidgetChoices(this,0, headerWidget.cellh + 1, _choices);
+        if (_prompt != null) {
+            headerWidget = new WidgetText(this, 0, 0, _prompt);
+            choicesWidget = new WidgetChoices(this, 0, headerWidget.cellh + 1, _choices);
+            addWidget(headerWidget);
+        } else {
+            choicesWidget = new WidgetChoices(this,0,0,_choices);
+        }
         choicesWidget.dismissFlash = true;
-        addWidget(headerWidget);
         addWidget(choicesWidget);
         sizeToWidgets();
-        centerWidget(headerWidget);
-        centerWidget(choicesWidget);
     }
 
     @Override
