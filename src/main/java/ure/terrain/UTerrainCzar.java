@@ -59,7 +59,7 @@ public class UTerrainCzar {
             if (resourceName.endsWith(".json")) {
                 log.debug("loading " + resourceName);
                 try {
-                    InputStream inputStream = getClass().getResourceAsStream("/terrain/" + resourceName);
+                    InputStream inputStream = resourceManager.getResourceAsStream("/terrain/" + resourceName);
                     UTerrain[] terrainObjs = objectMapper.readValue(inputStream, UTerrain[].class);
                     for (UTerrain terrain : terrainObjs) {
                         terrain.initializeAsTemplate();
@@ -94,7 +94,7 @@ public class UTerrainCzar {
      * @return
      */
     public UTerrain getTerrainByName(String name) {
-        return (UTerrain)(getTerrainForFilechar(terrainsByName.get(name).getFilechar()));
+        return getTerrainForFilechar(terrainsByName.get(name).getFilechar());
     }
 
     public ArrayList<UTerrain> getAllTerrainTemplates() {

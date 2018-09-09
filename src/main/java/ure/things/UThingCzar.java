@@ -34,7 +34,7 @@ public class UThingCzar {
         for (String resource : resourceManager.getResourceFiles("/things")) {
             if (resource.endsWith(".json")) {
                 try {
-                    InputStream inputStream = getClass().getResourceAsStream("/things/" + resource);
+                    InputStream inputStream = resourceManager.getResourceAsStream("/things/" + resource);
                     UThing[] thingObjs = objectMapper.readValue(inputStream, UThing[].class);
                     for (UThing thing : thingObjs) {
                         thing.initializeAsTemplate();

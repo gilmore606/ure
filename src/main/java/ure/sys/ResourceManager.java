@@ -1,13 +1,18 @@
 package ure.sys;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import javax.inject.Inject;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ResourceManager {
+
+    @Inject
+    UConfig config;
+
+    public ResourceManager() {
+        Injector.getAppComponent().inject(this);
+    }
 
     public List<String> getResourceFiles( String path ) {
         List<String> filenames = new ArrayList<>();
@@ -30,7 +35,14 @@ public class ResourceManager {
         return filenames;
     }
 
-    private InputStream getResourceAsStream( String resource ) {
+    public InputStream getResourceAsStream( String resource ) {
+        // Whatever is on the filesystem will always be the most current.  Use that if it exists.
+        try {
+            File file = new File(config.getResourcePath() + resource);
+            return new FileInputStream(file);
+        } catch (IOException e) {
+            // No big deal, it's probably in the jar
+        }
         final InputStream in = getContextClassLoader().getResourceAsStream( resource );
         return in == null ? getClass().getResourceAsStream( resource ) : in;
     }
