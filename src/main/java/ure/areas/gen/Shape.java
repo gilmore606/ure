@@ -859,4 +859,13 @@ public class Shape {
 
         return false;
     }
+
+    public boolean matchNeighbors(int x, int y, Boolean[][] neighborMask) {
+        boolean[][] n = new boolean[neighborMask.length][neighborMask[0].length];
+        for (int i=0;i<neighborMask.length;i++) {
+            for (int j = 0;j < neighborMask[0].length;j++)
+                n[i][j] = neighborMask[i][j];
+        }
+        return matchNeighbors(x,y,n);
+    }
 }

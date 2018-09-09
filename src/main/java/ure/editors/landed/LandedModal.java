@@ -29,7 +29,8 @@ public class LandedModal extends UModal {
     WidgetButton regenButton;
     WidgetButton quitButton;
 
-    WidgetTerrainpick fillPicker, floorPicker;
+    WidgetTerrainpick fillPicker, floorPicker, doorPicker;
+    WidgetHSlider doorSlider;
 
     HashMap<String,Widget> shaperWidgets;
 
@@ -74,8 +75,12 @@ public class LandedModal extends UModal {
         addWidget(pruneRadio);
         addWidget(wipeRadio);
         addWidget(roundRadio);
+        doorSlider = new WidgetHSlider(this,  0, 32,"door chance", 5, 0, 0, 100, true);
+        addWidget(doorSlider);
+        doorPicker = new WidgetTerrainpick(this, 13, 32, "type:", "door");
+        addWidget(doorPicker);
 
-        regenButton = new WidgetButton(this, 0, 33, "[ Regenerate ]", null);
+        regenButton = new WidgetButton(this, 0, 34, "[ Regenerate ]", null);
         addWidget(regenButton);
         quitButton = new WidgetButton(this, 0, 36, "[ Quit ]", null);
         addWidget(quitButton);
@@ -190,7 +195,7 @@ public class LandedModal extends UModal {
             int val = ((WidgetHSlider)(shaperWidgets.get(pf))).value;
             shaper.paramsF.put(pf, ((float)val)*0.01f);
         }
-        scaper.setup(shaper, fillPicker.selection, floorPicker.selection, pruneRadio.on, wipeRadio.on, roundRadio.on);
+        scaper.setup(shaper, fillPicker.selection, floorPicker.selection, pruneRadio.on, wipeRadio.on, roundRadio.on, doorPicker.selection, (float)(doorSlider.value)/100f);
         shaper.build();
         scaper.buildArea(area, 1, new String[]{});
 
