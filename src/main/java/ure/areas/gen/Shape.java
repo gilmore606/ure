@@ -615,12 +615,23 @@ public class Shape {
         return this;
     }
 
+    public Shape roundCorners() {
+        boolean[][] pattern = new boolean[][]{{false, true, true},{false,true,true},{false,false,false}};
+        for (int x=0;x<xsize;x++) {
+            for (int y=0;y<ysize;y++) {
+                if (value(x,y))
+                    write(x,y,!matchNeighbors(x,y,pattern));
+            }
+        }
+        return this;
+    }
+
     /**
      * Prune dead-end one space hallways
      */
     public Shape pruneDeadEnds() {
         clearBuffer();
-        int passes = 20;
+        int passes = 30;
         for (int i=0;i<passes;i++) {
             boolean killedone = false;
             for (int x=0;x<xsize;x++) {
@@ -814,5 +825,38 @@ public class Shape {
                 r.rotate();
             return r;
         }
+    }
+
+    public boolean matchNeighbors(int x, int y, boolean[][] neighborMask) {
+        boolean matched = true;
+        for (int i=-1;i<2;i++) {
+            for (int j = -1;j < 2;j++)
+                if (neighborMask[i+1][j+1] != value(x + i, y + j))
+                    matched = false;
+        }
+        if (matched) return true;
+        matched = true;
+        for (int i=-1;i<2;i++) {
+            for (int j=-1;j<2;j++)
+                if (neighborMask[-i+1][j+1] != value(x+i,y+j))
+                    matched = false;
+        }
+        if (matched) return true;
+        matched = true;
+        for (int i=-1;i<2;i++) {
+            for (int j=-1;j<2;j++)
+                if (neighborMask[i+1][-j+1] != value(x+i,y+j))
+                    matched = false;
+        }
+        if (matched) return true;
+        matched = true;
+        for (int i=-1;i<2;i++) {
+            for (int j=-1;j<2;j++)
+                if (neighborMask[-i+1][-j+1] != value(x+i,y+j))
+                    matched = false;
+        }
+        if (matched) return true;
+
+        return false;
     }
 }
