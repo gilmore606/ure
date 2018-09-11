@@ -669,6 +669,7 @@ public class UCamera extends View implements UAnimator {
     void drawCellAO(int col, int row) {
         if (!area.canSeeThrough(col+leftEdge,row+topEdge)) return;
         if (col+leftEdge <=0 || row+topEdge <= 0 || col+leftEdge >= area.xsize-1 || row+topEdge >= area.ysize-1) return;
+
         boolean nn = !area.canSeeThrough(col+leftEdge,row+topEdge-1) || !area.terrainAt(col+leftEdge,row+topEdge-1).isPassable();
         boolean ns = !area.canSeeThrough(col+leftEdge,row+topEdge+1) || !area.terrainAt(col+leftEdge,row+topEdge+1).isPassable();
         boolean nw = !area.canSeeThrough(col+leftEdge-1,row+topEdge) || !area.terrainAt(col+leftEdge-1,row+topEdge).isPassable();
@@ -683,17 +684,19 @@ public class UCamera extends View implements UAnimator {
             renderer.drawRect(x, y, w, h / 4, UColor.SHADE);
             renderer.drawRect(x, y, w, 3, UColor.DARKSHADE);
         }
-        if (ns) {
-            renderer.drawRect(x, y + ch, w, h / 4, UColor.SHADE);
-            renderer.drawRect(x, y + h - 3, w, 3, UColor.DARKSHADE);
-        }
-        if (nw) {
-            renderer.drawRect(x, y, w / 3, h, UColor.SHADE);
-            renderer.drawRect(x, y, 3, h, UColor.DARKSHADE);
-        }
-        if (ne) {
-            renderer.drawRect(x + cw, y, w / 4, h, UColor.SHADE);
-            renderer.drawRect(x + w - 3, y, 3, h, UColor.DARKSHADE);
+        if (!config.isAmbientOcclusionIso()) {
+            if (ns) {
+                renderer.drawRect(x, y + ch, w, h / 4, UColor.SHADE);
+                renderer.drawRect(x, y + h - 3, w, 3, UColor.DARKSHADE);
+            }
+            if (nw) {
+                renderer.drawRect(x, y, w / 3, h, UColor.SHADE);
+                renderer.drawRect(x, y, 3, h, UColor.DARKSHADE);
+            }
+            if (ne) {
+                renderer.drawRect(x + cw, y, w / 4, h, UColor.SHADE);
+                renderer.drawRect(x + w - 3, y, 3, h, UColor.DARKSHADE);
+            }
         }
     }
 

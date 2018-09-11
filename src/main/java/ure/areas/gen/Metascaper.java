@@ -28,7 +28,7 @@ public class Metascaper extends ULandscaper {
         if (roundCorners)
             shaper.roundCorners();
         shaper.writeTerrain(area, floorTerrain, 1, 1);
-
+        shaper.pruneRooms();
         if (doorChance > 0f)
             addDoors(area);
         if (lightChance > 0f)
@@ -47,6 +47,7 @@ public class Metascaper extends ULandscaper {
         this.lightChance = lightChance;
         this.roomLights = roomLights;
     }
+
 
     void addDoors(UArea area) {
         ArrayList<Boolean[][]> patterns = new ArrayList<>();

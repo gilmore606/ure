@@ -74,7 +74,8 @@ public class UConfig {
     private boolean visibilityEnable = true;            // if false, assume everything is visible (no occlusion)
     private boolean lightEnable = true;                 // if false, assume all areas lit 100%
     private boolean lightBloom = true;                  // TODO: lights adding to >fullbright bloom to white
-    private boolean ambientOcclusion = true;
+    private boolean ambientOcclusion = true;            // ambient occlusion shadowing on terrain edges
+    private boolean ambientOcclusionIso = true;         // shadow south edge only for faux-isometric shading
     private boolean smoothLightCones = true;            // dither edges of light cones
 
     private float visibilityThreshold = 0.2f;           // how 'visible' is a cell before we consider it seen? (ucamera 512, 537)
@@ -444,6 +445,8 @@ public class UConfig {
     }
     public boolean isAmbientOcclusion() { return ambientOcclusion; }
     public void setAmbientOcclusion(boolean b) { ambientOcclusion = b; }
+    public boolean isAmbientOcclusionIso() { return ambientOcclusionIso; }
+    public void setAmbientOcclusionIso(boolean b) { ambientOcclusionIso = b; }
 
     public boolean isSmoothLightCones() {
         return smoothLightCones;

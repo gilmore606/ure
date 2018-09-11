@@ -87,6 +87,7 @@ public class Shape {
         public boolean isOpen(UArea area) {
             return area.terrainAt(x+1,y+1).isPassable();
         }
+        public boolean isOpen() { return value(x+1,y+1); }
     }
 
     public class Face {

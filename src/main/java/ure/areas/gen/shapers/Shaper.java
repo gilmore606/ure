@@ -57,4 +57,13 @@ public abstract class Shaper extends Shape {
         rooms.clear();
         return super.clear();
     }
+
+    public void pruneRooms() {
+        ArrayList<Room> keepers = new ArrayList<>();
+        for (Room r : rooms) {
+            if (r.isOpen())
+                keepers.add(r);
+        }
+        this.rooms = keepers;
+    }
 }
