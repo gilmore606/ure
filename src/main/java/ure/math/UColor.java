@@ -13,7 +13,7 @@ public class UColor {
     public static UColor CLEAR = new UColor(0f,0f,0f,0f);
     public static UColor BLACK = new UColor(0f,0f,0f);
     public static UColor SHADE = new UColor(0f,0f,0f,0.1f);
-    public static UColor DARKSHADE = new UColor(0f,0f,0f,0.22f);
+    public static UColor DARKSHADE = new UColor(0f,0f,0f,0.2f);
     public static UColor DARKERSHADE = new UColor(0f,0f,0f,0.4f);
     public static UColor LIGHT = new UColor(1f,1f,1f,0.3f);
     public static UColor WHITE = new UColor(1f,1f,1f);

@@ -8,11 +8,13 @@ import java.util.HashMap;
 public class UModalTabs extends UModal {
 
     HashMap<String,ArrayList<Widget>> tabWidgetSets;
+    ArrayList<String> tabNames;
     String tab;
 
     public UModalTabs(HearModal _callback, String _callbackContext) {
         super(_callback, _callbackContext);
         tabWidgetSets = new HashMap<>();
+        tabNames = new ArrayList<>();
     }
 
     @Override
@@ -44,14 +46,17 @@ public class UModalTabs extends UModal {
                 tabWidgetSets.put(tab, new ArrayList<>());
             for (Widget w : tabWidgetSets.get(tab))
                 super.addWidget(w);
+            boolean nameFound = false;
+            for (String n : tabNames) {
+                if (n.equals(newtab))
+                    nameFound = true;
+            }
+            if (!nameFound)
+                tabNames.add(newtab);
         }
     }
 
     public ArrayList<String> tabList() {
-        ArrayList<String> tablist = new ArrayList<>();
-        for (String s : tabWidgetSets.keySet()) {
-            tablist.add(s);
-        }
-        return tablist;
+        return tabNames;
     }
 }

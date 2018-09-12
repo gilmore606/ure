@@ -182,6 +182,10 @@ public class Shape {
 
     public Shape(int _xsize, int _ysize) {
         Injector.getAppComponent().inject(this);
+        resize(_xsize, _ysize);
+    }
+
+    public void resize(int _xsize, int _ysize) {
         xsize = _xsize;
         ysize = _ysize;
         cells = new boolean[xsize][ysize];

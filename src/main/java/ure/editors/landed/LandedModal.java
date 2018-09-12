@@ -32,7 +32,7 @@ public class LandedModal extends UModalTabs {
     WidgetRadio pruneRadio, wipeRadio, roundRadio;
     WidgetDropdown shaperDropdown;
 
-
+    WidgetHSlider areaWidthSlider, areaHeightSlider;
     WidgetTerrainpick fillPicker, floorPicker, doorPicker;
     WidgetHSlider doorSlider;
 
@@ -79,11 +79,18 @@ public class LandedModal extends UModalTabs {
         addWidget(quitButton);
 
 
-
-        changeTab("Shape");
+        changeTab("Global");
 
         fillPicker = new WidgetTerrainpick(this, 0, 0, "fill:", "rock");
         addWidget(fillPicker);
+        areaWidthSlider = new WidgetHSlider(this, 0, 2, "width", 6, 100, 40, 200, true);
+        areaHeightSlider = new WidgetHSlider(this, 0, 3, "height", 6, 100, 40, 200, true);
+        addWidget(areaWidthSlider);
+        addWidget(areaHeightSlider);
+
+
+        changeTab("Shape");
+
         floorPicker = new WidgetTerrainpick(this, 8, 0, "floor:", "floor");
         addWidget(floorPicker);
 
@@ -132,7 +139,7 @@ public class LandedModal extends UModalTabs {
         scaper = new Metascaper();
         roomLights = new ArrayList<>();
 
-        changeTab("Shape");
+        changeTab("Global");
     }
 
     void remakeShaperWidgets() {
@@ -232,6 +239,10 @@ public class LandedModal extends UModalTabs {
         commander.showModal(lmodal);
         commander.renderer.render();
 
+        if (area.xsize != areaWidthSlider.value || area.ysize != areaHeightSlider.value) {
+            area.initialize(areaWidthSlider.value, areaHeightSlider.value, fillPicker.selection);
+            shaper.resize(areaWidthSlider.value-2, areaHeightSlider.value-2);
+        }
         for (String pi : shaper.paramsI.keySet()) {
             int val = ((WidgetHSlider)(shaperWidgets.get(pi))).value;
             shaper.paramsI.put(pi, val);

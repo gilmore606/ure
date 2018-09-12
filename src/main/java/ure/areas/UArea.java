@@ -102,13 +102,7 @@ public class UArea implements Serializable {
     }
     public UArea(int thexsize, int theysize, String defaultTerrain) {
         this();
-        xsize = thexsize;
-        ysize = theysize;
-        cells = new UCell[xsize][ysize];
-        for (int i=0;i<xsize;i++) {
-            for (int j=0;j<ysize;j++)
-                cells[i][j] = new UCell(this, i, j, terrainCzar.getTerrainByName(defaultTerrain));
-        }
+        initialize(thexsize,theysize,defaultTerrain);
     }
 
     public UArea(String filename) {
@@ -127,6 +121,16 @@ public class UArea implements Serializable {
             xsize = cellsX;
         });
         lines.close();
+    }
+
+    public void initialize(int xsize, int ysize, String defaultTerrain) {
+        this.xsize = xsize;
+        this.ysize = ysize;
+        cells = new UCell[xsize][ysize];
+        for (int i=0;i<xsize;i++) {
+            for (int j=0;j<ysize;j++)
+                cells[i][j] = new UCell(this, i, j, terrainCzar.getTerrainByName(defaultTerrain));
+        }
     }
 
     public boolean canBePersisted() {
