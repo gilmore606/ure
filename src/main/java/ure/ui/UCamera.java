@@ -648,6 +648,7 @@ public class UCamera extends View implements UAnimator {
     }
     private void drawCellFog(int col, int row, int distance, int distanceFull) {
         if (commander.player() == null) return;
+        if (!config.isFog()) return;
         UColor light = lightAt(col,row);
         float vis = visibilityAt(col,row);
         if (vis > 0f) {

@@ -28,6 +28,7 @@ public class LandedModal extends UModalTabs {
 
     ArrayList<ULight> roomLights;
 
+    WidgetButton layerUpButton, layerDownButton, layerDeleteButton;
     WidgetDropdown layerPicker;
     HashMap<String,Widget> shaperWidgets;
 
@@ -36,7 +37,7 @@ public class LandedModal extends UModalTabs {
     WidgetDropdown shaperPicker;
 
     WidgetHSlider areaWidthSlider, areaHeightSlider;
-    WidgetTerrainpick fillPicker, terrainPicker, doorPicker;
+    WidgetTerrainpick fillPicker, terrainPicker, doorPicker, structurePicker;
     WidgetHSlider doorSlider;
     WidgetDropdown drawPicker;
 
@@ -48,6 +49,7 @@ public class LandedModal extends UModalTabs {
 
     WidgetSlideTabs tabSlider;
     WidgetButton regenButton;
+    WidgetRadio autoRegenRadio;
     WidgetButton quitButton;
 
     boolean dragging = false;
@@ -74,6 +76,8 @@ public class LandedModal extends UModalTabs {
 
         regenButton = new WidgetButton(this, 0, 34, "[ Regenerate ]", null);
         addWidget(regenButton);
+        autoRegenRadio = new WidgetRadio(this, 7, 34, "auto", null, null, true);
+        addWidget(autoRegenRadio);
         quitButton = new WidgetButton(this, 16, 34, "[ Quit ]", null);
         addWidget(quitButton);
 
@@ -86,18 +90,25 @@ public class LandedModal extends UModalTabs {
         areaHeightSlider = new WidgetHSlider(this, 0, 3, "height", 6, 100, 40, 200, true);
         addWidget(areaWidthSlider);
         addWidget(areaHeightSlider);
-
+        structurePicker = new WidgetTerrainpick(this, 0, 5, "structure:", "wall");
+        addWidget(structurePicker);
 
         changeTab("Layers");
         layerPicker = new WidgetDropdown(this, 0, 0, new String[]{"<new layer>"}, 0);
         addWidget(layerPicker);
+        layerUpButton = new WidgetButton(this, 16, 1, "[ Up ]", null);
+        layerDownButton = new WidgetButton(this,16,0, "[ Down ]", null);
+        layerDeleteButton = new WidgetButton(this, 16, 3, "[ Delete ]", null);
+        addWidget(layerUpButton);
+        addWidget(layerDownButton);
+        addWidget(layerDeleteButton);
 
         shaperPicker = new WidgetDropdown(this, 9, 0, shaperNames, 0);
         addWidget(shaperPicker);
         terrainPicker = new WidgetTerrainpick(this, 0, 2, "terrain:", "floor");
         addWidget(terrainPicker);
-        addWidget(new WidgetText(this, 0, 3, "Draw on:"));
-        drawPicker = new WidgetDropdown(this, 5, 3, new String[]{"All", "Walls only", "Floors only"}, 0);
+        addWidget(new WidgetText(this, 0, 3, "Draw:"));
+        drawPicker = new WidgetDropdown(this, 5, 3, new String[]{"All", "In blocked only", "In unblocked only", "With walls"}, 0);
         addWidget(drawPicker);
 
         makeShaperWidgets();
@@ -197,6 +208,27 @@ public class LandedModal extends UModalTabs {
         layer.density = 1f;
         updateLayerPicker();
         selectLayer(layers.indexOf(layer));
+        autoRegenerate();
+    }
+
+    void deleteLayer() {
+        if (layers.size() < 2) return;
+        layers.remove(layerIndex);
+        if (layerIndex >= layers.size()) layerIndex = layers.size() - 1;
+        updateLayerPicker();
+        selectLayer(layerIndex);
+        autoRegenerate();
+    }
+
+    void moveLayer(int by) {
+        int destIndex = layerIndex + by;
+        Layer temp = layers.get(destIndex);
+        layers.set(destIndex, layers.get(layerIndex));
+        layers.set(layerIndex, temp);
+        layerIndex = destIndex;
+        updateLayerPicker();
+        selectLayer(layerIndex);
+        autoRegenerate();
     }
 
     void updateLayerPicker() {
@@ -216,28 +248,42 @@ public class LandedModal extends UModalTabs {
             regenerate();
         else if (widget == quitButton)
             quit();
+        else if (widget == autoRegenRadio)
+            autoRegenRadio.on = !autoRegenRadio.on;
         else if (widget == pruneRadio) {
             pruneRadio.on = !pruneRadio.on;
             layer.pruneDeadEnds = pruneRadio.on;
+            autoRegenerate();
         } else if (widget == wipeRadio) {
             wipeRadio.on = !wipeRadio.on;
             layer.wipeSmallRegions = wipeRadio.on;
+            autoRegenerate();
         } else if (widget == roundRadio) {
             roundRadio.on = !roundRadio.on;
             layer.roundCorners = roundRadio.on;
+            autoRegenerate();
         } else if (widget == invertRadio) {
             invertRadio.on = !invertRadio.on;
             layer.invert = invertRadio.on;
+            autoRegenerate();
         }else if (widget == lightNewAmbient)
             makeNewLight(ULight.AMBIENT);
         else if (widget == lightNewPoint)
             makeNewLight(ULight.POINT);
+        else if (widget == layerDeleteButton) {
+            deleteLayer();
+        } else if (widget == layerUpButton) {
+            moveLayer(1);
+        } else if (widget == layerDownButton) {
+            moveLayer(-1);
+        }
     }
 
     @Override
     public void widgetChanged(Widget widget) {
         if (widget == shaperPicker) {
             selectShaper(shaperPicker.selected());
+            autoRegenerate();
         } else if (widget == tabSlider) {
             changeTab(tabSlider.tabs.get(tabSlider.selection));
         } else if (widget == layerPicker) {
@@ -247,12 +293,18 @@ public class LandedModal extends UModalTabs {
                 selectLayer(layerPicker.selection);
         } else if (widget == terrainPicker) {
             layer.terrain = terrainPicker.selection;
+            autoRegenerate();
+        } else if (widget == fillPicker) {
+            autoRegenerate();
         } else if (widget == drawPicker) {
             layer.printMode = drawPicker.selection;
+            autoRegenerate();
         } else if (widget == densitySlider) {
             layer.density = (float)densitySlider.value / 100f;
+            autoRegenerate();
         } else if (shaperWidgets.containsValue(widget)) {
             updateShaperFromWidgets();
+            autoRegenerate();
         }
     }
 
@@ -288,7 +340,7 @@ public class LandedModal extends UModalTabs {
         removeShaperWidgets();
         layer.shaper = layerShapers.get(layerIndex).get(selection);
         makeShaperWidgets();
-        regenerate();
+        autoRegenerate();
     }
 
     void selectLayer(int selection) {
@@ -306,6 +358,13 @@ public class LandedModal extends UModalTabs {
         terrainPicker.selection = layer.terrain;
         drawPicker.selection = layer.printMode;
         densitySlider.value = (int)(layer.density * 100f);
+
+        removeWidget(layerUpButton);
+        removeWidget(layerDownButton);
+        if (layerIndex > 0)
+            addWidget(layerDownButton);
+        if (layerIndex < layers.size() - 1)
+            addWidget(layerUpButton);
     }
 
     void updateShaperFromWidgets() {
@@ -319,6 +378,11 @@ public class LandedModal extends UModalTabs {
         }
     }
 
+    void autoRegenerate() {
+        if (autoRegenRadio.on)
+            regenerate();
+    }
+
     void regenerate() {
         //if (true) return;
         UModalLoading lmodal = new UModalLoading();
@@ -330,7 +394,7 @@ public class LandedModal extends UModalTabs {
             area.initialize(areaWidthSlider.value, areaHeightSlider.value, fillPicker.selection);
             layer.shaper.resize(areaWidthSlider.value-2, areaHeightSlider.value-2);
         }
-        scaper.setup(layers, fillPicker.selection, doorPicker.selection, (float)(doorSlider.value)/100f, (float)(lightChanceSlider.value)/100f, roomLights);
+        scaper.setup(layers, fillPicker.selection, doorPicker.selection, structurePicker. selection, (float)(doorSlider.value)/100f, (float)(lightChanceSlider.value)/100f, roomLights);
         scaper.buildArea(area, 1, new String[]{});
 
         commander.camera().renderLights();

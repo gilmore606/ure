@@ -15,7 +15,7 @@ public class Metascaper extends ULandscaper {
     public ArrayList<Layer> layers;
     public Layer roomLayer;
 
-    String wallTerrain, doorTerrain;
+    String wallTerrain, doorTerrain, structureTerrain;
     float doorChance, lightChance;
     ArrayList<ULight> roomLights;
 
@@ -27,7 +27,7 @@ public class Metascaper extends ULandscaper {
         area.wipe(wallTerrain);
         for (Layer layer : layers) {
             layer.build();
-            layer.print(area, 1, 1);
+            layer.print(area, 1, 1, structureTerrain);
         }
 
         roomLayer = layers.get(0);
@@ -41,10 +41,11 @@ public class Metascaper extends ULandscaper {
             addRoomLights(area);
     }
 
-    public void setup(ArrayList<Layer> layers, String wallTerrain, String doorTerrain, float doorChance, float lightChance, ArrayList<ULight> roomLights) {
+    public void setup(ArrayList<Layer> layers, String wallTerrain, String doorTerrain, String structureTerrain, float doorChance, float lightChance, ArrayList<ULight> roomLights) {
         this.layers = layers;
         this.wallTerrain = wallTerrain;
         this.doorTerrain = doorTerrain;
+        this.structureTerrain = structureTerrain;
         this.doorChance = doorChance;
         this.lightChance = lightChance;
         this.roomLights = roomLights;
