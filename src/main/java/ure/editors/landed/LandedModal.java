@@ -65,7 +65,9 @@ public class LandedModal extends UModalTabs {
                 "Growdungeon",
                 "Chambers",
                 "Ruins",
-                "Convochain"
+                "Convochain",
+                "Blobs",
+                "Roads"
         };
         layerShapers = new ArrayList<>();
         shaperWidgets = new HashMap<>();
@@ -186,6 +188,9 @@ public class LandedModal extends UModalTabs {
         shapers.put("Growdungeon", new Growdungeon(area.xsize-2,area.ysize-2));
         shapers.put("Chambers", new Chambers(area.xsize-2,area.ysize-2));
         shapers.put("Convochain", new Convochain(area.xsize-2,area.ysize-2));
+        shapers.put("Ruins", new Ruins(area.xsize-2,area.ysize-2));
+        shapers.put("Blobs", new Blobs(area.xsize-2,area.ysize-2));
+        shapers.put("Roads", new Roads(area.xsize-2,area.ysize-2));
         layerShapers.add(shapers);
         layer.shaper = shapers.get("Caves");
         layer.terrain = "null";
@@ -299,6 +304,8 @@ public class LandedModal extends UModalTabs {
         roundRadio.on = layer.roundCorners;
         invertRadio.on = layer.invert;
         terrainPicker.selection = layer.terrain;
+        drawPicker.selection = layer.printMode;
+        densitySlider.value = (int)(layer.density * 100f);
     }
 
     void updateShaperFromWidgets() {
