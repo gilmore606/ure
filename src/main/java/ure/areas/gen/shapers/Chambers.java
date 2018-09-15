@@ -49,6 +49,7 @@ public class Chambers extends Shaper {
 
     public Chambers(int xsize, int ysize) {
         super(xsize, ysize);
+        name = "Chambers";
         rooms = new ArrayList<>();
     }
 

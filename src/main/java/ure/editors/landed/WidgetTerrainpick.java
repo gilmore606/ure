@@ -62,5 +62,6 @@ public class WidgetTerrainpick extends Widget implements HearModalDropdown {
 
     public void hearModalDropdown(String context, int selection) {
         this.selection = names[selection];
+        modal.widgetChanged(this);
     }
 }

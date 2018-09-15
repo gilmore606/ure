@@ -87,7 +87,10 @@ public class Mines extends Shaper {
         }
     }
 
-    public Mines(int xsize, int ysize) { super(xsize, ysize); }
+    public Mines(int xsize, int ysize) {
+        super(xsize, ysize);
+        name = "Mines";
+    }
 
     @Override
     void setupParams() {

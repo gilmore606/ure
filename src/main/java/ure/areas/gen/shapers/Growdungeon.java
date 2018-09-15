@@ -12,6 +12,7 @@ public class Growdungeon extends Shaper {
 
     public Growdungeon(int xsize, int ysize) {
         super(xsize,ysize);
+        name = "Growdungeon";
     }
 
 

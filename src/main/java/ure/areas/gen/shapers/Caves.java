@@ -6,6 +6,7 @@ public class Caves extends Shaper {
 
     public Caves(int xsize, int ysize) {
         super(xsize, ysize);
+        name = "Caves";
     }
 
     @Override

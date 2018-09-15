@@ -57,7 +57,7 @@ public class Convochain extends Shaper {
 
     public Convochain(int xsize, int ysize) {
         super(xsize,ysize);
-
+        name = "Convochain";
     }
 
     @Override

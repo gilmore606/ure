@@ -22,6 +22,8 @@ public abstract class Shaper extends Shape {
 
     public ArrayList<Room> rooms;
 
+    public String name;
+
     public Shaper(int xsize, int ysize) {
         super(xsize,ysize);
         Injector.getAppComponent().inject(this);

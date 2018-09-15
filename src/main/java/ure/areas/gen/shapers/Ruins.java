@@ -11,6 +11,7 @@ public class Ruins extends Shaper {
 
     public Ruins(int xsize, int ysize) {
         super(xsize, ysize);
+        name = "Ruins";
     }
 
     @Override

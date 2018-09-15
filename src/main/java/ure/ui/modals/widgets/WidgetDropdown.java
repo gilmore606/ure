@@ -44,4 +44,23 @@ public class WidgetDropdown extends Widget implements HearModalDropdown {
         this.selection = selection;
         modal.widgetChanged(this);
     }
+
+    public String selected() {
+        return choices[selection];
+    }
+
+    public void selectChoice(String choice) {
+        for (int i=0;i<choices.length;i++) {
+            if (choice.equals(choices[i])) {
+                selection = i;
+                return;
+            }
+        }
+    }
+
+    public void setChoices(String[] choices) {
+        this.choices = choices;
+        if (selection >= choices.length)
+            selection = choices.length-1;
+    }
 }
