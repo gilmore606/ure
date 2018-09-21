@@ -148,6 +148,14 @@ public class View {
         return absoluteY;
     }
 
+    public int mouseX() {
+        return commander.mouseX() - absoluteX();
+    }
+
+    public int mouseY() {
+        return commander.mouseY() - absoluteY();
+    }
+
     /**
      * Draw this view.  The renderer will handle drawing any child views.
      */

@@ -10,6 +10,7 @@ import ure.ui.modals.UModalLoading;
 import ure.ui.modals.UModalTabs;
 import ure.ui.modals.widgets.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +28,8 @@ public class LandedModal extends UModalTabs {
     Layer layer;
 
     ArrayList<ULight> roomLights;
+
+    WidgetDropdown vaultSetPicker;
 
     WidgetButton layerUpButton, layerDownButton, layerDeleteButton;
     WidgetDropdown layerPicker;
@@ -141,6 +144,10 @@ public class LandedModal extends UModalTabs {
         lightList = new WidgetListVert(this, 0, 7, new String[]{});
         addWidget(lightList);
 
+        addWidget(new WidgetText(this, 0, 12, "vault set:"));
+        vaultSetPicker = new WidgetDropdown(this, 6, 12, commander.getResourceList("vaults"), 0);
+        addWidget(vaultSetPicker);
+
         changeTab(null);
 
         tabSlider = new WidgetSlideTabs(this, 0, 36, 20, tabList(), 0);
@@ -194,14 +201,14 @@ public class LandedModal extends UModalTabs {
         Layer layer = new Layer();
         layers.add(layer);
         HashMap<String,Shaper> shapers = new HashMap<>();
-        shapers.put("Caves", new Caves(area.xsize-2,area.ysize-2));
-        shapers.put("Mines", new Mines(area.xsize-2,area.ysize-2));
-        shapers.put("Growdungeon", new Growdungeon(area.xsize-2,area.ysize-2));
-        shapers.put("Chambers", new Chambers(area.xsize-2,area.ysize-2));
-        shapers.put("Convochain", new Convochain(area.xsize-2,area.ysize-2));
-        shapers.put("Ruins", new Ruins(area.xsize-2,area.ysize-2));
-        shapers.put("Blobs", new Blobs(area.xsize-2,area.ysize-2));
-        shapers.put("Roads", new Roads(area.xsize-2,area.ysize-2));
+        shapers.put("Caves", new Caves(area.xsize,area.ysize));
+        shapers.put("Mines", new Mines(area.xsize,area.ysize));
+        shapers.put("Growdungeon", new Growdungeon(area.xsize,area.ysize));
+        shapers.put("Chambers", new Chambers(area.xsize,area.ysize));
+        shapers.put("Convochain", new Convochain(area.xsize,area.ysize));
+        shapers.put("Ruins", new Ruins(area.xsize,area.ysize));
+        shapers.put("Blobs", new Blobs(area.xsize,area.ysize));
+        shapers.put("Roads", new Roads(area.xsize,area.ysize));
         layerShapers.add(shapers);
         layer.shaper = shapers.get("Caves");
         layer.terrain = "null";
@@ -394,7 +401,7 @@ public class LandedModal extends UModalTabs {
             area.initialize(areaWidthSlider.value, areaHeightSlider.value, fillPicker.selection);
             layer.shaper.resize(areaWidthSlider.value-2, areaHeightSlider.value-2);
         }
-        scaper.setup(layers, fillPicker.selection, doorPicker.selection, structurePicker. selection, (float)(doorSlider.value)/100f, (float)(lightChanceSlider.value)/100f, roomLights);
+        scaper.setup(layers, fillPicker.selection, doorPicker.selection, structurePicker. selection, (float)(doorSlider.value)/100f, (float)(lightChanceSlider.value)/100f, roomLights, vaultSetPicker.selected());
         scaper.buildArea(area, 1, new String[]{});
 
         commander.camera().renderLights();

@@ -235,4 +235,70 @@ public class UPath {
         log.debug("failed path in max stepcount");
         return null;
     }
+
+    public static int[][] steps(UArea area, int x1, int y1, int x2, int y2, UActor actor, int range) {
+        if (mdist(x1,y1,x2,y2) > range)
+            return null;
+        Nodelist openlist = new Nodelist();
+        Nodelist closedlist = new Nodelist();
+        Node start = new Node(x1,y1);
+        openlist.add(start);
+        int stepcount = 0;
+        while (!openlist.isEmpty() && stepcount < 2000) {
+            stepcount++;
+            Node q = openlist.pollFirst();
+            openlist.remove(q);
+            Node[] steps = new Node[8];
+            steps[0] = NodeIfOpen(area, q.x-1, q.y, q, actor);
+            steps[1] = NodeIfOpen(area, q.x+1, q.y, q, actor);
+            steps[2] = NodeIfOpen(area, q.x, q.y-1, q, actor);
+            steps[3] = NodeIfOpen(area, q.x, q.y+1, q, actor);
+            steps[4] = NodeIfOpen(area, q.x-1,q.y-1, q, actor);
+            steps[5] = NodeIfOpen(area, q.x+1,q.y+1, q, actor);
+            steps[6] = NodeIfOpen(area, q.x-1,q.y+1,q,actor);
+            steps[7] = NodeIfOpen(area, q.x+1,q.y-1,q,actor);
+            for (int i=0;i<8;i++) {
+                Node step = steps[i];
+                if (step != null) {
+                    if (step.x == x2 && step.y == y2) { // FOUND IT
+                        Node countFrom = step;
+                        int pathLength = 0;
+                        while (countFrom.parent != start) {
+                            countFrom = countFrom.parent;
+                            pathLength++;
+                        }
+                        int[][] path = new int[pathLength][2];
+                        pathLength--;
+                        while (step.parent != start) {
+                            step = step.parent;
+                            path[pathLength][0] = step.x;
+                            path[pathLength][1] = step.y;
+                            pathLength--;
+                        }
+                        return path;
+                    }
+                    step.recalc(x2,y2);
+                    boolean skipstep = false;
+                    for (Node o : openlist) {
+                        if ((o.x == step.x) && (o.y == step.y) && (o.f < step.f)) {
+                            skipstep = true;
+                        }
+                    }
+                    for (Node c : closedlist) {
+                        if ((c.x == step.x) && (c.y == step.y) && (c.f < step.f)) {
+                            skipstep = true;
+                        }
+                    }
+                    if (mdist(x1,y1,step.x,step.y) > range)
+                        skipstep = true;
+                    if (!skipstep) {
+                        openlist.add(step);
+                    }
+                }
+            }
+            closedlist.add(q);
+        }
+        log.debug("failed path in max stepcount");
+        return null;
+    }
 }

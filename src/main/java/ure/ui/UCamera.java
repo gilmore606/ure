@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.areas.UCell;
+import ure.math.Dimap;
 import ure.math.UColor;
 import ure.math.SimplexNoise;
 import ure.math.UPath;
@@ -39,6 +40,8 @@ public class UCamera extends View implements UAnimator {
     @Inject
     EventBus bus;
 
+    Dimap testmap;
+
     public UArea area;
     float zoom = 1.0f;
     public int columns, rows;
@@ -48,6 +51,9 @@ public class UCamera extends View implements UAnimator {
     private ULightcell lightcells[][];
     private HashSet<UActor> visibilitySources;
     private boolean lightEnable = true;
+
+    private int cursorX, cursorY;
+    private int[][] cursorPath;
 
     public static int PINSTYLE_NONE = 0;
     public static int PINSTYLE_SOFT = 1;
@@ -164,6 +170,7 @@ public class UCamera extends View implements UAnimator {
         area = theArea;
         moveTo(thex,they);
         if (areachange) {
+            testmap = new Dimap(area, commander);
             renderer.render();
         }
     }
@@ -579,6 +586,8 @@ public class UCamera extends View implements UAnimator {
                 drawCellFog(col, row, fogDistance, fogDistanceFull);
             }
         }
+
+        drawCursor();
     }
 
     private void drawCell(int col, int row) {
@@ -706,6 +715,7 @@ public class UCamera extends View implements UAnimator {
     }
 
     public void animationTick() {
+        updateCursor();
         float visThreshold;
         if (config.isVisibilityEnable())
             visThreshold = config.getVisibilityThreshold();
@@ -715,6 +725,47 @@ public class UCamera extends View implements UAnimator {
             for (int row = topEdge; row< bottomEdge; row++) {
                 if (area.isValidXY(col,row) && lightcells[col- leftEdge][row- topEdge].visibility > visThreshold)
                     area.cellAt(col,row).animationTick();
+            }
+        }
+    }
+
+    void updateCursor() {
+        if (commander.player() == null) return;
+        int mouseCol = mouseX() / config.getTileWidth();
+        int mouseRow = mouseY() / config.getTileHeight();
+        if (mouseCol < 0 || mouseRow < 0 || mouseCol >= columns || mouseRow >= rows) {
+            cursorX = -1;
+            cursorY = -1;
+            cursorPath = null;
+        } else if (cursorX != mouseCol || cursorY != mouseRow) {
+            cursorX = mouseCol;
+            cursorY = mouseRow;
+        }
+        testmap.valueAt(0,0);
+    }
+
+    void drawCursor() {
+        if (cursorX < 0) return;
+        if (testmap == null) return;
+        renderer.drawRect(cursorX*config.getTileWidth(), cursorY*config.getTileHeight(), config.getTileWidth(), config.getTileHeight(), config.getHiliteColor());
+        int linepos[] = new int[]{cursorX+leftEdge,cursorY+topEdge};
+        float steps = testmap.valueAt(linepos[0],linepos[1]);
+        while (steps > 0) {
+            renderer.drawRect((linepos[0]-leftEdge)*config.getTileWidth(),(linepos[1]-topEdge)*config.getTileHeight(),config.getTileWidth(),config.getTileHeight(), config.getHiliteColor());
+            linepos = testmap.stepDown(linepos);
+            if (linepos == null) break;
+            steps = testmap.valueAt(linepos[0],linepos[1]);
+        }
+        if (false) {
+            for (int i = 0;i < columns;i++) {
+                for (int j = 0;j < rows;j++) {
+                    int mx = i + leftEdge;
+                    int my = j + topEdge;
+                    if (area.isValidXY(mx, my)) {
+                        float v = testmap.valueAt(mx, my);
+                        renderer.drawString(i * config.getTileWidth(), j * config.getTileHeight(), UColor.RED, Integer.toString((int) v));
+                    }
+                }
             }
         }
     }

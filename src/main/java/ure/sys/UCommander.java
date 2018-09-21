@@ -762,18 +762,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public void launchVaulted() {
-        File dirfile = new File(config.getResourcePath() + "vaults/");
-        ArrayList<String> fileList = new ArrayList<>();
-        for (String filename : dirfile.list()) {
-            if (filename.endsWith(".json")) {
-                printScroll("found " + filename);
-                fileList.add(filename.substring(0,filename.length()-5));
-            }
-        }
-        fileList.add("<new vaultSet>");
-        String[] filearray = new String[fileList.size()];
         UModalStringPick spmodal = new UModalStringPick("Select vaultSet to edit:",
-                fileList.toArray(filearray), this, "vaulted-pickfile");
+                getResourceList("vaults"), this, "vaulted-pickfile");
         printScroll("Launching VaultEd...");
         showModal(spmodal);
     }
@@ -805,5 +795,19 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     public void toggleFullscreen() {
         renderer.toggleFullscreen();
+    }
+
+    public String[] getResourceList(String dirname) { return getResourceList(dirname, ".json"); }
+    public String[] getResourceList(String dirname, String suffix) {
+        File dirfile = new File(config.getResourcePath() + dirname + "/");
+        ArrayList<String> fileList = new ArrayList<>();
+        for (String filename : dirfile.list()) {
+            if (filename.endsWith(suffix))
+                fileList.add(filename.substring(0,filename.length()-suffix.length()));
+        }
+        String[] resources = new String[fileList.size()];
+        for (int i=0;i<fileList.size();i++)
+            resources[i] = fileList.get(i);
+        return resources;
     }
 }

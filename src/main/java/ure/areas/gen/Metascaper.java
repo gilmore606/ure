@@ -1,5 +1,6 @@
 package ure.areas.gen;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.areas.UArea;
 import ure.areas.gen.shapers.Shaper;
 import ure.ui.ULight;
@@ -18,6 +19,11 @@ public class Metascaper extends ULandscaper {
     String wallTerrain, doorTerrain, structureTerrain;
     float doorChance, lightChance;
     ArrayList<ULight> roomLights;
+    UVaultSet vaultSet;
+    String vaultSetName;
+
+    @JsonIgnore
+    ArrayList<Shape.Room> rooms;
 
     public Metascaper() {
         super(TYPE);
@@ -27,7 +33,7 @@ public class Metascaper extends ULandscaper {
         area.wipe(wallTerrain);
         for (Layer layer : layers) {
             layer.build();
-            layer.print(area, 1, 1, structureTerrain);
+            layer.print(area, 0, 0, structureTerrain);
         }
 
         roomLayer = layers.get(0);
@@ -35,13 +41,16 @@ public class Metascaper extends ULandscaper {
             if (layer.rooms().size() > roomLayer.rooms().size())
                 roomLayer = layer;
         }
+        rooms = roomLayer.rooms();
         if (doorChance > 0f)
             addDoors(area);
+        if (vaultSet != null)
+            addVaults(area);
         if (lightChance > 0f)
             addRoomLights(area);
     }
 
-    public void setup(ArrayList<Layer> layers, String wallTerrain, String doorTerrain, String structureTerrain, float doorChance, float lightChance, ArrayList<ULight> roomLights) {
+    public void setup(ArrayList<Layer> layers, String wallTerrain, String doorTerrain, String structureTerrain, float doorChance, float lightChance, ArrayList<ULight> roomLights, String vaultSetName) {
         this.layers = layers;
         this.wallTerrain = wallTerrain;
         this.doorTerrain = doorTerrain;
@@ -49,6 +58,9 @@ public class Metascaper extends ULandscaper {
         this.doorChance = doorChance;
         this.lightChance = lightChance;
         this.roomLights = roomLights;
+        if (vaultSetName != null)
+            if (!vaultSetName.equals(this.vaultSetName))
+                this.vaultSet = commander.cartographer.loadVaultSet(vaultSetName);
     }
 
 
@@ -63,7 +75,7 @@ public class Metascaper extends ULandscaper {
             for (int y=0;y<area.ysize;y++) {
                 if (roomLayer.shaper.value(x,y)) {
                     if (canDoor(area, x, y, patterns) && random.f() < doorChance) {
-                        area.setTerrain(x+1, y+1, doorTerrain);
+                        area.setTerrain(x, y, doorTerrain);
                     }
                 }
             }
@@ -79,7 +91,7 @@ public class Metascaper extends ULandscaper {
     }
 
     void addRoomLights(UArea area) {
-        for (Shaper.Room r : roomLayer.rooms()) {
+        for (Shape.Room r : rooms) {
             if (!r.isHallway() && r.isOpen(area)) {
                 if (random.f() < lightChance) {
                     ULight l = roomLights.get(random.i(roomLights.size())).clone();
@@ -91,6 +103,22 @@ public class Metascaper extends ULandscaper {
                         l.setFalloff(l.getRange()/2);
                         l.moveTo(area,r.x+(r.width/2),r.y+(r.height/2));
                     }
+                }
+            }
+        }
+    }
+
+    void addVaults(UArea area) {
+        if (vaultSet == null) return;
+        if (rooms == null) return;
+        ArrayList<UVault> vaults = vaultSet.getVaults();
+        for (UVault v : vaults) {
+            for (Shape.Room r : rooms) {
+                if (v.fitsIn(r)) {
+                    v.printToArea(area, r);
+                    if (v.lights != null)
+                        rooms.remove(r);
+                    break;
                 }
             }
         }

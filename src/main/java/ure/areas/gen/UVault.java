@@ -2,6 +2,7 @@ package ure.areas.gen;
 
 import ure.actors.SpawnActor;
 import ure.actors.UActor;
+import ure.areas.UArea;
 import ure.things.SpawnItem;
 import ure.things.UThing;
 import ure.ui.ULight;
@@ -111,5 +112,29 @@ public class UVault {
 
     public void deleteLight(ULight l) {
         lights.remove(l);
+    }
+
+    public boolean fitsIn(Shape.Room room) {
+        if (room.width == cols && room.height == rows) return true;
+        return false;
+    }
+
+    public void printToArea(UArea area, Shape.Room room) {
+        int w = room.width;
+        int h = room.height;
+        for (int i=0;i<w;i++) {
+            for (int j=0;j<h;j++) {
+                String t = terrainAt(i,j);
+                if (t != null) {
+                    if (!t.equals("null")) {
+                        area.setTerrain(room.x + i, room.y + j, terrainAt(i, j));
+                    }
+                }
+            }
+        }
+        for (ULight light : lights) {
+            ULight newlight = light.clone();
+            newlight.moveTo(area, room.x + light.x, room.y + light.y);
+        }
     }
 }
