@@ -1,6 +1,5 @@
 package ure.math;
 
-import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.sys.UCommander;
 import ure.terrain.UTerrain;
@@ -15,8 +14,8 @@ public class Dimap {
 
     float[][] map;
     int[][] edges;
-    int[][] newedges;
-    int edgei, newedgei;
+    int[][] newEdges;
+    int edgeI, newEdgeI;
 
     int updateTurn = 0;
 
@@ -29,9 +28,9 @@ public class Dimap {
         this.commander = commander;
         map = new float[area.xsize][area.ysize];
         edges = new int[(area.xsize+area.ysize)*3][2];
-        newedges = new int[(area.xsize+area.ysize)*3][2];
-        edgei = 0;
-        newedgei = 0;
+        newEdges = new int[(area.xsize+area.ysize)*3][2];
+        edgeI = 0;
+        newEdgeI = 0;
         targets = new ArrayList<>();
     }
 
@@ -84,17 +83,17 @@ public class Dimap {
             for (int j = 0;j < map[0].length;j++)
                 map[i][j] = -1f;
         }
-        edgei = 0;
+        edgeI = 0;
         for (int[] tp : targets) {
             map[tp[0]][tp[1]] = 0f;
-            edges[edgei][0] = tp[0]; edges[edgei][1] = tp[1];
-            edgei++;
+            edges[edgeI][0] = tp[0]; edges[edgeI][1] = tp[1];
+            edgeI++;
         }
 
         float step = 0f;
-        while (edgei > 0) {
-            newedgei = 0;
-            for (int ei=0;ei<edgei;ei++) {
+        while (edgeI > 0) {
+            newEdgeI = 0;
+            for (int ei = 0;ei< edgeI;ei++) {
                 int[] edge = edges[ei];
                 if (map[edge[0]][edge[1]] <= step) {
                     for (int[] dir : dirs) {
@@ -106,21 +105,25 @@ public class Dimap {
                                 UTerrain t = area.terrainAt(nx, ny);
                                 if (t != null) {
                                     if (t.isPassable()) {
-                                        map[nx][ny] = map[edge[0]][edge[1]] + t.getMovespeed();
-                                        newedges[newedgei][0] = nx;
-                                        newedges[newedgei][1] = ny;
-                                        newedgei++;
+                                        map[nx][ny] = map[edge[0]][edge[1]] + 1f / t.getMovespeed();
+                                        newEdges[newEdgeI][0] = nx;
+                                        newEdges[newEdgeI][1] = ny;
+                                        newEdgeI++;
                                     }
                                 }
                             }
                         }
                     }
+                } else {
+                    newEdges[newEdgeI][0] = edge[0];
+                    newEdges[newEdgeI][1] = edge[1];
+                    newEdgeI++;
                 }
             }
             int[][] tmp = edges;
-            edges = newedges;
-            newedges = tmp;
-            edgei = newedgei;
+            edges = newEdges;
+            newEdges = tmp;
+            edgeI = newEdgeI;
             step = step + 1f;
         }
         updateTurn = commander.turnCounter;

@@ -78,6 +78,7 @@ public class UConfig {
     private boolean ambientOcclusionIso = true;         // shadow south edge only for faux-isometric shading
     private boolean smoothLightCones = true;            // dither edges of light cones
     private boolean fog = true;                         // area-specific distance fog
+    private boolean telemetry = false;                  // diagnostic telemetry
 
     private float visibilityThreshold = 0.2f;           // how 'visible' is a cell before we consider it seen? (ucamera 512, 537)
     private float seenOpacity = 0.55f;                  // how bright to draw seen-but-not-visible terrain
@@ -608,4 +609,6 @@ public class UConfig {
     public int getVolumeFalloffDistance() { return volumeFalloffDistance; }
     public boolean isFog() { return fog; }
     public void setFog(boolean b) { fog = b; }
+    public boolean isTelemetry() { return telemetry; }
+    public void setTelemetry(boolean b) { telemetry = b; }
 }

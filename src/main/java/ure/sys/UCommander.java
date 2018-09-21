@@ -299,6 +299,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                 debug_3();
             } else if (k.k == GLFW_KEY_F4) {
                 debug_4();
+            } else if (k.k == GLFW_KEY_F5) {
+                debug_5();
             } else if (k.k == GLFW_KEY_ENTER && k.alt) {
                 toggleFullscreen();
             } else if (k.k == GLFW_KEY_EQUAL && k.alt) {
@@ -432,6 +434,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     void debug_3() { config.setAmbientOcclusion(!config.isAmbientOcclusion()); }
 
     void debug_4() { config.setFog(!config.isFog()); }
+
+    void debug_5() { config.setTelemetry(!config.isTelemetry()); }
 
     /**
      * Print a message to the scroll printer.

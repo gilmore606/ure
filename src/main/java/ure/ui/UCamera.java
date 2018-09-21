@@ -757,14 +757,15 @@ public class UCamera extends View implements UAnimator {
             if (linepos == null) break;
             steps = testmap.valueAt(linepos[0],linepos[1]);
         }
-        if (false) {
+        if (config.isTelemetry()) {
             for (int i = 0;i < columns;i++) {
                 for (int j = 0;j < rows;j++) {
                     int mx = i + leftEdge;
                     int my = j + topEdge;
                     if (area.isValidXY(mx, my)) {
                         float v = testmap.valueAt(mx, my);
-                        renderer.drawString(i * config.getTileWidth(), j * config.getTileHeight(), UColor.RED, Integer.toString((int) v));
+                        if (v > 0f)
+                            renderer.drawString(i * config.getTileWidth(), j * config.getTileHeight(), config.getHiliteColor(), Integer.toString((int) v));
                     }
                 }
             }
