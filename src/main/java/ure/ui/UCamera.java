@@ -747,6 +747,7 @@ public class UCamera extends View implements UAnimator {
     void drawCursor() {
         if (cursorX < 0) return;
         if (testmap == null) return;
+        if (commander.modal() != null) return;
         renderer.drawRect(cursorX*config.getTileWidth(), cursorY*config.getTileHeight(), config.getTileWidth(), config.getTileHeight(), config.getHiliteColor());
         int linepos[] = new int[]{cursorX+leftEdge,cursorY+topEdge};
         float steps = testmap.valueAt(linepos[0],linepos[1]);

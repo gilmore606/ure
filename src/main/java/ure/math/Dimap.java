@@ -11,7 +11,7 @@ public class Dimap {
 
     UArea area;
     UCommander commander;
-    static int[][] dirs = {{-1,-1},{0,-1},{1,-1},{1,0},{1,1},{0,1},{-1,1},{-1,0}};
+    static int[][] dirs = {{-1,0},{1,0},{0,-1},{0,1},{-1,-1},{1,1},{-1,1},{1,-1}};
 
     float[][] map;
     int[][] edges;
@@ -66,6 +66,7 @@ public class Dimap {
     }
 
     boolean updateTargets() {
+        if (commander.player() == null) return false;
         if (commander.player().areaX() != targetx || commander.player().areaY() != targety) {
             targets.clear();
             addTarget(commander.player().areaX(),commander.player().areaY());
