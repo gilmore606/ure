@@ -54,7 +54,7 @@ import static org.lwjgl.glfw.GLFW.*;
  */
 
 
-public class UCommander implements URenderer.KeyListener,HearModalGetString,HearModalStringPick {
+public class UCommander implements URenderer.KeyListener,HearModalGetString,HearModalStringPick,HearModalFade {
 
     @Inject
     public USpeaker speaker;
@@ -100,6 +100,9 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     private boolean moveLatch = false;
     private int moveLatchX = 0;
     private int moveLatchY = 0;
+
+    private UArea transportPlayerArea;
+    private int transportPlayerX, transportPlayerY;
 
     private HashMap<String,UCommand> rightClickCommands;
 
@@ -596,6 +599,17 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void transportPlayer(UArea area, int x, int y) {
+        transportPlayerArea = area;
+        transportPlayerX = x;
+        transportPlayerY = y;
+        showModal(new UModalFade(this, "", 0.1f));
+    }
+
+    public void hearModalFade(String context) {
+        player.moveToCell(transportPlayerArea, transportPlayerX, transportPlayerY);
     }
 
     /**

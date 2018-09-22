@@ -40,8 +40,6 @@ public class UCamera extends View implements UAnimator {
     @Inject
     EventBus bus;
 
-    Dimap testmap;
-
     public UArea area;
     float zoom = 1.0f;
     public int columns, rows;
@@ -170,7 +168,6 @@ public class UCamera extends View implements UAnimator {
         area = theArea;
         moveTo(thex,they);
         if (areachange) {
-            testmap = new Dimap(area, commander);
             renderer.render();
         }
     }
@@ -741,21 +738,21 @@ public class UCamera extends View implements UAnimator {
             cursorX = mouseCol;
             cursorY = mouseRow;
         }
-        testmap.valueAt(0,0);
     }
 
     void drawCursor() {
         if (cursorX < 0) return;
-        if (testmap == null) return;
+        if (commander.player() == null) return;
         if (commander.modal() != null) return;
         renderer.drawRect(cursorX*config.getTileWidth(), cursorY*config.getTileHeight(), config.getTileWidth(), config.getTileHeight(), config.getHiliteColor());
         int linepos[] = new int[]{cursorX+leftEdge,cursorY+topEdge};
-        float steps = testmap.valueAt(linepos[0],linepos[1]);
+        Dimap playermap = area.dimapTo(commander.player());
+        float steps = playermap.valueAt(linepos[0],linepos[1]);
         while (steps > 0) {
             renderer.drawRect((linepos[0]-leftEdge)*config.getTileWidth(),(linepos[1]-topEdge)*config.getTileHeight(),config.getTileWidth(),config.getTileHeight(), config.getHiliteColor());
-            linepos = testmap.stepDown(linepos);
+            linepos = playermap.stepDown(linepos);
             if (linepos == null) break;
-            steps = testmap.valueAt(linepos[0],linepos[1]);
+            steps = playermap.valueAt(linepos[0],linepos[1]);
         }
         if (config.isTelemetry()) {
             for (int i = 0;i < columns;i++) {
@@ -763,7 +760,7 @@ public class UCamera extends View implements UAnimator {
                     int mx = i + leftEdge;
                     int my = j + topEdge;
                     if (area.isValidXY(mx, my)) {
-                        float v = testmap.valueAt(mx, my);
+                        float v = playermap.valueAt(mx, my);
                         if (v > 0f)
                             renderer.drawString(i * config.getTileWidth(), j * config.getTileHeight(), config.getHiliteColor(), Integer.toString((int) v));
                     }

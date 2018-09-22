@@ -1,5 +1,6 @@
 package ure.math;
 
+import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.sys.UCommander;
 import ure.terrain.UTerrain;
@@ -21,17 +22,24 @@ public class Dimap {
 
     ArrayList<int[]> targets;
 
+    public UActor actorTarget;
+
     int targetx,targety;  // this is mostly for test right now
 
-    public Dimap(UArea area, UCommander commander) {
+    public Dimap(UArea area) {
         this.area = area;
-        this.commander = commander;
+        this.commander = area.commander;
         map = new float[area.xsize][area.ysize];
         edges = new int[(area.xsize+area.ysize)*3][2];
         newEdges = new int[(area.xsize+area.ysize)*3][2];
         edgeI = 0;
         newEdgeI = 0;
         targets = new ArrayList<>();
+    }
+
+    public Dimap(UArea area, UActor actor) {
+        this(area);
+        actorTarget = actor;
     }
 
     public float valueAt(int x, int y) {
@@ -65,10 +73,10 @@ public class Dimap {
     }
 
     boolean updateTargets() {
-        if (commander.player() == null) return false;
-        if (commander.player().areaX() != targetx || commander.player().areaY() != targety) {
+        if (actorTarget == null) return false;
+        if (actorTarget.areaX() != targetx || actorTarget.areaY() != targety) {
             targets.clear();
-            addTarget(commander.player().areaX(),commander.player().areaY());
+            addTarget(actorTarget.areaX(),actorTarget.areaY());
             return true;
         }
         return false;

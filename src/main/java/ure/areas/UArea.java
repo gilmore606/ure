@@ -6,6 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.actors.UPlayer;
+import ure.math.Dimap;
 import ure.math.URandom;
 import ure.sys.Injector;
 import ure.sys.UCommander;
@@ -93,12 +94,16 @@ public class UArea implements Serializable {
     @JsonIgnore
     public ArrayList<Stairs> stairsLinks;
 
+    @JsonIgnore
+    ArrayList<Dimap> dimaps;
+
     private Log log = LogFactory.getLog(UArea.class);
 
     public UArea() {
         Injector.getAppComponent().inject(this);
         bus.register(this);
         config.addDefaultSunCycle(this);
+        dimaps = new ArrayList<>();
     }
     public UArea(int thexsize, int theysize, String defaultTerrain) {
         this();
@@ -498,6 +503,16 @@ public class UArea implements Serializable {
         }
     }
 
+    public Dimap dimapTo(UActor actor) {
+        for (Dimap map : dimaps) {
+            if (map.actorTarget == actor) {
+                return map;
+            }
+        }
+        Dimap map = new Dimap(actor.area(), actor);
+        dimaps.add(map);
+        return map;
+    }
 
     /**
      * Do what it takes to make this area ready for serialization.

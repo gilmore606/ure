@@ -12,6 +12,7 @@ import ure.sys.events.PlayerChangedAreaEvent;
 import ure.sys.Injector;
 import ure.ui.modals.HearModalChoices;
 import ure.ui.modals.UModalChoices;
+import ure.ui.modals.UModalFade;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -69,9 +70,11 @@ public class Stairs extends UTerrain implements HearModalChoices {
             log.warn("couldn't find back-matching stairs!  going to random space");
             dest = destarea.randomOpenCell(actor);
         }
-        actor.moveToCell(destarea, dest.areaX(), dest.areaY());
         if (actor instanceof UPlayer) {
+            commander.transportPlayer(destarea, dest.areaX(), dest.areaY());
             bus.post(new PlayerChangedAreaEvent((UPlayer)actor, this, sourcearea, destarea));
+        } else {
+            actor.moveToCell(destarea, dest.areaX(), dest.areaY());
         }
     }
 

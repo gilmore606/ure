@@ -60,7 +60,7 @@ public class UConfig {
     private UColor modalShadowColor = new UColor(0f,0f,0f,0.5f);  // color (and alpha) of modal shadows
     private UColor textColor = UColor.OFFWHITE;                             // color for ui/scroll text
     private UColor textGray = new UColor(0.72f, 0.72f, 0.55f, 1f);                                // color for grayed ui text
-    private UColor hiliteColor = new UColor(1f,1f,0.2f, 0.3f);            // color for ui selection highlighting
+    private UColor hiliteColor = new UColor(1f,1f,0.25f, 0.2f);            // color for ui selection highlighting
 
     private boolean outlineActors = true;                           // draw a black outline around Actor glyphs?
     private boolean outlineThings = false;                          // draw a black outline around Thing glyphs?
