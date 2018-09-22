@@ -122,7 +122,7 @@
     "name": "morel",
     "type": "food",
     "category": "consumables",
-    "description": "A delicious mushroom.",
+    "description": "A delicious wrinkly brown mushroom, a hunter's forest delight.",
     "tags": [ "forest", "food" ],
     "spawnlevels": [1,50],
     "weight": 0,

@@ -19,6 +19,8 @@ import ure.sys.UConfig;
 import ure.sys.events.ResolutionChangedEvent;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
+import ure.ui.modals.UModal;
+import ure.ui.modals.UModalNotify;
 import ure.ui.particles.UParticle;
 
 import javax.inject.Inject;
@@ -51,6 +53,8 @@ public class UCamera extends View implements UAnimator {
     private boolean lightEnable = true;
 
     private int cursorX, cursorY;
+    private long cursorEnterTime;
+    private int lastMouseX, lastMouseY;
     private int[][] cursorPath;
 
     public static int PINSTYLE_NONE = 0;
@@ -734,10 +738,25 @@ public class UCamera extends View implements UAnimator {
             cursorX = -1;
             cursorY = -1;
             cursorPath = null;
+            cursorEnterTime = System.currentTimeMillis();
         } else if (cursorX != mouseCol || cursorY != mouseRow) {
             cursorX = mouseCol;
             cursorY = mouseRow;
+            cursorEnterTime = System.currentTimeMillis();
+        } else if (lastMouseX == mouseX() && lastMouseY == mouseY()) {
+            if (System.currentTimeMillis() - cursorEnterTime > 500) {
+                if (!commander.hasTooltip() && !commander.hasModal()) {
+                    UModal tooltip = makeTooltip();
+                    if (tooltip != null) {
+                        commander.attachTooltip(tooltip);
+                    }
+                }
+            }
+        } else if (commander.hasTooltip()) {
+            commander.detachTooltip();
         }
+        lastMouseX = mouseX();
+        lastMouseY = mouseY();
     }
 
     void drawCursor() {
@@ -767,6 +786,18 @@ public class UCamera extends View implements UAnimator {
                 }
             }
         }
+    }
+
+    UModal makeTooltip() {
+        UModal tooltip = area.makeTooltipAt(cursorX+leftEdge, cursorY+topEdge);
+        if (tooltip != null) {
+            int toolx = cursorX;
+            int tooly = cursorY + 3;
+            if (toolx + tooltip.cellw >= columns)
+                toolx -= (toolx + tooltip.cellw - columns + 1);
+            tooltip.setChildPosition(toolx, tooly, this);
+        }
+        return tooltip;
     }
 
     public boolean isLightEnable() { return lightEnable; }

@@ -64,7 +64,7 @@ public class UModal extends View implements UAnimator {
     int dismissFrameEnd = 9;
     int zoomFrame = 0;
     int zoomDir = 0;
-    float zoom = 1f;
+    public float zoom = 1f;
     String title;
     ArrayList<Widget> widgets;
     Widget focusWidget;
@@ -337,8 +337,8 @@ public class UModal extends View implements UAnimator {
             updateMouse();
             if (zoomDir != 0) {
                 zoomFrame++;
-                zoom += (0.8f / config.getModalZoomFrames());
-                if (zoomFrame == config.getModalZoomFrames()) {
+                zoom += (0.8f / zoomFrames());
+                if (zoomFrame == zoomFrames()) {
                     zoomDir = 0;
                     zoom = 1f;
                 }
@@ -346,6 +346,10 @@ public class UModal extends View implements UAnimator {
             for (Widget w : widgets)
                 w.animationTick();
         }
+    }
+
+    public int zoomFrames() {
+        return config.getModalZoomFrames();
     }
 
     void updateMouse() {
@@ -437,6 +441,14 @@ public class UModal extends View implements UAnimator {
      * Return the length in glyph cells of the longest line of text.
      */
     public int longestLine(String[] lines) {
+        int longest = 0;
+        for (String line : lines) {
+            int len = renderer.textWidth(line);
+            if (len > longest) longest = len;
+        }
+        return longest / gw() + 1;
+    }
+    public int longestLine(ArrayList<String> lines) {
         int longest = 0;
         for (String line : lines) {
             int len = renderer.textWidth(line);

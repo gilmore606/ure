@@ -19,6 +19,7 @@ public interface Entity {
     String getPlural();
     String getCategory();
     ArrayList<String> UIdetails(String context);
+    ArrayList<String> UItips(String context);
     void setStat(String attribute, int value);
     int getStat(String attribute);
     UArea area();

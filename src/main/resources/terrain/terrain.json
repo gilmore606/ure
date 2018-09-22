@@ -76,7 +76,8 @@
       "glyphopen": "|",
       "walkmsg": "An open doorway.",
       "openmsg": "The door creaks open.",
-      "closemsg": "The door clicks shut."
+      "closemsg": "The door clicks shut.",
+      "lookmsg": "A rotting unfinished wooden door."
     },
     {
       "name": "window",
@@ -84,7 +85,8 @@
       "passable": false,
       "opaque": false,
       "sunvis": 1.0,
-      "bonkmsg": "Dusty glass panes in rotten wood framing."
+      "bonkmsg": "Dusty glass panes in rotten wood framing.",
+      "lookmsg": "Dusty glass panes set in rotting wood frames."
     },
     {
       "name": "tree",
@@ -178,7 +180,8 @@
       "movespeed": 0.5,
       "glow": true,
       "breaklatch": true,
-      "walkmsg": "Oh god it burns!  It BURNS!"
+      "walkmsg": "Oh god it burns!  It BURNS!",
+      "lookmsg": "Magma bubbles and creeps in slow motion flow."
     },
   {
     "name": "cave entrance",
@@ -188,6 +191,7 @@
     "opaque": false,
     "sunvis": 0.5,
     "walkmsg": "The trail slopes down into a dark cave.",
+    "lookmsg": "The trail slopes down into a dark cave.",
     "breaklatch": true,
     "ambientsound": "cave_entrance.wav",
     "ambientsoundGain": 0.9
@@ -200,7 +204,8 @@
     "opaque": false,
     "sunvis": 0.5,
     "breaklatch": true,
-    "walkmsg": "Rough stairs cut into the rock lead out of the cavern."
+    "walkmsg": "Rough stairs cut into the rock lead out of the cavern.",
+    "lookmsg": "Rough stairs cut into the rock lead out of the cavern."
   },
   {
     "name": "trapdoor",
@@ -210,7 +215,8 @@
     "opaque": false,
     "sunvis": 0.0,
     "breaklatch": true,
-    "walkmsg": "A trapdoor in the floor leads to a lower level."
+    "walkmsg": "A trapdoor in the floor leads to a lower level.",
+    "lookmsg": "A trapdoor in the floor leads to a lower level."
   },
   {
     "name": "ladder",
@@ -220,7 +226,8 @@
     "opaque": false,
     "sunvis": 0.0,
     "breaklatch": true,
-    "walkmsg": "A ladder leads up to a trapdoor in the ceiling."
+    "walkmsg": "A ladder leads up to a trapdoor in the ceiling.",
+    "lookmsg": "A ladder leads up to a trapdoor in the ceiling."
   }
 
   ]

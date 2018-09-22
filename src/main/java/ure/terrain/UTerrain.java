@@ -53,6 +53,7 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     protected String type;
     protected String walkmsg = "";
     protected String bonkmsg = "";
+    protected String lookmsg = "";
     protected char filechar;
     protected Icon icon;
     protected String category;
@@ -102,6 +103,17 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     }
 
     public ArrayList<String> UIdetails(String context) { return null; }
+
+    public ArrayList<String> UItips(String context) {
+        if (lookmsg != null) {
+            if (lookmsg.length() > 0) {
+                ArrayList<String> tips = new ArrayList<>();
+                tips.add(lookmsg);
+                return tips;
+            }
+        }
+        return null;
+    }
 
     public void becomeReal(UCell c) {
         cell = c;
@@ -198,6 +210,8 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     public void setBonkmsg(String bonkmsg) {
         this.bonkmsg = bonkmsg;
     }
+    public String getLookmsg() { return lookmsg; }
+    public void setLookmsg(String s) { lookmsg = s; }
 
     public char getFilechar() {
         return filechar;

@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import ure.actors.UPlayer;
 import ure.math.Dimap;
 import ure.math.URandom;
+import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actors.actions.UAction;
@@ -20,6 +21,8 @@ import ure.terrain.Stairs;
 import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
+import ure.ui.modals.UModal;
+import ure.ui.modals.UModalTooltip;
 import ure.ui.particles.UParticle;
 
 import javax.inject.Inject;
@@ -512,6 +515,28 @@ public class UArea implements Serializable {
         Dimap map = new Dimap(actor.area(), actor);
         dimaps.add(map);
         return map;
+    }
+
+    public UModal makeTooltipAt(int x, int y) {
+        UCell cell = cellAt(x,y);
+        if (cell != null) {
+            Entity entity = null;
+            if (cell.actorAt() != null) {
+                entity = cell.actorAt();
+            } else if (cell.things() != null) {
+                if (cell.things().size() > 0)
+                    entity = cell.things().get(0);
+            }
+            if (entity == null)
+                entity = cell.terrain();
+            if (entity != null) {
+                if (entity.UItips("") != null) {
+                    UModal tooltip = new UModalTooltip(entity);
+                    return tooltip;
+                }
+            }
+        }
+        return null;
     }
 
     /**

@@ -108,6 +108,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     private UModal modal;
     private Stack<UModal> modalStack;
+    private UModal tooltip;
 
     private boolean quitGame = false;
 
@@ -332,6 +333,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public void mousePressed() {
+        if (tooltip != null)
+            detachTooltip();
         if (modal != null)
             modal.mouseClick();
         else if (camera.isMouseInside())
@@ -472,6 +475,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         for (UAnimator anim : animators) {
             anim.animationTick();
         }
+        if (tooltip != null)
+            tooltip.animationTick();
         if (modal != null)
             modal.animationTick();
         if (!modalStack.empty()) {
@@ -764,6 +769,26 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                 if (m instanceof UModalInventory)
                     ((UModalInventory)m).reCategorize();
             }
+        }
+    }
+
+    public UModal tooltip() { return tooltip; }
+
+    public boolean hasTooltip() { return tooltip != null; }
+
+    public void attachTooltip(UModal tooltip) {
+        if (hasTooltip()) {
+            detachTooltip();
+        }
+        renderer.getRootView().addChild(tooltip);
+        this.tooltip = tooltip;
+        tooltip.onOpen();
+    }
+
+    public void detachTooltip() {
+        if (tooltip != null) {
+            renderer.getRootView().removeChild(tooltip);
+            tooltip = null;
         }
     }
 

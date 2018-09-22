@@ -17,7 +17,7 @@
   },
   {
     "name": "rat",
-    "description": "A big wet rat.",
+    "description": "A big wet rat with glittering red eyes.",
     "bodytype": "animal",
     "tags": [ "cave", "complex", "title" ],
     "spawnlevels": [ 1,5 ],
@@ -28,7 +28,7 @@
   },
   {
     "name": "rabbit",
-    "description": "A mangy jackrabbit.",
+    "description": "A mangy jackrabbit with long tattered ears and blotchy white fur.",
     "bodytype": "animal",
     "tags": [ "forest" ],
     "spawnterrain": [ "grass" ],
@@ -43,7 +43,7 @@
   },
   {
     "name": "sasquatch",
-    "description": "A foul smelling giant humanoid.",
+    "description": "A foul smelling giant humanoid.  Burrs and twigs are stuck in its muddy fur.",
     "tags": [ "rock", "forest" ],
     "spawnterrain": [ "grass", "sapling", "dirt" ],
     "spawnlevels": [ 2, 5 ],
@@ -58,7 +58,7 @@
   },
   {
     "name": "soldier",
-    "description": "Some goon.",
+    "description": "Some goon in a patchwork military uniform.  The insignia are strange and unfamiliar.",
     "tags": [ "complex" ],
     "spawnlevels": [ 1, 5 ],
     "behaviors": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "cave snail",
-    "description": "A dog sized snail with a coral-pattern shell.",
+    "description": "A dog sized snail with a coral-pattern shell.  Mindless eyes wave at the ends of its head-feeler things.",
     "bodytype": "mollusk",
     "tags": [ "cave" ],
     "spawnlevels": [1, 3],

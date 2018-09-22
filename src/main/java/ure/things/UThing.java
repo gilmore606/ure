@@ -157,6 +157,11 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
         d.add(description());
         return d;
     }
+    public ArrayList<String> UItips(String context) {
+        ArrayList<String> tips = new ArrayList<>();
+        tips.add(description());
+        return tips;
+    }
 
     public void moveToCell(int x, int y) {
         moveToCell(area(), x, y);

@@ -119,6 +119,15 @@ public class Stairs extends UTerrain implements HearModalChoices {
             transportActor(commander.player());
     }
 
+    @Override
+    public ArrayList<String> UItips(String context) {
+        ArrayList<String> tips = super.UItips(context);
+        if (tips == null)
+            tips = new ArrayList<String>();
+        tips.add(" ");
+        tips.add("(Leads to " + commander.cartographer.describeLabel(label) + ".)");
+        return tips;
+    }
 
     public int getDestX() {
         return destX;
