@@ -762,7 +762,7 @@ public class UCamera extends View implements UAnimator {
                     if (area.isValidXY(mx, my)) {
                         float v = playermap.valueAt(mx, my);
                         if (v > 0f)
-                            renderer.drawString(i * config.getTileWidth(), j * config.getTileHeight(), config.getHiliteColor(), Integer.toString((int) v));
+                            renderer.drawString(i * config.getTileWidth(), j * config.getTileHeight(), config.getHiliteColor(), String.format("%.1f", v));
                     }
                 }
             }

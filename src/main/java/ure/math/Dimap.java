@@ -1,16 +1,28 @@
 package ure.math;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import ure.actors.UActor;
 import ure.areas.UArea;
+import ure.sys.Injector;
 import ure.sys.UCommander;
+import ure.sys.events.ActorMovedEvent;
 import ure.terrain.UTerrain;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 
 public class Dimap {
 
+    @Inject
+    public UCommander commander;
+    @Inject
+    public EventBus bus;
+
+    public boolean dirty;
+
     UArea area;
-    UCommander commander;
+
     static int[][] dirs = {{-1,0},{1,0},{0,-1},{0,1},{-1,-1},{1,1},{-1,1},{1,-1}};
 
     float[][] map;
@@ -27,14 +39,16 @@ public class Dimap {
     int targetx,targety;  // this is mostly for test right now
 
     public Dimap(UArea area) {
+        Injector.getAppComponent().inject(this);
         this.area = area;
-        this.commander = area.commander;
         map = new float[area.xsize][area.ysize];
         edges = new int[(area.xsize+area.ysize)*3][2];
         newEdges = new int[(area.xsize+area.ysize)*3][2];
         edgeI = 0;
         newEdgeI = 0;
         targets = new ArrayList<>();
+        dirty = false;
+        bus.register(this);
     }
 
     public Dimap(UArea area, UActor actor) {
@@ -43,7 +57,7 @@ public class Dimap {
     }
 
     public float valueAt(int x, int y) {
-        if (commander.turnCounter > updateTurn && updateTargets()) {
+        if (dirty || (commander.turnCounter > updateTurn || updateTargets())) {
             update();
         }
         if (area.isValidXY(x,y))
@@ -91,6 +105,8 @@ public class Dimap {
         if (actorTarget.areaX() != targetx || actorTarget.areaY() != targety) {
             targets.clear();
             addTarget(actorTarget.areaX(),actorTarget.areaY());
+            targetx = actorTarget.areaX();
+            targety = actorTarget.areaY();
             return true;
         }
         return false;
@@ -149,6 +165,14 @@ public class Dimap {
             step = step + 1f;
         }
         updateTurn = commander.turnCounter;
+        dirty = false;
+    }
+
+    @Subscribe
+    public void actorMoved(ActorMovedEvent event) {
+        if (event.actor == actorTarget) {
+            dirty = true;
+        }
     }
 
 }

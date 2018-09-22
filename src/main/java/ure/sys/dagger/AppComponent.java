@@ -6,6 +6,7 @@ import ure.areas.*;
 import ure.areas.gen.Shape;
 import ure.areas.gen.ULandscaper;
 import ure.areas.gen.shapers.Shaper;
+import ure.math.Dimap;
 import ure.mygame.MyGame;
 import ure.render.URendererOGL;
 import ure.sys.ResourceManager;
@@ -89,4 +90,5 @@ public interface AppComponent {
     void inject(UREWindow win);
     void inject(Shaper sha);
     void inject(ResourceManager manager);
+    void inject(Dimap map);
 }

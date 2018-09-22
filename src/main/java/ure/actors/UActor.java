@@ -11,6 +11,7 @@ import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.math.UPath;
+import ure.sys.events.ActorMovedEvent;
 import ure.sys.events.DeathEvent;
 import ure.terrain.UTerrain;
 import ure.things.Corpse;
@@ -109,10 +110,12 @@ public class UActor extends UThing implements Interactable {
         int oldx = -1;
         int oldy = -1;
         UArea oldarea = null;
+        UCell oldcell = null;
         if (getLocation() != null) {
             oldx = areaX();
             oldy = areaY();
             oldarea = area();
+            oldcell = (UCell)getLocation();
         }
         super.moveToCell(thearea, destX, destY);
         // TODO: Move the following logic to UCamera
@@ -125,8 +128,12 @@ public class UActor extends UThing implements Interactable {
             setMoveAnimDX(-(getMoveAnimX() / moveFrames));
             setMoveAnimDY(-(getMoveAnimY() / moveFrames));
         }
-        if (oldarea == thearea)
-            thearea.cellAt(destX, destY).walkedOnBy(this);
+        UCell newcell = (UCell)getLocation();
+        if (newcell != oldcell && newcell != null) {
+            if (oldarea == thearea)
+                newcell.walkedOnBy(this);
+            bus.post(new ActorMovedEvent(this, oldcell, newcell));
+        }
     }
 
     public void updatePinnedCamera() {
