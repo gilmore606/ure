@@ -72,6 +72,20 @@ public class Dimap {
         return pos;
     }
 
+
+    public int[] stepOut(int[] pos) {
+        if (valueAt(pos[0],pos[1]) < 0f) return null;
+        int[] lastpos = new int[2];
+        lastpos[0] = pos[0];
+        lastpos[1] = pos[1];
+        while (valueAt(pos[0],pos[1]) > 0f) {
+            lastpos[0] = pos[0];
+            lastpos[1] = pos[1];
+            pos = stepDown(pos);
+        }
+        return lastpos;
+    }
+
     boolean updateTargets() {
         if (actorTarget == null) return false;
         if (actorTarget.areaX() != targetx || actorTarget.areaY() != targety) {

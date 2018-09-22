@@ -283,10 +283,13 @@ public class UActor extends UThing implements Interactable {
     }
 
     public boolean stepToward(int x, int y) {
-        int[] step = UPath.nextStep(area(), areaX(), areaY(), x, y, this, 100);
+        int[] step = area().dimapTo(this).stepOut(new int[]{x,y});
+        //int[] step = UPath.nextStep(area(), areaX(), areaY(), x, y, this, 100);
         if (step != null) {
-            ActionWalk action = new ActionWalk(this, step[0] - areaX(), step[1] - areaY());
-            doAction(action);
+            if (step[0] != areaX() || step[1] != areaY()) {
+                ActionWalk action = new ActionWalk(this, step[0] - areaX(), step[1] - areaY());
+                doAction(action);
+            }
             return true;
         }
         return false;
