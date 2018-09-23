@@ -12,6 +12,7 @@ import ure.things.UThing;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * UPlayer implements a UActor whose actions are initiated by user input.  More than one can exist.
@@ -66,6 +67,11 @@ public class UPlayer extends UActor {
         statesF = new HashMap<>();
         statesB = new HashMap<>();
         statesS = new HashMap<>();
+
+        moveTypes = new HashSet<>();
+        moveTypes.add("walk");
+        moveTypes.add("climb");
+        moveTypes.add("wade");
     }
 
     @Override

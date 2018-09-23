@@ -2,14 +2,14 @@
   {
     "name": "null",
     "filechar": "@",
-    "passable": true,
+    "moveTypes": ["walk"],
     "opaque": false,
     "sunvis": 1.0
   },
     {
       "name": "grass",
       "filechar": ".",
-      "passable": true,
+      "moveTypes": ["walk","fly","roll"],
       "opaque": false,
       "spawnok": true,
       "sunvis": 1.0
@@ -17,7 +17,7 @@
   {
     "name": "dirt",
     "filechar": ",",
-    "passable": true,
+    "moveTypes": ["walk","fly","roll"],
     "opaque": false,
     "spawnok": true,
     "sunvis": 1.0,
@@ -26,7 +26,7 @@
     {
       "name": "wall",
       "filechar": "#",
-      "passable": false,
+      "moveTypes": [],
       "opaque": true,
       "sunvis": 0.0,
       "bonkmsg": "A stone block wall."
@@ -34,7 +34,7 @@
   {
     "name": "rock",
     "filechar": "O",
-    "passable": false,
+    "moveTypes": [],
     "opaque": true,
     "sunvis": 0.0,
     "bonkmsg": "A rough stone face."
@@ -42,7 +42,7 @@
     {
       "name": "floor",
       "filechar": "_",
-      "passable": true,
+      "moveTypes": ["walk","fly","roll"],
       "opaque": false,
       "spawnok": true,
       "sunvis": 0.0
@@ -50,7 +50,7 @@
     {
       "name": "floormoss",
       "filechar": "9",
-      "passable": true,
+      "moveTypes": ["walk","fly","roll"],
       "opaque": false,
       "spawnok": true,
       "sunvis": 0.0,
@@ -59,7 +59,7 @@
   {
   "name": "carvings",
     "filechar": "8",
-    "passable": true,
+    "moveTypes": ["walk","fly","roll"],
     "opaque": false,
     "spawnok": true,
     "sunvis": 0.0,
@@ -69,7 +69,7 @@
       "name": "door",
       "type": "door",
       "filechar": "D",
-      "passable": true,
+      "moveTypes": ["walk","fly","roll"],
       "opaque": true,
       "breaklatch": true,
       "sunvis": 0.0,
@@ -82,7 +82,7 @@
     {
       "name": "window",
       "filechar": "[",
-      "passable": false,
+      "moveTypes": ["climb"],
       "opaque": false,
       "sunvis": 1.0,
       "bonkmsg": "Dusty glass panes in rotten wood framing.",
@@ -91,7 +91,7 @@
     {
       "name": "tree",
       "filechar": "T",
-      "passable": false,
+      "moveTypes": [],
       "opaque": true,
       "sunvis": 0.5,
       "walkmsg": "Tall pine trees.",
@@ -100,7 +100,7 @@
   {
     "name": "sapling",
     "filechar": "t",
-    "passable": true,
+    "moveTypes": ["walk","fly"],
     "opaque": false,
     "spawnok": true,
     "sunvis": 1.0
@@ -109,7 +109,7 @@
       "name": "water",
       "type": "water",
       "filechar": "W",
-      "passable": true,
+      "moveTypes": ["wade","swim","fly"],
       "opaque": false,
       "breaklatch": true,
       "sunvis": 1.0,
@@ -123,7 +123,7 @@
     "name": "still water",
     "type": "water",
     "filechar": "p",
-    "passable": true,
+    "moveTypes": ["wade","swim","fly"],
     "opaque": false,
     "breaklatch": true,
     "sunvis": 1.0,
@@ -137,17 +137,18 @@
     "name": "deep water",
     "type": "water",
     "filechar": "w",
-    "passable": true,
+    "moveTypes": ["swim","fly"],
     "opaque": false,
     "breaklatch": true,
     "sunvis": 1.0,
     "movespeed": 0.3,
+    "bonkmsg": "You can't swim, and that water looks cold anyway.",
     "walkmsg": "You swim across the water."
   },
     {
       "name": "wooden bridge",
       "filechar": "B",
-      "passable": true,
+      "moveTypes": ["walk","roll","fly"],
       "opaque": false,
       "sunvis": 1.0,
       "walkmsg": "A rickety plank bridge, with no railing."
@@ -155,7 +156,7 @@
     {
       "name": "sand",
       "filechar": "S",
-      "passable": true,
+      "moveTypes": ["walk","roll","fly"],
       "opaque": false,
       "sunvis": 1.0,
       "movespeed": 0.7,
@@ -164,7 +165,7 @@
     {
       "name": "mud",
       "filechar": "M",
-      "passable": true,
+      "moveTypes": ["walk", "fly"],
       "opaque": false,
       "sunvis": 1.0,
       "movespeed": 0.3,
@@ -174,7 +175,7 @@
       "name": "lava",
       "type": "lava",
       "filechar": "!",
-      "passable": true,
+      "moveTypes": ["fly"],
       "opaque": false,
       "sunvis": 0.0,
       "movespeed": 0.5,
@@ -187,7 +188,7 @@
     "name": "cave entrance",
     "type": "stairs",
     "filechar": ">",
-    "passable": true,
+    "moveTypes": ["walk","fly"],
     "opaque": false,
     "sunvis": 0.5,
     "walkmsg": "The trail slopes down into a dark cave.",
@@ -200,7 +201,7 @@
     "name": "cave exit",
     "type": "stairs",
     "filechar": "<",
-    "passable": true,
+    "moveTypes": ["walk","fly"],
     "opaque": false,
     "sunvis": 0.5,
     "breaklatch": true,
@@ -211,7 +212,7 @@
     "name": "trapdoor",
     "type": "stairs",
     "filechar": "X",
-    "passable": true,
+    "moveTypes": ["climb"],
     "opaque": false,
     "sunvis": 0.0,
     "breaklatch": true,
@@ -222,7 +223,7 @@
     "name": "ladder",
     "type": "stairs",
     "filechar": "H",
-    "passable": true,
+    "moveTypes": ["climb"],
     "opaque": false,
     "sunvis": 0.0,
     "breaklatch": true,

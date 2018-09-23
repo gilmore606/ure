@@ -1,6 +1,5 @@
 package ure.areas.gen;
 
-import org.apache.commons.logging.Log;
 import ure.areas.UArea;
 import ure.math.URandom;
 import ure.sys.Injector;
@@ -85,7 +84,7 @@ public class Shape {
             return false;
         }
         public boolean isOpen(UArea area) {
-            return area.terrainAt(x+1,y+1).isPassable();
+            return area.terrainAt(x+1,y+1).passable();
         }
         public boolean isOpen() { return value(x+1,y+1); }
     }

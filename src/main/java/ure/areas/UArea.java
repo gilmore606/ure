@@ -412,7 +412,7 @@ public class UArea implements Serializable {
             cell = cellAt(random.i(xsize),random.i(ysize));
             UTerrain t = cell.terrain();
             if (t != null)
-                match = t.isPassable();
+                match = t.passable();
             tries++;
         }
         if (match)

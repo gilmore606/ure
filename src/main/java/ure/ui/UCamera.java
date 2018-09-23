@@ -1,7 +1,6 @@
 package ure.ui;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.actors.UActor;
@@ -13,11 +12,9 @@ import ure.sys.Injector;
 import ure.sys.UAnimator;
 import ure.sys.UCommander;
 import ure.sys.UConfig;
-import ure.sys.events.ResolutionChangedEvent;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
 import ure.ui.modals.UModal;
-import ure.ui.modals.UModalNotify;
 import ure.ui.particles.UParticle;
 
 import javax.inject.Inject;
@@ -678,10 +675,10 @@ public class UCamera extends View implements UAnimator {
         if (!area.canSeeThrough(col+leftEdge,row+topEdge)) return;
         if (col+leftEdge <=0 || row+topEdge <= 0 || col+leftEdge >= area.xsize-1 || row+topEdge >= area.ysize-1) return;
 
-        boolean nn = !area.canSeeThrough(col+leftEdge,row+topEdge-1) || !area.terrainAt(col+leftEdge,row+topEdge-1).isPassable();
-        boolean ns = !area.canSeeThrough(col+leftEdge,row+topEdge+1) || !area.terrainAt(col+leftEdge,row+topEdge+1).isPassable();
-        boolean nw = !area.canSeeThrough(col+leftEdge-1,row+topEdge) || !area.terrainAt(col+leftEdge-1,row+topEdge).isPassable();
-        boolean ne = !area.canSeeThrough(col+leftEdge+1,row+topEdge) || !area.terrainAt(col+leftEdge+1,row+topEdge).isPassable();
+        boolean nn = !area.canSeeThrough(col+leftEdge,row+topEdge-1) || !area.terrainAt(col+leftEdge,row+topEdge-1).passable();
+        boolean ns = !area.canSeeThrough(col+leftEdge,row+topEdge+1) || !area.terrainAt(col+leftEdge,row+topEdge+1).passable();
+        boolean nw = !area.canSeeThrough(col+leftEdge-1,row+topEdge) || !area.terrainAt(col+leftEdge-1,row+topEdge).passable();
+        boolean ne = !area.canSeeThrough(col+leftEdge+1,row+topEdge) || !area.terrainAt(col+leftEdge+1,row+topEdge).passable();
         int x = col * config.getTileWidth();
         int y = row * config.getTileHeight();
         int w = config.getTileWidth();

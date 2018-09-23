@@ -45,8 +45,8 @@ public class Layer {
                 if (shaper.value(i,j)) {
                     if (density >= 1f || shaper.random.f() < density) {
                         if ((printMode == PRINTMODE_ALL || printMode == PRINTMODE_STRUCTURE)
-                                ||  (printMode == PRINTMODE_WALLS && !area.cellAt(i+xoffset,j+yoffset).terrain().isPassable())
-                                ||  (printMode == PRINTMODE_FLOORS && area.cellAt(i+xoffset,j+yoffset).terrain().isPassable())) {
+                                ||  (printMode == PRINTMODE_WALLS && !area.cellAt(i+xoffset,j+yoffset).terrain().passable())
+                                ||  (printMode == PRINTMODE_FLOORS && area.cellAt(i+xoffset,j+yoffset).terrain().passable())) {
                             area.setTerrain(i+xoffset,j+yoffset,terrain);
                         }
                     }

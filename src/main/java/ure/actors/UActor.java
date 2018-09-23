@@ -326,7 +326,7 @@ public class UActor extends UThing implements Interactable {
     }
 
     public HashSet<String> moveTypes() {
-        return new HashSet<>();
+        return moveTypes;
     }
 
     /**

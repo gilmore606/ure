@@ -153,7 +153,7 @@ public class UCell implements UContainer {
 
     public boolean willAcceptThing(UThing thing) {
         if (getTerrain() != null) {
-            if (getTerrain().isPassable()) {
+            if (getTerrain().passable()) {
                 return true;
             }
         }

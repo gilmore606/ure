@@ -1,12 +1,9 @@
 package ure.math;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.sys.Injector;
 import ure.sys.UCommander;
-import ure.sys.events.ActorMovedEvent;
 import ure.terrain.UTerrain;
 
 import javax.inject.Inject;
@@ -42,6 +39,7 @@ public class Dimap {
         Injector.getAppComponent().inject(this);
         this.area = area;
         this.type = type;
+        this.moveTypes = moveTypes;
         map = new float[area.xsize][area.ysize];
         edges = new int[(area.xsize+area.ysize)*3][2];
         newEdges = new int[(area.xsize+area.ysize)*3][2];
@@ -128,10 +126,9 @@ public class Dimap {
                         int ny = edge[1]+dir[1];
                         if (nx >= 0 && ny >= 0 && nx < map.length && ny < map[0].length) {
                             if (map[nx][ny] < 0f) {
-                                // TODO: make a real actor check here, this is bullshit
                                 UTerrain t = area.terrainAt(nx, ny);
                                 if (t != null) {
-                                    if (t.isPassable()) {
+                                    if (t.passable(moveTypes)) {
                                         map[nx][ny] = map[edge[0]][edge[1]] + 1f / t.getMovespeed();
                                         newEdges[newEdgeI][0] = nx;
                                         newEdges[newEdgeI][1] = ny;
