@@ -9,6 +9,8 @@ import ure.actors.actions.Interactable;
 import ure.actors.actions.UAction;
 import ure.areas.UArea;
 import ure.areas.UCell;
+import ure.math.Dimap;
+import ure.math.DimapEntity;
 import ure.math.UColor;
 import ure.math.UPath;
 import ure.sys.events.ActorMovedEvent;
@@ -22,6 +24,7 @@ import ure.ui.UCamera;
 import ure.ui.particles.ParticleHit;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * UActor represents a UThing which can perform actions.  This includes the player and NPCs.
@@ -39,6 +42,7 @@ public class UActor extends UThing implements Interactable {
     protected int hearingrange = 15;
     protected float actionspeed = 1f;
     protected float movespeed = 1f;
+    protected HashSet<String> moveTypes;
     protected String bodytype = "humanoid";
     protected String customCorpse;
     protected Body body;
@@ -290,8 +294,12 @@ public class UActor extends UThing implements Interactable {
     }
 
     public boolean stepToward(int x, int y) {
-        int[] step = area().dimapTo(this).stepOut(new int[]{x,y});
-        //int[] step = UPath.nextStep(area(), areaX(), areaY(), x, y, this, 100);
+        String mapname = Long.toString(getID()) + " self";
+        Dimap map = area().dimapFor(mapname);
+        if (map == null)
+            map = area().addDimap(mapname, new DimapEntity(area(), Dimap.TYPE_SEEK, moveTypes(), this));
+
+        int[] step = map.stepOut(new int[]{x,y});
         if (step != null) {
             if (step[0] != areaX() || step[1] != areaY()) {
                 ActionWalk action = new ActionWalk(this, step[0] - areaX(), step[1] - areaY());
@@ -315,6 +323,10 @@ public class UActor extends UThing implements Interactable {
         if (this instanceof UPlayer) {
             commander.printScroll(cell.terrain().getIcon(), cell.terrain().getBonkmsg());
         }
+    }
+
+    public HashSet<String> moveTypes() {
+        return new HashSet<>();
     }
 
     /**
@@ -438,6 +450,9 @@ public class UActor extends UThing implements Interactable {
     public float getMovespeed() {
         return movespeed;
     }
+    public HashSet<String> getMoveTypes() { return moveTypes; }
+    public void setMoveTypes(HashSet<String> h) { moveTypes = h; }
+
     public void setBodytype(String s) { bodytype = s; }
     public String getBodytype() { return bodytype; }
     public Body getBody() { return body; }

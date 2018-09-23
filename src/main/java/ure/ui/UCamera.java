@@ -7,10 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.areas.UCell;
-import ure.math.Dimap;
-import ure.math.UColor;
-import ure.math.SimplexNoise;
-import ure.math.UPath;
+import ure.math.*;
 import ure.render.URenderer;
 import ure.sys.Injector;
 import ure.sys.UAnimator;
@@ -765,7 +762,9 @@ public class UCamera extends View implements UAnimator {
         if (commander.modal() != null) return;
         renderer.drawRect(cursorX*config.getTileWidth(), cursorY*config.getTileHeight(), config.getTileWidth(), config.getTileHeight(), config.getHiliteColor());
         int linepos[] = new int[]{cursorX+leftEdge,cursorY+topEdge};
-        Dimap playermap = area.dimapTo(commander.player());
+        Dimap playermap = area.dimapFor(commander.player().getID() + " self");
+        if (playermap == null)
+            playermap = area.addDimap(commander.player().getID() + " self", new DimapEntity(area, Dimap.TYPE_SEEK, commander.player().moveTypes(), commander.player()));
         float steps = playermap.valueAt(linepos[0],linepos[1]);
         while (steps > 0) {
             renderer.drawRect((linepos[0]-leftEdge)*config.getTileWidth(),(linepos[1]-topEdge)*config.getTileHeight(),config.getTileWidth(),config.getTileHeight(), config.getHiliteColor());

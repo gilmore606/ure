@@ -40,8 +40,8 @@ public class LandedModal extends UModalTabs {
     WidgetDropdown shaperPicker;
 
     WidgetHSlider areaWidthSlider, areaHeightSlider;
-    WidgetTerrainpick fillPicker, terrainPicker, doorPicker, structurePicker;
-    WidgetHSlider doorSlider;
+    WidgetTerrainpick fillPicker, terrainPicker, doorPicker, structurePicker, entrancePicker, exitPicker;
+    WidgetHSlider doorSlider, exitDistanceSlider;
     WidgetDropdown drawPicker;
 
 
@@ -147,6 +147,16 @@ public class LandedModal extends UModalTabs {
         addWidget(new WidgetText(this, 0, 12, "vault set:"));
         vaultSetPicker = new WidgetDropdown(this, 6, 12, commander.getResourceList("vaults"), 0);
         addWidget(vaultSetPicker);
+
+
+        changeTab("Stairs");
+
+        entrancePicker = new WidgetTerrainpick(this, 0, 0, "entrance type:", "null");
+        addWidget(entrancePicker);
+        exitPicker = new WidgetTerrainpick(this,0,2,"exit type:", "null");
+        addWidget(exitPicker);
+        exitDistanceSlider = new WidgetHSlider(this,0,6,"exit min distance:", 6, 30, 1, 100, true);
+        addWidget(exitDistanceSlider);
 
         changeTab(null);
 
@@ -301,7 +311,7 @@ public class LandedModal extends UModalTabs {
         } else if (widget == terrainPicker) {
             layer.terrain = terrainPicker.selection;
             autoRegenerate();
-        } else if (widget == fillPicker) {
+        } else if (widget == fillPicker || widget == entrancePicker || widget == exitPicker || widget == doorPicker) {
             autoRegenerate();
         } else if (widget == drawPicker) {
             layer.printMode = drawPicker.selection;
@@ -401,7 +411,7 @@ public class LandedModal extends UModalTabs {
             area.initialize(areaWidthSlider.value, areaHeightSlider.value, fillPicker.selection);
             layer.shaper.resize(areaWidthSlider.value-2, areaHeightSlider.value-2);
         }
-        scaper.setup(layers, fillPicker.selection, doorPicker.selection, structurePicker. selection, (float)(doorSlider.value)/100f, (float)(lightChanceSlider.value)/100f, roomLights, vaultSetPicker.selected());
+        scaper.setup(layers, fillPicker.selection, doorPicker.selection, structurePicker. selection, (float)(doorSlider.value)/100f, (float)(lightChanceSlider.value)/100f, roomLights, vaultSetPicker.selected(), entrancePicker.selection, exitPicker.selection, exitDistanceSlider.value);
         scaper.buildArea(area, 1, new String[]{});
 
         commander.camera().renderLights();

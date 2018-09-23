@@ -98,7 +98,7 @@ public class UArea implements Serializable {
     public ArrayList<Stairs> stairsLinks;
 
     @JsonIgnore
-    ArrayList<Dimap> dimaps;
+    HashMap<String,Dimap> dimaps;
 
     private Log log = LogFactory.getLog(UArea.class);
 
@@ -106,7 +106,7 @@ public class UArea implements Serializable {
         Injector.getAppComponent().inject(this);
         bus.register(this);
         config.addDefaultSunCycle(this);
-        dimaps = new ArrayList<>();
+        dimaps = new HashMap<>();
     }
     public UArea(int thexsize, int theysize, String defaultTerrain) {
         this();
@@ -404,6 +404,22 @@ public class UArea implements Serializable {
         return cell;
     }
 
+    public UCell randomOpenCell() {
+        UCell cell = null;
+        boolean match = false;
+        int tries = 0;
+        while ((cell == null || !match) && tries < 100) {
+            cell = cellAt(random.i(xsize),random.i(ysize));
+            UTerrain t = cell.terrain();
+            if (t != null)
+                match = t.isPassable();
+            tries++;
+        }
+        if (match)
+            return cell;
+        return null;
+    }
+
     public void hearRemoveThing(UThing thing) {
         getActors().remove(thing);
     }
@@ -506,14 +522,14 @@ public class UArea implements Serializable {
         }
     }
 
-    public Dimap dimapTo(UActor actor) {
-        for (Dimap map : dimaps) {
-            if (map.actorTarget == actor) {
-                return map;
-            }
-        }
-        Dimap map = new Dimap(actor.area(), actor);
-        dimaps.add(map);
+    public Dimap dimapFor(String key) {
+        if (dimaps.containsKey(key))
+            return dimaps.get(key);
+        return null;
+    }
+
+    public Dimap addDimap(String key, Dimap map) {
+        dimaps.put(key,map);
         return map;
     }
 

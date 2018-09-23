@@ -408,6 +408,13 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public UContainer getLocation() {
         return location;
     }
+    public UContainer location() {
+        return location;
+    }
+    public UCell cell() {
+        return this.location.cell();
+    }
+
     public void setLocation(UContainer location) {
         this.location = location;
     }

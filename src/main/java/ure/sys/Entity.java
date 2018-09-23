@@ -1,6 +1,7 @@
 package ure.sys;
 
 import ure.areas.UArea;
+import ure.things.UContainer;
 import ure.ui.Icons.Icon;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public interface Entity {
     long getID();
     void setID(long newID);
     Icon icon();
+    UContainer location();
     String getPlural();
     String getCategory();
     ArrayList<String> UIdetails(String context);

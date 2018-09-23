@@ -2,10 +2,14 @@ package ure.areas.gen;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.areas.UArea;
+import ure.areas.UCell;
 import ure.areas.gen.shapers.Shaper;
+import ure.math.Dimap;
+import ure.math.DimapEntity;
 import ure.ui.ULight;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Metascaper extends ULandscaper {
 
@@ -16,11 +20,12 @@ public class Metascaper extends ULandscaper {
     public ArrayList<Layer> layers;
     public Layer roomLayer;
 
-    String wallTerrain, doorTerrain, structureTerrain;
+    String wallTerrain, doorTerrain, structureTerrain, entranceTerrain, exitTerrain;
     float doorChance, lightChance;
     ArrayList<ULight> roomLights;
     UVaultSet vaultSet;
     String vaultSetName;
+    int exitDistance;
 
     @JsonIgnore
     ArrayList<Shape.Room> rooms;
@@ -48,9 +53,10 @@ public class Metascaper extends ULandscaper {
             addVaults(area);
         if (lightChance > 0f)
             addRoomLights(area);
+        addStairs(area);
     }
 
-    public void setup(ArrayList<Layer> layers, String wallTerrain, String doorTerrain, String structureTerrain, float doorChance, float lightChance, ArrayList<ULight> roomLights, String vaultSetName) {
+    public void setup(ArrayList<Layer> layers, String wallTerrain, String doorTerrain, String structureTerrain, float doorChance, float lightChance, ArrayList<ULight> roomLights, String vaultSetName, String entranceTerrain, String exitTerrain, int exitDistance) {
         this.layers = layers;
         this.wallTerrain = wallTerrain;
         this.doorTerrain = doorTerrain;
@@ -58,6 +64,9 @@ public class Metascaper extends ULandscaper {
         this.doorChance = doorChance;
         this.lightChance = lightChance;
         this.roomLights = roomLights;
+        this.entranceTerrain = entranceTerrain;
+        this.exitTerrain = exitTerrain;
+        this.exitDistance = exitDistance;
         if (vaultSetName != null)
             if (!vaultSetName.equals(this.vaultSetName))
                 this.vaultSet = commander.cartographer.loadVaultSet(vaultSetName);
@@ -121,6 +130,29 @@ public class Metascaper extends ULandscaper {
                     break;
                 }
             }
+        }
+    }
+
+    void addStairs(UArea area) {
+        int separation = 0;
+        DimapEntity dimap = new DimapEntity(area, Dimap.TYPE_SEEK, new HashSet<>(), null);
+        int tries = 0;
+        UCell entrance = null;
+        UCell exit = null;
+        while (separation < exitDistance && tries < 500) {
+            entrance = area.randomOpenCell();
+            dimap.changeEntity(entrance.terrain());
+            int etries = 0;
+            while (separation < exitDistance && etries < 50) {
+                exit = area.randomOpenCell();
+                separation = (int) dimap.valueAt(exit.x, exit.y);
+                etries++;
+            }
+            tries++;
+        }
+        if (entrance != null && exit != null) {
+            area.setTerrain(entrance.x, entrance.y, entranceTerrain);
+            area.setTerrain(exit.x, exit.y, exitTerrain);
         }
     }
 }

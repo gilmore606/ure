@@ -11,6 +11,7 @@ import ure.terrain.UTerrain;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Dimap {
 
@@ -22,42 +23,44 @@ public class Dimap {
     public boolean dirty;
 
     UArea area;
+    int type;
+    HashSet<String> moveTypes;
 
     static int[][] dirs = {{-1,0},{1,0},{0,-1},{0,1},{-1,-1},{1,1},{-1,1},{1,-1}};
+    public static int TYPE_SEEK = 0;
+    public static int TYPE_FLEE = 1;
 
     float[][] map;
     int[][] edges;
     int[][] newEdges;
     int edgeI, newEdgeI;
+    ArrayList<int[]> targets;
 
     int updateTurn = 0;
 
-    ArrayList<int[]> targets;
-
-    public UActor actorTarget;
-
-    int targetx,targety;  // this is mostly for test right now
-
-    public Dimap(UArea area) {
+    public Dimap(UArea area, int type, HashSet<String> moveTypes) {
         Injector.getAppComponent().inject(this);
         this.area = area;
+        this.type = type;
         map = new float[area.xsize][area.ysize];
         edges = new int[(area.xsize+area.ysize)*3][2];
         newEdges = new int[(area.xsize+area.ysize)*3][2];
         edgeI = 0;
         newEdgeI = 0;
-        targets = new ArrayList<>();
         dirty = false;
-        bus.register(this);
+        targets = new ArrayList<>();
     }
 
-    public Dimap(UArea area, UActor actor) {
-        this(area);
-        actorTarget = actor;
+    public boolean targetsChanged() {
+        return false;
+    }
+
+    public void updateTargets() {
+
     }
 
     public float valueAt(int x, int y) {
-        if (dirty || (commander.turnCounter > updateTurn || updateTargets())) {
+        if (dirty || (commander.turnCounter > updateTurn || targetsChanged())) {
             update();
         }
         if (area.isValidXY(x,y))
@@ -100,28 +103,14 @@ public class Dimap {
         return lastpos;
     }
 
-    boolean updateTargets() {
-        if (actorTarget == null) return false;
-        if (actorTarget.areaX() != targetx || actorTarget.areaY() != targety) {
-            targets.clear();
-            addTarget(actorTarget.areaX(),actorTarget.areaY());
-            targetx = actorTarget.areaX();
-            targety = actorTarget.areaY();
-            return true;
-        }
-        return false;
-    }
-
-    void addTarget(int x, int y) {
-        targets.add(new int[]{x,y});
-    }
-
     void update() {
         for (int i=0;i<map.length;i++) {
             for (int j = 0;j < map[0].length;j++)
                 map[i][j] = -1f;
         }
         edgeI = 0;
+        targets.clear();
+        updateTargets();
         for (int[] tp : targets) {
             map[tp[0]][tp[1]] = 0f;
             edges[edgeI][0] = tp[0]; edges[edgeI][1] = tp[1];
@@ -167,12 +156,4 @@ public class Dimap {
         updateTurn = commander.turnCounter;
         dirty = false;
     }
-
-    @Subscribe
-    public void actorMoved(ActorMovedEvent event) {
-        if (event.actor == actorTarget) {
-            dirty = true;
-        }
-    }
-
 }

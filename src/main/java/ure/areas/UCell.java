@@ -185,6 +185,7 @@ public class UCell implements UContainer {
     public int areaX() { return x; }
     public int areaY() { return y; }
     public UArea area() { return area; }
+    public UCell cell() { return this; }
 
     /**
      * Take a terrain object and make it our terrain.

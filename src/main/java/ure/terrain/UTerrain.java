@@ -12,6 +12,7 @@ import ure.actors.actions.Interactable;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.actors.UActor;
+import ure.things.UContainer;
 import ure.ui.Icons.Icon;
 import ure.ui.Icons.UIconCzar;
 import ure.ui.sounds.Sound;
@@ -126,6 +127,10 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
                 icon.setEntity(this);
         }
         return icon;
+    }
+
+    public UContainer location() {
+        return cell;
     }
 
     public void moveTriggerFrom(UActor actor, UCell cell) {
