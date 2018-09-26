@@ -2,6 +2,8 @@ package ure.areas.gen.shapers;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import ure.areas.UArea;
+import ure.areas.gen.Layer;
 
 import java.util.ArrayList;
 
@@ -25,7 +27,7 @@ public class Ruins extends Shaper {
     }
 
     @Override
-    public void build() {
+    public void build(Layer previousLayer, UArea area) {
         buildRuins(getParamI("roomsizeMin"),getParamI("roomsizeMax"),getParamI("minroomarea"),getParamI("roomsmax"),getParamI("hallwidth"),getParamF("hallChance"));
     }
 

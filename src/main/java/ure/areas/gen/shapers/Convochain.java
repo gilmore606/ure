@@ -2,6 +2,8 @@ package ure.areas.gen.shapers;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import ure.areas.UArea;
+import ure.areas.gen.Layer;
 import ure.areas.gen.Shape;
 import ure.areas.gen.UVault;
 import ure.areas.gen.UVaultSet;
@@ -71,7 +73,7 @@ public class Convochain extends Shaper {
     }
 
     @Override
-    public void build() {
+    public void build(Layer previousLayer, UArea area) {
         UVault seed = seedVault.vaultAt(getParamI("sampletype"));
         boolean[][] sample = new boolean[seed.cols][seed.rows];
         for (int i=0;i<seed.cols;i++) {

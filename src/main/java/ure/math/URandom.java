@@ -10,7 +10,16 @@ public class URandom extends Random {
         return nextInt(bound);
     }
 
-    public int i(int min, int max) { return min + nextInt(max-min+1); }
+    public int i(int min, int max) {
+        if (min == max)
+            return min;
+        else if (min > max) {
+            int tmp = min;
+            min = max;
+            max = tmp;
+        }
+        return min + nextInt(max-min+1);
+    }
 
     public float f() { return f(1f); }
 

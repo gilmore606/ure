@@ -1,5 +1,7 @@
 package ure.areas.gen.shapers;
 
+import ure.areas.UArea;
+import ure.areas.gen.Layer;
 import ure.areas.gen.Shape;
 
 public class Roads extends Shaper {
@@ -19,7 +21,7 @@ public class Roads extends Shaper {
     }
 
     @Override
-    public void build() {
+    public void build(Layer previousLayer, UArea area) {
         buildRoads(getParamI("roadsMin"),getParamI("roadsMax"),getParamF("width"),getParamF("twist"),getParamF("twistMax"));
     }
 

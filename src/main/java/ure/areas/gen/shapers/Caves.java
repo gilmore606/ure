@@ -1,5 +1,7 @@
 package ure.areas.gen.shapers;
 
+import ure.areas.UArea;
+import ure.areas.gen.Layer;
 import ure.areas.gen.Shape;
 
 public class Caves extends Shaper {
@@ -18,7 +20,7 @@ public class Caves extends Shaper {
     }
 
     @Override
-    public void build() {
+    public void build(Layer previousLayer, UArea area) {
         buildCaves(getParamF("initialDensity"),getParamI("jumblePasses"),getParamI("jumbleDensity"),getParamI("smoothPasses"));
     }
 

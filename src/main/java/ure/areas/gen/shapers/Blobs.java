@@ -1,5 +1,7 @@
 package ure.areas.gen.shapers;
 
+import ure.areas.UArea;
+import ure.areas.gen.Layer;
 import ure.areas.gen.Shape;
 
 public class Blobs extends Shaper {
@@ -20,7 +22,7 @@ public class Blobs extends Shaper {
     }
 
     @Override
-    public void build() {
+    public void build(Layer previousLayer, UArea area) {
         buildBlobs(getParamI("blobsMin"),getParamI("blobsMax"),getParamI("sizeMin"),getParamI("sizeMax"),getParamF("rot"),getParamI("erode"));
     }
 

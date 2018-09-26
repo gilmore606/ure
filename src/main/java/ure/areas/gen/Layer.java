@@ -12,7 +12,6 @@ public class Layer {
     public static final int PRINTMODE_ALL = 0;
     public static final int PRINTMODE_WALLS = 1;
     public static final int PRINTMODE_FLOORS = 2;
-    public static final int PRINTMODE_STRUCTURE = 3;
     public String terrain;
     public boolean pruneDeadEnds, wipeSmallRegions, roundCorners, invert;
 
@@ -26,8 +25,9 @@ public class Layer {
         this.roundCorners = roundCorners;
         this.invert = invert;
     }
-    public void build() {
-        shaper.build();
+
+    public void build(Layer previousLayer, UArea area) {
+        shaper.build(previousLayer, area);
         if (pruneDeadEnds)
             shaper.pruneDeadEnds();
         if (wipeSmallRegions)
@@ -38,23 +38,17 @@ public class Layer {
             shaper.invert();
         shaper.pruneRooms();
     }
-    public void print(UArea area, int xoffset, int yoffset) { print(area,xoffset,yoffset,null); }
-    public void print(UArea area, int xoffset, int yoffset, String wallTerrain) {
+
+    public void print(UArea area, int xoffset, int yoffset) {
         for (int i=0;i<shaper.xsize;i++) {
             for (int j=0;j<shaper.ysize;j++) {
                 if (shaper.value(i,j)) {
                     if (density >= 1f || shaper.random.f() < density) {
-                        if ((printMode == PRINTMODE_ALL || printMode == PRINTMODE_STRUCTURE)
-                                ||  (printMode == PRINTMODE_WALLS && !area.cellAt(i+xoffset,j+yoffset).terrain().passable())
-                                ||  (printMode == PRINTMODE_FLOORS && area.cellAt(i+xoffset,j+yoffset).terrain().passable())) {
-                            area.setTerrain(i+xoffset,j+yoffset,terrain);
+                        if ((printMode == PRINTMODE_ALL)
+                                || (printMode == PRINTMODE_WALLS && !area.cellAt(i + xoffset, j + yoffset).terrain().passable())
+                                || (printMode == PRINTMODE_FLOORS && area.cellAt(i + xoffset, j + yoffset).terrain().passable())) {
+                            area.setTerrain(i + xoffset, j + yoffset, terrain);
                         }
-                    }
-                } else if (printMode == PRINTMODE_STRUCTURE) {
-                    if (shaper.value(i-1,j-1)||shaper.value(i-1,j)||shaper.value(i-1,j+1)
-                    ||shaper.value(i,j-1)||shaper.value(i,j+1)
-                    ||shaper.value(i+1,j-1)||shaper.value(i+1,j)||shaper.value(i+1,j+1)) {
-                        area.setTerrain(i+xoffset,j+yoffset,wallTerrain);
                     }
                 }
             }

@@ -1,5 +1,7 @@
 package ure.areas.gen.shapers;
 
+import ure.areas.UArea;
+import ure.areas.gen.Layer;
 import ure.areas.gen.Shape;
 
 import java.util.ArrayList;
@@ -109,7 +111,7 @@ public class Mines extends Shaper {
     }
 
     @Override
-    public void build() {
+    public void build(Layer previousLayer, UArea area) {
         buildMines(getParamI("tunnelWidth"),getParamI("minForkSteps"),getParamI("maxForkSteps"),getParamI("turnStepCount"),getParamF("turnChance"),getParamF("connectChance"),getParamF("narrowChance"),getParamF("roomChance"),getParamF("backRoomChance"),getParamI("maxRooms"),getParamI("roomSizeMin"),getParamI("roomSizeMax"));
     }
 

@@ -1,6 +1,8 @@
 package ure.areas.gen;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import ure.areas.UArea;
 import ure.areas.UCell;
 import ure.areas.gen.shapers.Shaper;
@@ -20,7 +22,7 @@ public class Metascaper extends ULandscaper {
     public ArrayList<Layer> layers;
     public Layer roomLayer;
 
-    String wallTerrain, doorTerrain, structureTerrain, entranceTerrain, exitTerrain;
+    String wallTerrain, doorTerrain, entranceTerrain, exitTerrain;
     float doorChance, lightChance;
     ArrayList<ULight> roomLights;
     UVaultSet vaultSet;
@@ -30,15 +32,20 @@ public class Metascaper extends ULandscaper {
     @JsonIgnore
     ArrayList<Shape.Room> rooms;
 
+    @JsonIgnore
+    private Log log = LogFactory.getLog(Metascaper.class);
+
     public Metascaper() {
         super(TYPE);
     }
 
     public void buildArea(UArea area, int level, String[] tags) {
         area.wipe(wallTerrain);
+        Layer previousLayer = null;
         for (Layer layer : layers) {
-            layer.build();
-            layer.print(area, 0, 0, structureTerrain);
+            layer.build(previousLayer, area);
+            layer.print(area, 0, 0);
+            previousLayer = layer;
         }
 
         roomLayer = layers.get(0);
@@ -56,11 +63,10 @@ public class Metascaper extends ULandscaper {
         addStairs(area);
     }
 
-    public void setup(ArrayList<Layer> layers, String wallTerrain, String doorTerrain, String structureTerrain, float doorChance, float lightChance, ArrayList<ULight> roomLights, String vaultSetName, String entranceTerrain, String exitTerrain, int exitDistance) {
+    public void setup(ArrayList<Layer> layers, String wallTerrain, String doorTerrain, float doorChance, float lightChance, ArrayList<ULight> roomLights, String vaultSetName, String entranceTerrain, String exitTerrain, int exitDistance) {
         this.layers = layers;
         this.wallTerrain = wallTerrain;
         this.doorTerrain = doorTerrain;
-        this.structureTerrain = structureTerrain;
         this.doorChance = doorChance;
         this.lightChance = lightChance;
         this.roomLights = roomLights;
@@ -141,10 +147,18 @@ public class Metascaper extends ULandscaper {
         UCell exit = null;
         while (separation < exitDistance && tries < 500) {
             entrance = area.randomOpenCell();
+            if (entrance == null) {
+                log.info("Failed to find randomOpenCell for entrance");
+                return;
+            }
             dimap.changeEntity(entrance.terrain());
             int etries = 0;
             while (separation < exitDistance && etries < 50) {
                 exit = area.randomOpenCell();
+                if (exit == null) {
+                    log.info("Failed to find randomOpenCell for exit");
+                    return;
+                }
                 separation = (int) dimap.valueAt(exit.x, exit.y);
                 etries++;
             }

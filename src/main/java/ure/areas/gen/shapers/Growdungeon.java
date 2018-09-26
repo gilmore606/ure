@@ -2,6 +2,8 @@ package ure.areas.gen.shapers;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import ure.areas.UArea;
+import ure.areas.gen.Layer;
 import ure.areas.gen.Shape;
 
 import java.util.ArrayList;
@@ -38,7 +40,7 @@ public class Growdungeon extends Shaper {
     }
 
     @Override
-    public void build() {
+    public void build(Layer previousLayer, UArea area) {
         buildGrowdungeon(getParamI("iterations"), getParamI("roomSizeMin"),getParamI("roomSizeMax"),getParamI("chamberSizeMin"),getParamI("chamberSizeMax"),getParamI("hallLengthMin"),getParamI("hallLengthMax"),getParamI("hallWidth"),getParamF("roomChance"),getParamF("chamberChance"),getParamF("hallChance"),getParamI("earlyIterations"),getParamF("earlyRoomChance"),getParamF("earlyChamberChance"),getParamI("earlyHallWidth"),getParamF("roundedChance"),getParamF("openChance"));
     }
 
