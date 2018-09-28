@@ -29,12 +29,8 @@ public class Outline extends Shaper {
 
     public void buildOutline(Layer previousLayer, UArea area, boolean useTerrainSource, String terrainSource, boolean inner, boolean diagonals, int iterations, float densityDrop, float writeChance) {
         clear();
-        Shape source;
         if (previousLayer == null || area == null) return;
-        if (useTerrainSource)
-            source = makeTerrainMask(area, terrainSource);
-        else
-            source = previousLayer.shaper;
+        Shape source = useTerrainSource ? makeTerrainMask(area,terrainSource) : previousLayer.shaper;
         Shape scratch = new Shape(xsize,ysize);
         for (int i=0;i<iterations;i++) {
             scratch.clear();
@@ -77,13 +73,5 @@ public class Outline extends Shaper {
         }
     }
 
-    Shape makeTerrainMask(UArea area, String terrain) {
-        Shape mask = new Shape(area.xsize, area.ysize);
-        for (int x=0;x<area.xsize;x++) {
-            for (int y = 0;y < area.ysize;y++)
-                if (area.hasTerrainAt(x, y, terrain))
-                    mask.set(x, y);
-        }
-        return mask;
-    }
+
 }

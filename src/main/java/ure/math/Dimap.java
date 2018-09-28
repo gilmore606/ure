@@ -41,8 +41,8 @@ public class Dimap {
         this.type = type;
         this.moveTypes = moveTypes;
         map = new float[area.xsize][area.ysize];
-        edges = new int[(area.xsize+area.ysize)*3][2];
-        newEdges = new int[(area.xsize+area.ysize)*3][2];
+        edges = new int[(area.xsize+area.ysize)*6][2];
+        newEdges = new int[(area.xsize+area.ysize)*6][2];
         edgeI = 0;
         newEdgeI = 0;
         dirty = false;
@@ -55,6 +55,14 @@ public class Dimap {
 
     public void updateTargets() {
 
+    }
+
+    public void printTargets() {
+        for (int[] tp : targets) {
+            map[tp[0]][tp[1]] = 0f;
+            edges[edgeI][0] = tp[0]; edges[edgeI][1] = tp[1];
+            edgeI++;
+        }
     }
 
     public float valueAt(int x, int y) {
@@ -109,11 +117,7 @@ public class Dimap {
         edgeI = 0;
         targets.clear();
         updateTargets();
-        for (int[] tp : targets) {
-            map[tp[0]][tp[1]] = 0f;
-            edges[edgeI][0] = tp[0]; edges[edgeI][1] = tp[1];
-            edgeI++;
-        }
+        printTargets();
 
         float step = 0f;
         while (edgeI > 0) {

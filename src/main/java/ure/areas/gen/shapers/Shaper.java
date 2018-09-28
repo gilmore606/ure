@@ -91,4 +91,14 @@ public abstract class Shaper extends Shape {
         }
         this.rooms = keepers;
     }
+
+    public static Shape makeTerrainMask(UArea area, String terrain) {
+        Shape mask = new Shape(area.xsize, area.ysize);
+        for (int x=0;x<area.xsize;x++) {
+            for (int y = 0;y < area.ysize;y++)
+                if (area.hasTerrainAt(x, y, terrain))
+                    mask.set(x, y);
+        }
+        return mask;
+    }
 }

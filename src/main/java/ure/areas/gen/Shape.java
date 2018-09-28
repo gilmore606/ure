@@ -875,4 +875,35 @@ public class Shape {
         }
         return matchNeighbors(x,y,n);
     }
+
+    public float fullness() {
+        int trues = 0;
+        for (int x=0;x<xsize;x++) {
+            for (int y=0;y<ysize;y++) {
+                trues += value(x,y) ? 1 : 0;
+            }
+        }
+        return (float)trues / (float)(xsize*ysize);
+    }
+    public int count() {
+        int trues = 0;
+        for (int x=0;x<xsize;x++) {
+            for (int y=0;y<ysize;y++) {
+                trues += value(x,y) ? 1 : 0;
+            }
+        }
+        return trues;
+    }
+
+    public ArrayList<int[]> edgeList() {
+        ArrayList<int[]> edges = new ArrayList<>();
+        for (int x=0;x<xsize;x++) {
+            for (int y=0;y<ysize;y++) {
+                if (value(x,y))
+                    if (!value(x-1,y) || !value(x+1,y) || !value(x,y-1) || !value(x,y+1))
+                        edges.add(new int[]{x,y});
+            }
+        }
+        return edges;
+    }
 }

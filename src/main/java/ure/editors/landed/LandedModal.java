@@ -73,7 +73,8 @@ public class LandedModal extends UModalTabs {
                 "Convochain",
                 "Blobs",
                 "Roads",
-                "Outline"
+                "Outline",
+                "Connector"
         };
         layerShapers = new ArrayList<>();
         shaperWidgets = new HashMap<>();
@@ -239,6 +240,7 @@ public class LandedModal extends UModalTabs {
         shapers.put("Blobs", new Blobs(area.xsize,area.ysize));
         shapers.put("Roads", new Roads(area.xsize,area.ysize));
         shapers.put("Outline", new Outline(area.xsize,area.ysize));
+        shapers.put("Connector", new Connector(area.xsize,area.ysize));
         layerShapers.add(shapers);
         layer.shaper = shapers.get("Caves");
         layer.terrain = "null";
@@ -375,6 +377,7 @@ public class LandedModal extends UModalTabs {
                                             dragCenterY + (mouseY / gh()));
             }
         }
+        setChildPosition(commander.camera().columns - cellw - 2, commander.camera().rows - cellh - 2, commander.camera());
     }
 
     void selectShaper(String selection) {
