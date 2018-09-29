@@ -253,6 +253,7 @@ public class UCartographer implements Runnable {
         if (commander.config.isPersistentAreas()) {
             log.info("saving file " + path + filename);
             File file = new File(path + filename);
+            file.mkdirs();
             try (
                     FileOutputStream stream = new FileOutputStream(file);
                     GZIPOutputStream gzip = new GZIPOutputStream(stream)
