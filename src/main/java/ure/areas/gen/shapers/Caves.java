@@ -12,7 +12,7 @@ public class Caves extends Shaper {
     }
 
     @Override
-    void setupParams() {
+    public void setupParams() {
         addParamF("initialDensity", 0.3f, 0.45f, 0.6f);
         addParamI("jumblePasses", 1, 5, 10);
         addParamI("jumbleDensity", 1, 2, 5);

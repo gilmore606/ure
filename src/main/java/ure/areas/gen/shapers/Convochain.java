@@ -1,5 +1,6 @@
 package ure.areas.gen.shapers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.areas.UArea;
@@ -49,13 +50,16 @@ public class Convochain extends Shaper {
         }
     }
 
+    @JsonIgnore
     public double temperature;
     public final double DEFAULT_WEIGHT = 0.01;
+    @JsonIgnore
     private int N;
 
-    private Pattern[] patterns;
+    @JsonIgnore
     private HashMap<Integer, Double> weights;
-    private UVaultSet seedVault;
+    @JsonIgnore
+    protected UVaultSet seedVault;
 
     public Convochain(int xsize, int ysize) {
         super(xsize,ysize);
@@ -63,10 +67,9 @@ public class Convochain extends Shaper {
     }
 
     @Override
-    void setupParams() {
-        if (seedVault == null)
-            seedVault = commander.cartographer.loadVaultSet("convochain");
-        addParamI("sampletype", 0, 0, seedVault.size());
+    public void setupParams() {
+
+        addParamI("sampletype", 0, 0, 5);
         addParamI("N", 2, 3, 6);
         addParamF("temperature", 0f, 1.2f, 4f);
         addParamI("iterations",1,1,10);
@@ -74,6 +77,8 @@ public class Convochain extends Shaper {
 
     @Override
     public void build(Layer previousLayer, UArea area) {
+        if (seedVault == null)
+            seedVault = commander.cartographer.loadVaultSet("convochain");
         UVault seed = seedVault.vaultAt(getParamI("sampletype"));
         boolean[][] sample = new boolean[seed.cols][seed.rows];
         for (int i=0;i<seed.cols;i++) {

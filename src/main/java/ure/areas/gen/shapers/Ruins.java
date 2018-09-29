@@ -1,5 +1,6 @@
 package ure.areas.gen.shapers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.areas.UArea;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 
 public class Ruins extends Shaper {
 
+    @JsonIgnore
     private Log log = LogFactory.getLog(Ruins.class);
 
     public Ruins(int xsize, int ysize) {
@@ -17,7 +19,7 @@ public class Ruins extends Shaper {
     }
 
     @Override
-    void setupParams() {
+    public void setupParams() {
         addParamI("roomsizeMin", 1, 4, 10);
         addParamI("roomsizeMax", 2, 10, 20);
         addParamI("minroomarea", 4, 12, 50);

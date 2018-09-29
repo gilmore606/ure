@@ -95,7 +95,7 @@ public class Mines extends Shaper {
     }
 
     @Override
-    void setupParams() {
+    public void setupParams() {
         addParamI("tunnelWidth", 1, 3, 6);
         addParamI("minForkSteps", 1, 6, 20);
         addParamI("maxForkSteps", 2, 12, 40);

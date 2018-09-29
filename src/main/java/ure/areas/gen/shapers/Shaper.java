@@ -1,5 +1,6 @@
 package ure.areas.gen.shapers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.areas.UArea;
 import ure.areas.gen.Layer;
 import ure.areas.gen.Shape;
@@ -10,8 +11,9 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public abstract class Shaper extends Shape {
+public class Shaper extends Shape {
 
+    @JsonIgnore
     @Inject
     public UCommander commander;
 
@@ -24,13 +26,22 @@ public abstract class Shaper extends Shape {
     public HashMap<String,Boolean> paramsB;
     public HashMap<String,String> paramsT;
 
+    @JsonIgnore
     public ArrayList<Room> rooms;
 
     public String name;
 
+    public Shaper() {
+        super();
+    }
+
     public Shaper(int xsize, int ysize) {
-        super(xsize,ysize);
-        Injector.getAppComponent().inject(this);
+        super();
+        initialize(xsize,ysize);
+    }
+
+    public void initialize(int xsize, int ysize) {
+        resize(xsize,ysize);
         paramsI = new HashMap<>();
         paramsImin = new HashMap<>();
         paramsImax = new HashMap<>();
@@ -65,7 +76,7 @@ public abstract class Shaper extends Shape {
     public boolean getParamB(String param) { return paramsB.get(param); }
     public String getParamT(String param) { return paramsT.get(param); }
 
-    abstract void setupParams();
+    public void setupParams() { }
 
     /**
      *
@@ -75,7 +86,7 @@ public abstract class Shaper extends Shape {
      */
 
     public void build() { build(null,null); }
-    public abstract void build(Layer previousLayer, UArea area);
+    public void build(Layer previousLayer, UArea area) { }
 
     @Override
     public Shape clear() {
@@ -86,7 +97,7 @@ public abstract class Shaper extends Shape {
     public void pruneRooms() {
         ArrayList<Room> keepers = new ArrayList<>();
         for (Room r : rooms) {
-            if (r.isOpen())
+            if (r.unobstructed())
                 keepers.add(r);
         }
         this.rooms = keepers;
@@ -100,5 +111,85 @@ public abstract class Shaper extends Shape {
                     mask.set(x, y);
         }
         return mask;
+    }
+
+    public HashMap<String, Integer> getParamsI() {
+        return paramsI;
+    }
+
+    public void setParamsI(HashMap<String, Integer> paramsI) {
+        this.paramsI = paramsI;
+    }
+
+    public HashMap<String, Integer> getParamsImin() {
+        return paramsImin;
+    }
+
+    public void setParamsImin(HashMap<String, Integer> paramsImin) {
+        this.paramsImin = paramsImin;
+    }
+
+    public HashMap<String, Integer> getParamsImax() {
+        return paramsImax;
+    }
+
+    public void setParamsImax(HashMap<String, Integer> paramsImax) {
+        this.paramsImax = paramsImax;
+    }
+
+    public HashMap<String, Float> getParamsF() {
+        return paramsF;
+    }
+
+    public void setParamsF(HashMap<String, Float> paramsF) {
+        this.paramsF = paramsF;
+    }
+
+    public HashMap<String, Float> getParamsFmin() {
+        return paramsFmin;
+    }
+
+    public void setParamsFmin(HashMap<String, Float> paramsFmin) {
+        this.paramsFmin = paramsFmin;
+    }
+
+    public HashMap<String, Float> getParamsFmax() {
+        return paramsFmax;
+    }
+
+    public void setParamsFmax(HashMap<String, Float> paramsFmax) {
+        this.paramsFmax = paramsFmax;
+    }
+
+    public HashMap<String, Boolean> getParamsB() {
+        return paramsB;
+    }
+
+    public void setParamsB(HashMap<String, Boolean> paramsB) {
+        this.paramsB = paramsB;
+    }
+
+    public HashMap<String, String> getParamsT() {
+        return paramsT;
+    }
+
+    public void setParamsT(HashMap<String, String> paramsT) {
+        this.paramsT = paramsT;
+    }
+
+    public ArrayList<Room> getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(ArrayList<Room> rooms) {
+        this.rooms = rooms;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

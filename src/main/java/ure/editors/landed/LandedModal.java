@@ -1,8 +1,12 @@
 package ure.editors.landed;
 
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import ure.areas.UArea;
 import ure.areas.gen.Layer;
 import ure.areas.gen.Metascaper;
+import ure.areas.gen.ULandscaper;
 import ure.areas.gen.shapers.*;
 import ure.math.UColor;
 import ure.ui.ULight;
@@ -10,10 +14,12 @@ import ure.ui.modals.UModalLoading;
 import ure.ui.modals.UModalTabs;
 import ure.ui.modals.widgets.*;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class LandedModal extends UModalTabs {
 
@@ -24,6 +30,7 @@ public class LandedModal extends UModalTabs {
 
     ArrayList<Layer> layers;
     ArrayList<HashMap<String,Shaper>> layerShapers;
+    HashMap<String,Class> shaperClasses;
     int layerIndex;
     Layer layer;
 
@@ -64,6 +71,17 @@ public class LandedModal extends UModalTabs {
         this.area = area;
 
         layers = new ArrayList<>();
+        shaperClasses = new HashMap<>();
+        shaperClasses.put("Caves", Caves.class);
+        shaperClasses.put("Mines", Mines.class);
+        shaperClasses.put("Growdungeon", Growdungeon.class);
+        shaperClasses.put("Chambers", Chambers.class);
+        shaperClasses.put("Ruins", Ruins.class);
+        shaperClasses.put("Convochain", Convochain.class);
+        shaperClasses.put("Blobs", Blobs.class);
+        shaperClasses.put("Roads", Roads.class);
+        shaperClasses.put("Outline", Outline.class);
+        shaperClasses.put("Connector", Connector.class);
         shaperNames = new String[]{
                 "Caves",
                 "Mines",
@@ -168,12 +186,49 @@ public class LandedModal extends UModalTabs {
         escapable = false;
         setChildPosition(commander.camera().columns - cellw - 2, commander.camera().rows - cellh - 2, commander.camera());
 
+        //scaper = ((Metascaper)(loadScaper("testscaper")));
         scaper = new Metascaper();
         roomLights = new ArrayList<>();
 
         changeTab("Layers");
         makeNewLayer();
         changeTab("Global");
+    }
+
+    ULandscaper loadScaper(String filename) {
+        String path = commander.savePath();
+        File file = new File(path + filename);
+        try (
+                FileInputStream stream = new FileInputStream(file);
+        ) {
+            Metascaper scaper = (Metascaper)(objectMapper.readValue(stream, ULandscaper.class));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        layers = scaper.layers;
+        layerIndex = 0;
+        layer = layers.get(0);
+
+        return null;
+    }
+
+    void saveScaper(ULandscaper scaper, String filename) {
+        String path = commander.savePath();
+        File file = new File(path + filename);
+        try (
+                FileOutputStream stream = new FileOutputStream(file);
+        ) {
+            JsonFactory jfactory = new JsonFactory();
+            JsonGenerator jGenerator = jfactory
+                    .createGenerator(stream, JsonEncoding.UTF8);
+            jGenerator.setCodec(objectMapper);
+            jGenerator.writeObject(scaper);
+            jGenerator.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     void removeShaperWidgets() {
@@ -247,7 +302,6 @@ public class LandedModal extends UModalTabs {
         layer.density = 1f;
         updateLayerPicker();
         selectLayer(layers.indexOf(layer));
-        autoRegenerate();
     }
 
     void deleteLayer() {
@@ -454,6 +508,7 @@ public class LandedModal extends UModalTabs {
     }
 
     void quit() {
+        saveScaper(scaper, "testscaper");
         escape();
         commander.game().setupTitleScreen();
     }

@@ -1,5 +1,6 @@
 package ure.areas.gen;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.areas.UArea;
 import ure.math.URandom;
 import ure.sys.Injector;
@@ -20,15 +21,20 @@ import java.util.List;
  */
 public class Shape {
 
+    @JsonIgnore
     @Inject
     public URandom random;
 
+    @JsonIgnore
     @Inject
     UThingCzar thingCzar;
 
     public int xsize, ysize;
+    @JsonIgnore
     public int cellCount;
+    @JsonIgnore
     public boolean[][] cells;
+    @JsonIgnore
     boolean[][] buffer;
 
     public static final int MASK_OR = 0;
@@ -83,10 +89,42 @@ public class Shape {
                 return true;
             return false;
         }
-        public boolean isOpen(UArea area) {
+        public boolean unobstructed(UArea area) {
             return area.terrainAt(x+1,y+1).passable();
         }
-        public boolean isOpen() { return value(x+1,y+1); }
+        public boolean unobstructed() { return value(x+1,y+1); }
+
+        public int getX() {
+            return x;
+        }
+
+        public void setX(int x) {
+            this.x = x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public void setY(int y) {
+            this.y = y;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
+        }
     }
 
     public class Face {
@@ -177,10 +215,53 @@ public class Shape {
                 }
             }
         }
+
+        public int getX() {
+            return x;
+        }
+
+        public void setX(int x) {
+            this.x = x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public void setY(int y) {
+            this.y = y;
+        }
+
+        public int getLength() {
+            return length;
+        }
+
+        public void setLength(int length) {
+            this.length = length;
+        }
+
+        public int getFacex() {
+            return facex;
+        }
+
+        public void setFacex(int facex) {
+            this.facex = facex;
+        }
+
+        public int getFacey() {
+            return facey;
+        }
+
+        public void setFacey(int facey) {
+            this.facey = facey;
+        }
     }
 
-    public Shape(int _xsize, int _ysize) {
+    public Shape() {
         Injector.getAppComponent().inject(this);
+    }
+    public Shape(int _xsize, int _ysize) {
+        this();
         resize(_xsize, _ysize);
     }
 
@@ -682,6 +763,7 @@ public class Shape {
     /**
      * Are all true cells connected in a single contiguous region?
      */
+    @JsonIgnore
     public boolean isContiguous() {
         backupToBuffer();
         boolean filledOne = false;
@@ -905,5 +987,45 @@ public class Shape {
             }
         }
         return edges;
+    }
+
+    public int getXsize() {
+        return xsize;
+    }
+
+    public void setXsize(int xsize) {
+        this.xsize = xsize;
+    }
+
+    public int getYsize() {
+        return ysize;
+    }
+
+    public void setYsize(int ysize) {
+        this.ysize = ysize;
+    }
+
+    public int getCellCount() {
+        return cellCount;
+    }
+
+    public void setCellCount(int cellCount) {
+        this.cellCount = cellCount;
+    }
+
+    public boolean[][] getCells() {
+        return cells;
+    }
+
+    public void setCells(boolean[][] cells) {
+        this.cells = cells;
+    }
+
+    public boolean[][] getBuffer() {
+        return buffer;
+    }
+
+    public void setBuffer(boolean[][] buffer) {
+        this.buffer = buffer;
     }
 }

@@ -1,5 +1,6 @@
 package ure.areas.gen.shapers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.areas.UArea;
@@ -11,12 +12,16 @@ import java.util.Collections;
 
 public class Chambers extends Shaper {
 
+    @JsonIgnore
     private Log log = LogFactory.getLog(Chambers.class);
 
+    @JsonIgnore
     ArrayList<RoomStruct> rooms;
+    @JsonIgnore
     int cellSize,groupMin,groupMax;
-    int ys,xs;
-    int totalRooms;
+    @JsonIgnore
+    int ys,xs,totalRooms;
+    @JsonIgnore
     int[][] roomPointers;
 
     class RoomStruct{
@@ -56,7 +61,7 @@ public class Chambers extends Shaper {
     }
 
     @Override
-    void setupParams() {
+    public void setupParams() {
         addParamI("cellSize", 3, 5, 10);
         addParamI("groupMin",1,1,5);
         addParamI("groupMax",1,5,10);

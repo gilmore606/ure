@@ -5,7 +5,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.areas.UArea;
 import ure.areas.UCell;
-import ure.areas.gen.shapers.Shaper;
 import ure.math.Dimap;
 import ure.math.DimapEntity;
 import ure.ui.ULight;
@@ -25,6 +24,7 @@ public class Metascaper extends ULandscaper {
     String wallTerrain, doorTerrain, entranceTerrain, exitTerrain;
     float doorChance, lightChance;
     ArrayList<ULight> roomLights;
+    @JsonIgnore
     UVaultSet vaultSet;
     String vaultSetName;
     int exitDistance;
@@ -107,7 +107,7 @@ public class Metascaper extends ULandscaper {
 
     void addRoomLights(UArea area) {
         for (Shape.Room r : rooms) {
-            if (!r.isHallway() && r.isOpen(area)) {
+            if (!r.isHallway() && r.unobstructed(area)) {
                 if (random.f() < lightChance) {
                     ULight l = roomLights.get(random.i(roomLights.size())).clone();
                     if (l.type == ULight.AMBIENT) {
@@ -168,5 +168,109 @@ public class Metascaper extends ULandscaper {
             area.setTerrain(entrance.x, entrance.y, entranceTerrain);
             area.setTerrain(exit.x, exit.y, exitTerrain);
         }
+    }
+
+    public ArrayList<Layer> getLayers() {
+        return layers;
+    }
+
+    public void setLayers(ArrayList<Layer> layers) {
+        this.layers = layers;
+    }
+
+    public Layer getRoomLayer() {
+        return roomLayer;
+    }
+
+    public void setRoomLayer(Layer roomLayer) {
+        this.roomLayer = roomLayer;
+    }
+
+    public String getWallTerrain() {
+        return wallTerrain;
+    }
+
+    public void setWallTerrain(String wallTerrain) {
+        this.wallTerrain = wallTerrain;
+    }
+
+    public String getDoorTerrain() {
+        return doorTerrain;
+    }
+
+    public void setDoorTerrain(String doorTerrain) {
+        this.doorTerrain = doorTerrain;
+    }
+
+    public String getEntranceTerrain() {
+        return entranceTerrain;
+    }
+
+    public void setEntranceTerrain(String entranceTerrain) {
+        this.entranceTerrain = entranceTerrain;
+    }
+
+    public String getExitTerrain() {
+        return exitTerrain;
+    }
+
+    public void setExitTerrain(String exitTerrain) {
+        this.exitTerrain = exitTerrain;
+    }
+
+    public float getDoorChance() {
+        return doorChance;
+    }
+
+    public void setDoorChance(float doorChance) {
+        this.doorChance = doorChance;
+    }
+
+    public float getLightChance() {
+        return lightChance;
+    }
+
+    public void setLightChance(float lightChance) {
+        this.lightChance = lightChance;
+    }
+
+    public ArrayList<ULight> getRoomLights() {
+        return roomLights;
+    }
+
+    public void setRoomLights(ArrayList<ULight> roomLights) {
+        this.roomLights = roomLights;
+    }
+
+    public UVaultSet getVaultSet() {
+        return vaultSet;
+    }
+
+    public void setVaultSet(UVaultSet vaultSet) {
+        this.vaultSet = vaultSet;
+    }
+
+    public String getVaultSetName() {
+        return vaultSetName;
+    }
+
+    public void setVaultSetName(String vaultSetName) {
+        this.vaultSetName = vaultSetName;
+    }
+
+    public int getExitDistance() {
+        return exitDistance;
+    }
+
+    public void setExitDistance(int exitDistance) {
+        this.exitDistance = exitDistance;
+    }
+
+    public ArrayList<Shape.Room> getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(ArrayList<Shape.Room> rooms) {
+        this.rooms = rooms;
     }
 }

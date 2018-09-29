@@ -19,7 +19,7 @@ public class Growdungeon extends Shaper {
 
 
     @Override
-    void setupParams() {
+    public void setupParams() {
         addParamI("iterations", 1, 500, 1000);
         addParamI("roomSizeMin", 1, 3, 15);
         addParamI("roomSizeMax", 2, 6, 30);

@@ -15,6 +15,10 @@ public class Layer {
     public String terrain;
     public boolean pruneDeadEnds, wipeSmallRegions, roundCorners, invert;
 
+    public Layer() {
+
+    }
+
     public void update(Shaper shaper, float density, int printMode, String terrain, boolean pruneDeadEnds, boolean wipeSmallRegions, boolean roundCorners, boolean invert) {
         this.shaper = shaper;
         this.density = density;
@@ -55,4 +59,68 @@ public class Layer {
         }
     }
     public ArrayList<Shaper.Room> rooms() { return shaper.rooms; }
+
+    public Shaper getShaper() {
+        return shaper;
+    }
+
+    public void setShaper(Shaper shaper) {
+        this.shaper = shaper;
+    }
+
+    public float getDensity() {
+        return density;
+    }
+
+    public void setDensity(float density) {
+        this.density = density;
+    }
+
+    public int getPrintMode() {
+        return printMode;
+    }
+
+    public void setPrintMode(int printMode) {
+        this.printMode = printMode;
+    }
+
+    public String getTerrain() {
+        return terrain;
+    }
+
+    public void setTerrain(String terrain) {
+        this.terrain = terrain;
+    }
+
+    public boolean isPruneDeadEnds() {
+        return pruneDeadEnds;
+    }
+
+    public void setPruneDeadEnds(boolean pruneDeadEnds) {
+        this.pruneDeadEnds = pruneDeadEnds;
+    }
+
+    public boolean isWipeSmallRegions() {
+        return wipeSmallRegions;
+    }
+
+    public void setWipeSmallRegions(boolean wipeSmallRegions) {
+        this.wipeSmallRegions = wipeSmallRegions;
+    }
+
+    public boolean isRoundCorners() {
+        return roundCorners;
+    }
+
+    public void setRoundCorners(boolean roundCorners) {
+        this.roundCorners = roundCorners;
+    }
+
+    public boolean isInvert() {
+        return invert;
+    }
+
+    public void setInvert(boolean invert) {
+        this.invert = invert;
+    }
 }
