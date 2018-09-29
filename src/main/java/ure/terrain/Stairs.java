@@ -12,6 +12,7 @@ import ure.sys.events.PlayerChangedAreaEvent;
 import ure.sys.Injector;
 import ure.ui.modals.HearModalChoices;
 import ure.ui.modals.UModalChoices;
+import ure.ui.modals.UModalFade;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -69,9 +70,11 @@ public class Stairs extends UTerrain implements HearModalChoices {
             log.warn("couldn't find back-matching stairs!  going to random space");
             dest = destarea.randomOpenCell(actor);
         }
-        actor.moveToCell(destarea, dest.areaX(), dest.areaY());
         if (actor instanceof UPlayer) {
+            commander.transportPlayer(destarea, dest.areaX(), dest.areaY());
             bus.post(new PlayerChangedAreaEvent((UPlayer)actor, this, sourcearea, destarea));
+        } else {
+            actor.moveToCell(destarea, dest.areaX(), dest.areaY());
         }
     }
 
@@ -105,13 +108,9 @@ public class Stairs extends UTerrain implements HearModalChoices {
     }
 
     public void askConfirm() {
-        ArrayList<String> choices = new ArrayList<>();
-        choices.add("Yes");
-        choices.add("No");
         String confirmMsg = "Travel to " + commander.cartographer.describeLabel(label) + "?";
         confirmMsg = walkmsg + "\n" + confirmMsg;
-        UModalChoices modal = new UModalChoices(confirmMsg, choices, 1, 1, true,
-                null, this, "travel");
+        UModalChoices modal = new UModalChoices(confirmMsg, new String[]{"Yes","No"},this, "travel");
         commander.showModal(modal);
     }
 
@@ -120,6 +119,15 @@ public class Stairs extends UTerrain implements HearModalChoices {
             transportActor(commander.player());
     }
 
+    @Override
+    public ArrayList<String> UItips(String context) {
+        ArrayList<String> tips = super.UItips(context);
+        if (tips == null)
+            tips = new ArrayList<String>();
+        tips.add(" ");
+        tips.add("(Leads to " + commander.cartographer.describeLabel(label) + ".)");
+        return tips;
+    }
 
     public int getDestX() {
         return destX;

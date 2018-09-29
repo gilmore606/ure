@@ -11,24 +11,23 @@ import ure.render.URenderer;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.sys.UConfig;
-import ure.sys.UREGame;
+import ure.sys.UREgame;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThingCzar;
 import ure.ui.UCamera;
 import ure.ui.View;
-import ure.ui.panels.UActorPanel;
-import ure.ui.panels.UScrollPanel;
-import ure.ui.panels.UStatusPanel;
+import ure.ui.panels.ScrollPanel;
+import ure.ui.panels.StatusPanel;
 
 import javax.inject.Inject;
 
-public class MyGame implements UREGame {
+public class MyGame implements UREgame {
 
     static UArea area;
     static UCamera camera;
     static UPlayer player;
-    static UStatusPanel statusPanel;
-    static UScrollPanel scrollPanel;
+    static StatusPanel statusPanel;
+    static ScrollPanel scrollPanel;
 
     @Inject
     public URenderer renderer;
@@ -49,7 +48,7 @@ public class MyGame implements UREGame {
 
     public void startUp() {
         cartographer = new ExampleCartographer();
-        commander.registerComponents(this, player, renderer, thingCzar, actorCzar, cartographer);
+        commander.registerComponents(this, null, player, renderer, thingCzar, actorCzar, cartographer);
 
         makeWindow();
 

@@ -1,12 +1,12 @@
 package ure.ui;
 
+import com.google.common.eventbus.EventBus;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.actors.UActor;
 import ure.areas.UArea;
 import ure.areas.UCell;
-import ure.math.UColor;
-import ure.math.USimplexNoise;
+import ure.math.*;
 import ure.render.URenderer;
 import ure.sys.Injector;
 import ure.sys.UAnimator;
@@ -14,6 +14,7 @@ import ure.sys.UCommander;
 import ure.sys.UConfig;
 import ure.terrain.UTerrain;
 import ure.things.UThing;
+import ure.ui.modals.UModal;
 import ure.ui.particles.UParticle;
 
 import javax.inject.Inject;
@@ -32,6 +33,8 @@ public class UCamera extends View implements UAnimator {
     UConfig config;
     @Inject
     URenderer renderer;
+    @Inject
+    EventBus bus;
 
     public UArea area;
     float zoom = 1.0f;
@@ -41,15 +44,23 @@ public class UCamera extends View implements UAnimator {
     public int leftEdge, topEdge, rightEdge, bottomEdge;
     private ULightcell lightcells[][];
     private HashSet<UActor> visibilitySources;
+    private boolean lightEnable = true;
+
+    private int cursorX, cursorY;
+    private long cursorEnterTime;
+    private int lastMouseX, lastMouseY;
+    private int[][] cursorPath;
 
     public static int PINSTYLE_NONE = 0;
     public static int PINSTYLE_SOFT = 1;
     public static int PINSTYLE_SCREENS = 2;
     public static int PINSTYLE_HARD = 3;
 
-    private USimplexNoise noise = new USimplexNoise();
+    private SimplexNoise noise = new SimplexNoise();
 
     private Log log = LogFactory.getLog(UCamera.class);
+
+    private UShadowLine shadowLine;
 
     private class UShadow {
         float start, end;
@@ -73,6 +84,9 @@ public class UCamera extends View implements UAnimator {
         LinkedList<UShadow> _shadows;
         public UShadowLine() {
             _shadows = new LinkedList<UShadow>();
+        }
+        public void reset() {
+            _shadows.clear();
         }
         public void add(UShadow shadow) {
             int index = 0;
@@ -119,7 +133,20 @@ public class UCamera extends View implements UAnimator {
     public UCamera(int x, int y, int width, int height) {
         Injector.getAppComponent().inject(this);
         visibilitySources = new HashSet<>();
+        shadowLine = new UShadowLine();
         setBounds(x, y, width, height);
+        setupGrid();
+    }
+
+    public void resizeView(int x, int y, int w, int h) {
+        this.x = x;
+        this.y = y;
+        resize(w,h);
+        renderLights();
+    }
+
+    public void resize(int newwidth, int newheight) {
+        setBounds(x, y, newwidth, newheight);
         setupGrid();
     }
 
@@ -173,7 +200,8 @@ public class UCamera extends View implements UAnimator {
     public int getWidthInCells() { return columns; }
     public int getHeightInCells() { return rows; }
 
-    void renderLights() {
+    public void renderLights() {
+        if (area == null) return;
         for (int i = 0; i< columns; i++) {
             for (int j = 0; j< rows; j++) {
                 lightcells[i][j].wipe();
@@ -238,10 +266,8 @@ public class UCamera extends View implements UAnimator {
                 setVisibilityAt(col, row, 0f);
             }
         }
-        Iterator<UActor> players = visibilitySources.iterator();
-        while (players.hasNext()) {
-            renderVisibleFor(players.next());
-        }
+        for (UActor p : visibilitySources)
+            renderVisibleFor(p);
 
     }
 
@@ -273,7 +299,7 @@ public class UCamera extends View implements UAnimator {
             return 1.0f;
         if (!isValidCell(col, row))
             return 0f;
-        return lightcells[col][row].visibility();
+        return lightcells[col][row].visibility;
     }
 
     void setVisibilityAt(int col, int row, float vis) {
@@ -305,7 +331,7 @@ public class UCamera extends View implements UAnimator {
         else if (light.type == ULight.POINT) isAmbient = false;
         if (projectVisibility || !isAmbient) {
             for (int octant = 0;octant < 8;octant++) {
-                UShadowLine line = new UShadowLine();
+                shadowLine.reset();
                 boolean fullShadow = false;
                 int row = 0;
                 boolean inFrame = true;
@@ -326,12 +352,12 @@ public class UCamera extends View implements UAnimator {
                                 } else {
                                     UShadow projection = new UShadow(0f, 0f);
                                     projection.projectTile(row, col);
-                                    boolean visible = !line.isInShadow(projection);
+                                    boolean visible = !shadowLine.isInShadow(projection);
                                     if (visible) {
                                         projectToCell(dx, dy, light, projectVisibility, 1f);
                                         if (area.blocksLight(dx + leftEdge, dy + topEdge)) {
-                                            line.add(projection);
-                                            fullShadow = line.isFullShadow();
+                                            shadowLine.add(projection);
+                                            fullShadow = shadowLine.isFullShadow();
                                         }
                                     }
                                 }
@@ -383,14 +409,22 @@ public class UCamera extends View implements UAnimator {
             for (int ix = sx1;ix < sx1 + w;ix++) {
                 val = spreadAmbient(light, ix, sy1, 0, -1, fall);
                 projectToCell(ix, sy1, light, false, val);
+                projectToCell(ix-1, sy1, light, false, val);
+                projectToCell(ix+1,sy1,light,false,val);
                 val = spreadAmbient(light, ix, sy1 + h-1, 0, 1, fall);
                 projectToCell(ix, sy1 + h-1, light, false, val);
+                projectToCell(ix-1,sy1+h-1,light,false,val);
+                projectToCell(ix+1,sy1+h-1,light,false,val);
             }
             for (int iy = sy1;iy < sy1 + h;iy++) {
                 val = spreadAmbient(light, sx1, iy, -1, 0, fall);
                 projectToCell(sx1, iy, light, false, val);
+                projectToCell(sx1,iy-1,light,false,val);
+                projectToCell(sx1,iy+1,light,false,val);
                 val = spreadAmbient(light, sx1 + w-1, iy, 1, 0, fall);
                 projectToCell(sx1 + w-1, iy, light, false, val);
+                projectToCell(sx1+w-1,iy-1,light,false,val);
+                projectToCell(sx1+w-1,iy+1,light,false,val);
             }
         }
     }
@@ -483,7 +517,7 @@ public class UCamera extends View implements UAnimator {
         UColor total;
         if (!isValidCell(col,row))
             return UColor.BLACK;
-        if (!config.isLightEnable()) {
+        if (!config.isLightEnable() || !isLightEnable()) {
             total = UColor.WHITE;
         } else if (lightcells[col][row] == null) {
             log.warn("nonexistent lightcell at " + col + "," + row);
@@ -503,6 +537,12 @@ public class UCamera extends View implements UAnimator {
         return total;
     }
 
+    public UColor fogAt(int col, int row) {
+        if (!isValidCell(col,row))
+            return UColor.CLEAR;
+        return lightcells[col][row].fog(commander.frameCounter);
+    }
+
     public UTerrain terrainAt(int localCol, int localRow) {
         return area.terrainAt(localCol + leftEdge, localRow + topEdge);
     }
@@ -516,7 +556,7 @@ public class UCamera extends View implements UAnimator {
     @Override
     public void draw() {
 
-        renderLights();
+        //renderLights();
 
         // Render Cells.
         for (int col=0; col<columns; col++) {
@@ -534,6 +574,15 @@ public class UCamera extends View implements UAnimator {
                 drawCellParticle(col, row);
             }
         }
+        int fogDistance = area.getFogDistance();
+        int fogDistanceFull = area.getFogDistanceFull();
+        for (int col = 0;col < columns;col++) {
+            for (int row = 0;row < rows;row++) {
+                drawCellFog(col, row, fogDistance, fogDistanceFull);
+            }
+        }
+
+        drawCursor();
     }
 
     private void drawCell(int col, int row) {
@@ -562,13 +611,18 @@ public class UCamera extends View implements UAnimator {
             renderer.drawRect(col * cellw, row * cellh, cellw, cellh, config.getCameraBgColor());
         }
 
+        if (vis > 0f && config.isAmbientOcclusion())
+            drawCellAO(col, row);
+
         if (vis < config.getVisibilityThreshold())
             return;
+
         if (thingsAt(col,row) != null) {
             for (UThing thing : thingsAt(col,row)) {
                 thing.icon().draw(col*cellw, row*cellh, light, vis, 1f);
             }
         }
+
     }
 
     private void drawCellActor(int col, int row) {
@@ -596,8 +650,67 @@ public class UCamera extends View implements UAnimator {
             }
         }
     }
+    private void drawCellFog(int col, int row, int distance, int distanceFull) {
+        if (commander.player() == null) return;
+        if (!config.isFog()) return;
+        UColor light = lightAt(col,row);
+        float vis = visibilityAt(col,row);
+        if (vis > 0f) {
+            int range = (int) UPath.dist(commander.player().areaX() - leftEdge, commander.player().areaY() - topEdge, col, row);
+            if (range > distance) {
+                float fog;
+                if (range > distanceFull) {
+                    fog = 1f;
+                } else {
+                    fog = (float) (range - distance) / (float) (distanceFull - distance);
+                }
+                UColor fogcolor = fogAt(col,row);
+                fogcolor.setAlpha(fog * vis);
+                renderer.drawRect(col * config.getTileWidth(), row * config.getTileHeight(), config.getTileWidth(), config.getTileHeight(), fogcolor);
+            }
+        }
+    }
+
+    void drawCellAO(int col, int row) {
+        if (!area.canSeeThrough(col+leftEdge,row+topEdge)) return;
+        if (col+leftEdge <=0 || row+topEdge <= 0 || col+leftEdge >= area.xsize-1 || row+topEdge >= area.ysize-1) return;
+
+        boolean nn = !area.canSeeThrough(col+leftEdge,row+topEdge-1) || !area.terrainAt(col+leftEdge,row+topEdge-1).passable();
+        boolean ns = !area.canSeeThrough(col+leftEdge,row+topEdge+1) || !area.terrainAt(col+leftEdge,row+topEdge+1).passable();
+        boolean nw = !area.canSeeThrough(col+leftEdge-1,row+topEdge) || !area.terrainAt(col+leftEdge-1,row+topEdge).passable();
+        boolean ne = !area.canSeeThrough(col+leftEdge+1,row+topEdge) || !area.terrainAt(col+leftEdge+1,row+topEdge).passable();
+        int x = col * config.getTileWidth();
+        int y = row * config.getTileHeight();
+        int w = config.getTileWidth();
+        int h = config.getTileHeight();
+        int cw = (int)(((float)w/4f)*3f);
+        int ch = (int)(((float)h/4f)*3f);
+        if (nn) {
+            renderer.drawRect(x, y, w, h / 4, UColor.SHADE);
+            renderer.drawRect(x, y, w, 3, UColor.DARKSHADE);
+            renderer.drawRect(x,y,w,1, UColor.DARKERSHADE);
+        }
+        if (!config.isAmbientOcclusionIso()) {
+            if (ns) {
+                renderer.drawRect(x, y + ch, w, h / 4, UColor.SHADE);
+                renderer.drawRect(x, y + h - 3, w, 3, UColor.DARKSHADE);
+                renderer.drawRect(x,y+h-1,w,1,UColor.DARKERSHADE);
+            }
+            if (nw) {
+                renderer.drawRect(x, y, w / 4, h, UColor.SHADE);
+                renderer.drawRect(x, y, 3, h, UColor.DARKSHADE);
+                renderer.drawRect(x,y,1,h,UColor.DARKERSHADE);
+            }
+            if (ne) {
+                renderer.drawRect(x + cw, y, w / 4, h, UColor.SHADE);
+                renderer.drawRect(x + w - 3, y, 3, h, UColor.DARKSHADE);
+                renderer.drawRect(x+w-1,y,1,h,UColor.DARKERSHADE);
+            }
+        }
+    }
 
     public void animationTick() {
+        updateCursor();
         float visThreshold;
         if (config.isVisibilityEnable())
             visThreshold = config.getVisibilityThreshold();
@@ -605,10 +718,84 @@ public class UCamera extends View implements UAnimator {
             visThreshold = -1f;
         for (int col = leftEdge; col< rightEdge; col++) {
             for (int row = topEdge; row< bottomEdge; row++) {
-                if (area.isValidXY(col,row) && lightcells[col- leftEdge][row- topEdge].visibility() > visThreshold)
+                if (area.isValidXY(col,row) && lightcells[col- leftEdge][row- topEdge].visibility > visThreshold)
                     area.cellAt(col,row).animationTick();
             }
         }
     }
 
+    void updateCursor() {
+        if (commander.player() == null) return;
+        int mouseCol = mouseX() / config.getTileWidth();
+        int mouseRow = mouseY() / config.getTileHeight();
+        if (mouseCol < 0 || mouseRow < 0 || mouseCol >= columns || mouseRow >= rows) {
+            cursorX = -1;
+            cursorY = -1;
+            cursorPath = null;
+            cursorEnterTime = System.currentTimeMillis();
+        } else if (cursorX != mouseCol || cursorY != mouseRow) {
+            cursorX = mouseCol;
+            cursorY = mouseRow;
+            cursorEnterTime = System.currentTimeMillis();
+        } else if (lastMouseX == mouseX() && lastMouseY == mouseY()) {
+            if (System.currentTimeMillis() - cursorEnterTime > 500) {
+                if (!commander.hasTooltip() && !commander.hasModal()) {
+                    UModal tooltip = makeTooltip();
+                    if (tooltip != null) {
+                        commander.attachTooltip(tooltip);
+                    }
+                }
+            }
+        } else if (commander.hasTooltip()) {
+            commander.detachTooltip();
+        }
+        lastMouseX = mouseX();
+        lastMouseY = mouseY();
+    }
+
+    void drawCursor() {
+        if (cursorX < 0) return;
+        if (commander.player() == null) return;
+        if (commander.modal() != null) return;
+        renderer.drawRect(cursorX*config.getTileWidth(), cursorY*config.getTileHeight(), config.getTileWidth(), config.getTileHeight(), config.getHiliteColor());
+        int linepos[] = new int[]{cursorX+leftEdge,cursorY+topEdge};
+        Dimap playermap = area.dimapFor(commander.player().getID() + " self");
+        if (playermap == null)
+            playermap = area.addDimap(commander.player().getID() + " self", new DimapEntity(area, Dimap.TYPE_SEEK, commander.player().moveTypes(), commander.player()));
+        float steps = playermap.valueAt(linepos[0],linepos[1]);
+        while (steps > 0) {
+            renderer.drawRect((linepos[0]-leftEdge)*config.getTileWidth(),(linepos[1]-topEdge)*config.getTileHeight(),config.getTileWidth(),config.getTileHeight(), config.getHiliteColor());
+            linepos = playermap.stepDown(linepos);
+            if (linepos == null) break;
+            steps = playermap.valueAt(linepos[0],linepos[1]);
+        }
+        if (config.isTelemetry()) {
+            for (int i = 0;i < columns;i++) {
+                for (int j = 0;j < rows;j++) {
+                    int mx = i + leftEdge;
+                    int my = j + topEdge;
+                    if (area.isValidXY(mx, my)) {
+                        float v = playermap.valueAt(mx, my);
+                        if (v > 0f)
+                            renderer.drawString(i * config.getTileWidth(), j * config.getTileHeight(), config.getHiliteColor(), String.format("%.1f", v));
+                    }
+                }
+            }
+        }
+    }
+
+    UModal makeTooltip() {
+        UModal tooltip = area.makeTooltipAt(cursorX+leftEdge, cursorY+topEdge);
+        if (tooltip != null) {
+            int toolx = cursorX;
+            int tooly = cursorY + 3;
+            if (toolx + tooltip.cellw >= columns)
+                toolx -= (toolx + tooltip.cellw - columns + 1);
+            tooltip.setChildPosition(toolx, tooly, this);
+        }
+        return tooltip;
+    }
+
+    public boolean isLightEnable() { return lightEnable; }
+    public void setLightEnable(boolean b) { lightEnable = b; }
 }

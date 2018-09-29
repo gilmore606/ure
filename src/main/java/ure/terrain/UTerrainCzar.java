@@ -3,15 +3,13 @@ package ure.terrain;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.sys.Injector;
+import ure.sys.ResourceManager;
 import ure.sys.UCommander;
 
 import javax.inject.Inject;
@@ -33,6 +31,8 @@ public class UTerrainCzar {
     ObjectMapper objectMapper;
     @Inject
     UCommander commander;
+    @Inject
+    ResourceManager resourceManager;
 
     private Log log = LogFactory.getLog(UTerrainCzar.class);
 
@@ -54,14 +54,12 @@ public class UTerrainCzar {
     public void loadTerrains() {
         terrains = new HashMap<>();
         terrainsByName = new HashMap<>();
-        File jsonDir = new File(commander.config.getResourcePath() + "terrain/");
-        ArrayList<File> files = new ArrayList<File>(Arrays.asList(jsonDir.listFiles()));
-        for (File resourceFile : files) {
-            String resourceName = resourceFile.getName();
+        List<String> files = resourceManager.getResourceFiles("/terrain");
+        for (String resourceName : files) {
             if (resourceName.endsWith(".json")) {
                 log.debug("loading " + resourceName);
                 try {
-                    InputStream inputStream = getClass().getResourceAsStream("/terrain/" + resourceName);
+                    InputStream inputStream = resourceManager.getResourceAsStream("/terrain/" + resourceName);
                     UTerrain[] terrainObjs = objectMapper.readValue(inputStream, UTerrain[].class);
                     for (UTerrain terrain : terrainObjs) {
                         terrain.initializeAsTemplate();
@@ -96,7 +94,7 @@ public class UTerrainCzar {
      * @return
      */
     public UTerrain getTerrainByName(String name) {
-        return (UTerrain)(getTerrainForFilechar(terrainsByName.get(name).getFilechar()));
+        return getTerrainForFilechar(terrainsByName.get(name).getFilechar());
     }
 
     public ArrayList<UTerrain> getAllTerrainTemplates() {

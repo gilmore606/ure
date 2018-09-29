@@ -32,15 +32,15 @@ public class UConfig {
 
     private int FPStarget = 30;                                 // draw at this FPS
     private int animFrameMilliseconds = 33;                     // milliseconds between animation frames
-    private int screenWidth = 1400;                             // window width in pixels
-    private int screenHeight = 1000;                            // window height in pixels
+    private int screenWidth = 1000;                             // window width in pixels
+    private int screenHeight = 700;                            // window height in pixels
     private String tileFont = "/fonts/Deferral-Square.ttf";    // irrelevant for non-ascii renderer
     private float tileFontSize = 20;
     private String textFont = "/fonts/UbuntuMono-R.ttf";
     private float textFontSize = 16;
     private int tileWidth = 20;
     private int tileHeight = 20;
-    private int textWidth = 10;
+    private int textWidth = 11;
     private int textHeight = 16;
 
     private String uiCheckGlyph = "*";                          // checkmark for UI selections
@@ -55,10 +55,12 @@ public class UConfig {
     private UColor windowBgColor = UColor.BLACK;                          // bgColor of game window
     private UColor cameraBgColor = UColor.BLACK;                          // bgColor of camera (for unseen territory)
     private UColor modalBgColor = new UColor(0.1f,0.1f,0f);                         // bgColor of modal popups
+    private UColor panelBgColor = new UColor(0.1f, 0.1f, 0.0f);        // bgColor of window panels
     private UColor modalFrameColor = new UColor(0.7f,0.7f,0.1f);     // glyph color for modal popup frame glyphs
     private UColor modalShadowColor = new UColor(0f,0f,0f,0.5f);  // color (and alpha) of modal shadows
     private UColor textColor = UColor.OFFWHITE;                             // color for ui/scroll text
-    private UColor hiliteColor = new UColor(1f,1f,0.2f, 0.3f);            // color for ui selection highlighting
+    private UColor textGray = new UColor(0.72f, 0.72f, 0.55f, 1f);                                // color for grayed ui text
+    private UColor hiliteColor = new UColor(1f,1f,0.25f, 0.2f);            // color for ui selection highlighting
 
     private boolean outlineActors = true;                           // draw a black outline around Actor glyphs?
     private boolean outlineThings = false;                          // draw a black outline around Thing glyphs?
@@ -72,7 +74,11 @@ public class UConfig {
     private boolean visibilityEnable = true;            // if false, assume everything is visible (no occlusion)
     private boolean lightEnable = true;                 // if false, assume all areas lit 100%
     private boolean lightBloom = true;                  // TODO: lights adding to >fullbright bloom to white
+    private boolean ambientOcclusion = true;            // ambient occlusion shadowing on terrain edges
+    private boolean ambientOcclusionIso = true;         // shadow south edge only for faux-isometric shading
     private boolean smoothLightCones = true;            // dither edges of light cones
+    private boolean fog = true;                         // area-specific distance fog
+    private boolean telemetry = false;                  // diagnostic telemetry
 
     private float visibilityThreshold = 0.2f;           // how 'visible' is a cell before we consider it seen? (ucamera 512, 537)
     private float seenOpacity = 0.55f;                  // how bright to draw seen-but-not-visible terrain
@@ -100,15 +106,15 @@ public class UConfig {
     private float musicFadeTime = 2.5f;                   // seconds to crossfade background music
 
     private int volumeFalloffDistance = 40;             // cells away for a sound to attenuate to -infDB
-    private String titleMusic = "sounds/ultima_dungeon.ogg";
+    private String titleMusic = "/sounds/ultima_dungeon.ogg";
 
-    public String soundUImodalOpen ="sounds/echo_alert_rev.ogg";
-    public String soundUIcursorUp = "sounds/mouse_over3.wav";
-    public String soundUIcursorDown = "sounds/mouse_over3.wav";
-    public String soundUIselect = "sounds/melodic2_click.ogg";
-    public String soundUIcancel = "sounds/echo_alert.ogg";
-    public String soundUIkeystroke = "sounds/mouse_over3.ogg";
-    public String soundUIbumpLimit = "sounds/melodic1_click.ogg";
+    public String soundUImodalOpen ="/sounds/echo_alert_rev.ogg";
+    public String soundUIcursorUp = "/sounds/mouse_over3.wav";
+    public String soundUIcursorDown = "/sounds/mouse_over3.wav";
+    public String soundUIselect = "/sounds/melodic2_click.ogg";
+    public String soundUIcancel = "/sounds/echo_alert.ogg";
+    public String soundUIkeystroke = "/sounds/mouse_over3.ogg";
+    public String soundUIbumpLimit = "/sounds/melodic1_click.ogg";
     public Sound soundModalOpen, soundCursorUp, soundCursorDown, soundSelect, soundCancel, soundKeystroke, soundBumpLimit;
 
     // Game functionality
@@ -355,7 +361,8 @@ public class UConfig {
     public void setModalBgColor(UColor modalBgColor) {
         this.modalBgColor = modalBgColor;
     }
-
+    public UColor getPanelBgColor() { return panelBgColor; }
+    public void setPanelBgColor(UColor c) { panelBgColor = c; }
     public UColor getModalFrameColor() {
         return modalFrameColor;
     }
@@ -370,10 +377,11 @@ public class UConfig {
     public UColor getTextColor() {
         return textColor;
     }
-
     public void setTextColor(UColor textColor) {
         this.textColor = textColor;
     }
+    public UColor getTextGray() { return textGray; }
+    public void setTextGray(UColor grayColor) { this.textGray = grayColor; }
 
     public UColor getHiliteColor() {
         return hiliteColor;
@@ -437,6 +445,10 @@ public class UConfig {
     public void setLightBloom(boolean lightBloom) {
         this.lightBloom = lightBloom;
     }
+    public boolean isAmbientOcclusion() { return ambientOcclusion; }
+    public void setAmbientOcclusion(boolean b) { ambientOcclusion = b; }
+    public boolean isAmbientOcclusionIso() { return ambientOcclusionIso; }
+    public void setAmbientOcclusionIso(boolean b) { ambientOcclusionIso = b; }
 
     public boolean isSmoothLightCones() {
         return smoothLightCones;
@@ -595,4 +607,8 @@ public class UConfig {
     public void setTitleMusic(String s) { titleMusic = s; }
     public void setVolumeFalloffDistance(int d) { volumeFalloffDistance = d; }
     public int getVolumeFalloffDistance() { return volumeFalloffDistance; }
+    public boolean isFog() { return fog; }
+    public void setFog(boolean b) { fog = b; }
+    public boolean isTelemetry() { return telemetry; }
+    public void setTelemetry(boolean b) { telemetry = b; }
 }

@@ -1,6 +1,8 @@
 package ure.things;
 
 import ure.areas.UArea;
+import ure.areas.UCell;
+import ure.sys.Entity;
 import ure.things.UThing;
 
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ public interface UContainer {
     int areaX();
     int areaY();
     UArea area();
+    UCell cell();
     void addThing(UThing thing);
     void removeThing(UThing thing);
     Iterator<UThing> iterator();

@@ -3,6 +3,7 @@
   "name": "deer",
   "description": "A huge mule deer buck.",
     "bodytype": "animal",
+    "moveTypes": ["walk","wade"],
   "tags": [ "forest" ],
   "behaviors": [
     {"type": "wander", "freq": 0.3},
@@ -17,8 +18,9 @@
   },
   {
     "name": "rat",
-    "description": "A big wet rat.",
+    "description": "A big wet rat with glittering red eyes.",
     "bodytype": "animal",
+    "moveTypes": ["walk"],
     "tags": [ "cave", "complex", "title" ],
     "spawnlevels": [ 1,5 ],
     "behaviors": [
@@ -28,8 +30,9 @@
   },
   {
     "name": "rabbit",
-    "description": "A mangy jackrabbit.",
+    "description": "A mangy jackrabbit with long tattered ears and blotchy white fur.",
     "bodytype": "animal",
+    "moveTypes": ["walk"],
     "tags": [ "forest" ],
     "spawnterrain": [ "grass" ],
     "spawnlevels": [ 1,2 ],
@@ -43,7 +46,8 @@
   },
   {
     "name": "sasquatch",
-    "description": "A foul smelling giant humanoid.",
+    "description": "A foul smelling giant humanoid.  Burrs and twigs are stuck in its muddy fur.",
+    "moveTypes": ["walk","climb","wade"],
     "tags": [ "rock", "forest" ],
     "spawnterrain": [ "grass", "sapling", "dirt" ],
     "spawnlevels": [ 2, 5 ],
@@ -58,7 +62,8 @@
   },
   {
     "name": "soldier",
-    "description": "Some goon.",
+    "description": "Some goon in a patchwork military uniform.  The insignia are strange and unfamiliar.",
+    "moveTypes": ["walk","climb","wade"],
     "tags": [ "complex" ],
     "spawnlevels": [ 1, 5 ],
     "behaviors": [
@@ -71,6 +76,7 @@
   {
     "name": "worker",
     "description": "Some desk jockey.",
+    "moveTypes": ["walk","climb","wade"],
     "tags": [ "complex", "title" ],
     "spawnterrain": [ "floor", "floormoss" ],
     "spawnlevels": [ 1, 2 ],
@@ -82,8 +88,9 @@
   },
   {
     "name": "cave snail",
-    "description": "A dog sized snail with a coral-pattern shell.",
+    "description": "A dog sized snail with a coral-pattern shell.  Mindless eyes wave at the ends of its head-feeler things.",
     "bodytype": "mollusk",
+    "moveTypes": ["walk"],
     "tags": [ "cave" ],
     "spawnlevels": [1, 3],
     "behaviors": [
@@ -94,6 +101,7 @@
     "name": "tuatara",
     "description": "A huge ill-tempered cave lizard.",
     "bodytype": "animal",
+    "moveTypes": ["walk","wade"],
     "tags": [ "cave" ],
     "spawnlevels": [1, 4],
     "ambients": [ "The tuatara hisses threateningly." ],

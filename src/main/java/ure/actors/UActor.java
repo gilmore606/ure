@@ -9,8 +9,11 @@ import ure.actors.actions.Interactable;
 import ure.actors.actions.UAction;
 import ure.areas.UArea;
 import ure.areas.UCell;
+import ure.math.Dimap;
+import ure.math.DimapEntity;
 import ure.math.UColor;
 import ure.math.UPath;
+import ure.sys.events.ActorMovedEvent;
 import ure.sys.events.DeathEvent;
 import ure.terrain.UTerrain;
 import ure.things.Corpse;
@@ -21,6 +24,7 @@ import ure.ui.UCamera;
 import ure.ui.particles.ParticleHit;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * UActor represents a UThing which can perform actions.  This includes the player and NPCs.
@@ -38,6 +42,7 @@ public class UActor extends UThing implements Interactable {
     protected int hearingrange = 15;
     protected float actionspeed = 1f;
     protected float movespeed = 1f;
+    protected HashSet<String> moveTypes;
     protected String bodytype = "humanoid";
     protected String customCorpse;
     protected Body body;
@@ -109,19 +114,39 @@ public class UActor extends UThing implements Interactable {
         int oldx = -1;
         int oldy = -1;
         UArea oldarea = null;
+        UCell oldcell = null;
         if (getLocation() != null) {
             oldx = areaX();
             oldy = areaY();
             oldarea = area();
+            oldcell = (UCell)getLocation();
         }
         super.moveToCell(thearea, destX, destY);
         // TODO: Move the following logic to UCamera
+        updatePinnedCamera();
+        int moveFrames = config.getMoveAnimFrames();
+        if (this instanceof UPlayer) moveFrames = config.getMoveAnimPlayerFrames();
+        if (oldx >=0 && oldarea == thearea && moveFrames > 0) {
+            setMoveAnimX((oldx-destX)*config.getTileWidth());
+            setMoveAnimY((oldy-destY)*config.getTileHeight());
+            setMoveAnimDX(-(getMoveAnimX() / moveFrames));
+            setMoveAnimDY(-(getMoveAnimY() / moveFrames));
+        }
+        UCell newcell = (UCell)getLocation();
+        if (newcell != oldcell && newcell != null) {
+            if (oldarea == thearea)
+                newcell.walkedOnBy(this);
+            bus.post(new ActorMovedEvent(this, oldcell, newcell));
+        }
+    }
+
+    public void updatePinnedCamera() {
         if (camera != null) {
             if (getCameraPinStyle() == UCamera.PINSTYLE_HARD)
-                camera.moveTo(area(), destX, destY);
+                camera.moveTo(area(), areaX(), areaY());
             if (getCameraPinStyle() == UCamera.PINSTYLE_SOFT) {
-                int cameraX = Math.min(destX, thearea.xsize - camera.columns / 2);
-                int cameraY = Math.min(destY, thearea.ysize - camera.rows / 2);
+                int cameraX = Math.min(areaX(), area().xsize - camera.columns / 2);
+                int cameraY = Math.min(areaY(), area().ysize - camera.rows / 2);
                 cameraX = Math.max(camera.columns / 2, cameraX);
                 cameraY = Math.max(camera.rows / 2, cameraY);
                 camera.moveTo(area(), cameraX, cameraY);
@@ -131,30 +156,12 @@ public class UActor extends UThing implements Interactable {
                 throw new RuntimeException("Camera.PINSTYLE_SCREENS not implemented!");
             }
         }
-        int moveFrames = config.getMoveAnimFrames();
-        if (this instanceof UPlayer) moveFrames = config.getMoveAnimPlayerFrames();
-        if (oldx >=0 && oldarea == thearea && moveFrames > 0) {
-            setMoveAnimX((oldx-destX)*config.getTileWidth());
-            setMoveAnimY((oldy-destY)*config.getTileHeight());
-            setMoveAnimDX(-(getMoveAnimX() / moveFrames));
-            setMoveAnimDY(-(getMoveAnimY() / moveFrames));
-        }
-        if (oldarea == thearea)
-            thearea.cellAt(destX, destY).walkedOnBy(this);
     }
 
     public UCell myCell() {
         if (getLocation().containerType() == UContainer.TYPE_CELL)
             return (UCell) getLocation();
         return null;
-    }
-
-    public void debug() {
-        Lightsource torch = (Lightsource)(commander.thingCzar.getThingByName("torch"));
-        torch.setLightcolor(new int[]{random.nextInt(255),random.nextInt(255),random.nextInt(255)});
-        torch.moveToCell(area(), areaX(), areaY());
-        torch.turnOn();
-        commander.printScroll("You drop a torch.");
     }
 
     public void moveTriggerFrom(UActor actor) {
@@ -287,10 +294,17 @@ public class UActor extends UThing implements Interactable {
     }
 
     public boolean stepToward(int x, int y) {
-        int[] step = UPath.nextStep(area(), areaX(), areaY(), x, y, this, 100);
+        String mapname = Long.toString(getID()) + " self";
+        Dimap map = area().dimapFor(mapname);
+        if (map == null)
+            map = area().addDimap(mapname, new DimapEntity(area(), Dimap.TYPE_SEEK, moveTypes(), this));
+
+        int[] step = map.stepOut(new int[]{x,y});
         if (step != null) {
-            ActionWalk action = new ActionWalk(this, step[0] - areaX(), step[1] - areaY());
-            doAction(action);
+            if (step[0] != areaX() || step[1] != areaY()) {
+                ActionWalk action = new ActionWalk(this, step[0] - areaX(), step[1] - areaY());
+                doAction(action);
+            }
             return true;
         }
         return false;
@@ -309,6 +323,10 @@ public class UActor extends UThing implements Interactable {
         if (this instanceof UPlayer) {
             commander.printScroll(cell.terrain().getIcon(), cell.terrain().getBonkmsg());
         }
+    }
+
+    public HashSet<String> moveTypes() {
+        return moveTypes;
     }
 
     /**
@@ -432,6 +450,9 @@ public class UActor extends UThing implements Interactable {
     public float getMovespeed() {
         return movespeed;
     }
+    public HashSet<String> getMoveTypes() { return moveTypes; }
+    public void setMoveTypes(HashSet<String> h) { moveTypes = h; }
+
     public void setBodytype(String s) { bodytype = s; }
     public String getBodytype() { return bodytype; }
     public Body getBody() { return body; }

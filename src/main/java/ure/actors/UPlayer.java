@@ -10,6 +10,10 @@ import ure.ui.Icons.Icon;
 import ure.ui.ULight;
 import ure.things.UThing;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+
 /**
  * UPlayer implements a UActor whose actions are initiated by user input.  More than one can exist.
  *
@@ -27,6 +31,14 @@ public class UPlayer extends UActor {
     public UColor selfLightColor;
     public int selfLight;
     public int selfLightFalloff;
+
+    public ArrayList<UThing> hotbar;
+    public ArrayList<Long> hotbarIDs;
+
+    HashMap<String,Integer> statesI;
+    HashMap<String,Float> statesF;
+    HashMap<String,Boolean> statesB;
+    HashMap<String,String> statesS;
 
     @JsonIgnore
     ULight light;
@@ -50,6 +62,16 @@ public class UPlayer extends UActor {
         bodytype = "humanoid";
         body = commander.actorCzar.getNewBody(bodytype);
         hearingrange = config.getVolumeFalloffDistance();
+        hotbar = new ArrayList<>();
+        statesI = new HashMap<>();
+        statesF = new HashMap<>();
+        statesB = new HashMap<>();
+        statesS = new HashMap<>();
+
+        moveTypes = new HashSet<>();
+        moveTypes.add("walk");
+        moveTypes.add("climb");
+        moveTypes.add("wade");
     }
 
     @Override
@@ -70,10 +92,29 @@ public class UPlayer extends UActor {
     public void reconnectThings() {
         for (UThing thing : contents.getThings()) {
             thing.setLocation(this);
+            thing.reconnect(area(), this);
         }
         if (selfLight > 0) {
             light = new ULight(selfLightColor, selfLightFalloff + selfLight, selfLight);
         }
+        hotbar = new ArrayList<>();
+        for (Long id : hotbarIDs) {
+            if (id == 0)
+                hotbar.add(null);
+            else {
+                for (UThing t : things()) {
+                    if (t.getID() == id) {
+                        hotbar.add(t);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void removeThing(UThing thing) {
+        super.removeThing(thing);
+        removeFromHotbar(thing);
     }
 
     @Override
@@ -121,11 +162,102 @@ public class UPlayer extends UActor {
         saveAreaX = areaX();
         saveAreaY = areaY();
         saveTurn = commander.getTurn();
+        hotbarIDs = new ArrayList<>();
+        for (UThing t : hotbar) {
+            if (t == null)
+                hotbarIDs.add((long)0);
+            else
+                hotbarIDs.add(t.getID());
+        }
     }
+
     public void setSaveLocation(UArea area, int x, int y) {
         saveAreaLabel = area.getLabel();
         saveAreaX = x;
         saveAreaY = y;
+    }
+
+    public void addToHotbar(UThing thing) {
+        for (int i=0;i<10;i++) {
+            if (i < hotbar.size()) {
+                if (hotbar.get(i) == null) {
+                    hotbar.set(i, thing);
+                    return;
+                }
+            }
+        }
+        if (hotbar.size() < 10)
+            hotbar.add(thing);
+    }
+
+    public void clearHotbarSlot(int slot) {
+        if (hotbar.size() >= slot+1) {
+            hotbar.set(slot, null);
+        }
+    }
+
+    public void removeFromHotbar(UThing thing) {
+        for (int i=0;i<hotbar.size();i++) {
+            if (hotbar.get(i) == thing)
+                hotbar.set(i, null);
+        }
+    }
+
+    public boolean hasFreeHotbarSlot() {
+        if (hotbar.size() < 10) return true;
+        for (UThing t : hotbar)
+            if (t == null) return true;
+        return false;
+    }
+
+    public UThing getHotbarItem(int i) {
+        if (i < hotbar.size())
+            return hotbar.get(i);
+        return null;
+    }
+
+    /**
+     * Get a stored state by key.  If no stored state, store as 'def' default and return that.
+     */
+    public int getStateI(String state, int def) {
+        if (statesI.containsKey(state))
+            return statesI.get(state);
+        else
+            statesI.put(state, def);
+        return def;
+    }
+    public void setStateI(String state, int val) {
+        statesI.put(state, val);
+    }
+    public float getStateF(String state, float def) {
+        if (statesF.containsKey(state))
+            return statesF.get(state);
+        else
+            statesF.put(state, def);
+        return def;
+    }
+    public void setStateF(String state, float val) {
+        statesF.put(state, val);
+    }
+    public boolean getStateB(String state, boolean def) {
+        if (statesB.containsKey(state))
+            return statesB.get(state);
+        else
+            statesB.put(state, def);
+        return def;
+    }
+    public void setStateB(String state, boolean val) {
+        statesB.put(state, val);
+    }
+    public String getStateS(String state, String def) {
+        if (statesS.containsKey(state))
+            return statesS.get(state);
+        else
+            statesS.put(state, def);
+        return def;
+    }
+    public void setStateS(String state, String val) {
+        statesS.put(state, val);
     }
 
     public void setSaveAreaLabel(String l) { saveAreaLabel = l; }
@@ -142,5 +274,15 @@ public class UPlayer extends UActor {
     public void setSelfLightColor(UColor c) { selfLightColor = c; }
     public void setSelfLight(int c) { selfLight = c; }
     public void setSelfLightFalloff(int c) { selfLightFalloff = c; }
+    public ArrayList<UThing> getHotbar() { return hotbar; }
+    public void setHotbar(ArrayList<UThing> al) { hotbar = al; }
+    public HashMap<String,Integer> getStatesI() { return statesI; }
+    public void setStatesI(HashMap<String,Integer> m) { statesI = m; }
+    public HashMap<String,Float> getStatesF() { return statesF; }
+    public void setStatesF(HashMap<String,Float> m) { statesF = m; }
+    public HashMap<String,Boolean> getStatesB() { return statesB; }
+    public void setStatesB(HashMap<String,Boolean> m) { statesB = m; }
+    public HashMap<String,String> getStatesS() { return statesS; }
+    public void setStatesS(HashMap<String,String> m) { statesS = m; }
 
 }

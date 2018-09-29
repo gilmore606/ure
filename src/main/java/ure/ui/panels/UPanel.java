@@ -27,6 +27,22 @@ public class UPanel extends View {
     int pixelw, pixelh;
     int padX, padY;
 
+    public static int XPOS_LEFT = -1;
+    public static int XPOS_FIT = 0;
+    public static int XPOS_RIGHT = 1;
+    public static int YPOS_TOP = -1;
+    public static int YPOS_FIT = 0;
+    public static int YPOS_BOTTOM = 1;
+
+    public int layoutXpos;
+    public int layoutYpos;
+    public int layoutWidthMin;
+    public float layoutWidthFrac;
+    public int layoutWidthMax;
+    public int layoutHeightMin;
+    public float layoutHeightFrac;
+    public int layoutHeightMax;
+
     public boolean hidden;
 
     class TextFrag {
@@ -45,16 +61,38 @@ public class UPanel extends View {
         }
     }
 
-    public UPanel(int _pixelw, int _pixelh, int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
+    public UPanel(int _padx, int _pady, UColor _fgColor, UColor _bgColor, UColor _borderColor) {
         Injector.getAppComponent().inject(this);
-        pixelw = _pixelw;
-        pixelh = _pixelh;
         padX = _padx;
         padY = _pady;
         fgColor = _fgColor;
-        bgColor = _bgColor;
+        bgColor = (_bgColor == null ? config.getPanelBgColor() : _bgColor);
         borderColor = _borderColor;
         hidden = true;
+    }
+
+    public void setLayout(int layoutXpos, int layoutYpos, int layoutWidthMin, float layoutWidthFrac, int layoutWidthMax, int layoutHeightMin, float layoutHeightFrac, int layoutHeightMax) {
+        this.layoutXpos = layoutXpos;
+        this.layoutYpos = layoutYpos;
+        this.layoutWidthMin = layoutWidthMin;
+        this.layoutWidthFrac = layoutWidthFrac;
+        this.layoutWidthMax = layoutWidthMax;
+        this.layoutHeightMin = layoutHeightMin;
+        this.layoutHeightFrac = layoutHeightFrac;
+        this.layoutHeightMax = layoutHeightMax;
+    }
+
+    public int widthForXsize(int xsize) {
+        int w = (int)((float)(xsize / config.getTileWidth()) * layoutWidthFrac);
+        return Math.max(layoutWidthMin, Math.min(layoutWidthMax, w));
+    }
+    public int heightForYsize(int ysize) {
+        int h = (int)((float)(ysize / config.getTileHeight()) * layoutHeightFrac);
+        return Math.max(layoutHeightMin, Math.min(layoutHeightMax, h));
+    }
+
+    public void resizeView(int x, int y, int w, int h) {
+        setBounds(x,y,w,h);
     }
 
     public void hide() { hidden = true; }
@@ -62,13 +100,33 @@ public class UPanel extends View {
     public boolean isHidden() { return hidden; }
 
     public void setPosition(int posx, int posy) {
-        setBounds(posx, posy, pixelw, pixelh);
+        setBounds(posx, posy, width, height);
     }
 
     public void draw() {
         // TODO : support glyph based frames same as UModal
-        if (!hidden)
-            renderer.drawRectBorder(1, 1, width - 2, height - 2, 1, bgColor, borderColor);
+        if (!hidden) {
+            drawFrame();
+            drawContent();
+        }
+    }
+
+    public void drawFrame() {
+        if (borderColor != null)
+            renderer.drawRectBorder(1, 1, width - 2, height - 2, 3, UColor.CLEAR, borderColor);
+        renderer.drawRect(0,0,width,height, bgColor);
+    }
+
+    public void drawContent() {
+
+    }
+
+    public void mouseClick() {
+
+    }
+
+    public void mouseRightClick() {
+
     }
 
     public void drawString(String string, int x, int y, UColor color) {
@@ -86,12 +144,11 @@ public class UPanel extends View {
     public int gw() { return config.getTileWidth(); }
     public int gh() { return config.getTileHeight(); }
 
-    public boolean isMouseInside() {
-        int mousex = commander.mouseX();
-        int mousey = commander.mouseY();
-        if (mousex >= absoluteX() && mousex < absoluteX()+pixelw && mousey >= absoluteY() && mousey < absoluteY()+pixelh) {
-            return true;
-        }
-        return false;
+    public int mouseX() {
+        return (commander.mouseX() - absoluteX()) / gw();
     }
+    public int mouseY() {
+        return (commander.mouseY() - absoluteY()) / gh();
+    }
+
 }

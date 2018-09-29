@@ -1,6 +1,7 @@
 package ure.ui;
 
 import ure.render.URenderer;
+import ure.sys.UCommander;
 
 import javax.inject.Inject;
 import java.lang.ref.WeakReference;
@@ -11,11 +12,16 @@ public class View {
 
     @Inject
     public URenderer renderer;
+    @Inject
+    public UCommander commander;
 
-    protected int x, y, width, height;
+    public int x, y, width, height;
 
     protected LinkedHashSet<View> children = new LinkedHashSet<>();
     protected WeakReference<View> parent = new WeakReference<>(null);
+
+    protected boolean clipsToBounds = false;
+    protected int[] clipRectBuffer = new int[4];
 
     /**
      * Set this view's position and dimensions.
@@ -106,6 +112,15 @@ public class View {
     }
 
     /**
+     * This isn't used by the view directly, but is provided for the renderer as a place to store the clip
+     * rectangle to restore after rendering this view.  This is done to avoid allocating objects when rendering.
+     * @return the clip rect buffer
+     */
+    public int[] getClipRectBuffer() {
+        return clipRectBuffer;
+    }
+
+    /**
      * Gets this view's X position in the root view's coordinate system.
      * @return The absolute X position.
      */
@@ -133,11 +148,33 @@ public class View {
         return absoluteY;
     }
 
+    public int mouseX() {
+        return commander.mouseX() - absoluteX();
+    }
+
+    public int mouseY() {
+        return commander.mouseY() - absoluteY();
+    }
+
     /**
      * Draw this view.  The renderer will handle drawing any child views.
      */
     public void draw() {
-        // Do any drawing required for this view, then draw children
+        // Do any drawing required for this view
     }
 
+    public boolean clipsToBounds() { return clipsToBounds; }
+    public void setClipsToBounds(boolean clipsToBounds) { this.clipsToBounds = clipsToBounds; }
+
+    public String xystr() { return "my xy is " + Integer.toString(x) + "," + Integer.toString(y); }
+    public String absxystr() { return "abs xy is " + Integer.toString(absoluteX()) + "," + Integer.toString(absoluteY()) + " " + Integer.toString(width) + "x" + Integer.toString(height); }
+
+    public boolean isMouseInside() {
+        int mousex = commander.mouseX();
+        int mousey = commander.mouseY();
+        if (mousex >= absoluteX() && mousex < absoluteX()+width && mousey >= absoluteY() && mousey < absoluteY()+height) {
+            return true;
+        }
+        return false;
+    }
 }

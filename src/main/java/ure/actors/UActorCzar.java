@@ -3,16 +3,14 @@ package ure.actors;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.actors.behaviors.BehaviorDeserializer;
 import ure.sys.Injector;
+import ure.sys.ResourceManager;
 import ure.sys.UCommander;
 import ure.ui.Icons.UIconCzar;
 
@@ -25,6 +23,8 @@ public class UActorCzar {
 
     @Inject
     ObjectMapper objectMapper;
+    @Inject
+    ResourceManager resourceManager;
     @Inject
     UCommander commander;
     @Inject
@@ -40,33 +40,29 @@ public class UActorCzar {
 
     public void loadActors() {
         bodies = new HashMap<>();
-        File jsonDir = new File(commander.config.getResourcePath() + "bodies/");
-        ArrayList<File> files = new ArrayList<File>(Arrays.asList(jsonDir.listFiles()));
-        for (File resourceFile : files) {
-            String resourceName = resourceFile.getName();
-            if (resourceName.endsWith(".json")) {
+        List<String> fileList = resourceManager.getResourceFiles("/bodies");
+        for (String resource : fileList) {
+            if (resource.endsWith(".json")) {
                 try {
-                    InputStream inputStream = getClass().getResourceAsStream("/bodies/" + resourceName);
+                    InputStream inputStream = resourceManager.getResourceAsStream("/bodies/" + resource);
                     Body[] bodyObjs = objectMapper.readValue(inputStream, Body[].class);
                     for (Body body : bodyObjs) {
                         bodies.put(body.getName(), body);
                         log.debug("loaded " + body.getName());
                     }
                 } catch (IOException io) {
-                    throw new RuntimeException("Failed to load " + resourceName, io);
+                    throw new RuntimeException("Failed to load " + resource, io);
                 }
             }
         }
 
         behaviorDeserializer = new BehaviorDeserializer(objectMapper);
         actorsByName = new HashMap<>();
-        jsonDir = new File(commander.config.getResourcePath() + "actors/");
-        files = new ArrayList<File>(Arrays.asList(jsonDir.listFiles()));
-        for (File resourceFile : files) {
-            String resourceName = resourceFile.getName();
-            if (resourceName.endsWith(".json")) {
+        fileList = resourceManager.getResourceFiles("/actors");
+        for (String resource : fileList) {
+            if (resource.endsWith(".json")) {
                 try {
-                    InputStream inputStream = getClass().getResourceAsStream("/actors/" + resourceName);
+                    InputStream inputStream = resourceManager.getResourceAsStream("/actors/" + resource);
                     UActor[] actorObjs = objectMapper.readValue(inputStream, UActor[].class);
                     for (UActor actor : actorObjs) {
                         actor.initializeAsTemplate();
@@ -74,7 +70,7 @@ public class UActorCzar {
                         log.debug("loaded " + actor.getName());
                     }
                 } catch (IOException io) {
-                    throw new RuntimeException("Failed to load " + resourceName, io);
+                    throw new RuntimeException("Failed to load " + resource, io);
                 }
             }
         }

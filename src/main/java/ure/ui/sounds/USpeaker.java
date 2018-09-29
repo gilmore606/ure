@@ -21,6 +21,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
@@ -379,7 +380,8 @@ public class USpeaker implements UAnimator, Runnable {
             IntBuffer channelsBuffer = stackMallocInt(1);
             stackPush();
             IntBuffer sampleRateBuffer = stackMallocInt(1);
-            ShortBuffer rawBuffer = stb_vorbis_decode_filename(config.getResourcePath() + filename, channelsBuffer, sampleRateBuffer);
+            ByteBuffer rawFile = readFile(filename);
+            ShortBuffer rawBuffer = stb_vorbis_decode_memory(rawFile, channelsBuffer, sampleRateBuffer);
             int channels = channelsBuffer.get();
             int sampleRate = sampleRateBuffer.get();
             stackPop();
@@ -588,4 +590,18 @@ public class USpeaker implements UAnimator, Runnable {
             log.debug("ambient " + name + " at " + Integer.toString(a.x()) + "," + Integer.toString(a.y()));
         }
     }
+
+    private ByteBuffer readFile(String filename) {
+        try {
+            InputStream is = getClass().getResourceAsStream(filename);
+            byte[] bytes = IOUtils.toByteArray(is);
+            ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length + 1);
+            buffer.put(bytes);
+            buffer.flip();
+            return buffer;
+        } catch (IOException ioe) {
+            throw new RuntimeException("Can't open resource file " + filename, ioe);
+        }
+    }
+
 }

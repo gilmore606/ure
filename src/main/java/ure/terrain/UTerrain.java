@@ -6,12 +6,11 @@ import ure.areas.UArea;
 import ure.math.URandom;
 import ure.sys.Entity;
 import ure.sys.Injector;
-import ure.sys.UAnimator;
 import ure.sys.UCommander;
 import ure.actors.actions.Interactable;
 import ure.areas.UCell;
-import ure.math.UColor;
 import ure.actors.UActor;
+import ure.things.UContainer;
 import ure.ui.Icons.Icon;
 import ure.ui.Icons.UIconCzar;
 import ure.ui.sounds.Sound;
@@ -19,7 +18,7 @@ import ure.ui.sounds.Sound;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
+import java.util.HashSet;
 
 /**
  * A real serializable instance of a terrain which exists in a single cell.  Subclass this to
@@ -53,18 +52,19 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     protected String type;
     protected String walkmsg = "";
     protected String bonkmsg = "";
+    protected String lookmsg = "";
     protected char filechar;
     protected Icon icon;
     protected String category;
     protected HashMap<String,Integer> stats = new HashMap<>();
 
-    protected boolean passable;
     protected boolean opaque;
     protected boolean spawnok;
     protected boolean breaklatch = false;
     protected boolean glow = false;
     protected float sunvis = 0.0f;
     protected float movespeed = 1.0f;
+    protected HashSet<String> moveTypes;
 
     protected String ambientsound;
     protected float ambientsoundGain;
@@ -103,6 +103,17 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
 
     public ArrayList<String> UIdetails(String context) { return null; }
 
+    public ArrayList<String> UItips(String context) {
+        if (lookmsg != null) {
+            if (lookmsg.length() > 0) {
+                ArrayList<String> tips = new ArrayList<>();
+                tips.add(lookmsg);
+                return tips;
+            }
+        }
+        return null;
+    }
+
     public void becomeReal(UCell c) {
         cell = c;
     }
@@ -116,8 +127,12 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
         return icon;
     }
 
+    public UContainer location() {
+        return cell;
+    }
+
     public void moveTriggerFrom(UActor actor, UCell cell) {
-        if (isPassable(actor)) {
+        if (passable(actor)) {
             actor.moveToCell(cell.areaX(), cell.areaY());
         } else {
             actor.walkFail(cell);
@@ -151,8 +166,29 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
         }
     }
 
-    public boolean isPassable() { return passable; }
-    public boolean isPassable(UActor actor) { return isPassable(); }
+    public boolean passable() {
+        if (moveTypes == null)
+            return false;
+        if (moveTypes.size() < 1)
+            return false;
+        return true;
+    }
+
+    public boolean passable(HashSet<String> actorMoveTypes) {
+        if (actorMoveTypes == null) return false;
+        if (passable()) {
+            for (String moveType : actorMoveTypes) {
+                for (String myType : moveTypes) {
+                    if (myType.equals(moveType))
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean passable(UActor actor) { return passable(actor.moveTypes()); }
+
     public boolean isOpaque() { return opaque; }
     public boolean isSpawnok() { return spawnok; }
     public String getName() { return name; }
@@ -198,6 +234,8 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     public void setBonkmsg(String bonkmsg) {
         this.bonkmsg = bonkmsg;
     }
+    public String getLookmsg() { return lookmsg; }
+    public void setLookmsg(String s) { lookmsg = s; }
 
     public char getFilechar() {
         return filechar;
@@ -217,10 +255,6 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
 
     public void setStats(HashMap<String, Integer> stats) {
         this.stats = stats;
-    }
-
-    public void setPassable(boolean passable) {
-        this.passable = passable;
     }
 
     public void setOpaque(boolean opaque) {
@@ -254,7 +288,6 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     public float getMovespeed() {
         return movespeed;
     }
-
     public float getMoveSpeed(UActor actor) {
         return movespeed;
     }
@@ -262,6 +295,9 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     public void setMovespeed(float movespeed) {
         this.movespeed = movespeed;
     }
+
+    public HashSet<String> getMoveTypes() { return moveTypes; }
+    public void setMoveTypes(HashSet<String> h) { moveTypes = h; }
 
     public String getAmbientsound() { return ambientsound; }
     public void setAmbientsound(String s) { ambientsound = s; }

@@ -5,14 +5,15 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.eventbus.EventBus;
 import dagger.Module;
 import dagger.Provides;
-import ure.areas.LandscaperDeserializer;
+import ure.areas.gen.LandscaperDeserializer;
 import ure.areas.UCartographer;
-import ure.areas.ULandscaper;
+import ure.areas.gen.ULandscaper;
 import ure.actors.behaviors.BehaviorDeserializer;
 import ure.actors.behaviors.UBehavior;
 import ure.math.URandom;
 import ure.render.URenderer;
 import ure.render.URendererOGL;
+import ure.sys.ResourceManager;
 import ure.sys.UCommander;
 import ure.actors.ActorDeserializer;
 import ure.actors.UActor;
@@ -132,5 +133,11 @@ public class AppModule {
         USpeaker s = new USpeaker();
         s.initialize();
         return s;
+    }
+
+    @Provides
+    @Singleton
+    public ResourceManager providesResourceManager() {
+        return new ResourceManager();
     }
 }

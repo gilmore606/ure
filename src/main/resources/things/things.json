@@ -20,6 +20,14 @@
     "value": 10
   },
   {
+    "name": "nylon backpack",
+    "type": "container",
+    "category": "gear",
+    "description": "A nylon stiff-frame backpack.",
+    "weight": 3,
+    "value": 25
+  },
+  {
     "name": "trucker hat",
     "type": "clothing",
     "category": "gear",
@@ -114,7 +122,7 @@
     "name": "morel",
     "type": "food",
     "category": "consumables",
-    "description": "A delicious mushroom.",
+    "description": "A delicious wrinkly brown mushroom, a hunter's forest delight.",
     "tags": [ "forest", "food" ],
     "spawnlevels": [1,50],
     "weight": 0,

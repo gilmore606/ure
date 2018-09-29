@@ -9,37 +9,31 @@ import ure.areas.UCartographer;
 import ure.areas.UCell;
 import ure.math.UColor;
 import ure.render.URenderer;
-import ure.sys.Injector;
-import ure.sys.UCommander;
-import ure.sys.UConfig;
-import ure.sys.UREGame;
+import ure.sys.*;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.*;
 import ure.ui.modals.HearModalTitleScreen;
 import ure.ui.modals.UModalTitleScreen;
-import ure.ui.panels.UActorPanel;
-import ure.ui.panels.ULensPanel;
-import ure.ui.panels.UScrollPanel;
-import ure.ui.panels.UStatusPanel;
+import ure.ui.panels.*;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.LogManager;
 
-public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.ResolutionListener {
+public class ExampleGame implements UREgame, HearModalTitleScreen {
 
     static UArea area;
     static UCamera camera;
     static UPlayer player;
-    static UStatusPanel statusPanel;
-    static UScrollPanel scrollPanel;
-    static ULensPanel lensPanel;
-    static UActorPanel actorPanel;
+    static StatusPanel statusPanel;
+    static HotbarPanel hotbarPanel;
+    static ScrollPanel scrollPanel;
+    static LensPanel lensPanel;
+    static ActorPanel actorPanel;
+    static UREWindow window;
 
     @Inject
     URenderer renderer;
@@ -62,7 +56,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
         // Set up logging before doing anything else, including dependency injection.  That way we'll
         // get proper logging for @Provides methods.
         try {
-            InputStream configInputStream = new FileInputStream(new File("logging.properties"));
+            InputStream configInputStream = ExampleGame.class.getResourceAsStream("/logging.properties");
             LogManager.getLogManager().readConfiguration(configInputStream);
         } catch (IOException ioe) {
             throw new RuntimeException("Can't configure logger", ioe);
@@ -73,15 +67,15 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
 
     private void makeWindow() {
 
-        View rootView = new View();
-
+        window = new UREWindow();
         camera = new UCamera(0, 0, 1200, 800);
         camera.moveTo(area, 40,20);
-        rootView.addChild(camera);
+        window.setCamera(camera);
 
         UColor borderColor = UColor.DARKGRAY;
 
-        statusPanel = new UStatusPanel(200, 200, 10, 10, config.getTextColor(), UColor.BLACK, borderColor);
+        statusPanel = new StatusPanel(10, 10, config.getTextColor(), null, borderColor);
+
         statusPanel.addText("name", " ",0,0);
         statusPanel.addText("race", "Owl",0,1);
         statusPanel.addText("class", "Ornithologist",0,2);
@@ -89,45 +83,49 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
         statusPanel.addText("time", "", 0, 6);
         statusPanel.addText("location", "?", 0, 8);
         statusPanel.addText("lens", "", 0, 20);
-        statusPanel.setPosition(1200,0);
-        rootView.addChild(statusPanel);
+        statusPanel.setLayout(UPanel.XPOS_LEFT, UPanel.YPOS_BOTTOM, 8, 0.15f, 12, 10, 0f, 10);
+        window.addPanel(statusPanel);
 
-        actorPanel = new UActorPanel(200,600,10,10,config.getTextColor(), UColor.BLACK, borderColor);
-        actorPanel.setPosition(1200,200);
-        rootView.addChild(actorPanel);
+        actorPanel = new ActorPanel(10,10,config.getTextColor(), null, borderColor);
+        actorPanel.setLayout(UPanel.XPOS_LEFT, UPanel.YPOS_FIT, 8, 0.15f, 12, 1, 1f, 9999);
+        window.addPanel(actorPanel);
 
-        lensPanel = new ULensPanel(camera, 0, 0, 200, 200, 12, 12, config.getTextColor(), UColor.BLACK, borderColor);
-        lensPanel.setPosition(1200,800);
-        rootView.addChild(lensPanel);
+        lensPanel = new LensPanel(camera, 0, 0, 12, 12, config.getTextColor(), null, borderColor);
+        lensPanel.setLayout(UPanel.XPOS_LEFT, UPanel.YPOS_TOP, 8, 0.15f, 12, 6, 0f, 6);
+        window.addPanel(lensPanel);
 
-        scrollPanel = new UScrollPanel(1200, 200, 12, 12, config.getTextColor(), new UColor(0f,0f,0f), new UColor(0.3f,0.3f,0.3f));
+
+        scrollPanel = new ScrollPanel(12, 12, config.getTextColor(), null, new UColor(0.3f,0.3f,0.3f));
+        scrollPanel.setLayout(UPanel.XPOS_FIT, UPanel.YPOS_BOTTOM, 0, 1f, 9999, 2, 0.18f, 11);
         scrollPanel.addLineFade(new UColor(1.0f, 1.0f, 1.0f));
         scrollPanel.addLineFade(new UColor(0.8f, 0.8f, 0.8f));
         scrollPanel.addLineFade(new UColor(0.6f, 0.6f, 0.6f));
         scrollPanel.addLineFade(new UColor(0.5f, 0.5f, 0.5f));
         scrollPanel.addLineFade(new UColor(0.4f, 0.4f, 0.4f));
         scrollPanel.addLineFade(new UColor(0.3f, 0.3f, 0.3f));
-        scrollPanel.setPosition(0,800);
-        scrollPanel.setBounds(0,800,1200,200);
         scrollPanel.print("Welcome to UnRogueEngine!");
         scrollPanel.print("The universal java toolkit for roguelike games.");
         scrollPanel.print("Your journey begins...");
-        rootView.addChild(scrollPanel);
+        window.addPanel(scrollPanel);
 
-        renderer.setRootView(rootView);
-        renderer.setResolutionListener(this);
+        hotbarPanel = new HotbarPanel(config.getTextColor(), config.getPanelBgColor());
+        hotbarPanel.setLayout(UPanel.XPOS_FIT, UPanel.YPOS_TOP, 1, 1f, 9999, 2, 0f, 2);
+        window.addPanel(hotbarPanel);
+
+        window.doLayout();
+        renderer.setRootView(window);
 
         commander.setStatusPanel(statusPanel);
         commander.setScrollPanel(scrollPanel);
-        commander.registerModalCamera(camera);
+        commander.registerCamera(camera);
     }
 
     public void startUp()  {
 
         cartographer = new ExampleCartographer();
-
-        commander.registerComponents(this, player, renderer, thingCzar, actorCzar, cartographer);
         makeWindow();
+        commander.registerComponents(this, window, player, renderer, thingCzar, actorCzar, cartographer);
+
 
         commander.registerScrollPrinter(scrollPanel);
         commander.addAnimator(camera);
@@ -138,15 +136,11 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
     }
 
     public void setupTitleScreen() {
-        scrollPanel.hide();
-        lensPanel.hide();
-        statusPanel.hide();
-        actorPanel.hide();
+        window.hidePanels();
         area = cartographer.getTitleArea();
         camera.moveTo(area, 50, 50);
         commander.config.setVisibilityEnable(false);
-        commander.showModal(new UModalTitleScreen(35, 20, this, "start", new UColor(0.07f,0.07f,0.07f), area));
-
+        commander.showModal(new UModalTitleScreen(22, 22, this, "start", area));
     }
 
     public void hearModalTitleScreen(String context, String optional) {
@@ -178,11 +172,8 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
             area = cartographer.getArea(player.getSaveAreaLabel());
         }
         commander.startGame(player, area);
-        statusPanel.unHide();
-        lensPanel.unHide();
-        scrollPanel.unHide();
-        actorPanel.unHide();
         player.attachCamera(camera, config.getCameraPinStyle());
+        window.showPanels();
     }
 
     public UPlayer makeNewPlayer(String playername) {
@@ -197,7 +188,7 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
         item.moveTo(player);
         item = thingCzar.getThingByName("apple");
         item.moveTo(player);
-        item = thingCzar.getThingByName("apple");
+        item = thingCzar.getThingByName("nylon backpack");
         item.moveTo(player);
         item = thingCzar.getThingByName("flashlight");
         item.moveTo(player);
@@ -223,16 +214,5 @@ public class ExampleGame implements UREGame, HearModalTitleScreen, URenderer.Res
         item = thingCzar.getPile("gold coins", 320);
         item.moveTo(player);
         return player;
-    }
-
-    @Override
-    public void resolutionChanged(int width, int height) {
-        // Position panels around the right/bottom edges
-        statusPanel.setPosition(width - statusPanel.getWidth(), 0); // upper right corner
-        lensPanel.setPosition(statusPanel.getX(), height - lensPanel.getHeight()); // bottom right
-        actorPanel.setBounds(statusPanel.getX(), statusPanel.getHeight() + 1, statusPanel.getWidth(), height - statusPanel.getHeight() - lensPanel.getHeight() - 2);
-        scrollPanel.setBounds(0, height - scrollPanel.getHeight(), width - statusPanel.getWidth(), scrollPanel.getHeight());
-        camera.setBounds(0, 0, width - statusPanel.getWidth(), height - scrollPanel.getHeight());
-        camera.setupGrid();
     }
 }

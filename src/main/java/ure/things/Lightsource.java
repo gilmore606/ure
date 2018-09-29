@@ -98,7 +98,7 @@ public class Lightsource extends UThing {
     }
 
     void deployLight() {
-        if (lightIsVisible())
+        if (lightIsVisible() && area() != null)
             getLight().moveTo(area(), areaX(), areaY());
         else
             getLight().removeFromArea();

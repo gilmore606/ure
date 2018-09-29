@@ -17,22 +17,23 @@ import ure.actors.UActorCzar;
 import ure.actors.UPlayer;
 import ure.areas.UArea;
 import ure.areas.UCartographer;
-import ure.commands.UCommand;
+import ure.commands.*;
 import ure.math.URandom;
 import ure.sys.events.PlayerChangedAreaEvent;
 import ure.math.UColor;
 import ure.render.URenderer;
+import ure.sys.events.ResolutionChangedEvent;
 import ure.sys.events.TimeTickEvent;
 import ure.things.UThing;
 import ure.things.UThingCzar;
 import ure.ui.Icons.Icon;
 import ure.ui.UCamera;
 import ure.ui.modals.*;
-import ure.ui.panels.UScrollPanel;
-import ure.ui.panels.UStatusPanel;
+import ure.ui.panels.ScrollPanel;
+import ure.ui.panels.StatusPanel;
+import ure.ui.panels.UPanel;
 import ure.ui.sounds.Sound;
 import ure.ui.sounds.USpeaker;
-import ure.editors.vaulted.VaultedArea;
 import ure.editors.vaulted.VaultedModal;
 
 import javax.inject.Inject;
@@ -53,7 +54,7 @@ import static org.lwjgl.glfw.GLFW.*;
  */
 
 
-public class UCommander implements URenderer.KeyListener,HearModalGetString,HearModalStringPick {
+public class UCommander implements URenderer.KeyListener,HearModalGetString,HearModalStringPick,HearModalFade {
 
     @Inject
     public USpeaker speaker;
@@ -69,15 +70,16 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     private HashSet<UAnimator> animators;
     private ArrayList<UActor> actors;
 
-    private UREGame game;
-    private URenderer renderer;
+    private UREgame game;
+    private UREWindow window;
+    public  URenderer renderer;
     private UPlayer player;
-    private UScrollPanel scrollPrinter;
-    private UCamera modalCamera;
+    private ScrollPanel scrollPrinter;
+    private UCamera camera;
 
 
-    private UScrollPanel scrollPanel;
-    private UStatusPanel statusPanel;
+    private ScrollPanel scrollPanel;
+    private StatusPanel statusPanel;
 
     public UThingCzar thingCzar;
     public UActorCzar actorCzar;
@@ -99,8 +101,14 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     private int moveLatchX = 0;
     private int moveLatchY = 0;
 
+    private UArea transportPlayerArea;
+    private int transportPlayerX, transportPlayerY;
+
+    private HashMap<String,UCommand> rightClickCommands;
+
     private UModal modal;
     private Stack<UModal> modalStack;
+    private UModal tooltip;
 
     private boolean quitGame = false;
 
@@ -111,8 +119,9 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         bus.register(this);
     }
 
-    public void registerComponents(UREGame _game, UPlayer theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
+    public void registerComponents(UREgame _game, UREWindow _window, UPlayer theplayer, URenderer theRenderer, UThingCzar thingczar, UActorCzar actorczar, UCartographer carto) {
         game = _game;
+        window = _window;
         renderer = theRenderer;
         animators = new HashSet<UAnimator>();
         actors = new ArrayList<UActor>();
@@ -161,7 +170,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      * Register a UI component to print scroll messages.  Right now this can only be a UScrollPrinter.
      *
      */
-    public void registerScrollPrinter(UScrollPanel printer) {
+    public void registerScrollPrinter(ScrollPanel printer) {
         scrollPrinter = printer;
         addAnimator(printer);
     }
@@ -170,13 +179,14 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
      * Register the camera to center modals on (if UConfig.modalPosition = POS_CAMERA_CENTER).
      *
      */
-    public void registerModalCamera(UCamera camera) { this.modalCamera = camera; }
-    public UCamera modalCamera() { return modalCamera; }
+    public void registerCamera(UCamera camera) { this.camera = camera; }
+    public UCamera camera() { return camera; }
 
     public void addAnimator(UAnimator animator) { animators.add(animator); }
     public void removeAnimator(UAnimator animator) { animators.remove(animator); }
 
-    public UActor player() { return player; }
+    public UPlayer player() { return player; }
+    public UREgame game() { return game; }
 
     /**
      * Read keybinds.txt and map keys to commands.
@@ -225,6 +235,7 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             String keystr = line.substring(0,comma);
             boolean shiftkey = false;
             boolean ctrlkey = false;
+            boolean altkey = false;
             int plus = keystr.indexOf("+");
             if (plus > 0) {
                 String modstr = line.substring(0,plus);
@@ -232,10 +243,12 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     shiftkey = true;
                 if (modstr.equals("ctrl") || modstr.equals("CTRL") || modstr.equals("control") || modstr.equals("CONTROL"))
                     ctrlkey = true;
+                if (modstr.equals("alt") || modstr.equals("ALT"))
+                    altkey = true;
                 keystr = keystr.substring(plus+1,keystr.length());
             }
             int k = glmap.get("GLFW_KEY_" + keystr.toUpperCase());
-            GLKey glkey = new GLKey(k, shiftkey, ctrlkey);
+            GLKey glkey = new GLKey(k, shiftkey, ctrlkey, altkey);
             Class commandClass = commandMap.get(commandid);
             if (commandClass == null) {
                 log.error("ERROR - no command found for '" + commandid + "' -- check mapping file!");
@@ -282,18 +295,22 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     command = keyBindings.get(bindkey);
             }
             hearCommand(command, k);
-            if (modal == null) {
-                if (k.k == GLFW_KEY_1) {
-                    debug_1();
-                } else if (k.k == GLFW_KEY_2) {
-                    debug_2();
-                } else if (k.k == GLFW_KEY_Q) {
-                    debug();
-                } else if (k.k == GLFW_KEY_F1) {
-                    launchVaulted();
-                } else if (k.k == GLFW_KEY_F2) {
-                    showModal(new UModalURESplash());
-                }
+            if (k.k == GLFW_KEY_F1) {
+                debug_1();
+            } else if (k.k == GLFW_KEY_F2) {
+                debug_2();
+            } else if (k.k == GLFW_KEY_F3) {
+                debug_3();
+            } else if (k.k == GLFW_KEY_F4) {
+                debug_4();
+            } else if (k.k == GLFW_KEY_F5) {
+                debug_5();
+            } else if (k.k == GLFW_KEY_ENTER && k.alt) {
+                toggleFullscreen();
+            } else if (k.k == GLFW_KEY_EQUAL && k.alt) {
+                changeGlyphSize(1);
+            } else if (k.k == GLFW_KEY_MINUS && k.alt) {
+                changeGlyphSize(-1);
             }
         } else if (moveLatch && config.isNethackShiftRun()) {
             player.doAction(new ActionWalk(player, moveLatchX, moveLatchY));
@@ -316,17 +333,34 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public void mousePressed() {
+        if (tooltip != null)
+            detachTooltip();
         if (modal != null)
             modal.mouseClick();
-        else
-            setAutoWalk(mouseX()/config.getTileWidth() + modalCamera.leftEdge, mouseY()/config.getTileHeight() + modalCamera.topEdge);
+        else if (camera.isMouseInside())
+            setAutoWalk((mouseX() - camera.getX())/config.getTileWidth() + camera.leftEdge, (mouseY() - camera.getY())/config.getTileHeight() + camera.topEdge);
+        else {
+            for (UPanel p : window.panels) {
+                if (p.isMouseInside())
+                    p.mouseClick();
+            }
+        }
     }
+
     public void mouseReleased() {
 
     }
     public void mouseRightPressed() {
         if (modal != null)
             modal.mouseRightClick();
+        else if (camera.isMouseInside())
+            rightClickMenu();
+        else {
+            for (UPanel p : window.panels) {
+                if (p.isMouseInside())
+                    p.mouseRightClick();
+            }
+        }
     }
     public void mouseRightReleased() {
 
@@ -336,6 +370,14 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         moveLatch = true;
         moveLatchX = xdir;
         moveLatchY = ydir;
+    }
+
+    void changeGlyphSize(int mod) {
+        config.setTileHeight(config.getTileHeight()+mod);
+        config.setTileWidth(config.getTileWidth()+mod);
+        config.setTileFontSize(config.getTileFontSize()+mod);
+        renderer.reloadTileFont();
+        bus.post(new ResolutionChangedEvent(renderer.getRootView().width, renderer.getRootView().height));
     }
 
     /**
@@ -352,18 +394,39 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     /**
+     * Show a context menu of commands on right-click of the camera.
+     */
+    public void rightClickMenu() {
+        rightClickCommands = new HashMap<>();
+        rightClickCommands.put("inventory", new CommandInventory());
+        rightClickCommands.put("equipment", new CommandEquipment());
+        rightClickCommands.put("use item", new CommandUse());
+        rightClickCommands.put("open container", new CommandOpen());
+        rightClickCommands.put("check map", new CommandMap());
+        rightClickCommands.put("quit game", new CommandQuit());
+
+        String[] options = new String[rightClickCommands.size()];
+        int i=0;
+        for (String s : rightClickCommands.keySet()) {
+            options[i] = s;
+            i++;
+        }
+        UModalStringPick modal = new UModalStringPick(null, options, this, "rightclick");
+        modal.setChildPosition((mouseX() - camera.x)/config.getTileWidth() - 1,(mouseY() - camera.y)/config.getTileHeight(), camera);
+        showModal(modal);
+        modal.skipZoom();
+    }
+
+    /**
      * Show a UModal dialog and send all player input to it.
      *
      * @param modal
      */
     public void showModal(UModal modal) {
+        //if (camera == null) return;
         speaker.playUI(config.soundModalOpen);
         attachModal(modal);
         modal.onOpen();
-    }
-
-    void debug() {
-        player.debug();
     }
 
     void debug_1() {
@@ -373,6 +436,12 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     void debug_2() {
         config.setLightEnable(!config.isLightEnable());
     }
+
+    void debug_3() { config.setAmbientOcclusion(!config.isAmbientOcclusion()); }
+
+    void debug_4() { config.setFog(!config.isFog()); }
+
+    void debug_5() { config.setTelemetry(!config.isTelemetry()); }
 
     /**
      * Print a message to the scroll printer.
@@ -406,15 +475,23 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         for (UAnimator anim : animators) {
             anim.animationTick();
         }
+        if (tooltip != null)
+            tooltip.animationTick();
         if (modal != null)
             modal.animationTick();
+        if (!modalStack.empty()) {
+            Stack<UModal> ms = (Stack<UModal>)(modalStack.clone());
+            for (UModal m : ms) {
+                m.animationTick();
+            }
+        }
     }
 
-    public void setStatusPanel(UStatusPanel panel){
+    public void setStatusPanel(StatusPanel panel){
         statusPanel = panel;
     }
 
-    public void setScrollPanel(UScrollPanel panel){
+    public void setScrollPanel(ScrollPanel panel){
         scrollPanel = panel;
     }
 
@@ -458,8 +535,10 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
                     letActorsAct();
                     killActors();
                 }
+                camera.renderLights();
             } else {
                 consumeKeyFromBuffer();
+                camera.renderLights();
             }
         }
     }
@@ -525,6 +604,17 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void transportPlayer(UArea area, int x, int y) {
+        transportPlayerArea = area;
+        transportPlayerX = x;
+        transportPlayerY = y;
+        showModal(new UModalFade(this, "", 0.1f));
+    }
+
+    public void hearModalFade(String context) {
+        player.moveToCell(transportPlayerArea, transportPlayerX, transportPlayerY);
     }
 
     /**
@@ -609,9 +699,8 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     void attachModal(UModal newmodal) {
         if (modal != null) {
-            speaker.playUI(config.soundSelect);
             modalStack.push(modal);
-            modal.addChild(newmodal);
+            renderer.getRootView().addChild(newmodal);
             modal = newmodal;
         } else {
             renderer.getRootView().addChild(newmodal);
@@ -620,12 +709,11 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public void detachModal() {
+        renderer.getRootView().removeChild(modal);
         if (!modalStack.isEmpty()) {
             UModal oldmodal = modalStack.pop();
-            oldmodal.removeChild(modal);
             modal = oldmodal;
         } else {
-            renderer.getRootView().removeChild(modal);
             modal = null;
         }
     }
@@ -634,9 +722,15 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
         if (this.modal == modal) {
             detachModal();
         } else {
-            if (modalStack.contains(modal))
+            if (modalStack.contains(modal)) {
                 modalStack.remove(modal);
+                renderer.getRootView().removeChild(modal);
+            }
         }
+    }
+
+    public UModal modal() {
+        return modal;
     }
 
     public void wipeModals() {
@@ -657,6 +751,46 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
             return false;
         return true;
     }
+    public boolean isChildModal(UModal modal) {
+        if (modalStack.isEmpty())
+            return false;
+        if (this.modal == modal)
+            return true;
+        if (modalStack.contains(modal) && modalStack.get(0) != modal)
+            return true;
+        return false;
+    }
+
+    public void updateInventoryModal() {
+        if (modal instanceof UModalInventory)
+            ((UModalInventory)modal).reCategorize();
+        else {
+            for (UModal m : modalStack) {
+                if (m instanceof UModalInventory)
+                    ((UModalInventory)m).reCategorize();
+            }
+        }
+    }
+
+    public UModal tooltip() { return tooltip; }
+
+    public boolean hasTooltip() { return tooltip != null; }
+
+    public void attachTooltip(UModal tooltip) {
+        if (hasTooltip()) {
+            detachTooltip();
+        }
+        renderer.getRootView().addChild(tooltip);
+        this.tooltip = tooltip;
+        tooltip.onOpen();
+    }
+
+    public void detachTooltip() {
+        if (tooltip != null) {
+            renderer.getRootView().removeChild(tooltip);
+            tooltip = null;
+        }
+    }
 
     /**
      * Get the filesystem path to the current savestate (the world we're playing now), or the top level save path.
@@ -671,44 +805,31 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
     }
 
     public void launchVaulted() {
-        File dirfile = new File(config.getResourcePath() + "vaults/");
-        ArrayList<String> filelist = new ArrayList<>();
-        for (String filename : dirfile.list()) {
-            if (filename.endsWith(".json")) {
-                printScroll("found " + filename);
-                filelist.add(filename.substring(0,filename.length()-5));
-            }
-        }
-        filelist.add("<new vaultSet>");
-
-        UModalStringPick spmodal = new UModalStringPick("Select vaultSet to edit:", UColor.BLACK, 0, 0,
-                filelist, true, this, "vaulted-pickfile");
+        UModalStringPick spmodal = new UModalStringPick("Select vaultSet to edit:",
+                getResourceList("vaults"), this, "vaulted-pickfile");
         printScroll("Launching VaultEd...");
         showModal(spmodal);
-
     }
-    public void hearModalStringPick(String context, String filename) {
-        if (filename.equals("<new vaultSet>")) {
-            UModalGetString fmodal = new UModalGetString("Filename?", 20, true, UColor.BLACK, this, "vaulted-newfile");
-            showModal(fmodal);
-        } else {
-            doLaunchVaulted(filename);
+
+    public void hearModalStringPick(String context, String choice) {
+        if (context.equals("vaulted-pickfile")) {
+            if (choice.equals("<new vaultSet>")) {
+                UModalGetString fmodal = new UModalGetString("Filename?", 15, 25, this, "vaulted-newfile");
+                showModal(fmodal);
+            } else {
+                doLaunchVaulted(choice);
+            }
+        } else if (context.equals("rightclick")) {
+            UCommand c = rightClickCommands.get(choice);
+            c.execute(player);
         }
     }
+
     void doLaunchVaulted(String filename) {
-        UArea oldarea = null;
-        if (player == null)
-            player = new UPlayer("Vault Editor Guy", null, 0, 0);
-        else
-            oldarea = player.area();
-        VaultedArea edarea = new VaultedArea(30,30);
-        player.attachCamera(modalCamera, UCamera.PINSTYLE_SOFT);
-        player.moveToCell(edarea, 2, 2);
-        postPlayerLevelportEvent(oldarea);
-        UModal edmodal = new VaultedModal(edarea, filename);
-        wipeModals();
+        UModal edmodal = new VaultedModal(filename);
         showModal(edmodal);
     }
+
     public void hearModalGetString(String context, String input) {
         if (context.equals("vaulted-newfile")) {
             doLaunchVaulted(input);
@@ -717,5 +838,19 @@ public class UCommander implements URenderer.KeyListener,HearModalGetString,Hear
 
     public void toggleFullscreen() {
         renderer.toggleFullscreen();
+    }
+
+    public String[] getResourceList(String dirname) { return getResourceList(dirname, ".json"); }
+    public String[] getResourceList(String dirname, String suffix) {
+        File dirfile = new File(config.getResourcePath() + dirname + "/");
+        ArrayList<String> fileList = new ArrayList<>();
+        for (String filename : dirfile.list()) {
+            if (filename.endsWith(suffix))
+                fileList.add(filename.substring(0,filename.length()-suffix.length()));
+        }
+        String[] resources = new String[fileList.size()];
+        for (int i=0;i<fileList.size();i++)
+            resources[i] = fileList.get(i);
+        return resources;
     }
 }

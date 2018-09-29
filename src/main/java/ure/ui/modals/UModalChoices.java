@@ -1,10 +1,8 @@
 package ure.ui.modals;
 
-import ure.commands.UCommand;
-import ure.math.UColor;
-import ure.sys.GLKey;
-
-import java.util.ArrayList;
+import ure.ui.modals.widgets.Widget;
+import ure.ui.modals.widgets.WidgetChoices;
+import ure.ui.modals.widgets.WidgetText;
 
 /**
  * ModalChoices gives the user a few plaintext choices and returns the one picked.
@@ -12,88 +10,32 @@ import java.util.ArrayList;
  */
 public class UModalChoices extends UModal {
 
-    ArrayList<String> choices;
-    int escapeChoice;
-    boolean escapable;
-    String[] prompt;
-    int selection = 0;
-    int hiliteX, hiliteY, hiliteW, hiliteH;
-    UColor tempHiliteColor;
-    UColor flashColor;
 
-    public UModalChoices(String _prompt, ArrayList<String> _choices, int _escapeChoice, int _defaultChoice,
-                         boolean _escapable, UColor bgColor, HearModalChoices _callback, String _callbackContext) {
-        super(_callback, _callbackContext, bgColor);
-        prompt = splitLines(_prompt);
-        choices = _choices;
-        escapeChoice = _escapeChoice;
-        escapable = _escapable;
-        selection = _defaultChoice;
-        int width = longestLine(prompt);
-        int height = 2;
-        if (prompt != null)
-            height += prompt.length;
-        int cwidth = 0;
-        for (String choice : choices) {
-            cwidth = (textWidth(choice) + 1);
+    WidgetText headerWidget;
+    WidgetChoices choicesWidget;
+
+    public UModalChoices(String _prompt, String[] _choices, HearModalChoices _callback, String _callbackContext) {
+        super(_callback, _callbackContext);
+        if (_prompt != null) {
+            headerWidget = new WidgetText(this, 0, 0, _prompt);
+            choicesWidget = new WidgetChoices(this, 0, headerWidget.cellh + 1, _choices);
+            addWidget(headerWidget);
+        } else {
+            choicesWidget = new WidgetChoices(this,0,0,_choices);
         }
-        if (cwidth > width)
-            width = cwidth;
-        setDimensions(width, height);
-        dismissFrameEnd = 8;
-        tempHiliteColor = config.getHiliteColor();
-        flashColor = new UColor(config.getHiliteColor());
-        flashColor.setAlpha(1f);
+        choicesWidget.dismissFlash = true;
+        addWidget(choicesWidget);
+        sizeToWidgets();
     }
 
     @Override
-    public void drawContent() {
-        drawStrings(prompt, 0, 0);
-        int xtab = 0;
-        int drawSelection = 0;
-        for (String choice : choices) {
-            int oldxtab = xtab;
-            drawString(choice, xtab, cellh-1, (selection == drawSelection) ? null : UColor.GRAY, (selection == drawSelection) ? tempHiliteColor : null);
-            xtab += textWidth(choice) + 1;
-            drawSelection++;
-            if (mousex < xtab && mousex >= oldxtab && mousey > 0 && mousey <= cellh)
-                selection = drawSelection-1;
-        }
+    public void pressWidget(Widget widget) {
+        if (widget == choicesWidget)
+            pickSelection(choicesWidget.choice());
     }
 
-    @Override
-    public void hearCommand(UCommand command, GLKey k) {
-        if (command != null) {
-            if (command.id.equals("MOVE_W") || command.id.equals("MOVE_N"))
-                selection = cursorMove(selection, -1, choices.size());
-            if (command.id.equals("MOVE_E") || command.id.equals("MOVE_S"))
-                selection = cursorMove(selection, 1, choices.size());
-            if (command.id.equals("PASS"))
-                pickSelection();
-            if (command.id.equals("ESC") && escapable) {
-                escape();
-            }
-        }
-    }
-    @Override
-    public void mouseClick() {
-        pickSelection();
-    }
-
-    public void pickSelection() {
+    public void pickSelection(String selection) {
         dismiss();
-        ((HearModalChoices)callback).hearModalChoices(callbackContext, choices.get(selection));
-    }
-
-    @Override
-    public void animationTick() {
-        if (dismissed) {
-            if ((dismissFrames % 2) == 0) {
-                tempHiliteColor = commander.config.getModalBgColor();
-            } else {
-                tempHiliteColor = flashColor;
-            }
-        }
-        super.animationTick();
+        ((HearModalChoices)callback).hearModalChoices(callbackContext, selection);
     }
 }

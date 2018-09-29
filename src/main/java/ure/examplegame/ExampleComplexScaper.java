@@ -1,10 +1,8 @@
 package ure.examplegame;
 
-import ure.areas.Shape;
+import ure.areas.gen.Shape;
 import ure.areas.UArea;
-import ure.areas.ULandscaper;
-import ure.terrain.Stairs;
-import ure.terrain.UTerrain;
+import ure.areas.gen.ULandscaper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +28,9 @@ public class ExampleComplexScaper extends ULandscaper {
             faces.add(face);
         int iter = 0;
         while (!faces.isEmpty() && iter < 100000) {
-            Room newroom = new Room(100, 100);
-            int shortdim = 0;
-            newroom = randomRoom((iter < 500) ? 0.02f : 0.9f, 3, 5,
+            Room newroom = randomRoom((iter < 500) ? 0.02f : 0.9f, 3, 5,
                     (iter < 500) ? 0.2f : 0.01f, 8, 15,
                     0.75f, 10, 24, 1, (iter < 500) ? 2 : 1);
-            shortdim = newroom.height;
-            if (newroom.width < newroom.height) shortdim = newroom.width;
             Face face = (Face) random.member((List) faces);
             if (face.addRoom(newroom, space) != null) {
                 newroom.print(space, random.f() < 0.1f);
@@ -48,7 +42,7 @@ public class ExampleComplexScaper extends ULandscaper {
                 //faces.remove(face);
                 for (Face newface : newroom.faces()) {
                     faces.add(newface);
-                    if (newroom.isHallway && newface.length == shortdim)
+                    if (newroom.isHallway() && newface.length == Math.min(newroom.width,newroom.height))
                         newface.punchDoors(space, true);
                 }
             } else {
@@ -60,7 +54,7 @@ public class ExampleComplexScaper extends ULandscaper {
         space.pruneDeadEnds().writeTerrain(area, "floor", 0, 0);
         addDoors(area, "door", new String[]{"rock", "door"}, 0.1f);
         for (Room room : rooms) {
-            if (!room.isHallway)
+            if (!room.isHallway())
                 DecorateRoom(area, new int[]{room.x,room.y,room.width,room.height});
         }
 

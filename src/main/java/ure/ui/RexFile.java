@@ -6,10 +6,7 @@ import ure.sys.Injector;
 import ure.sys.UConfig;
 
 import javax.inject.Inject;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
@@ -44,8 +41,8 @@ public class RexFile extends View {
         Injector.getAppComponent().inject(this);
         layers = new ArrayList<>();
         try {
-            byte[] compressed = Files.readAllBytes(new File(filename).toPath());
-            byte[] decompressed = gzipDecodeByteArray(compressed);
+            GZIPInputStream gunzipStream = new GZIPInputStream(getClass().getResourceAsStream(filename));
+            byte[] decompressed = gunzipStream.readAllBytes();
             ByteBuffer bb = ByteBuffer.wrap(decompressed);
             bb.order(ByteOrder.LITTLE_ENDIAN);
             int version = bb.getInt();
@@ -81,27 +78,6 @@ public class RexFile extends View {
             e.printStackTrace();
         }
 
-    }
-
-    public byte[] gzipDecodeByteArray(byte[] data) {
-        GZIPInputStream gzipInputStream = null;
-        try {
-            gzipInputStream = new GZIPInputStream(new ByteArrayInputStream(data));
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-            byte[] buffer = new byte[1024];
-            while (gzipInputStream.available() > 0) {
-                int count = gzipInputStream.read(buffer, 0, 1024);
-                if (count > 0) {
-                    outputStream.write(buffer, 0, count);
-                }
-            }
-            outputStream.close();
-            gzipInputStream.close();
-            return outputStream.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     public void draw(URenderer renderer, float alpha) { draw(renderer, alpha, 0, 0); }

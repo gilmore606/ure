@@ -31,7 +31,7 @@ public class Door extends UTerrain {
     public boolean isOpen() { return open; }
 
     @Override
-    public boolean isPassable() {
+    public boolean passable() {
         return isOpen();
     }
     @Override

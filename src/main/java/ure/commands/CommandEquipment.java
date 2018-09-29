@@ -14,7 +14,7 @@ public class CommandEquipment extends UCommand {
 
     @Override
     public void execute(UPlayer player) {
-        UModalEquipment emodal = new UModalEquipment(null, 1, 1, player);
+        UModalEquipment emodal = new UModalEquipment(player);
         emodal.setTitle("equipment");
         commander.showModal(emodal);
     }

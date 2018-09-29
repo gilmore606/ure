@@ -1,15 +1,22 @@
 package ure.sys.dagger;
 
 import dagger.Component;
+import ure.actors.SpawnActor;
 import ure.areas.*;
+import ure.areas.gen.Shape;
+import ure.areas.gen.ULandscaper;
+import ure.areas.gen.shapers.Shaper;
+import ure.math.Dimap;
 import ure.mygame.MyGame;
 import ure.render.URendererOGL;
+import ure.sys.ResourceManager;
 import ure.sys.UCommander;
 import ure.actors.actions.UAction;
 import ure.actors.UActorCzar;
 import ure.actors.behaviors.UBehavior;
 import ure.commands.UCommand;
 import ure.examplegame.ExampleGame;
+import ure.sys.UREWindow;
 import ure.terrain.Stairs;
 import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
@@ -21,11 +28,11 @@ import ure.ui.Icons.UIconCzar;
 import ure.ui.RexFile;
 import ure.ui.UCamera;
 import ure.ui.ULight;
+import ure.ui.panels.LensPanel;
 import ure.ui.sounds.Sound;
 import ure.ui.sounds.USpeaker;
-import ure.ui.panels.ULensPanel;
 import ure.ui.panels.UPanel;
-import ure.ui.panels.UStatusPanel;
+import ure.ui.panels.StatusPanel;
 import ure.ui.modals.UModal;
 import ure.ui.particles.UParticle;
 
@@ -65,8 +72,8 @@ public interface AppComponent {
     void inject(UModal mod);
     void inject(UCommand comm);
     void inject(URendererOGL rend);
-    void inject(UStatusPanel statpan);
-    void inject(ULensPanel lenspan);
+    void inject(StatusPanel statpan);
+    void inject(LensPanel lenspan);
     void inject(ULandscaper landscape);
     void inject(URegion reg);
     void inject(UPanel pan);
@@ -77,6 +84,11 @@ public interface AppComponent {
     void inject(RexFile rexfile);
     void inject(Shape shape);
     void inject(SpawnItem item);
+    void inject(SpawnActor actor);
     void inject(ULight lit);
     void inject(Sound snd);
+    void inject(UREWindow win);
+    void inject(Shaper sha);
+    void inject(ResourceManager manager);
+    void inject(Dimap map);
 }

@@ -16,7 +16,7 @@ public class CommandThrow extends UCommand implements HearModalEntityPick, HearM
     public static final String id = "THROW";
 
     public static String throwNothingMsg = "You have nothing to throw.";
-    public static String throwDialogMsg = "Throw what?";
+    public static String throwDialogMsg = "Throw what?\n ";
     public static String throwTargetDialogMsg = "Select target.  Hold shift for free targeting.";
     public CommandThrow() {
         super(id);
@@ -32,14 +32,16 @@ public class CommandThrow extends UCommand implements HearModalEntityPick, HearM
         Iterator<UThing> i = player.iterator();
         while (i.hasNext())
             things.add((Entity)i.next());
-        UModalEntityPick modal = new UModalEntityPick(throwDialogMsg, null, 0, 0, things,
-                true, true, true,false, this, "throw");
+        UModalEntityPick modal = new UModalEntityPick(throwDialogMsg, things,
+                true, this, "throw");
         commander.showModal(modal);
     }
 
     public void hearModalEntityPick(String context, Entity thing) {
         if (thing != null) {
             UModalTarget modal = new UModalTarget(throwTargetDialogMsg, this, "throw", null, true, true);
+            commander.modal().escape();
+            commander.detachModal();
             commander.showModal(modal);
         }
     }

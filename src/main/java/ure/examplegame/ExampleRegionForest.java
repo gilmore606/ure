@@ -1,6 +1,6 @@
 package ure.examplegame;
 
-import ure.areas.ULandscaper;
+import ure.areas.gen.ULandscaper;
 import ure.areas.URegion;
 
 public class ExampleRegionForest extends URegion {

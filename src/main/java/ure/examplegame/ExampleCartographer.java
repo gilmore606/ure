@@ -2,7 +2,7 @@ package ure.examplegame;
 
 import ure.areas.UArea;
 import ure.areas.UCartographer;
-import ure.areas.ULandscaper;
+import ure.areas.gen.ULandscaper;
 
 public class ExampleCartographer extends UCartographer {
 
@@ -19,8 +19,8 @@ public class ExampleCartographer extends UCartographer {
                             "Mystic Forest",
                             new ULandscaper[]{new ExampleForestScaper()},
                             new String[]{"start"},
-                            100,
-                            100,
+                            150,
+                            150,
                             1,
                             "cave entrance",
                             "cave exit",
@@ -39,9 +39,9 @@ public class ExampleCartographer extends UCartographer {
         float scapetype = random.f();
         if (scapetype < 0.2f)
             scaper = new ExampleForestScaper();
-        else if (scapetype < 0.4f)
-            scaper = new ExampleComplexScaper();
         else if (scapetype < 0.6f)
+            scaper = new ExampleComplexScaper();
+        else if (scapetype < 0.8f)
             scaper = new ExampleMineScaper();
         else
             scaper = new ExampleCaveScaper();

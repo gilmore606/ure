@@ -153,9 +153,14 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
 
     public ArrayList<String> UIdetails(String context) {
         ArrayList<String> d = new ArrayList<>();
-        d.add("Weight " + Integer.toString(weight()));
-        d.add("Value " + Integer.toString(value()));
+        d.add(Integer.toString(weight()) + "kg  $" + Integer.toString(value()));
+        d.add(description());
         return d;
+    }
+    public ArrayList<String> UItips(String context) {
+        ArrayList<String> tips = new ArrayList<>();
+        tips.add(description());
+        return tips;
     }
 
     public void moveToCell(int x, int y) {
@@ -403,6 +408,13 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
     public UContainer getLocation() {
         return location;
     }
+    public UContainer location() {
+        return location;
+    }
+    public UCell cell() {
+        return this.location.cell();
+    }
+
     public void setLocation(UContainer location) {
         this.location = location;
     }
@@ -490,8 +502,9 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
 
         if (isMovableBy(actor))
             actions.put("drop", new ActionDrop(actor, this));
-        if (isUsable(actor))
+        if (isUsable(actor)) {
             actions.put(useVerb(), new ActionUse(actor, this));
+        }
         if (equipSlots != null) {
             if (equipSlots[0].equals("equip")) {
                 if (equipped)
@@ -504,6 +517,25 @@ public abstract class UThing implements UContainer, Entity, Interactable, Clonea
                 } else {
                     actions.put("wear on " + equipSlots[0], new ActionEquip(actor, this));
                 }
+            }
+        }
+        if (!(this instanceof Container)) {
+            for (UThing t : actor.things()) {
+                if (t instanceof Container) {
+                    if (((Container) t).willAcceptThing(this)) {
+                        actions.put("put in " + t.name(), new ActionDrop(actor, this, t));
+                    }
+                }
+            }
+        }
+        if (isUsable(actor) || equipSlots != null) {
+            if (commander.player().hasFreeHotbarSlot()) {
+                if (!commander.player().hotbar.contains(this)) {
+                    actions.put("add to hotbar", null);
+                }
+            }
+            if (commander.player().hotbar.contains(this)) {
+                actions.put("remove from hotbar", null);
             }
         }
         return actions;

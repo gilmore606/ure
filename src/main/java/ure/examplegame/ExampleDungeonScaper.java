@@ -3,7 +3,7 @@ package ure.examplegame;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.areas.UArea;
-import ure.areas.ULandscaper;
+import ure.areas.gen.ULandscaper;
 import ure.math.UColor;
 import ure.terrain.UTerrain;
 
@@ -51,7 +51,7 @@ public class ExampleDungeonScaper extends ULandscaper {
     }
 
     UArea area;
-    int roomMultiplier = 5;
+    int cellSize = 5;
     int totalRooms = 0;
     int[][] roomPointers;
     float branchChance = .25f; // Keep in mind this is a chance per roomMultiplier size,
@@ -96,11 +96,11 @@ public class ExampleDungeonScaper extends ULandscaper {
         //TODO: Perhaps add a system to add a bunch of random things to the rooms (furniture/decals/etc).
         if(r.entered == 0) return;
         int x, y;
-        for(y = roomMultiplier * r.y; y < roomMultiplier * (r.y + r.h); y++){
-            for(x = roomMultiplier * r.x; x < roomMultiplier * (r.x + r.w); x++){
+        for(y = cellSize * r.y;y < cellSize * (r.y + r.h);y++){
+            for(x = cellSize * r.x;x < cellSize * (r.x + r.w);x++){
                 UTerrain t = area.terrainAt(x, y);
                 if (t != null) {
-                    if (x == roomMultiplier * r.x || y == roomMultiplier * r.y) {
+                    if (x == cellSize * r.x || y == cellSize * r.y) {
                         //t.bgColor.set(0, 0, 0);
                         //t.fgColor.set(0, 0, 0);
                         //TODO: If not a door, make it a wall.
@@ -123,11 +123,11 @@ public class ExampleDungeonScaper extends ULandscaper {
 /*    void colorRoom(RoomStruct r, UColor c){
         if(r.entered == 0) return;
         int x, y;
-        for(y = roomMultiplier * r.y; y < roomMultiplier * (r.y + r.h); y++){
-            for(x = roomMultiplier * r.x; x < roomMultiplier * (r.x + r.w); x++){
+        for(y = cellSize * r.y; y < cellSize * (r.y + r.h); y++){
+            for(x = cellSize * r.x; x < cellSize * (r.x + r.w); x++){
                 UTerrain t = area.terrainAt(x, y);
                 if (t != null) {
-                    if (x == roomMultiplier * r.x || y == roomMultiplier * r.y) {
+                    if (x == cellSize * r.x || y == cellSize * r.y) {
                     }else{
                         t.bgColor.set(c.r, c.g, c.b);
                         //area.setTerrain(x, y, "floor");
@@ -146,7 +146,7 @@ public class ExampleDungeonScaper extends ULandscaper {
         }
     }
 
-    ArrayList<RoomNeighbor> ajacentRooms(RoomStruct room){
+    ArrayList<RoomNeighbor> adjacentRooms(RoomStruct room){
         ArrayList<RoomNeighbor> neighbors = new ArrayList<RoomNeighbor>();
         int lastRoom = -1;
         int r;
@@ -174,7 +174,7 @@ public class ExampleDungeonScaper extends ULandscaper {
     }
 
     void connect(RoomStruct s, RoomStruct e){
-        ArrayList<RoomNeighbor> r = ajacentRooms(s);
+        ArrayList<RoomNeighbor> r = adjacentRooms(s);
         Collections.shuffle(r);
         s.entered = 1;
         e.entered = 1;
@@ -184,12 +184,12 @@ public class ExampleDungeonScaper extends ULandscaper {
                     int x = 0;
                     if(n.x == s.x - 1) x = 5;
                     int y = random.nextInt(3) + 2;
-                    area.setTerrain(x + n.x * roomMultiplier, y + n.y * roomMultiplier, "door");
+                    area.setTerrain(x + n.x * cellSize, y + n.y * cellSize, "door");
                 }else{ // N / S
                     int y = 0;
                     if(n.y == s.y - 1) y = 5;
                     int x = random.nextInt(3) + 2;
-                    area.setTerrain(x + n.x * roomMultiplier, y + n.y * roomMultiplier, "door");
+                    area.setTerrain(x + n.x * cellSize, y + n.y * cellSize, "door");
                 }
                 return;
             }
@@ -200,7 +200,7 @@ public class ExampleDungeonScaper extends ULandscaper {
     boolean pathFind(RoomStruct room, int depth){
         //floodRoom(room, new UColor(0.0f, 1.0f, 0.0f), false);
         room.hit = 1;
-        ArrayList<RoomNeighbor> r = ajacentRooms(room);
+        ArrayList<RoomNeighbor> r = adjacentRooms(room);
         if(depth >= maxDepth) return false;
 
         boolean ok = true;
@@ -233,12 +233,12 @@ public class ExampleDungeonScaper extends ULandscaper {
 
     @Override
     public void buildArea(UArea area_, int level, String[] tags) {
-        //NOTE:  Ideally you'd want to create this as a divisor of roomMultiplier + 1 so the east/south walls can be walls.
+        //NOTE:  Ideally you'd want to create this as a divisor of cellSize + 1 so the east/south walls can be walls.
         area = area_;
         fillRect(area, "wall", 0,0,area.xsize - 1,area.ysize - 1);
 
-        ys = (area.ysize - 1) / roomMultiplier;
-        xs = (area.xsize - 1) / roomMultiplier;
+        ys = (area.ysize - 1) / cellSize;
+        xs = (area.xsize - 1) / cellSize;
         roomPointers = new int[ys][xs];
 
         int x, y;
@@ -261,13 +261,6 @@ public class ExampleDungeonScaper extends ULandscaper {
             log.error("Something happened, we couldn't connect start to exit.");
         }
 
-
-
-        /*MM:A//Debug, color all rooms from start to exit, then the start and exit.
-        for(RoomStruct room : rooms) if (room.entered == 1) room.forceColor = new UColor(.3f, .3f, .15f);
-        start.forceColor = new UColor(.13f, .23f, .13f);
-        exit.forceColor = new UColor(.23f, .13f, .13f);*/
-
         //Connect random rooms.
         ArrayList<RoomStruct> branches = new ArrayList<RoomStruct>();
         for(RoomStruct room : rooms) {
@@ -275,7 +268,7 @@ public class ExampleDungeonScaper extends ULandscaper {
         }
         for(int i = 0; i < branches.size(); i++){
             RoomStruct room = branches.get(i);
-            ArrayList<RoomNeighbor> r = ajacentRooms(room);
+            ArrayList<RoomNeighbor> r = adjacentRooms(room);
             Collections.shuffle(r);
             for(RoomNeighbor n : r) {
                 RoomStruct targ = rooms.get(roomPointers[n.y][n.x]);

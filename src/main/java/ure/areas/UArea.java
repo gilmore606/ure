@@ -6,7 +6,9 @@ import com.google.common.eventbus.Subscribe;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.actors.UPlayer;
+import ure.math.Dimap;
 import ure.math.URandom;
+import ure.sys.Entity;
 import ure.sys.Injector;
 import ure.sys.UCommander;
 import ure.actors.actions.UAction;
@@ -19,6 +21,8 @@ import ure.terrain.Stairs;
 import ure.terrain.UTerrain;
 import ure.terrain.UTerrainCzar;
 import ure.things.UThing;
+import ure.ui.modals.UModal;
+import ure.ui.modals.UModalTooltip;
 import ure.ui.particles.UParticle;
 
 import javax.inject.Inject;
@@ -77,6 +81,10 @@ public class UArea implements Serializable {
     protected int sunCycleLastAnnounceMarker;
     public boolean sunVisible;
 
+    protected UColor fogColor = UColor.LIGHTBLUE;
+    protected int fogDistance = 18;
+    protected int fogDistanceFull = 35;
+
     String backgroundMusic;
 
     @JsonIgnore
@@ -89,22 +97,20 @@ public class UArea implements Serializable {
     @JsonIgnore
     public ArrayList<Stairs> stairsLinks;
 
+    @JsonIgnore
+    HashMap<String,Dimap> dimaps;
+
     private Log log = LogFactory.getLog(UArea.class);
 
     public UArea() {
         Injector.getAppComponent().inject(this);
         bus.register(this);
         config.addDefaultSunCycle(this);
+        dimaps = new HashMap<>();
     }
     public UArea(int thexsize, int theysize, String defaultTerrain) {
         this();
-        xsize = thexsize;
-        ysize = theysize;
-        cells = new UCell[xsize][ysize];
-        for (int i=0;i<xsize;i++) {
-            for (int j=0;j<ysize;j++)
-                cells[i][j] = new UCell(this, i, j, terrainCzar.getTerrainByName(defaultTerrain));
-        }
+        initialize(thexsize,theysize,defaultTerrain);
     }
 
     public UArea(String filename) {
@@ -123,6 +129,16 @@ public class UArea implements Serializable {
             xsize = cellsX;
         });
         lines.close();
+    }
+
+    public void initialize(int xsize, int ysize, String defaultTerrain) {
+        this.xsize = xsize;
+        this.ysize = ysize;
+        cells = new UCell[xsize][ysize];
+        for (int i=0;i<xsize;i++) {
+            for (int j=0;j<ysize;j++)
+                cells[i][j] = new UCell(this, i, j, terrainCzar.getTerrainByName(defaultTerrain));
+        }
     }
 
     public boolean canBePersisted() {
@@ -270,6 +286,11 @@ public class UArea implements Serializable {
         return false;
     }
 
+    public boolean canSeeThrough(int x, int y) {
+        UTerrain t = terrainAt(x,y);
+        if (t == null) return true;
+        return !t.isOpaque();
+    }
     public UTerrain terrainAt(int x, int y) {
         if (isValidXY(x, y))
             if (getCells()[x][y] != null)
@@ -383,6 +404,22 @@ public class UArea implements Serializable {
         return cell;
     }
 
+    public UCell randomOpenCell() {
+        UCell cell = null;
+        boolean match = false;
+        int tries = 0;
+        while ((cell == null || !match) && tries < 100) {
+            cell = cellAt(random.i(xsize),random.i(ysize));
+            UTerrain t = cell.terrain();
+            if (t != null)
+                match = t.passable();
+            tries++;
+        }
+        if (match)
+            return cell;
+        return null;
+    }
+
     public void hearRemoveThing(UThing thing) {
         getActors().remove(thing);
     }
@@ -480,8 +517,43 @@ public class UArea implements Serializable {
             if (particle.isFizzled())
                 fizzleParticle(particle);
         }
+        for (ULight light : lights) {
+            light.animationTick();
+        }
     }
 
+    public Dimap dimapFor(String key) {
+        if (dimaps.containsKey(key))
+            return dimaps.get(key);
+        return null;
+    }
+
+    public Dimap addDimap(String key, Dimap map) {
+        dimaps.put(key,map);
+        return map;
+    }
+
+    public UModal makeTooltipAt(int x, int y) {
+        UCell cell = cellAt(x,y);
+        if (cell != null) {
+            Entity entity = null;
+            if (cell.actorAt() != null) {
+                entity = cell.actorAt();
+            } else if (cell.things() != null) {
+                if (cell.things().size() > 0)
+                    entity = cell.things().get(0);
+            }
+            if (entity == null)
+                entity = cell.terrain();
+            if (entity != null) {
+                if (entity.UItips("") != null) {
+                    UModal tooltip = new UModalTooltip(entity);
+                    return tooltip;
+                }
+            }
+        }
+        return null;
+    }
 
     /**
      * Do what it takes to make this area ready for serialization.
@@ -496,6 +568,17 @@ public class UArea implements Serializable {
         for (ULight light : (HashSet<ULight>)lights.clone()) {
             if (!light.isPermanent()) {
                 removeLight(light);
+            }
+        }
+    }
+
+    public void wipe(String wipeTerrain) {
+        freezeForPersist();
+        lights = new HashSet<>();
+        actors = new HashSet<>();
+        for (int i=0;i<xsize;i++) {
+            for (int j=0;j<ysize;j++) {
+                cells[i][j] = new UCell(this, i, j, terrainCzar.getTerrainByName(wipeTerrain));
             }
         }
     }
@@ -586,6 +669,13 @@ public class UArea implements Serializable {
     public void setSunCycleLastAnnounceMarker(int sunCycleLastAnnounceMarker) {
         this.sunCycleLastAnnounceMarker = sunCycleLastAnnounceMarker;
     }
+
+    public UColor getFogColor() { return fogColor; }
+    public void setFogColor(UColor c) { fogColor = c; }
+    public int getFogDistance() { return fogDistance; }
+    public void setFogDistance(int i) { fogDistance = i; }
+    public int getFogDistanceFull() { return fogDistanceFull; }
+    public void setFogDistanceFull(int i) { fogDistanceFull = i; }
 
     public void setBackgroundMusic(String b) { backgroundMusic = b; }
     public String getBackgroundMusic() { return backgroundMusic; }

@@ -3,13 +3,11 @@ package ure.editors.vaulted;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.actors.actions.UAction;
-import ure.actors.UPlayer;
 import ure.areas.UArea;
 import ure.areas.UCell;
-import ure.areas.UVault;
+import ure.areas.gen.UVault;
 import ure.math.UColor;
 import ure.terrain.UTerrain;
-import ure.things.UThing;
 
 public class VaultedArea extends UArea {
 
@@ -20,18 +18,9 @@ public class VaultedArea extends UArea {
         label = "vaulted";
         resetSunColorLerps();
         addSunColorLerp(0, UColor.WHITE);
-        addSunColorLerp(24*60, UColor.WHITE);
+        addSunColorLerp(24*60-1, UColor.WHITE);
         setSunColor(1f,1f,1f);
-    }
-
-    @Override
-    public boolean willAcceptThing(UThing thing, int x, int y) {
-        if (isValidXY(x, y)) {
-            if (thing instanceof UPlayer) {
-                return true;
-            }
-        }
-        return super.willAcceptThing(thing,x,y);
+        sunVisible = false;
     }
 
     @Override
@@ -44,7 +33,7 @@ public class VaultedArea extends UArea {
 
     }
 
-    public void cropSize(int newx, int newy) {
+    public void resize(int newx, int newy) {
         UCell[][] newcells = new UCell[newx][newy];
         for (int x=0;x<newx;x++) {
             for (int y=0;y<newy;y++) {
@@ -60,14 +49,14 @@ public class VaultedArea extends UArea {
             resize(vault.getCols(), vault.getRows());
         for (int x=0;x<vault.getCols();x++) {
             for (int y=0;y<vault.getRows();y++) {
-                setTerrain(x,y,vault.terrainCharAt(x,y));
+                setTerrain(x,y,vault.terrainAt(x,y));
             }
         }
         commander.player().moveToCell(this, 1,1);
     }
 
 
-    public void resize(int newx, int newy) {
+    public void initialize(int newx, int newy) {
         xsize = newx;
         ysize = newy;
         for (int x=0;x<xsize;x++) {
@@ -78,15 +67,14 @@ public class VaultedArea extends UArea {
     }
 
     public void saveVault(UVault vault) {
-        log.info("Saving vault...");
-        String[] tlines = new String[ysize];
-        for (int y=0; y<vault.getRows();y++) {
-            String line = "";
-            for (int x=0;x<vault.getCols();x++) {
+        log.info("Saving vault " + vault.getName() + " to vaultset...");
+        String[][] tlines = new String[xsize][ysize];
+        for (int x=0; x<vault.getCols();x++) {
+            for (int y=0;y<vault.getRows();y++) {
                 UTerrain t = terrainAt(x,y);
-                line += t.getFilechar();
+                if (t == null) tlines[x][y] = "null";
+                else tlines[x][y] = t.getName();
             }
-            tlines[y] = line;
         }
         vault.setTerrain(tlines);
     }

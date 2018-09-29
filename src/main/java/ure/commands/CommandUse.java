@@ -14,7 +14,7 @@ public class CommandUse extends UCommand implements HearModalEntityPick {
     public static final String id = "USE";
 
     public static String useNothingMsg = "You aren't carrying anything you can use.";
-    public static String useDialog = "Use what?";
+    public static String useDialog = "Use what?\n ";
     public CommandUse() {
         super(id);
     }
@@ -32,8 +32,8 @@ public class CommandUse extends UCommand implements HearModalEntityPick {
             commander.printScroll(useNothingMsg);
             return;
         }
-        UModalEntityPick modal = new UModalEntityPick(useDialog, null, 0, 0, things,
-                true, true, true, false, this, "use");
+        UModalEntityPick modal = new UModalEntityPick(useDialog, things,
+                true, this, "use");
         commander.showModal(modal);
     }
 
