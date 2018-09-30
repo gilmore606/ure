@@ -175,8 +175,8 @@ public class LandedModal extends UModalTabs {
         clipsToBounds = false;
         setChildPosition(commander.camera().columns - cellw - 2, commander.camera().rows - cellh - 2, commander.camera());
 
-        loadScaper("testscaper");
-        //scaper = new Metascaper();  makeNewLayer();
+        //loadScaper("testscaper");
+        scaper = new Metascaper();  makeNewLayer();
         roomLights = new ArrayList<>();
 
         changeTab("Layers");
