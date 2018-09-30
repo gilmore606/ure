@@ -229,6 +229,66 @@
     "breaklatch": true,
     "walkmsg": "A ladder leads up to a trapdoor in the ceiling.",
     "lookmsg": "A ladder leads up to a trapdoor in the ceiling."
+  },
+  {
+    "name": "tile floor",
+    "filechar": "W",
+    "moveTypes": ["walk","fly","roll"],
+    "opaque": false,
+    "spawnok": true,
+    "sunvis": 0.0
+  },
+  {
+    "name": "smooth wall",
+    "filechar": "#",
+    "moveTypes": [],
+    "opaque": true,
+    "sunvis": 0.0,
+    "bonkmsg": "A smooth stone wall."
+  },
+  {
+    "name": "steel door",
+    "type": "door",
+    "filechar": "Z",
+    "moveTypes": ["walk","fly","roll"],
+    "opaque": true,
+    "breaklatch": true,
+    "sunvis": 0.0,
+    "glyphopen": "|",
+    "walkmsg": "An open doorway.",
+    "openmsg": "The steel door slides open.",
+    "closemsg": "The steel door slides shut.",
+    "lookmsg": "A battered steel door."
+  },
+  {
+    "name": "smooth floor",
+    "filechar": "3",
+    "moveTypes": ["walk","fly","roll"],
+    "opaque": false,
+    "spawnok": true,
+    "sunvis": 0.0
+  },
+  {
+    "name": "metal wall",
+    "filechar": "2",
+    "moveTypes": [],
+    "opaque": true,
+    "sunvis": 0.0,
+    "bonkmsg": "A smooth metal wall."
+  },
+  {
+    "name": "vault door",
+    "type": "door",
+    "filechar": "1",
+    "moveTypes": ["walk","fly","roll"],
+    "opaque": true,
+    "breaklatch": true,
+    "sunvis": 0.0,
+    "glyphopen": "|",
+    "walkmsg": "An open doorway.",
+    "openmsg": "The vault door slowly swings open.",
+    "closemsg": "The vault door slowly swings shut.",
+    "lookmsg": "A massive round door."
   }
 
   ]
