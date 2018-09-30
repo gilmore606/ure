@@ -240,7 +240,7 @@
   },
   {
     "name": "smooth wall",
-    "filechar": "#",
+    "filechar": "}",
     "moveTypes": [],
     "opaque": true,
     "sunvis": 0.0,
