@@ -46,11 +46,10 @@ public class LandedModal extends UModalTabs {
     WidgetDropdown shaperPicker;
 
     WidgetHSlider areaWidthSlider, areaHeightSlider;
-    WidgetTerrainpick fillPicker, terrainPicker, entrancePicker, exitPicker;
-    WidgetHSlider exitDistanceSlider;
+    WidgetTerrainpick fillPicker, terrainPicker;
     WidgetDropdown drawPicker;
 
-
+    WidgetDropdown groupPicker;
 
     WidgetHSlider lightChanceSlider;
     WidgetButton lightNewAmbient, lightNewPoint;
@@ -90,7 +89,8 @@ public class LandedModal extends UModalTabs {
                 "Convochain",
                 "Outline",
                 "Connector",
-                "Doors"
+                "Doors",
+                "Stairs"
         };
         shaperWidgets = new HashMap<>();
 
@@ -144,7 +144,12 @@ public class LandedModal extends UModalTabs {
 
 
         changeTab("Rooms");
+        groupPicker = new WidgetDropdown(this, 0, 0, new String[]{"Group 0", "<new group>"}, 0);
+        addWidget(groupPicker);
 
+
+        changeTab("Decorate");
+        addWidget(groupPicker);
         lightChanceSlider = new WidgetHSlider(this, 0, 4, "room light chance", 6, 0, 0, 100, true);
         addWidget(lightChanceSlider);
         lightNewAmbient = new WidgetButton(this, 0, 6, "[ New Ambient ]", null);
@@ -158,15 +163,6 @@ public class LandedModal extends UModalTabs {
         vaultSetPicker = new WidgetDropdown(this, 6, 12, commander.getResourceList("vaults"), 0);
         addWidget(vaultSetPicker);
 
-
-        changeTab("Stairs");
-
-        entrancePicker = new WidgetTerrainpick(this, 0, 0, "entrance type:", "null");
-        addWidget(entrancePicker);
-        exitPicker = new WidgetTerrainpick(this,0,2,"exit type:", "null");
-        addWidget(exitPicker);
-        exitDistanceSlider = new WidgetHSlider(this,0,6,"exit min distance:", 6, 30, 1, 100, true);
-        addWidget(exitDistanceSlider);
 
         changeTab(null);
 
@@ -321,6 +317,8 @@ public class LandedModal extends UModalTabs {
             s = new Doors();
         else if (name.equals("Fill"))
             s = new Fill();
+        else if (name.equals("Stairs"))
+            s = new Stairs();
         else
             return null;
         s.initialize(areaWidthSlider.value, areaHeightSlider.value);
@@ -410,7 +408,7 @@ public class LandedModal extends UModalTabs {
         } else if (widget == terrainPicker) {
             layer.terrain = terrainPicker.selection;
             autoRegenerate();
-        } else if (widget == fillPicker || widget == entrancePicker || widget == exitPicker) {
+        } else if (widget == fillPicker) {
             autoRegenerate();
         } else if (widget == drawPicker) {
             layer.printMode = drawPicker.selection;
@@ -454,10 +452,9 @@ public class LandedModal extends UModalTabs {
         }
         setChildPosition(commander.camera().columns - cellw - 2, commander.camera().rows - cellh - 2, commander.camera());
     }
-
     @Override
     public void draw() {
-        if (tabSlider.tabName().equals("Rooms")) {
+        if (widgets.contains(groupPicker)) {
             if (scaper.getRooms() != null) {
                 for (Shape.Room r : scaper.getRooms()) {
                     int rx = ((r.x - commander.camera().leftEdge) * gw()) - absoluteX();
@@ -541,7 +538,7 @@ public class LandedModal extends UModalTabs {
                 l.shaper.resize(areaWidthSlider.value - 2, areaHeightSlider.value - 2);
             }
         }
-        scaper.setup(nameWidget.text, areaWidthSlider.value, areaHeightSlider.value, layers, fillPicker.selection, (float)(lightChanceSlider.value)/100f, roomLights, vaultSetPicker.selected(), entrancePicker.selection, exitPicker.selection, exitDistanceSlider.value);
+        scaper.setup(nameWidget.text, areaWidthSlider.value, areaHeightSlider.value, layers, fillPicker.selection, (float)(lightChanceSlider.value)/100f, roomLights, vaultSetPicker.selected());
         scaper.buildArea(area, 1, new String[]{});
 
         commander.camera().renderLights();
