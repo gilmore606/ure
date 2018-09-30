@@ -24,13 +24,12 @@ public class Metascaper extends ULandscaper {
 
     public String name;
     public int xsize,ysize;
-    String wallTerrain, entranceTerrain, exitTerrain;
+    String wallTerrain;
     float lightChance;
     ArrayList<ULight> roomLights;
     @JsonIgnore
     UVaultSet vaultSet;
     String vaultSetName;
-    int exitDistance;
 
     @JsonIgnore
     ArrayList<Shape.Room> rooms;
@@ -58,10 +57,9 @@ public class Metascaper extends ULandscaper {
             addVaults(area);
         if (lightChance > 0f)
             addRoomLights(area);
-        addStairs(area);
     }
 
-    public void setup(String name, int xsize, int ysize, ArrayList<Layer> layers, String wallTerrain, float lightChance, ArrayList<ULight> roomLights, String vaultSetName, String entranceTerrain, String exitTerrain, int exitDistance) {
+    public void setup(String name, int xsize, int ysize, ArrayList<Layer> layers, String wallTerrain, float lightChance, ArrayList<ULight> roomLights, String vaultSetName) {
         this.name = name;
         this.xsize = xsize;
         this.ysize = ysize;
@@ -69,9 +67,6 @@ public class Metascaper extends ULandscaper {
         this.wallTerrain = wallTerrain;
         this.lightChance = lightChance;
         this.roomLights = roomLights;
-        this.entranceTerrain = entranceTerrain;
-        this.exitTerrain = exitTerrain;
-        this.exitDistance = exitDistance;
         if (vaultSetName != null)
             if (!vaultSetName.equals(this.vaultSetName))
                 this.vaultSet = commander.cartographer.loadVaultSet(vaultSetName);
@@ -115,37 +110,6 @@ public class Metascaper extends ULandscaper {
         }
     }
 
-    void addStairs(UArea area) {
-        int separation = 0;
-        DimapEntity dimap = new DimapEntity(area, Dimap.TYPE_SEEK, new HashSet<>(), null);
-        int tries = 0;
-        UCell entrance = null;
-        UCell exit = null;
-        while (separation < exitDistance && tries < 500) {
-            entrance = area.randomOpenCell();
-            if (entrance == null) {
-                log.info("Failed to find randomOpenCell for entrance");
-                return;
-            }
-            dimap.changeEntity(entrance.terrain());
-            int etries = 0;
-            while (separation < exitDistance && etries < 50) {
-                exit = area.randomOpenCell();
-                if (exit == null) {
-                    log.info("Failed to find randomOpenCell for exit");
-                    return;
-                }
-                separation = (int) dimap.valueAt(exit.x, exit.y);
-                etries++;
-            }
-            tries++;
-        }
-        if (entrance != null && exit != null) {
-            area.setTerrain(entrance.x, entrance.y, entranceTerrain);
-            area.setTerrain(exit.x, exit.y, exitTerrain);
-        }
-    }
-
     public ArrayList<Layer> getLayers() {
         return layers;
     }
@@ -168,22 +132,6 @@ public class Metascaper extends ULandscaper {
 
     public void setWallTerrain(String wallTerrain) {
         this.wallTerrain = wallTerrain;
-    }
-
-    public String getEntranceTerrain() {
-        return entranceTerrain;
-    }
-
-    public void setEntranceTerrain(String entranceTerrain) {
-        this.entranceTerrain = entranceTerrain;
-    }
-
-    public String getExitTerrain() {
-        return exitTerrain;
-    }
-
-    public void setExitTerrain(String exitTerrain) {
-        this.exitTerrain = exitTerrain;
     }
 
     public float getLightChance() {
@@ -216,14 +164,6 @@ public class Metascaper extends ULandscaper {
 
     public void setVaultSetName(String vaultSetName) {
         this.vaultSetName = vaultSetName;
-    }
-
-    public int getExitDistance() {
-        return exitDistance;
-    }
-
-    public void setExitDistance(int exitDistance) {
-        this.exitDistance = exitDistance;
     }
 
     public ArrayList<Shape.Room> getRooms() {

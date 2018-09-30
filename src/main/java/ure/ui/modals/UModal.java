@@ -66,7 +66,7 @@ public class UModal extends View implements UAnimator {
     int zoomDir = 0;
     public float zoom = 1f;
     String title;
-    ArrayList<Widget> widgets;
+    public ArrayList<Widget> widgets;
     Widget focusWidget;
     ArrayList<Widget> widgetsFocusable;
 
