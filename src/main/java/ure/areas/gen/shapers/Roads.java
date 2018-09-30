@@ -6,10 +6,9 @@ import ure.areas.gen.Shape;
 
 public class Roads extends Shaper {
 
-    public Roads(int xsize, int ysize) {
-        super(xsize,ysize);
-        name = "Roads";
-    }
+    public static final String TYPE = "Roads";
+
+    public Roads() { super(TYPE); }
 
     @Override
     public void setupParams() {

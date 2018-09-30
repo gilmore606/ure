@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 public class Connector extends Shaper {
 
+    public static final String TYPE = "Connector";
+
     public class Tunnel {
         int startx,starty;
         int[][] points;
@@ -118,10 +120,7 @@ public class Connector extends Shaper {
         }
     }
 
-    public Connector(int xsize, int ysize) {
-        super(xsize,ysize);
-        name = "Connector";
-    }
+    public Connector() { super(TYPE); }
 
     @Override
     public void setupParams() {

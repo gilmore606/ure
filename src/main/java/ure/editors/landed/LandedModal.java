@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import ure.areas.UArea;
 import ure.areas.gen.Layer;
 import ure.areas.gen.Metascaper;
+import ure.areas.gen.Shape;
 import ure.areas.gen.ULandscaper;
 import ure.areas.gen.shapers.*;
 import ure.math.UColor;
@@ -29,26 +30,24 @@ public class LandedModal extends UModalTabs {
     String[] shaperNames;
 
     ArrayList<Layer> layers;
-    ArrayList<HashMap<String,Shaper>> layerShapers;
-    HashMap<String,Class> shaperClasses;
     int layerIndex;
     Layer layer;
 
     ArrayList<ULight> roomLights;
 
     WidgetDropdown vaultSetPicker;
-
+    WidgetStringInput nameWidget;
     WidgetButton layerUpButton, layerDownButton, layerDeleteButton;
     WidgetDropdown layerPicker;
     HashMap<String,Widget> shaperWidgets;
 
     WidgetHSlider densitySlider;
-    WidgetRadio pruneRadio, wipeRadio, roundRadio, invertRadio;
+    WidgetRadio pruneRadio, roundRadio, invertRadio;
     WidgetDropdown shaperPicker;
 
     WidgetHSlider areaWidthSlider, areaHeightSlider;
-    WidgetTerrainpick fillPicker, terrainPicker, doorPicker, entrancePicker, exitPicker;
-    WidgetHSlider doorSlider, exitDistanceSlider;
+    WidgetTerrainpick fillPicker, terrainPicker, entrancePicker, exitPicker;
+    WidgetHSlider exitDistanceSlider;
     WidgetDropdown drawPicker;
 
 
@@ -62,39 +61,37 @@ public class LandedModal extends UModalTabs {
     WidgetRadio autoRegenRadio;
     WidgetButton quitButton;
 
+    UColor hiliteScratch;
+
     boolean dragging = false;
     int dragStartX, dragStartY;
     int dragCenterX, dragCenterY;
+
+    float hilitePulse;
+    boolean hilitePulseReverse;
 
     public LandedModal(UArea area) {
         super(null, "");
         this.area = area;
 
+        hiliteScratch = new UColor(config.getHiliteColor());
+        hilitePulse = 0f;
+        hilitePulseReverse = false;
         layers = new ArrayList<>();
-        shaperClasses = new HashMap<>();
-        shaperClasses.put("Caves", Caves.class);
-        shaperClasses.put("Mines", Mines.class);
-        shaperClasses.put("Growdungeon", Growdungeon.class);
-        shaperClasses.put("Chambers", Chambers.class);
-        shaperClasses.put("Ruins", Ruins.class);
-        shaperClasses.put("Convochain", Convochain.class);
-        shaperClasses.put("Blobs", Blobs.class);
-        shaperClasses.put("Roads", Roads.class);
-        shaperClasses.put("Outline", Outline.class);
-        shaperClasses.put("Connector", Connector.class);
         shaperNames = new String[]{
+                "Fill",
+                "Blobs",
+                "Roads",
                 "Caves",
                 "Mines",
                 "Growdungeon",
                 "Chambers",
                 "Ruins",
                 "Convochain",
-                "Blobs",
-                "Roads",
                 "Outline",
-                "Connector"
+                "Connector",
+                "Doors"
         };
-        layerShapers = new ArrayList<>();
         shaperWidgets = new HashMap<>();
 
         regenButton = new WidgetButton(this, 0, 34, "[ Regenerate ]", null);
@@ -105,9 +102,11 @@ public class LandedModal extends UModalTabs {
         addWidget(quitButton);
 
 
-        changeTab("Global");
-
-        fillPicker = new WidgetTerrainpick(this, 0, 0, "fill:", "rock");
+        changeTab("File");
+        nameWidget = new WidgetStringInput(this, 0, 0, 15, "???", 40);
+        setTitle("???");
+        addWidget(nameWidget);
+        fillPicker = new WidgetTerrainpick(this, 0, 5, "fill:", "rock");
         addWidget(fillPicker);
         areaWidthSlider = new WidgetHSlider(this, 0, 2, "width", 6, 100, 40, 200, true);
         areaHeightSlider = new WidgetHSlider(this, 0, 3, "height", 6, 100, 40, 200, true);
@@ -124,34 +123,27 @@ public class LandedModal extends UModalTabs {
         addWidget(layerDownButton);
         addWidget(layerDeleteButton);
 
-        shaperPicker = new WidgetDropdown(this, 9, 0, shaperNames, 0);
+        shaperPicker = new WidgetDropdown(this, 0, 1, shaperNames, 0);
         addWidget(shaperPicker);
         terrainPicker = new WidgetTerrainpick(this, 0, 2, "terrain:", "floor");
         addWidget(terrainPicker);
         addWidget(new WidgetText(this, 0, 3, "Draw:"));
-        drawPicker = new WidgetDropdown(this, 5, 3, new String[]{"All", "In blocked only", "In unblocked only"}, 0);
+        drawPicker = new WidgetDropdown(this, 5, 3, new String[]{"All", "In blocked only", "In unblocked only", "None"}, 0);
         addWidget(drawPicker);
 
         makeShaperWidgets();
 
         densitySlider = new WidgetHSlider(this, 0, 27, "density", 6, 100, 0, 100, true);
         pruneRadio = new WidgetRadio(this, 0, 29, "prune dead ends", null, null, true);
-        wipeRadio = new WidgetRadio(this,0,30,"wipe small regions", null, null, true);
         roundRadio = new WidgetRadio(this, 0, 31, "round corners", null, null, false);
         invertRadio = new WidgetRadio(this, 0, 32, "invert", null, null, false);
         addWidget(densitySlider);
         addWidget(pruneRadio);
-        addWidget(wipeRadio);
         addWidget(roundRadio);
         addWidget(invertRadio);
 
 
-        changeTab("Decorate");
-
-        doorSlider = new WidgetHSlider(this,  0, 0,"door chance", 6, 0, 0, 100, true);
-        addWidget(doorSlider);
-        doorPicker = new WidgetTerrainpick(this, 0, 2, "door type:", "door");
-        addWidget(doorPicker);
+        changeTab("Rooms");
 
         lightChanceSlider = new WidgetHSlider(this, 0, 4, "room light chance", 6, 0, 0, 100, true);
         addWidget(lightChanceSlider);
@@ -184,37 +176,47 @@ public class LandedModal extends UModalTabs {
         sizeToWidgets();
 
         escapable = false;
+        clipsToBounds = false;
         setChildPosition(commander.camera().columns - cellw - 2, commander.camera().rows - cellh - 2, commander.camera());
 
-        //scaper = ((Metascaper)(loadScaper("testscaper")));
-        scaper = new Metascaper();
+        loadScaper("testscaper");
+        //scaper = new Metascaper();  makeNewLayer();
         roomLights = new ArrayList<>();
 
         changeTab("Layers");
-        makeNewLayer();
-        changeTab("Global");
+        changeTab("File");
+        config.setLightEnable(false);
     }
 
-    ULandscaper loadScaper(String filename) {
+    void loadScaper(String filename) {
         String path = commander.savePath();
         File file = new File(path + filename);
+        scaper = null;
         try (
                 FileInputStream stream = new FileInputStream(file);
         ) {
-            Metascaper scaper = (Metascaper)(objectMapper.readValue(stream, ULandscaper.class));
+            scaper = objectMapper.readValue(stream, Metascaper.class);
         }
-        catch (IOException e) {
+        catch (Exception e) {
             e.printStackTrace();
         }
 
         layers = scaper.layers;
         layerIndex = 0;
         layer = layers.get(0);
+        roomLights = scaper.getRoomLights();
+        fillPicker.selection = scaper.getWallTerrain();
+        areaWidthSlider.value = scaper.xsize;
+        areaHeightSlider.value = scaper.ysize;
+        lightChanceSlider.value = (int)(scaper.getLightChance()*100f);
+        nameWidget.text = scaper.name;
+        setTitle(scaper.name);
+        updateLayerPicker();
 
-        return null;
+        regenerate();
     }
 
-    void saveScaper(ULandscaper scaper, String filename) {
+    void saveScaper(Metascaper scaper, String filename) {
         String path = commander.savePath();
         File file = new File(path + filename);
         try (
@@ -285,23 +287,44 @@ public class LandedModal extends UModalTabs {
     void makeNewLayer() {
         Layer layer = new Layer();
         layers.add(layer);
-        HashMap<String,Shaper> shapers = new HashMap<>();
-        shapers.put("Caves", new Caves(area.xsize,area.ysize));
-        shapers.put("Mines", new Mines(area.xsize,area.ysize));
-        shapers.put("Growdungeon", new Growdungeon(area.xsize,area.ysize));
-        shapers.put("Chambers", new Chambers(area.xsize,area.ysize));
-        shapers.put("Convochain", new Convochain(area.xsize,area.ysize));
-        shapers.put("Ruins", new Ruins(area.xsize,area.ysize));
-        shapers.put("Blobs", new Blobs(area.xsize,area.ysize));
-        shapers.put("Roads", new Roads(area.xsize,area.ysize));
-        shapers.put("Outline", new Outline(area.xsize,area.ysize));
-        shapers.put("Connector", new Connector(area.xsize,area.ysize));
-        layerShapers.add(shapers);
-        layer.shaper = shapers.get("Caves");
+        layer.shaper = makeShaper("Fill");
+        layer.shaper.initialize(areaWidthSlider.value, areaHeightSlider.value);
         layer.terrain = "null";
         layer.density = 1f;
         updateLayerPicker();
         selectLayer(layers.indexOf(layer));
+    }
+
+    Shaper makeShaper(String name) {
+        Shaper s = null;
+        if (name.equals("Caves"))
+            s = new Caves();
+        else if (name.equals("Mines"))
+            s =  new Mines();
+        else if (name.equals("Growdungeon"))
+            s =  new Growdungeon();
+        else if (name.equals("Chambers"))
+            s =  new Chambers();
+        else if (name.equals("Convochain"))
+            s =  new Convochain();
+        else if (name.equals("Ruins"))
+            s =  new Ruins();
+        else if (name.equals("Blobs"))
+            s =  new Blobs();
+        else if (name.equals("Roads"))
+            s =  new Roads();
+        else if (name.equals("Outline"))
+            s =  new Outline();
+        else if (name.equals("Connector"))
+            s =  new Connector();
+        else if (name.equals("Doors"))
+            s = new Doors();
+        else if (name.equals("Fill"))
+            s = new Fill();
+        else
+            return null;
+        s.initialize(areaWidthSlider.value, areaHeightSlider.value);
+        return s;
     }
 
     void deleteLayer() {
@@ -328,7 +351,7 @@ public class LandedModal extends UModalTabs {
         String[] choices = new String[layers.size()+1];
         int i = 0;
         for (Layer layer : layers) {
-            choices[i] = "Layer " + i + ": " + layer.terrain;
+            choices[i] = "Layer " + i + ": " + layer.shaper.type + " " + layer.terrain;
             i++;
         }
         choices[layers.size()] = "<new layer>";
@@ -346,10 +369,6 @@ public class LandedModal extends UModalTabs {
         else if (widget == pruneRadio) {
             pruneRadio.on = !pruneRadio.on;
             layer.pruneDeadEnds = pruneRadio.on;
-            autoRegenerate();
-        } else if (widget == wipeRadio) {
-            wipeRadio.on = !wipeRadio.on;
-            layer.wipeSmallRegions = wipeRadio.on;
             autoRegenerate();
         } else if (widget == roundRadio) {
             roundRadio.on = !roundRadio.on;
@@ -391,11 +410,13 @@ public class LandedModal extends UModalTabs {
         } else if (widget == terrainPicker) {
             layer.terrain = terrainPicker.selection;
             autoRegenerate();
-        } else if (widget == fillPicker || widget == entrancePicker || widget == exitPicker || widget == doorPicker) {
+        } else if (widget == fillPicker || widget == entrancePicker || widget == exitPicker) {
             autoRegenerate();
         } else if (widget == drawPicker) {
             layer.printMode = drawPicker.selection;
             autoRegenerate();
+        } else if (widget == nameWidget) {
+            setTitle(nameWidget.text);
         } else if (widget == densitySlider) {
             layer.density = (float)densitySlider.value / 100f;
             autoRegenerate();
@@ -428,15 +449,34 @@ public class LandedModal extends UModalTabs {
                 int mouseX = dragStartX - (commander.mouseX() - absoluteX());
                 int mouseY = dragStartY - (commander.mouseY() - absoluteY());
                 commander.camera().moveTo(dragCenterX + (mouseX / gw()),
-                                            dragCenterY + (mouseY / gh()));
+                        dragCenterY + (mouseY / gh()));
             }
         }
         setChildPosition(commander.camera().columns - cellw - 2, commander.camera().rows - cellh - 2, commander.camera());
     }
 
+    @Override
+    public void draw() {
+        if (tabSlider.tabName().equals("Rooms")) {
+            if (scaper.getRooms() != null) {
+                for (Shape.Room r : scaper.getRooms()) {
+                    int rx = ((r.x - commander.camera().leftEdge) * gw()) - absoluteX();
+                    int ry = ((r.y - commander.camera().topEdge) * gh()) - absoluteY();
+                    float f = (float)(commander.frameCounter / 22f);
+                    f = f + (float)((r.x + r.y) / 26f + (r.x - r.y) / 25f) + (r.y / 11f);
+                    f = 0.1f + (float)Math.sin(f * 2.7f) * 0.04f;
+                    hiliteScratch.setAlpha(f);
+                    renderer.drawRectBorder(rx,ry,r.width*gw(),r.height*gh(),2,hiliteScratch,config.getHiliteColor());
+                    //renderer.drawRect(rx, ry, r.width * gw(), r.height * gh(), hiliteScratch);
+                }
+            }
+        }
+        super.draw();
+    }
+
     void selectShaper(String selection) {
         removeShaperWidgets();
-        layer.shaper = layerShapers.get(layerIndex).get(selection);
+        layer.shaper = makeShaper(selection);
         makeShaperWidgets();
         autoRegenerate();
     }
@@ -446,11 +486,9 @@ public class LandedModal extends UModalTabs {
         removeShaperWidgets();
         layerIndex = selection;
         layer = layers.get(layerIndex);
-        int shaperIndex = 0;
-        shaperPicker.selectChoice(layer.shaper.name);
+        shaperPicker.selectChoice(layer.shaper.type);
         makeShaperWidgets();
         pruneRadio.on = layer.pruneDeadEnds;
-        wipeRadio.on = layer.wipeSmallRegions;
         roundRadio.on = layer.roundCorners;
         invertRadio.on = layer.invert;
         terrainPicker.selection = layer.terrain;
@@ -491,6 +529,7 @@ public class LandedModal extends UModalTabs {
 
     void regenerate() {
         //if (true) return;
+        updateLayerPicker();
         UModalLoading lmodal = new UModalLoading();
         lmodal.setChildPosition(2,2,commander.camera());
         commander.showModal(lmodal);
@@ -498,9 +537,11 @@ public class LandedModal extends UModalTabs {
 
         if (area.xsize != areaWidthSlider.value || area.ysize != areaHeightSlider.value) {
             area.initialize(areaWidthSlider.value, areaHeightSlider.value, fillPicker.selection);
-            layer.shaper.resize(areaWidthSlider.value-2, areaHeightSlider.value-2);
+            for (Layer l : layers) {
+                l.shaper.resize(areaWidthSlider.value - 2, areaHeightSlider.value - 2);
+            }
         }
-        scaper.setup(layers, fillPicker.selection, doorPicker.selection, (float)(doorSlider.value)/100f, (float)(lightChanceSlider.value)/100f, roomLights, vaultSetPicker.selected(), entrancePicker.selection, exitPicker.selection, exitDistanceSlider.value);
+        scaper.setup(nameWidget.text, areaWidthSlider.value, areaHeightSlider.value, layers, fillPicker.selection, (float)(lightChanceSlider.value)/100f, roomLights, vaultSetPicker.selected(), entrancePicker.selection, exitPicker.selection, exitDistanceSlider.value);
         scaper.buildArea(area, 1, new String[]{});
 
         commander.camera().renderLights();
@@ -509,6 +550,7 @@ public class LandedModal extends UModalTabs {
 
     void quit() {
         saveScaper(scaper, "testscaper");
+        config.setLightEnable(true);
         escape();
         commander.game().setupTitleScreen();
     }
@@ -537,4 +579,5 @@ public class LandedModal extends UModalTabs {
         }
         lightList.setOptions(lightNames);
     }
+
 }

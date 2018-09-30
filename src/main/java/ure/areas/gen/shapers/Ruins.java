@@ -10,13 +10,12 @@ import java.util.ArrayList;
 
 public class Ruins extends Shaper {
 
+    public static final String TYPE = "Ruins";
+
     @JsonIgnore
     private Log log = LogFactory.getLog(Ruins.class);
 
-    public Ruins(int xsize, int ysize) {
-        super(xsize, ysize);
-        name = "Ruins";
-    }
+    public Ruins() { super(TYPE); }
 
     @Override
     public void setupParams() {

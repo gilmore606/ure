@@ -12,6 +12,8 @@ import java.util.Collections;
 
 public class Chambers extends Shaper {
 
+    public static final String TYPE = "Chambers";
+
     @JsonIgnore
     private Log log = LogFactory.getLog(Chambers.class);
 
@@ -54,11 +56,7 @@ public class Chambers extends Shaper {
         }
     }
 
-    public Chambers(int xsize, int ysize) {
-        super(xsize, ysize);
-        name = "Chambers";
-        rooms = new ArrayList<>();
-    }
+    public Chambers() { super(TYPE); }
 
     @Override
     public void setupParams() {
@@ -78,7 +76,7 @@ public class Chambers extends Shaper {
         this.groupMin = groupMin;
         this.groupMax = groupMax;
         clear();
-        rooms.clear();
+        rooms = new ArrayList<>();
         totalRooms = 0;
         ys = (ysize - 1) / cellSize;
         xs = (xsize - 1) / cellSize;

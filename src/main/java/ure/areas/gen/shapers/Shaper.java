@@ -29,15 +29,15 @@ public class Shaper extends Shape {
     @JsonIgnore
     public ArrayList<Room> rooms;
 
-    public String name;
+    public String type;
 
     public Shaper() {
         super();
     }
 
-    public Shaper(int xsize, int ysize) {
-        super();
-        initialize(xsize,ysize);
+    public Shaper(String type) {
+        this();
+        this.type = type;
     }
 
     public void initialize(int xsize, int ysize) {
@@ -50,7 +50,6 @@ public class Shaper extends Shape {
         paramsFmax = new HashMap<>();
         paramsB = new HashMap<>();
         paramsT = new HashMap<>();
-        rooms = new ArrayList<>();
         setupParams();
     }
 
@@ -90,11 +89,24 @@ public class Shaper extends Shape {
 
     @Override
     public Shape clear() {
-        rooms.clear();
+        if (cells == null) {
+            cells = new boolean[xsize][ysize];
+            buffer = new boolean[xsize][ysize];
+        }
         return super.clear();
     }
 
+    void addRoom(Room r) {
+        for (Room t : rooms) {
+            if (t.touches(r)) {
+                return;
+            }
+        }
+        rooms.add(r);
+    }
+
     public void pruneRooms() {
+        if (rooms == null) return;
         ArrayList<Room> keepers = new ArrayList<>();
         for (Room r : rooms) {
             if (r.unobstructed())
@@ -185,11 +197,11 @@ public class Shaper extends Shape {
         this.rooms = rooms;
     }
 
-    public String getName() {
-        return name;
+    public String getType() {
+        return type;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setType(String type) {
+        this.type = type;
     }
 }

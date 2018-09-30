@@ -40,6 +40,10 @@ public class WidgetSlideTabs extends Widget {
         modal.widgetChanged(this);
     }
 
+    public String tabName() {
+        return tabs.get(selection);
+    }
+
     @Override
     public void drawMe() {
         for (int i=0;i<tabs.size();i++) {

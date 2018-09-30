@@ -12,10 +12,9 @@ import java.util.List;
 
 public class Growdungeon extends Shaper {
 
-    public Growdungeon(int xsize, int ysize) {
-        super(xsize,ysize);
-        name = "Growdungeon";
-    }
+    public static final String TYPE = "Growdungeon";
+
+    public Growdungeon() { super(TYPE); }
 
 
     @Override
@@ -53,7 +52,7 @@ public class Growdungeon extends Shaper {
         clear();
         Room firstroom = new Room(xsize/2-5, ysize/2-5, random.i(chamberSizeMin,chamberSizeMax), random.i(chamberSizeMin,chamberSizeMax));
         firstroom.print(this);
-        rooms.add(firstroom);
+        addRoom(firstroom);
         ArrayList<Face> faces = new ArrayList<>();
         for (Face face : firstroom.faces())
             faces.add(face);
@@ -65,7 +64,7 @@ public class Growdungeon extends Shaper {
             Face face = (Face) random.member((List) faces);
             if (face.addRoom(newroom, this) != null) {
                 newroom.print(this, random.f() < roundedChance);
-                rooms.add(newroom);
+                addRoom(newroom);
                 if (random.f() < 0.5f)
                     newroom.punchDoors(this, random.f() < openChance);
                 else

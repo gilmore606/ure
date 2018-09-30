@@ -348,6 +348,14 @@ public class UModal extends View implements UAnimator {
         }
     }
 
+    /**
+     * Draw animation on top of the camera.
+     */
+
+    public void animationOverlay() {
+
+    }
+
     public int zoomFrames() {
         return config.getModalZoomFrames();
     }

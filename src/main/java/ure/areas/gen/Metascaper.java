@@ -19,10 +19,13 @@ public class Metascaper extends ULandscaper {
     public static final String TYPE = "meta";
 
     public ArrayList<Layer> layers;
+    @JsonIgnore
     public Layer roomLayer;
 
-    String wallTerrain, doorTerrain, entranceTerrain, exitTerrain;
-    float doorChance, lightChance;
+    public String name;
+    public int xsize,ysize;
+    String wallTerrain, entranceTerrain, exitTerrain;
+    float lightChance;
     ArrayList<ULight> roomLights;
     @JsonIgnore
     UVaultSet vaultSet;
@@ -41,21 +44,16 @@ public class Metascaper extends ULandscaper {
 
     public void buildArea(UArea area, int level, String[] tags) {
         area.wipe(wallTerrain);
+        rooms = new ArrayList<>();
         Layer previousLayer = null;
         for (Layer layer : layers) {
+            layer.shaper.rooms = rooms;
             layer.build(previousLayer, area);
             layer.print(area, 0, 0);
             previousLayer = layer;
+            rooms = layer.shaper.rooms;
         }
 
-        roomLayer = layers.get(0);
-        for (Layer layer : layers) {
-            if (layer.rooms().size() > roomLayer.rooms().size())
-                roomLayer = layer;
-        }
-        rooms = roomLayer.rooms();
-        if (doorChance > 0f)
-            addDoors(area);
         if (vaultSet != null)
             addVaults(area);
         if (lightChance > 0f)
@@ -63,11 +61,12 @@ public class Metascaper extends ULandscaper {
         addStairs(area);
     }
 
-    public void setup(ArrayList<Layer> layers, String wallTerrain, String doorTerrain, float doorChance, float lightChance, ArrayList<ULight> roomLights, String vaultSetName, String entranceTerrain, String exitTerrain, int exitDistance) {
+    public void setup(String name, int xsize, int ysize, ArrayList<Layer> layers, String wallTerrain, float lightChance, ArrayList<ULight> roomLights, String vaultSetName, String entranceTerrain, String exitTerrain, int exitDistance) {
+        this.name = name;
+        this.xsize = xsize;
+        this.ysize = ysize;
         this.layers = layers;
         this.wallTerrain = wallTerrain;
-        this.doorTerrain = doorTerrain;
-        this.doorChance = doorChance;
         this.lightChance = lightChance;
         this.roomLights = roomLights;
         this.entranceTerrain = entranceTerrain;
@@ -79,33 +78,10 @@ public class Metascaper extends ULandscaper {
     }
 
 
-    void addDoors(UArea area) {
-        ArrayList<Boolean[][]> patterns = new ArrayList<>();
-        patterns.add(new Boolean[][]{{true,false,true},{true,true,true},{true,false,true}});
-        patterns.add(new Boolean[][]{{true,false,true},{true,true,true},{false,false,true}});
-        patterns.add(new Boolean[][]{{true,false,true},{true,true,true},{false,false,false}});
-        patterns.add(new Boolean[][]{{false,false,true},{true,true,true},{false,false,true}});
-        patterns.add(new Boolean[][]{{true,false,true},{true,true,true},{true,false,false}});
-        for (int x=0;x<area.xsize;x++) {
-            for (int y=0;y<area.ysize;y++) {
-                if (roomLayer.shaper.value(x,y)) {
-                    if (canDoor(area, x, y, patterns) && random.f() < doorChance) {
-                        area.setTerrain(x, y, doorTerrain);
-                    }
-                }
-            }
-        }
-    }
-
-    boolean canDoor(UArea area, int x, int y, ArrayList<Boolean[][]> patterns) {
-        for (Boolean[][] p : patterns) {
-            if (roomLayer.shaper.matchNeighbors(x,y,p))
-                return true;
-        }
-        return false;
-    }
 
     void addRoomLights(UArea area) {
+        if (roomLights == null) return;
+        if (roomLights.size() == 0) return;
         for (Shape.Room r : rooms) {
             if (!r.isHallway() && r.unobstructed(area)) {
                 if (random.f() < lightChance) {
@@ -194,14 +170,6 @@ public class Metascaper extends ULandscaper {
         this.wallTerrain = wallTerrain;
     }
 
-    public String getDoorTerrain() {
-        return doorTerrain;
-    }
-
-    public void setDoorTerrain(String doorTerrain) {
-        this.doorTerrain = doorTerrain;
-    }
-
     public String getEntranceTerrain() {
         return entranceTerrain;
     }
@@ -216,14 +184,6 @@ public class Metascaper extends ULandscaper {
 
     public void setExitTerrain(String exitTerrain) {
         this.exitTerrain = exitTerrain;
-    }
-
-    public float getDoorChance() {
-        return doorChance;
-    }
-
-    public void setDoorChance(float doorChance) {
-        this.doorChance = doorChance;
     }
 
     public float getLightChance() {
@@ -273,4 +233,7 @@ public class Metascaper extends ULandscaper {
     public void setRooms(ArrayList<Shape.Room> rooms) {
         this.rooms = rooms;
     }
+
+    public String getName() { return name; }
+    public void setName(String s) { name = s; }
 }

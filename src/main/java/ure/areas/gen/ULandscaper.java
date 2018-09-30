@@ -758,79 +758,9 @@ public abstract class ULandscaper {
         diggers.add(firstDigger);
         diggers.add(secondDigger);
         boolean allDone = false;
-        while (!allDone) {
-            allDone = true;
-            tmp = (ArrayList<Digger>)diggers.clone();
-            for (Digger digger : tmp) {
-                if (!digger.run()) {
-                    allDone = false;
-                    if (digger.shouldFork(minForkSteps,maxForkSteps) && diggers.size() < 150) {
-                        float childAngle = digger.angle + (randf() < 0.5f ? -1.5708f : 1.5708f);
-                        int childWidth = digger.brush.xsize;
-                        if (childWidth > 2 && randf() < narrowChance) childWidth--;
-                        Digger child = new Digger(mask,(int)digger.x,(int)digger.y,childAngle,childWidth,minForkSteps,maxForkSteps,connectChance, turnStepCount, turnChance);
-                        diggers.add(child);
-                        if (randf() < 0.5f) {
-                            Digger child2 = new Digger(mask,(int)digger.x,(int)digger.y,childAngle+3.1416f,childWidth,minForkSteps,maxForkSteps,connectChance,turnStepCount,turnChance);
-                            diggers.add(child2);
-                        }
-                    } else if (!digger.turning && randf() < roomChance && !spareRooms.isEmpty()) {
-                        Room room = spareRooms.get(rand(spareRooms.size()));
-                        // is there room.w/h space N units toward angle?
-                        float roomangle = randf() < 0.5f ? digger.angle - 1.5708f : digger.angle + 1.5708f;
-                        if (mask.tryToFitRoom((int)digger.x,(int)digger.y,room.width,room.height,roomangle,digger.brush.xsize/2+1,true)) {
-                            spareRooms.remove(room);
-                            if (randf() < backRoomChance) {
-                                Room oldroom = room;
-                                room = spareRooms.get(rand(spareRooms.size()));
-                                int offx = (int)Math.rint(digger.x+(digger.brush.xsize/2+oldroom.height/2+1)*Math.cos(roomangle));
-                                int offy = (int)Math.rint(digger.y+(digger.brush.xsize/2+oldroom.height/2+1)*Math.sin(roomangle));
-                                float backangle = roomangle;
-                                if (mask.tryToFitRoom(offx,offy,room.width,room.height,backangle,oldroom.height/2+1,true)) {
-                                    spareRooms.remove(room);
-                                    mask.set(offx-(int)Math.rint(Math.sin(backangle)),offy-(int)Math.rint(Math.sin(backangle)));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
         return mask;
     }
 
-    public Shape shapeConvoChain(Shape sample, int N, double temperature, int size, int iterations) {
-        class Pattern {
-            public boolean[][] data;
-            private int getSize() { return data.length; }
-            private void Set(BiPredicate<Integer,Integer> f) {
-                for (int j=0;j<getSize();j++)
-                    for (int i=0;i<getSize();i++)
-                        data[i][j] = f.test(i,j);
-            }
-            public Pattern(int size, BiPredicate<Integer,Integer> f) {
-                data = new boolean[size][size];
-                Set(f);
-            }
-            public Pattern(boolean[][] field, int x, int y, int size) {
-                this(size,(i,j) -> false);
-                Set((i,j) -> field[(x+i+field.length) % field.length][(y+j+field[0].length) % field[0].length]);
-            }
-            public Pattern getRotated() { return new Pattern(getSize(),(x,y)->data[getSize()-1-y][x]); }
-            public Pattern getReflected() { return new Pattern(getSize(),(x,y)->data[getSize()-1-x][y]); }
-            public int getIndex() {
-                int result=0;
-                for (boolean[] row : data) {
-                    for (boolean datum : row) {
-                        result <<= 1;
-                        result += datum ? 1 : 0;
-                    }
-                }
-                return result;
-            }
-        }
-        return null;
-    }
 
 
     boolean canFitBoxAt(UArea area, int x, int y, int width, int height, String[] floorTerrains) {

@@ -6,10 +6,9 @@ import ure.areas.gen.Shape;
 
 public class Blobs extends Shaper {
 
-    public Blobs(int xsize, int ysize) {
-        super(xsize,ysize);
-        name = "Blobs";
-    }
+    public static final String TYPE = "Blobs";
+
+    public Blobs() { super(TYPE); }
 
     @Override
     public void setupParams() {

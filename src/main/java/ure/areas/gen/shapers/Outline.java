@@ -6,10 +6,9 @@ import ure.areas.gen.Shape;
 
 public class Outline extends Shaper {
 
-    public Outline(int xsize, int ysize) {
-        super(xsize,ysize);
-        name = "Outline";
-    }
+    public static final String TYPE = "Outline";
+
+    public Outline() { super(TYPE); }
 
     @Override
     public void setupParams() {

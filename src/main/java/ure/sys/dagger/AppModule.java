@@ -10,6 +10,8 @@ import ure.areas.UCartographer;
 import ure.areas.gen.ULandscaper;
 import ure.actors.behaviors.BehaviorDeserializer;
 import ure.actors.behaviors.UBehavior;
+import ure.areas.gen.shapers.Shaper;
+import ure.areas.gen.shapers.ShaperDeserializer;
 import ure.math.URandom;
 import ure.render.URenderer;
 import ure.render.URendererOGL;
@@ -49,6 +51,7 @@ public class AppModule {
         module.addDeserializer(UThing.class, new ThingDeserializer(objectMapper));
         module.addDeserializer(UActor.class, new ActorDeserializer(objectMapper));
         module.addDeserializer(ULandscaper.class, new LandscaperDeserializer(objectMapper));
+        module.addDeserializer(Shaper.class, new ShaperDeserializer(objectMapper));
         module.addDeserializer(UBehavior.class, new BehaviorDeserializer(objectMapper));
         module.addDeserializer(Icon.class, new IconDeserializer(objectMapper));
         objectMapper.registerModule(module);

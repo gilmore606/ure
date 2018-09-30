@@ -12,8 +12,9 @@ public class Layer {
     public static final int PRINTMODE_ALL = 0;
     public static final int PRINTMODE_WALLS = 1;
     public static final int PRINTMODE_FLOORS = 2;
+    public static final int PRINTMODE_NONE = 3;
     public String terrain;
-    public boolean pruneDeadEnds, wipeSmallRegions, roundCorners, invert;
+    public boolean pruneDeadEnds, roundCorners, invert;
 
     public Layer() {
 
@@ -25,7 +26,6 @@ public class Layer {
         this.printMode = printMode;
         this.terrain = terrain;
         this.pruneDeadEnds = pruneDeadEnds;
-        this.wipeSmallRegions = wipeSmallRegions;
         this.roundCorners = roundCorners;
         this.invert = invert;
     }
@@ -34,8 +34,6 @@ public class Layer {
         shaper.build(previousLayer, area);
         if (pruneDeadEnds)
             shaper.pruneDeadEnds();
-        if (wipeSmallRegions)
-            shaper.wipeSmallRegions();
         if (roundCorners)
             shaper.roundCorners();
         if (invert)
@@ -98,14 +96,6 @@ public class Layer {
 
     public void setPruneDeadEnds(boolean pruneDeadEnds) {
         this.pruneDeadEnds = pruneDeadEnds;
-    }
-
-    public boolean isWipeSmallRegions() {
-        return wipeSmallRegions;
-    }
-
-    public void setWipeSmallRegions(boolean wipeSmallRegions) {
-        this.wipeSmallRegions = wipeSmallRegions;
     }
 
     public boolean isRoundCorners() {

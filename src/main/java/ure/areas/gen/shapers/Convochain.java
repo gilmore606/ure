@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
 
 public class Convochain extends Shaper {
 
+    public static final String TYPE = "Convochain";
+
     private Log log = LogFactory.getLog(Chambers.class);
 
     class Pattern {
@@ -61,10 +63,7 @@ public class Convochain extends Shaper {
     @JsonIgnore
     protected UVaultSet seedVault;
 
-    public Convochain(int xsize, int ysize) {
-        super(xsize,ysize);
-        name = "Convochain";
-    }
+    public Convochain() { super(TYPE); }
 
     @Override
     public void setupParams() {

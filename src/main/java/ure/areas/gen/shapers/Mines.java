@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 public class Mines extends Shaper {
 
+    public static final String TYPE = "Mines";
+
     public class Digger {
         Shape brush, mask;
         float x, y, angle, turnChance;
@@ -89,10 +91,7 @@ public class Mines extends Shaper {
         }
     }
 
-    public Mines(int xsize, int ysize) {
-        super(xsize, ysize);
-        name = "Mines";
-    }
+    public Mines() { super(TYPE); }
 
     @Override
     public void setupParams() {
@@ -148,7 +147,9 @@ public class Mines extends Shaper {
                         Room room = spareRooms.get(random.i(spareRooms.size()));
                         // is there room.w/h space N units toward angle?
                         float roomangle = random.f() < 0.5f ? digger.angle - 1.5708f : digger.angle + 1.5708f;
-                        if (tryToFitRoom((int)digger.x,(int)digger.y,room.width,room.height,roomangle,digger.brush.xsize/2+1,true)) {
+                        room.x = (int)digger.x; room.y = (int)digger.y;
+                        if (tryToFitRoom(room,roomangle,digger.brush.xsize/2+1,true)) {
+                            addRoom(room);
                             spareRooms.remove(room);
                             if (random.f() < backRoomChance) {
                                 Room oldroom = room;
@@ -156,8 +157,10 @@ public class Mines extends Shaper {
                                 int offx = (int)Math.rint(digger.x+(digger.brush.xsize/2+oldroom.height/2+1)*Math.cos(roomangle));
                                 int offy = (int)Math.rint(digger.y+(digger.brush.xsize/2+oldroom.height/2+1)*Math.sin(roomangle));
                                 float backangle = roomangle;
-                                if (tryToFitRoom(offx,offy,room.width,room.height,backangle,oldroom.height/2+1,true)) {
+                                room.x = offx; room.y = offy;
+                                if (tryToFitRoom(room,backangle,oldroom.height/2+1,true)) {
                                     spareRooms.remove(room);
+                                    addRoom(room);
                                     set(offx-(int)Math.rint(Math.sin(backangle)),offy-(int)Math.rint(Math.sin(backangle)));
                                 }
                             }

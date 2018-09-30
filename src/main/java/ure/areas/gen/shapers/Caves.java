@@ -6,10 +6,9 @@ import ure.areas.gen.Shape;
 
 public class Caves extends Shaper {
 
-    public Caves(int xsize, int ysize) {
-        super(xsize, ysize);
-        name = "Caves";
-    }
+    public static final String TYPE = "Caves";
+
+    public Caves() { super(TYPE); }
 
     @Override
     public void setupParams() {

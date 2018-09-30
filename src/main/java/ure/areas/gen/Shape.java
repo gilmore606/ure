@@ -35,7 +35,7 @@ public class Shape {
     @JsonIgnore
     public boolean[][] cells;
     @JsonIgnore
-    boolean[][] buffer;
+    public boolean[][] buffer;
 
     public static final int MASK_OR = 0;
     public static final int MASK_AND = 1;
@@ -90,9 +90,17 @@ public class Shape {
             return false;
         }
         public boolean unobstructed(UArea area) {
-            return area.terrainAt(x+1,y+1).passable();
+            if (area.terrainAt(x+1,y+1) != null)
+                return area.terrainAt(x+1,y+1).passable();
+            return false;
         }
         public boolean unobstructed() { return value(x+1,y+1); }
+
+        public boolean touches(Room r) {
+            if (x > r.x+r.width || y > r.y+r.height || x+width < r.x || y+height < r.y)
+                return false;
+            return true;
+        }
 
         public int getX() {
             return x;
@@ -865,19 +873,19 @@ public class Shape {
         return c;
     }
 
-    public boolean tryToFitRoom(int x, int y, int width, int height, float angle, int displace, boolean draw) {
+    public boolean tryToFitRoom(Room room, float angle, int displace, boolean draw) {
         int dxy = (int)Math.rint(Math.cos(angle));
         int dyy = (int)Math.rint(Math.sin(angle));
         int dxx = (int)Math.rint(Math.cos(angle+1.5708f));
         int dyx = (int)Math.rint(Math.sin(angle+1.5708f));
-        width += 2; height += 2;
-        float x1 = x + displace*dxy;
-        float y1 = y + displace*dyy;
-        x1 -= (dxx * (width/2) + dxy);
-        y1 -= (dyx * (width/2) + dyy);
+        room.width += 2; room.height += 2;
+        float x1 = room.x + displace*dxy;
+        float y1 = room.y + displace*dyy;
+        x1 -= (dxx * (room.width/2) + dxy);
+        y1 -= (dyx * (room.width/2) + dyy);
         boolean blocked = false;
-        for (int i=0;i<width;i++) {
-            for (int j=0;j<height;j++) {
+        for (int i=0;i<room.width;i++) {
+            for (int j=0;j<room.height;j++) {
                 float cx = x1 + dxx*i + dxy*j;
                 float cy = y1 + dyx*i + dyy*j;
                 if (value((int)(cx),(int)cy)) {
@@ -888,14 +896,16 @@ public class Shape {
         if (draw && !blocked ) {
             x1 += dxx + dyx;
             y1 += dxy + dyy;
-            for (int i=0;i<width-2;i++) {
-                for (int j=0;j<height-2;j++) {
+            room.x = (int)x1;
+            room.y = (int)y1;
+            for (int i=0;i<room.width-2;i++) {
+                for (int j=0;j<room.height-2;j++) {
                     float cx = x1 + dxx*i + dxy*j;
                     float cy = y1 + dyx*i + dyy*j;
                     set((int)cx,(int)cy);
                 }
             }
-            set(x + dxy,y+dyy);
+            set(room.x + dxy,room.y+dyy);
         }
         return !blocked;
     }
@@ -956,6 +966,18 @@ public class Shape {
                 n[i][j] = neighborMask[i][j];
         }
         return matchNeighbors(x,y,n);
+    }
+
+    public boolean hasNeighborWithin(int x, int y, int distance) {
+        for (int i=-distance;i<distance;i++) {
+            for (int j=-distance;j<distance;j++) {
+                if (i != 0 && j != 0) {
+                    if (value(x + i, y + j))
+                        return true;
+                }
+            }
+        }
+        return false;
     }
 
     public float fullness() {
