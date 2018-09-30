@@ -251,6 +251,8 @@ public class UCartographer implements Runnable {
     public void persist(Object object, String filename) {
         String path = commander.savePath();
         if (commander.config.isPersistentAreas()) {
+            File dir = new File(path);
+            dir.mkdirs();
             log.info("saving file " + path + filename);
             File file = new File(path + filename);
             try (
