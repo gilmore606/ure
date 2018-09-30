@@ -24,7 +24,6 @@ import javax.inject.Inject;
 
 public class UTerrainCzar {
 
-    private  HashMap<Character,UTerrain> terrains;
     private  HashMap<String,UTerrain> terrainsByName;
 
     @Inject
@@ -52,7 +51,6 @@ public class UTerrainCzar {
      *
      */
     public void loadTerrains() {
-        terrains = new HashMap<>();
         terrainsByName = new HashMap<>();
         List<String> files = resourceManager.getResourceFiles("/terrain");
         for (String resourceName : files) {
@@ -63,7 +61,6 @@ public class UTerrainCzar {
                     UTerrain[] terrainObjs = objectMapper.readValue(inputStream, UTerrain[].class);
                     for (UTerrain terrain : terrainObjs) {
                         terrain.initializeAsTemplate();
-                        terrains.put(terrain.getFilechar(), terrain);
                         terrainsByName.put(terrain.getName(), terrain);
                     }
                 } catch (IOException io) {
@@ -74,27 +71,17 @@ public class UTerrainCzar {
     }
 
     /**
-     * Get a new instance of a terrain type with the given textfile character ID.
-     *
-     * @param thechar
-     * @return
-     */
-    public UTerrain getTerrainForFilechar(char thechar) {
-        UTerrain template = terrains.get(thechar);
-        UTerrain clone = template.makeClone();
-        clone.initializeAsCloneFrom(template);
-        clone.setID(commander.generateNewID(clone));
-        return clone;
-    }
-
-    /**
      * Get a new instance of a named terrain type.
      *
      * @param name
      * @return
      */
     public UTerrain getTerrainByName(String name) {
-        return getTerrainForFilechar(terrainsByName.get(name).getFilechar());
+        UTerrain template = terrainsByName.get(name);
+        UTerrain clone = template.makeClone();
+        clone.initializeAsCloneFrom(template);
+        clone.setID(commander.generateNewID(clone));
+        return clone;
     }
 
     public ArrayList<UTerrain> getAllTerrainTemplates() {

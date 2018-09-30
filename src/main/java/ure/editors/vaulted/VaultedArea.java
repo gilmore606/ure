@@ -61,7 +61,7 @@ public class VaultedArea extends UArea {
         ysize = newy;
         for (int x=0;x<xsize;x++) {
             for (int y=0;y<ysize;y++) {
-                cells[x][y] = new UCell(this,x,y,terrainCzar.getTerrainForFilechar('@'));
+                cells[x][y] = new UCell(this,x,y,terrainCzar.getTerrainByName("null"));
             }
         }
     }

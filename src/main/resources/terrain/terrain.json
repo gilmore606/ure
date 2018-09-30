@@ -1,14 +1,12 @@
 [
   {
     "name": "null",
-    "filechar": "@",
     "moveTypes": ["walk"],
     "opaque": false,
     "sunvis": 1.0
   },
     {
       "name": "grass",
-      "filechar": ".",
       "moveTypes": ["walk","fly","roll"],
       "opaque": false,
       "spawnok": true,
@@ -16,7 +14,6 @@
     },
   {
     "name": "dirt",
-    "filechar": ",",
     "moveTypes": ["walk","fly","roll"],
     "opaque": false,
     "spawnok": true,
@@ -25,7 +22,6 @@
   },
     {
       "name": "wall",
-      "filechar": "#",
       "moveTypes": [],
       "opaque": true,
       "sunvis": 0.0,
@@ -33,7 +29,6 @@
     },
   {
     "name": "rock",
-    "filechar": "O",
     "moveTypes": [],
     "opaque": true,
     "sunvis": 0.0,
@@ -41,7 +36,6 @@
   },
     {
       "name": "floor",
-      "filechar": "_",
       "moveTypes": ["walk","fly","roll"],
       "opaque": false,
       "spawnok": true,
@@ -49,7 +43,6 @@
     },
     {
       "name": "floormoss",
-      "filechar": "9",
       "moveTypes": ["walk","fly","roll"],
       "opaque": false,
       "spawnok": true,
@@ -58,7 +51,6 @@
     },
   {
   "name": "carvings",
-    "filechar": "8",
     "moveTypes": ["walk","fly","roll"],
     "opaque": false,
     "spawnok": true,
@@ -68,7 +60,6 @@
     {
       "name": "door",
       "type": "door",
-      "filechar": "D",
       "moveTypes": ["walk","fly","roll"],
       "opaque": true,
       "breaklatch": true,
@@ -81,7 +72,6 @@
     },
     {
       "name": "window",
-      "filechar": "[",
       "moveTypes": ["climb"],
       "opaque": false,
       "sunvis": 1.0,
@@ -90,7 +80,6 @@
     },
     {
       "name": "tree",
-      "filechar": "T",
       "moveTypes": [],
       "opaque": true,
       "sunvis": 0.5,
@@ -99,7 +88,6 @@
     },
   {
     "name": "sapling",
-    "filechar": "t",
     "moveTypes": ["walk","fly"],
     "opaque": false,
     "spawnok": true,
@@ -108,7 +96,6 @@
     {
       "name": "water",
       "type": "water",
-      "filechar": "W",
       "moveTypes": ["wade","swim","fly"],
       "opaque": false,
       "breaklatch": true,
@@ -122,7 +109,6 @@
   {
     "name": "still water",
     "type": "water",
-    "filechar": "p",
     "moveTypes": ["wade","swim","fly"],
     "opaque": false,
     "breaklatch": true,
@@ -136,7 +122,6 @@
   {
     "name": "deep water",
     "type": "water",
-    "filechar": "w",
     "moveTypes": ["swim","fly"],
     "opaque": false,
     "breaklatch": true,
@@ -147,7 +132,6 @@
   },
     {
       "name": "wooden bridge",
-      "filechar": "B",
       "moveTypes": ["walk","roll","fly"],
       "opaque": false,
       "sunvis": 1.0,
@@ -155,7 +139,6 @@
     },
     {
       "name": "sand",
-      "filechar": "S",
       "moveTypes": ["walk","roll","fly"],
       "opaque": false,
       "sunvis": 1.0,
@@ -164,7 +147,6 @@
     },
     {
       "name": "mud",
-      "filechar": "M",
       "moveTypes": ["walk", "fly"],
       "opaque": false,
       "sunvis": 1.0,
@@ -174,7 +156,6 @@
     {
       "name": "lava",
       "type": "lava",
-      "filechar": "!",
       "moveTypes": ["fly"],
       "opaque": false,
       "sunvis": 0.0,
@@ -187,7 +168,6 @@
   {
     "name": "cave entrance",
     "type": "stairs",
-    "filechar": ">",
     "moveTypes": ["walk","fly"],
     "opaque": false,
     "sunvis": 0.5,
@@ -200,7 +180,6 @@
   {
     "name": "cave exit",
     "type": "stairs",
-    "filechar": "<",
     "moveTypes": ["walk","fly"],
     "opaque": false,
     "sunvis": 0.5,
@@ -211,7 +190,6 @@
   {
     "name": "trapdoor",
     "type": "stairs",
-    "filechar": "X",
     "moveTypes": ["climb"],
     "opaque": false,
     "sunvis": 0.0,
@@ -222,7 +200,6 @@
   {
     "name": "ladder",
     "type": "stairs",
-    "filechar": "H",
     "moveTypes": ["climb"],
     "opaque": false,
     "sunvis": 0.0,
@@ -232,7 +209,6 @@
   },
   {
     "name": "tile floor",
-    "filechar": "W",
     "moveTypes": ["walk","fly","roll"],
     "opaque": false,
     "spawnok": true,
@@ -240,7 +216,6 @@
   },
   {
     "name": "smooth wall",
-    "filechar": "}",
     "moveTypes": [],
     "opaque": true,
     "sunvis": 0.0,
@@ -249,7 +224,6 @@
   {
     "name": "steel door",
     "type": "door",
-    "filechar": "Z",
     "moveTypes": ["walk","fly","roll"],
     "opaque": true,
     "breaklatch": true,
@@ -262,7 +236,6 @@
   },
   {
     "name": "smooth floor",
-    "filechar": "3",
     "moveTypes": ["walk","fly","roll"],
     "opaque": false,
     "spawnok": true,
@@ -270,7 +243,6 @@
   },
   {
     "name": "metal wall",
-    "filechar": "2",
     "moveTypes": [],
     "opaque": true,
     "sunvis": 0.0,
@@ -279,7 +251,6 @@
   {
     "name": "vault door",
     "type": "door",
-    "filechar": "1",
     "moveTypes": ["walk","fly","roll"],
     "opaque": true,
     "breaklatch": true,

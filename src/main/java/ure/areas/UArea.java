@@ -113,24 +113,6 @@ public class UArea implements Serializable {
         initialize(thexsize,theysize,defaultTerrain);
     }
 
-    public UArea(String filename) {
-        this();
-        cells = new UCell[200][200];
-        InputStream in = getClass().getResourceAsStream(filename);
-        Stream<String> lines = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)).lines();
-        lines.forEach(line -> {
-            int cellsX = 0;
-            for (char c : line.toCharArray()) {
-                UTerrain terrain = terrainCzar.getTerrainForFilechar(c);
-                cells[cellsX][ysize] = new UCell(this, cellsX, ysize, terrain);
-                ++cellsX;
-            }
-            ysize++;
-            xsize = cellsX;
-        });
-        lines.close();
-    }
-
     public void initialize(int xsize, int ysize, String defaultTerrain) {
         this.xsize = xsize;
         this.ysize = ysize;
@@ -308,12 +290,6 @@ public class UArea implements Serializable {
     public void setTerrain(int x, int y, String t) {
         if (isValidXY(x, y)) {
             UTerrain terrain = terrainCzar.getTerrainByName(t);
-            getCells()[x][y].useTerrain(terrain);
-        }
-    }
-    public void setTerrain(int x, int y, char c) {
-        if (isValidXY(x,y)) {
-            UTerrain terrain = terrainCzar.getTerrainForFilechar(c);
             getCells()[x][y].useTerrain(terrain);
         }
     }

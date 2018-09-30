@@ -53,7 +53,6 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     protected String walkmsg = "";
     protected String bonkmsg = "";
     protected String lookmsg = "";
-    protected char filechar;
     protected Icon icon;
     protected String category;
     protected HashMap<String,Integer> stats = new HashMap<>();
@@ -236,14 +235,6 @@ public abstract class UTerrain implements Entity, Cloneable, Interactable {
     }
     public String getLookmsg() { return lookmsg; }
     public void setLookmsg(String s) { lookmsg = s; }
-
-    public char getFilechar() {
-        return filechar;
-    }
-
-    public void setFilechar(char filechar) {
-        this.filechar = filechar;
-    }
 
     public void setIcon(Icon icon) {
         this.icon = icon;
