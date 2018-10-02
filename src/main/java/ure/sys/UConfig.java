@@ -76,6 +76,9 @@ public class UConfig {
     private boolean lightBloom = true;                  // TODO: lights adding to >fullbright bloom to white
     private boolean ambientOcclusion = true;            // ambient occlusion shadowing on terrain edges
     private boolean ambientOcclusionIso = true;         // shadow south edge only for faux-isometric shading
+    private float AODepth1 = 0.4f;
+    private float AODepth2 = 0.15f;
+    private int AODepth3 = 1;
     private boolean smoothLightCones = true;            // dither edges of light cones
     private boolean fog = true;                         // area-specific distance fog
     private boolean telemetry = false;                  // diagnostic telemetry
@@ -449,6 +452,12 @@ public class UConfig {
     public void setAmbientOcclusion(boolean b) { ambientOcclusion = b; }
     public boolean isAmbientOcclusionIso() { return ambientOcclusionIso; }
     public void setAmbientOcclusionIso(boolean b) { ambientOcclusionIso = b; }
+    public float getAODepth1() { return AODepth1; }
+    public void setAODepth1(float f) { AODepth1 = f; }
+    public float getAODepth2() { return AODepth2; }
+    public void setAODepth2(float f) { AODepth2 = f; }
+    public int getAODepth3() { return AODepth3; }
+    public void setAODepth3(int i) { AODepth3 = i; }
 
     public boolean isSmoothLightCones() {
         return smoothLightCones;

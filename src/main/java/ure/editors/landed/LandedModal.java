@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import ure.areas.UArea;
-import ure.areas.gen.Layer;
-import ure.areas.gen.Metascaper;
-import ure.areas.gen.Shape;
-import ure.areas.gen.ULandscaper;
+import ure.areas.gen.*;
 import ure.areas.gen.shapers.*;
 import ure.math.UColor;
 import ure.ui.ULight;
@@ -33,6 +30,10 @@ public class LandedModal extends UModalTabs {
     int layerIndex;
     Layer layer;
 
+    ArrayList<Roomgroup> groups;
+    int groupIndex;
+    Roomgroup group;
+
     ArrayList<ULight> roomLights;
 
     WidgetDropdown vaultSetPicker;
@@ -50,6 +51,9 @@ public class LandedModal extends UModalTabs {
     WidgetDropdown drawPicker;
 
     WidgetDropdown groupPicker;
+    WidgetRadio roomHallsRadio;
+    WidgetHSlider roomMinSizeSlider, roomMaxSizeSlider, roomFrequencySlider, roomSeparationSlider, roomCountSlider;
+    WidgetTerrainpick roomFloorPicker;
 
     WidgetHSlider lightChanceSlider;
     WidgetButton lightNewAmbient, lightNewPoint;
@@ -77,6 +81,7 @@ public class LandedModal extends UModalTabs {
         hilitePulse = 0f;
         hilitePulseReverse = false;
         layers = new ArrayList<>();
+        groups = new ArrayList<>();
         shaperNames = new String[]{
                 "Fill",
                 "Blobs",
@@ -146,7 +151,20 @@ public class LandedModal extends UModalTabs {
         changeTab("Rooms");
         groupPicker = new WidgetDropdown(this, 0, 0, new String[]{"Group 0", "<new group>"}, 0);
         addWidget(groupPicker);
-
+        roomHallsRadio = new WidgetRadio(this, 0, 2, "+hallways", null, null, false);
+        addWidget(roomHallsRadio);
+        roomCountSlider = new WidgetHSlider(this, 0, 3, "count", 8, 100, 1, 100, true);
+        addWidget(roomCountSlider);
+        roomMinSizeSlider = new WidgetHSlider(this, 0, 4, "minSize", 8, 6, 4, 100, true);
+        addWidget(roomMinSizeSlider);
+        roomMaxSizeSlider = new WidgetHSlider(this, 0, 5, "maxSize", 8, 200, 4, 200, true);
+        addWidget(roomMaxSizeSlider);
+        roomFrequencySlider = new WidgetHSlider(this, 0, 6, "frequency", 8, 100, 1, 100, false);
+        addWidget(roomFrequencySlider);
+        roomSeparationSlider = new WidgetHSlider(this, 0, 7, "separation", 8, 0, 0, 40, true);
+        addWidget(roomSeparationSlider);
+        roomFloorPicker = new WidgetTerrainpick(this, 0, 8, "floorType", "null");
+        addWidget(roomFloorPicker);
 
         changeTab("Decorate");
         addWidget(groupPicker);
@@ -280,6 +298,13 @@ public class LandedModal extends UModalTabs {
         }
     }
 
+    void makeNewGroup() {
+        Roomgroup g = new Roomgroup();
+        groups.add(g);
+        updateGroupPicker();
+        selectGroup(groups.indexOf(g));
+    }
+
     void makeNewLayer() {
         Layer layer = new Layer();
         layers.add(layer);
@@ -334,6 +359,15 @@ public class LandedModal extends UModalTabs {
         autoRegenerate();
     }
 
+    void deleteGroup() {
+        if (groups.size() < 2) return;
+        groups.remove(groupIndex);
+        if (groupIndex >= groups.size()) groupIndex = groups.size() - 1;
+        updateGroupPicker();
+        selectGroup(groupIndex);
+        autoRegenerate();
+    }
+
     void moveLayer(int by) {
         int destIndex = layerIndex + by;
         Layer temp = layers.get(destIndex);
@@ -354,6 +388,21 @@ public class LandedModal extends UModalTabs {
         }
         choices[layers.size()] = "<new layer>";
         layerPicker.setChoices(choices);
+    }
+
+    void updateGroupPicker() {
+        String[] choices = new String[groups.size()+1];
+        int i = 0;
+        for (Roomgroup g : groups) {
+            int size = 0;
+            if (g != null)
+                if (g.rooms != null)
+                    size = g.rooms.size();
+            choices[i] = "Group " + i + " (" + size + " rooms)";
+            i++;
+        }
+        choices[groups.size()] = "<new group>";
+        groupPicker.setChoices(choices);
     }
 
     @Override
@@ -498,6 +547,19 @@ public class LandedModal extends UModalTabs {
             addWidget(layerDownButton);
         if (layerIndex < layers.size() - 1)
             addWidget(layerUpButton);
+    }
+
+    void selectGroup(int selection) {
+        groupPicker.selection = selection;
+        groupIndex = selection;
+        group = groups.get(groupIndex);
+        roomHallsRadio.on = group.includeHallways;
+        roomCountSlider.value = group.maxCount;
+        roomMinSizeSlider.value = group.minRoomSize;
+        roomMaxSizeSlider.value = group.maxRoomSize;
+        roomFrequencySlider.value = (int)(group.frequency * 100f);
+        roomSeparationSlider.value = group.separation;
+        roomFloorPicker.selection = group.floorType;
     }
 
     void updateShaperFromWidgets() {

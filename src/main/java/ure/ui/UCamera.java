@@ -683,28 +683,29 @@ public class UCamera extends View implements UAnimator {
         int y = row * config.getTileHeight();
         int w = config.getTileWidth();
         int h = config.getTileHeight();
-        int cw = (int)(((float)w/4f)*3f);
-        int ch = (int)(((float)h/4f)*3f);
+        float d1 = config.getAODepth1();
+        float d2 = config.getAODepth2();
+        int d3 = config.getAODepth3();
         if (nn) {
-            renderer.drawRect(x, y, w, h / 4, UColor.SHADE);
+            renderer.drawRect(x, y, w, (int)(h * d1), UColor.SHADE);
             renderer.drawRect(x, y, w, 3, UColor.DARKSHADE);
             renderer.drawRect(x,y,w,1, UColor.DARKERSHADE);
         }
         if (!config.isAmbientOcclusionIso()) {
             if (ns) {
-                renderer.drawRect(x, y + ch, w, h / 4, UColor.SHADE);
-                renderer.drawRect(x, y + h - 3, w, 3, UColor.DARKSHADE);
-                renderer.drawRect(x,y+h-1,w,1,UColor.DARKERSHADE);
+                renderer.drawRect(x, (y+h)-(int)(h*d1), w, (int)(h*d1), UColor.SHADE);
+                renderer.drawRect(x, (y+h)-(int)(h*d2), w, (int)(h*d2), UColor.DARKSHADE);
+                renderer.drawRect(x,y+h-d3,w,d3,UColor.DARKERSHADE);
             }
             if (nw) {
-                renderer.drawRect(x, y, w / 4, h, UColor.SHADE);
-                renderer.drawRect(x, y, 3, h, UColor.DARKSHADE);
-                renderer.drawRect(x,y,1,h,UColor.DARKERSHADE);
+                renderer.drawRect(x, y, (int)(w*d1), h, UColor.SHADE);
+                renderer.drawRect(x, y, (int)(h*d2), h, UColor.DARKSHADE);
+                renderer.drawRect(x,y,d3,h,UColor.DARKERSHADE);
             }
             if (ne) {
-                renderer.drawRect(x + cw, y, w / 4, h, UColor.SHADE);
-                renderer.drawRect(x + w - 3, y, 3, h, UColor.DARKSHADE);
-                renderer.drawRect(x+w-1,y,1,h,UColor.DARKERSHADE);
+                renderer.drawRect((x+w)-(int)(w*d1), y, (int)(w*d1), h, UColor.SHADE);
+                renderer.drawRect((x+w)-(int)(w*d2), y, (int)(w*d2), h, UColor.DARKSHADE);
+                renderer.drawRect(x+w-d3,y,d3,h,UColor.DARKERSHADE);
             }
         }
     }
