@@ -295,5 +295,12 @@
     "opaque": true,
     "sunvis": 0.0,
     "bonkmsg": "A shimmering crystal surface."
+  },
+  {
+    "name": "chasm",
+    "moveTypes": [],
+    "opaque": true,
+    "sunvis": 0.0,
+    "bonkmsg": "A yawning abyss."
   }
   ]
