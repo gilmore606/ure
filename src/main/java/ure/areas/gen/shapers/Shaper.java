@@ -39,6 +39,7 @@ public class Shaper extends Shape {
     public Shaper(String type) {
         this();
         this.type = type;
+        rooms = new ArrayList<>();
     }
 
     public void initialize(int xsize, int ysize) {
@@ -94,6 +95,7 @@ public class Shaper extends Shape {
             cells = new boolean[xsize][ysize];
             buffer = new boolean[xsize][ysize];
         }
+        rooms.clear();
         return super.clear();
     }
 

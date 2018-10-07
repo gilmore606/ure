@@ -37,21 +37,48 @@ public class Metascaper extends ULandscaper {
 
     public void buildArea(UArea area, int level, String[] tags) {
         area.wipe("null");
-        rooms = new ArrayList<>();
+
         Layer previousLayer = null;
         for (Layer layer : layers) {
-            layer.shaper.rooms = rooms;
             layer.build(previousLayer, area);
             layer.print(area, 0, 0);
             previousLayer = layer;
-            rooms = layer.shaper.rooms;
         }
+
+        collectRooms();
         buildRoomgroups(area);
 
         if (vaultSet != null)
             addVaults(area);
         if (lightChance > 0f)
             addRoomLights(area);
+    }
+
+    void collectRooms() {
+        rooms = new ArrayList<>();
+        for (Layer layer : layers) {
+            ArrayList<Room> candidates = layer.shaper.rooms;
+            ArrayList<Room> discards = new ArrayList<>();
+            for (Room cand : candidates) {
+                boolean collided = false;
+                for (Room test : rooms) {
+                    if (cand != test && !discards.contains(test) && test.touches(cand)) {
+                        if ((test.height*test.width) < (cand.height*cand.width)) {
+                            collided = true;
+                            if (!rooms.contains(cand))
+                                rooms.add(cand);
+                            if (!discards.contains(test))
+                                discards.add(test);
+                        }
+                    }
+                }
+                if (!collided)
+                    rooms.add(cand);
+            }
+            for (Room dis : discards) {
+                rooms.remove(dis);
+            }
+        }
     }
 
     public void buildRoomgroups(UArea area) {
