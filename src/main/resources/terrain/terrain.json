@@ -260,7 +260,40 @@
     "openmsg": "The vault door slowly swings open.",
     "closemsg": "The vault door slowly swings shut.",
     "lookmsg": "A massive round door."
+  },
+  {
+    "name": "ice floor",
+    "moveTypes": ["walk","fly","roll"],
+    "opaque": false,
+    "spawnok": true,
+    "sunvis": 1.0
+  },
+  {
+    "name": "ice wall",
+    "moveTypes": [],
+    "opaque": true,
+    "sunvis": 0.0,
+    "bonkmsg": "A dark seam of coal"
+  },
+  {
+    "name": "coal wall",
+    "moveTypes": [],
+    "opaque": true,
+    "sunvis": 0.0,
+    "bonkmsg": "A dark seam of coal"
+  },
+  {
+    "name": "granite wall",
+    "moveTypes": [],
+    "opaque": true,
+    "sunvis": 0.0,
+    "bonkmsg": "A rough face of granite."
+  },
+  {
+    "name": "crystal wall",
+    "moveTypes": [],
+    "opaque": true,
+    "sunvis": 0.0,
+    "bonkmsg": "A shimmering crystal surface."
   }
-
   ]
-
