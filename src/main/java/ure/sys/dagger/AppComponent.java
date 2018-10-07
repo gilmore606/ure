@@ -6,6 +6,7 @@ import ure.areas.*;
 import ure.areas.gen.Roomgroup;
 import ure.areas.gen.Shape;
 import ure.areas.gen.ULandscaper;
+import ure.areas.gen.deco.Deco;
 import ure.areas.gen.shapers.Shaper;
 import ure.math.Dimap;
 import ure.mygame.MyGame;
@@ -93,4 +94,5 @@ public interface AppComponent {
     void inject(ResourceManager manager);
     void inject(Dimap map);
     void inject(Roomgroup rg);
+    void inject(Deco dec);
 }

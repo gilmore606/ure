@@ -34,9 +34,6 @@ public class LandedModal extends UModalTabs {
     int groupIndex;
     Roomgroup group;
 
-    ArrayList<ULight> roomLights;
-
-    WidgetDropdown vaultSetPicker;
     WidgetStringInput nameWidget;
     WidgetButton layerUpButton, layerDownButton, layerDeleteButton;
     WidgetDropdown layerPicker;
@@ -56,16 +53,10 @@ public class LandedModal extends UModalTabs {
     WidgetTerrainpick roomFloorPicker;
     WidgetButton groupDeleteButton;
 
-    WidgetHSlider lightChanceSlider;
-    WidgetButton lightNewAmbient, lightNewPoint;
-    WidgetListVert lightList;
-
     WidgetSlideTabs tabSlider;
     WidgetButton regenButton;
     WidgetRadio autoRegenRadio;
     WidgetButton quitButton;
-
-    UColor hiliteScratch;
 
     boolean dragging = false;
     int dragStartX, dragStartY;
@@ -78,7 +69,6 @@ public class LandedModal extends UModalTabs {
         super(null, "");
         this.area = area;
 
-        hiliteScratch = new UColor(config.getHiliteColor());
         hilitePulse = 0f;
         hilitePulseReverse = false;
         layers = new ArrayList<>();
@@ -169,18 +159,6 @@ public class LandedModal extends UModalTabs {
 
         changeTab("Decorate");
         addWidget(groupPicker);
-        lightChanceSlider = new WidgetHSlider(this, 0, 4, "room light chance", 6, 0, 0, 100, true);
-        addWidget(lightChanceSlider);
-        lightNewAmbient = new WidgetButton(this, 0, 6, "[ New Ambient ]", null);
-        addWidget(lightNewAmbient);
-        lightNewPoint = new WidgetButton(this, 10, 6, "[ New Point ]", null);
-        addWidget(lightNewPoint);
-        lightList = new WidgetListVert(this, 0, 7, new String[]{});
-        addWidget(lightList);
-
-        addWidget(new WidgetText(this, 0, 12, "vault set:"));
-        vaultSetPicker = new WidgetDropdown(this, 6, 12, commander.getResourceList("vaults"), 0);
-        addWidget(vaultSetPicker);
 
 
         changeTab(null);
@@ -196,7 +174,6 @@ public class LandedModal extends UModalTabs {
 
         loadScaper("testscaper");
         //scaper = new Metascaper();  makeNewLayer(); makeNewGroup();
-        roomLights = new ArrayList<>();
 
         changeTab("Layers");
         changeTab("File");
@@ -222,10 +199,8 @@ public class LandedModal extends UModalTabs {
         groups = scaper.groups;
         groupIndex = 0;
         group = groups.get(0);
-        roomLights = scaper.getRoomLights();
         areaWidthSlider.value = scaper.xsize;
         areaHeightSlider.value = scaper.ysize;
-        lightChanceSlider.value = (int)(scaper.getLightChance()*100f);
         nameWidget.text = scaper.name;
         setTitle(scaper.name);
         updateLayerPicker();
@@ -442,11 +417,7 @@ public class LandedModal extends UModalTabs {
             invertRadio.on = !invertRadio.on;
             layer.invert = invertRadio.on;
             autoRegenerate();
-        }else if (widget == lightNewAmbient)
-            makeNewLight(ULight.AMBIENT);
-        else if (widget == lightNewPoint)
-            makeNewLight(ULight.POINT);
-        else if (widget == groupDeleteButton)
+        } else if (widget == groupDeleteButton)
             deleteGroup();
         else if (widget == layerDeleteButton) {
             deleteLayer();
@@ -647,7 +618,7 @@ public class LandedModal extends UModalTabs {
                 l.shaper.resize(areaWidthSlider.value - 2, areaHeightSlider.value - 2);
             }
         }
-        scaper.setup(nameWidget.text, areaWidthSlider.value, areaHeightSlider.value, layers, groups,(float)(lightChanceSlider.value)/100f, roomLights, vaultSetPicker.selected());
+        scaper.setup(nameWidget.text, areaWidthSlider.value, areaHeightSlider.value, layers, groups);
         scaper.buildArea(area, 1, new String[]{});
 
         commander.camera().renderLights();
@@ -659,31 +630,6 @@ public class LandedModal extends UModalTabs {
         config.setLightEnable(true);
         escape();
         commander.game().setupTitleScreen();
-    }
-
-    void makeNewLight(int type) {
-        ULight light = new ULight(UColor.WHITE, 100, 100);
-        if (type == ULight.AMBIENT) {
-            light.makeAmbient(1, 1);
-        }
-        light.setPermanent(true);
-        roomLights.add(light);
-        updateLightList();
-    }
-
-    void updateLightList() {
-        String[] lightNames = new String[roomLights.size()];
-        int i=0;
-        for (ULight l : roomLights) {
-            String n = "";
-            if (l.type == ULight.AMBIENT)
-                n = "ambient light";
-            else
-                n = "point light";
-            lightNames[i] = n;
-            i++;
-        }
-        lightList.setOptions(lightNames);
     }
 
 }

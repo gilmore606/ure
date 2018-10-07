@@ -19,11 +19,6 @@ public class Metascaper extends ULandscaper {
 
     public String name;
     public int xsize,ysize;
-    float lightChance;
-    ArrayList<ULight> roomLights;
-    @JsonIgnore
-    UVaultSet vaultSet;
-    String vaultSetName;
 
     @JsonIgnore
     ArrayList<Room> rooms;
@@ -47,11 +42,6 @@ public class Metascaper extends ULandscaper {
 
         collectRooms();
         buildRoomgroups(area);
-
-        if (vaultSet != null)
-            addVaults(area);
-        if (lightChance > 0f)
-            addRoomLights(area);
     }
 
     void collectRooms() {
@@ -96,56 +86,14 @@ public class Metascaper extends ULandscaper {
         }
     }
 
-    public void setup(String name, int xsize, int ysize, ArrayList<Layer> layers, ArrayList<Roomgroup> groups, float lightChance, ArrayList<ULight> roomLights, String vaultSetName) {
+    public void setup(String name, int xsize, int ysize, ArrayList<Layer> layers, ArrayList<Roomgroup> groups) {
         this.name = name;
         this.xsize = xsize;
         this.ysize = ysize;
         this.layers = layers;
         this.groups = groups;
-        this.lightChance = lightChance;
-        this.roomLights = roomLights;
-        if (vaultSetName != null)
-            if (!vaultSetName.equals(this.vaultSetName))
-                this.vaultSet = commander.cartographer.loadVaultSet(vaultSetName);
     }
 
-
-
-    void addRoomLights(UArea area) {
-        if (roomLights == null) return;
-        if (roomLights.size() == 0) return;
-        for (Room r : rooms) {
-            if (!r.isHallway() && r.unobstructed(area)) {
-                if (random.f() < lightChance) {
-                    ULight l = roomLights.get(random.i(roomLights.size())).clone();
-                    if (l.type == ULight.AMBIENT) {
-                        l.makeAmbient(r.width, r.height);
-                        l.moveTo(area, r.x + 1, r.y + 1);
-                    } else {
-                        l.setRange(Math.max(r.width,r.height)+2);
-                        l.setFalloff(l.getRange()/2);
-                        l.moveTo(area,r.x+(r.width/2),r.y+(r.height/2));
-                    }
-                }
-            }
-        }
-    }
-
-    void addVaults(UArea area) {
-        if (vaultSet == null) return;
-        if (rooms == null) return;
-        ArrayList<UVault> vaults = vaultSet.getVaults();
-        for (UVault v : vaults) {
-            for (Room r : rooms) {
-                if (v.fitsIn(r)) {
-                    v.printToArea(area, r);
-                    if (v.lights != null)
-                        rooms.remove(r);
-                    break;
-                }
-            }
-        }
-    }
 
     public ArrayList<Layer> getLayers() {
         return layers;
@@ -153,38 +101,6 @@ public class Metascaper extends ULandscaper {
 
     public void setLayers(ArrayList<Layer> layers) {
         this.layers = layers;
-    }
-
-    public float getLightChance() {
-        return lightChance;
-    }
-
-    public void setLightChance(float lightChance) {
-        this.lightChance = lightChance;
-    }
-
-    public ArrayList<ULight> getRoomLights() {
-        return roomLights;
-    }
-
-    public void setRoomLights(ArrayList<ULight> roomLights) {
-        this.roomLights = roomLights;
-    }
-
-    public UVaultSet getVaultSet() {
-        return vaultSet;
-    }
-
-    public void setVaultSet(UVaultSet vaultSet) {
-        this.vaultSet = vaultSet;
-    }
-
-    public String getVaultSetName() {
-        return vaultSetName;
-    }
-
-    public void setVaultSetName(String vaultSetName) {
-        this.vaultSetName = vaultSetName;
     }
 
     public ArrayList<Room> getRooms() {
