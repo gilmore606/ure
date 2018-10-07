@@ -154,5 +154,78 @@
     "description": "Gold coins bearing a menacing profile.",
     "weightPer": 0.01,
     "valuePer": 1
+  },
+  {
+    "name": "Throne",
+    "description": "A large ornate chair.",
+    "tags": [ "decor" ],
+    "spawnlevels": [ 1,50 ],
+    "weight": 10,
+    "value": 0
+  },
+  {
+    "name": "Throne",
+    "description": "A large ornate chair.",
+    "tags": [ "furniture" ],
+    "spawnlevels": [ 1,50 ],
+    "weight": 10,
+    "value": 0
+  },
+  {
+    "name": "basin",
+    "description": "A large stone basin.",
+    "tags": [ "furniture" ],
+    "spawnlevels": [ 1,50 ],
+    "weight": 10,
+    "value": 0
+  },
+  {
+    "name": "statue",
+    "description": "A large statue.",
+    "tags": [ "furniture" ],
+    "spawnlevels": [ 1,50 ],
+    "weight": 10,
+    "value": 0
+  },
+  {
+    "name": "broken machinery",
+    "description": "A large heap of metal gears and wires.",
+    "tags": [ "furniture" ],
+    "spawnlevels": [ 1,50 ],
+    "weight": 10,
+    "value": 0
+  },
+  {
+    "name": "debris",
+    "description": "A jumbled pile of dross.",
+    "tags": [ "furniture" ],
+    "spawnlevels": [ 1,50 ],
+    "weight": 10,
+    "value": 0
+  },
+  {
+    "name": "tangle of roots",
+    "description": "A dense knot of twisted roots.",
+    "tags": [ "plant" ],
+    "spawnlevels": [ 1,50 ],
+    "weight": 10,
+    "value": 0
+  },
+  {
+    "name": "lichen",
+    "description": "A pale feathery crust.",
+    "tags": [ "plant" ],
+    "spawnlevels": [ 1,50 ],
+    "weight": 10,
+    "value": 0
+  },
+  {
+    "name": "boulder",
+    "description": "A massive hunk of rock.",
+    "tags": [ "rock", "cavern" ],
+    "spawnlevels": [ 1,50 ],
+    "weight": 10,
+    "value": 0
   }
+
 ]
