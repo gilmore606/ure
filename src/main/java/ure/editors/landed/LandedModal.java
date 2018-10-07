@@ -534,7 +534,7 @@ public class LandedModal extends UModalTabs {
             for (Roomgroup group : groups) {
                 if (groupPicker.selection == 0 || groupPicker.selection == groups.indexOf(group)) {
                     if (group.rooms != null) {
-                        for (Shape.Room r : group.rooms) {
+                        for (Room r : group.rooms) {
                             int rx = ((r.x - commander.camera().leftEdge) * gw()) - absoluteX();
                             int ry = ((r.y - commander.camera().topEdge) * gh()) - absoluteY();
                             float f = (float) (commander.frameCounter / 22f);
@@ -622,6 +622,10 @@ public class LandedModal extends UModalTabs {
         group.frequency = (float)(roomFrequencySlider.value) / 100f;
         group.separation = roomSeparationSlider.value;
         group.floorType = roomFloorPicker.selection;
+        if (autoRegenRadio.on) {
+            scaper.buildRoomgroups(area);
+            updateGroupPicker();
+        }
     }
 
     void autoRegenerate() {

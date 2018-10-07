@@ -3,7 +3,9 @@ package ure.areas.gen.shapers;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.areas.UArea;
+import ure.areas.gen.Face;
 import ure.areas.gen.Layer;
+import ure.areas.gen.Room;
 import ure.areas.gen.Shape;
 
 import java.util.ArrayList;

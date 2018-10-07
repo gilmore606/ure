@@ -23,7 +23,6 @@ import ure.things.UThingCzar;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiPredicate;
 
 /**
  * ULandscaper is a grab bag of tools for creating and populating UAreas.
@@ -71,26 +70,26 @@ public abstract class ULandscaper {
      * Room is used by shapers to dig rooms.  It represents a room location in a shape.
      * Walls and doors are outside of this square.
      */
-    public class Room {
+    public class OldRoom {
         public int x,y,width,height;
-        public Room(int x, int y, int width, int height) {
+        public OldRoom(int x, int y, int width, int height) {
             this.x=x;
             this.y=y;
             this.width=width;
             this.height=height;
         }
-        public Room(int width, int height) {
+        public OldRoom(int width, int height) {
             this.width=width;
             this.height=height;
             this.x=-1;
             this.y=-1;
         }
-        public Face[] faces() {
-            Face[] faces = new Face[4];
-            faces[0] = new Face(x,y-1,width,0,-1);
-            faces[1] = new Face(x+width,y,height,1,0);
-            faces[2] = new Face(x,y+height,width,0,1);
-            faces[3] = new Face(x-1,y,height,-1,0);
+        public OldFace[] faces() {
+            OldFace[] faces = new OldFace[4];
+            faces[0] = new OldFace(x,y-1,width,0,-1);
+            faces[1] = new OldFace(x+width,y,height,1,0);
+            faces[2] = new OldFace(x,y+height,width,0,1);
+            faces[3] = new OldFace(x-1,y,height,-1,0);
             return faces;
         }
         public void rotate() {
@@ -109,7 +108,7 @@ public abstract class ULandscaper {
         }
         public void punchDoors(Shape space) { punchDoors(space, false); }
         public void punchDoors(Shape space, boolean punchAll) {
-            for (Face face : faces()) {
+            for (OldFace face : faces()) {
                 face.punchDoors(space, punchAll);
             }
         }
@@ -124,10 +123,10 @@ public abstract class ULandscaper {
     /**
      * Face is used to dig away from rooms.
      */
-    public class Face {
+    public class OldFace {
         public int x,y,length;
         int facex,facey;
-        public Face(int x, int y, int length, int facex, int facey) {
+        public OldFace(int x, int y, int length, int facex, int facey) {
             this.x = x;
             this.y = y;
             this.length = length;
@@ -139,7 +138,7 @@ public abstract class ULandscaper {
          * Try to add the room somewhere along me.
          * If we can, record the room's xy and return it, else return null.
          */
-        public Room addRoom(Room room, Shape space) {
+        public OldRoom addRoom(OldRoom room, Shape space) {
             ArrayList<Integer> spaces = new ArrayList<>();
             for (int i=-(room.width-3);i<length-3;i++) {
                 boolean blocked = false;
@@ -347,16 +346,16 @@ public abstract class ULandscaper {
     /**
      * Make a new room either small, big or hallway.
      */
-    public Room randomRoom(float smallChance, int smallmin, int smallmax,
-                           float bigChance, int bigmin, int bigmax,
-                           float hallChance, int halllengthmin, int halllengthmax, int hallwidthmin, int hallwidthmax) {
+    public OldRoom randomRoom(float smallChance, int smallmin, int smallmax,
+                              float bigChance, int bigmin, int bigmax,
+                              float hallChance, int halllengthmin, int halllengthmax, int hallwidthmin, int hallwidthmax) {
         float rtype = random.f();
         if (rtype < smallChance)
-            return new Room(0,0,random.i(1+smallmax-smallmin)+smallmin, random.i(1+smallmax-smallmin)+smallmin);
+            return new OldRoom(0,0,random.i(1+smallmax-smallmin)+smallmin, random.i(1+smallmax-smallmin)+smallmin);
         else if (rtype < (bigChance+smallChance))
-            return new Room(0,0,random.i(1+bigmax-bigmin)+bigmin, random.i(1+bigmax-bigmin)+bigmin);
+            return new OldRoom(0,0,random.i(1+bigmax-bigmin)+bigmin, random.i(1+bigmax-bigmin)+bigmin);
         else {
-            Room r = new Room(0, 0, random.i(1+halllengthmax - halllengthmin) + halllengthmin, random.i(1+hallwidthmax - hallwidthmin) + hallwidthmin);
+            OldRoom r = new OldRoom(0, 0, random.i(1+halllengthmax - halllengthmin) + halllengthmin, random.i(1+hallwidthmax - hallwidthmin) + hallwidthmin);
             if (random.f() > 0.5f)
                 r.rotate();
             return r;
@@ -747,9 +746,9 @@ public abstract class ULandscaper {
 
     public Shape shapeMines(int xsize, int ysize, int tunnelWidth, int minForkSteps, int maxForkSteps, int turnStepCount, float turnChance, float connectChance, float narrowChance, float roomChance, float backRoomChance, int maxRooms, int roomSizeMin, int roomSizeMax) {
         Shape mask = new Shape(xsize,ysize);
-        ArrayList<Room> spareRooms = new ArrayList<>();
+        ArrayList<OldRoom> spareRooms = new ArrayList<>();
         for (int i=0;i<maxRooms;i++) {
-            spareRooms.add(new Room(0, 0,rand(roomSizeMax-roomSizeMin)+roomSizeMin, rand(roomSizeMax-roomSizeMin)+roomSizeMin));
+            spareRooms.add(new OldRoom(0, 0,rand(roomSizeMax-roomSizeMin)+roomSizeMin, rand(roomSizeMax-roomSizeMin)+roomSizeMin));
         }
         Digger firstDigger = new Digger(mask,xsize/2,ysize/2,1.5707f,tunnelWidth, minForkSteps, maxForkSteps, connectChance, turnStepCount, turnChance);
         Digger secondDigger = new Digger(mask,xsize/2,ysize/2,-1.5707f, tunnelWidth, minForkSteps, maxForkSteps, connectChance, turnStepCount, turnChance);
@@ -802,7 +801,7 @@ public abstract class ULandscaper {
         drawRect(area, wallt, x, y, (x+w)-1, (y+h)-1);
     }
 
-    public void buildComplex(UArea area, int x1, int y1, int x2, int y2, String floort, String wallt, String[] drawoverts, int roomsizeMin, int roomsizeMax, float hallChance, int hallwidth, int roomsmax, int minroomarea, ArrayList<Room> roomsReturn) {
+    public void buildComplex(UArea area, int x1, int y1, int x2, int y2, String floort, String wallt, String[] drawoverts, int roomsizeMin, int roomsizeMax, float hallChance, int hallwidth, int roomsmax, int minroomarea, ArrayList<OldRoom> roomsReturn) {
         ArrayList<int[]> rooms = new ArrayList<int[]>();
         boolean addExteriorDoors = true;
         boolean addExteriorWindows = true;
@@ -812,7 +811,7 @@ public abstract class ULandscaper {
         int firsty = y1 + (y2-y1)/2;
         buildRoom(area, firstx,firsty,firstw,firsth, floort, wallt);
         rooms.add(new int[]{firstx,firsty,firstw,firsth});
-        roomsReturn.add(new Room(firstx,firsty,firstw,firsth));
+        roomsReturn.add(new OldRoom(firstx,firsty,firstw,firsth));
         boolean done = false;
         int fails = 0;
         while (!done && (fails < rooms.size()*6) && (rooms.size() < roomsmax)) {
@@ -902,7 +901,7 @@ public abstract class ULandscaper {
                 }
                 buildRoom(area, newroom[0],newroom[1],newroom[2],newroom[3],floort,wallt);
                 rooms.add(newroom);
-                roomsReturn.add(new Room(newroom[0],newroom[1],newroom[2],newroom[3]));
+                roomsReturn.add(new OldRoom(newroom[0],newroom[1],newroom[2],newroom[3]));
                 int doorstyle = rand(2);
                 if (doorstyle == 0) {
                     int mid = doormin;

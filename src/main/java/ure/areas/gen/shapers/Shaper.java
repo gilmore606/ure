@@ -3,6 +3,7 @@ package ure.areas.gen.shapers;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ure.areas.UArea;
 import ure.areas.gen.Layer;
+import ure.areas.gen.Room;
 import ure.areas.gen.Shape;
 import ure.sys.Injector;
 import ure.sys.UCommander;
@@ -109,7 +110,7 @@ public class Shaper extends Shape {
         if (rooms == null) return;
         ArrayList<Room> keepers = new ArrayList<>();
         for (Room r : rooms) {
-            if (r.unobstructed())
+            if (r.unobstructed(this))
                 keepers.add(r);
         }
         this.rooms = keepers;

@@ -56,7 +56,7 @@ public class Layer {
             }
         }
     }
-    public ArrayList<Shaper.Room> rooms() { return shaper.rooms; }
+    public ArrayList<Room> rooms() { return shaper.rooms; }
 
     public Shaper getShaper() {
         return shaper;

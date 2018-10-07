@@ -114,12 +114,12 @@ public class UVault {
         lights.remove(l);
     }
 
-    public boolean fitsIn(Shape.Room room) {
+    public boolean fitsIn(Room room) {
         if (room.width == cols && room.height == rows) return true;
         return false;
     }
 
-    public void printToArea(UArea area, Shape.Room room) {
+    public void printToArea(UArea area, Room room) {
         int w = room.width;
         int h = room.height;
         for (int i=0;i<w;i++) {

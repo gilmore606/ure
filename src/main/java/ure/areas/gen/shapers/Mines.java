@@ -2,6 +2,7 @@ package ure.areas.gen.shapers;
 
 import ure.areas.UArea;
 import ure.areas.gen.Layer;
+import ure.areas.gen.Room;
 import ure.areas.gen.Shape;
 
 import java.util.ArrayList;

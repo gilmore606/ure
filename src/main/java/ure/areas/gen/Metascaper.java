@@ -4,13 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import ure.areas.UArea;
-import ure.areas.UCell;
-import ure.math.Dimap;
-import ure.math.DimapEntity;
 import ure.ui.ULight;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public class Metascaper extends ULandscaper {
 
@@ -30,7 +26,7 @@ public class Metascaper extends ULandscaper {
     String vaultSetName;
 
     @JsonIgnore
-    ArrayList<Shape.Room> rooms;
+    ArrayList<Room> rooms;
 
     @JsonIgnore
     private Log log = LogFactory.getLog(Metascaper.class);
@@ -61,11 +57,11 @@ public class Metascaper extends ULandscaper {
     public void buildRoomgroups(UArea area) {
         if (groups == null) return;
         if (groups.size() < 1) return;
-        groups.get(0).filterRooms(rooms, area);
-        ArrayList<Shape.Room> baseRooms = groups.get(0).rooms;
-        rooms.clear();
-        for (Shape.Room r : baseRooms)
-            rooms.add(r);
+        ArrayList<Room> baseRooms = new ArrayList<>();
+        for (Room r : rooms)
+            baseRooms.add(r);
+        groups.get(0).filterRooms(baseRooms, area);
+        baseRooms = groups.get(0).rooms;
         if (groups.size() > 1) {
             for (int i=1;i<groups.size();i++) {
                 groups.get(i).filterRooms(baseRooms, area);
@@ -91,7 +87,7 @@ public class Metascaper extends ULandscaper {
     void addRoomLights(UArea area) {
         if (roomLights == null) return;
         if (roomLights.size() == 0) return;
-        for (Shape.Room r : rooms) {
+        for (Room r : rooms) {
             if (!r.isHallway() && r.unobstructed(area)) {
                 if (random.f() < lightChance) {
                     ULight l = roomLights.get(random.i(roomLights.size())).clone();
@@ -113,7 +109,7 @@ public class Metascaper extends ULandscaper {
         if (rooms == null) return;
         ArrayList<UVault> vaults = vaultSet.getVaults();
         for (UVault v : vaults) {
-            for (Shape.Room r : rooms) {
+            for (Room r : rooms) {
                 if (v.fitsIn(r)) {
                     v.printToArea(area, r);
                     if (v.lights != null)
@@ -164,11 +160,11 @@ public class Metascaper extends ULandscaper {
         this.vaultSetName = vaultSetName;
     }
 
-    public ArrayList<Shape.Room> getRooms() {
+    public ArrayList<Room> getRooms() {
         return rooms;
     }
 
-    public void setRooms(ArrayList<Shape.Room> rooms) {
+    public void setRooms(ArrayList<Room> rooms) {
         this.rooms = rooms;
     }
 

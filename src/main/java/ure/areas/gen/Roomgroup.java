@@ -23,7 +23,7 @@ public class Roomgroup {
     public UColor editorColor;
 
     @JsonIgnore
-    public ArrayList<Shape.Room> rooms;
+    public ArrayList<Room> rooms;
 
     @Inject
     @JsonIgnore
@@ -45,10 +45,10 @@ public class Roomgroup {
         this.floorType = floorType;
     }
 
-    public void filterRooms(ArrayList<Shape.Room> baseRooms, UArea area) {
+    public void filterRooms(ArrayList<Room> baseRooms, UArea area) {
         if (rooms == null) rooms = new ArrayList<>();
         rooms.clear();
-        for (Shape.Room r : baseRooms) {
+        for (Room r : baseRooms) {
             if (!r.isHallway() || includeHallways) {
                 if ((r.width * r.height) >= minRoomSize && (r.width * r.height) <= maxRoomSize) {
                     if (matchFloorType(r, area)) {
@@ -62,12 +62,12 @@ public class Roomgroup {
         while (rooms.size() > maxCount) {
             rooms.remove(random.i(rooms.size()));
         }
-        for (Shape.Room r : rooms) {
+        for (Room r : rooms) {
             baseRooms.remove(r);
         }
     }
 
-    boolean matchFloorType(Shape.Room r, UArea area) {
+    boolean matchFloorType(Room r, UArea area) {
         if (floorType == null) return true;
         if (floorType.equals("null")) return true;
         for (int x=0;x<r.width;x++) {
@@ -136,11 +136,11 @@ public class Roomgroup {
         this.floorType = floorType;
     }
 
-    public ArrayList<Shape.Room> getRooms() {
+    public ArrayList<Room> getRooms() {
         return rooms;
     }
 
-    public void setRooms(ArrayList<Shape.Room> rooms) {
+    public void setRooms(ArrayList<Room> rooms) {
         this.rooms = rooms;
     }
 

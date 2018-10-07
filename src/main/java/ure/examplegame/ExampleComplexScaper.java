@@ -17,21 +17,21 @@ public class ExampleComplexScaper extends ULandscaper {
 
     @Override
     public void buildArea(UArea area, int level, String[] tags) {
-        ArrayList<Room> rooms = new ArrayList<>();
+        ArrayList<OldRoom> rooms = new ArrayList<>();
         fillRect(area, "wall", 0, 0, area.xsize - 1, area.ysize - 1);
         Shape space = new Shape(area.xsize, area.ysize);
-        Room firstroom = new Room(20, 20, 10, 10);
+        OldRoom firstroom = new OldRoom(20, 20, 10, 10);
         firstroom.print(space);
         rooms.add(firstroom);
-        ArrayList<Face> faces = new ArrayList<>();
-        for (Face face : firstroom.faces())
+        ArrayList<OldFace> faces = new ArrayList<>();
+        for (OldFace face : firstroom.faces())
             faces.add(face);
         int iter = 0;
         while (!faces.isEmpty() && iter < 100000) {
-            Room newroom = randomRoom((iter < 500) ? 0.02f : 0.9f, 3, 5,
+            OldRoom newroom = randomRoom((iter < 500) ? 0.02f : 0.9f, 3, 5,
                     (iter < 500) ? 0.2f : 0.01f, 8, 15,
                     0.75f, 10, 24, 1, (iter < 500) ? 2 : 1);
-            Face face = (Face) random.member((List) faces);
+            OldFace face = (OldFace) random.member((List) faces);
             if (face.addRoom(newroom, space) != null) {
                 newroom.print(space, random.f() < 0.1f);
                 rooms.add(newroom);
@@ -40,7 +40,7 @@ public class ExampleComplexScaper extends ULandscaper {
                 else
                     face.punchDoors(space, random.f() < 0.01f);
                 //faces.remove(face);
-                for (Face newface : newroom.faces()) {
+                for (OldFace newface : newroom.faces()) {
                     faces.add(newface);
                     if (newroom.isHallway() && newface.length == Math.min(newroom.width,newroom.height))
                         newface.punchDoors(space, true);
@@ -53,7 +53,7 @@ public class ExampleComplexScaper extends ULandscaper {
         }
         space.pruneDeadEnds().writeTerrain(area, "floor", 0, 0);
         addDoors(area, "door", new String[]{"rock", "door"}, 0.1f);
-        for (Room room : rooms) {
+        for (OldRoom room : rooms) {
             if (!room.isHallway())
                 DecorateRoom(area, new int[]{room.x,room.y,room.width,room.height});
         }
