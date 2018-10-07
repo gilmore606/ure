@@ -23,7 +23,6 @@ public class Metascaper extends ULandscaper {
 
     public String name;
     public int xsize,ysize;
-    String wallTerrain;
     float lightChance;
     ArrayList<ULight> roomLights;
     @JsonIgnore
@@ -41,7 +40,7 @@ public class Metascaper extends ULandscaper {
     }
 
     public void buildArea(UArea area, int level, String[] tags) {
-        area.wipe(wallTerrain);
+        area.wipe("null");
         rooms = new ArrayList<>();
         Layer previousLayer = null;
         for (Layer layer : layers) {
@@ -74,13 +73,12 @@ public class Metascaper extends ULandscaper {
         }
     }
 
-    public void setup(String name, int xsize, int ysize, ArrayList<Layer> layers, ArrayList<Roomgroup> groups, String wallTerrain, float lightChance, ArrayList<ULight> roomLights, String vaultSetName) {
+    public void setup(String name, int xsize, int ysize, ArrayList<Layer> layers, ArrayList<Roomgroup> groups, float lightChance, ArrayList<ULight> roomLights, String vaultSetName) {
         this.name = name;
         this.xsize = xsize;
         this.ysize = ysize;
         this.layers = layers;
         this.groups = groups;
-        this.wallTerrain = wallTerrain;
         this.lightChance = lightChance;
         this.roomLights = roomLights;
         if (vaultSetName != null)
@@ -132,14 +130,6 @@ public class Metascaper extends ULandscaper {
 
     public void setLayers(ArrayList<Layer> layers) {
         this.layers = layers;
-    }
-
-    public String getWallTerrain() {
-        return wallTerrain;
-    }
-
-    public void setWallTerrain(String wallTerrain) {
-        this.wallTerrain = wallTerrain;
     }
 
     public float getLightChance() {

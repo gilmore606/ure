@@ -35,7 +35,7 @@ public class Roomgroup {
         rooms = new ArrayList<>();
     }
 
-    public void update(boolean includeHallways, int maxCount, int minRoomSize, int maxRoomSize, float frequency, int separation, String floorTYpe) {
+    public void update(boolean includeHallways, int maxCount, int minRoomSize, int maxRoomSize, float frequency, int separation, String floorType) {
         this.includeHallways = includeHallways;
         this.maxCount = maxCount;
         this.minRoomSize = minRoomSize;
@@ -58,6 +58,9 @@ public class Roomgroup {
                     }
                 }
             }
+        }
+        while (rooms.size() > maxCount) {
+            rooms.remove(random.i(rooms.size()));
         }
         for (Shape.Room r : rooms) {
             baseRooms.remove(r);

@@ -47,7 +47,7 @@ public class LandedModal extends UModalTabs {
     WidgetDropdown shaperPicker;
 
     WidgetHSlider areaWidthSlider, areaHeightSlider;
-    WidgetTerrainpick fillPicker, terrainPicker;
+    WidgetTerrainpick terrainPicker;
     WidgetDropdown drawPicker;
 
     WidgetDropdown groupPicker;
@@ -112,8 +112,6 @@ public class LandedModal extends UModalTabs {
         nameWidget = new WidgetStringInput(this, 0, 0, 15, "???", 40);
         setTitle("???");
         addWidget(nameWidget);
-        fillPicker = new WidgetTerrainpick(this, 0, 5, "fill:", "rock");
-        addWidget(fillPicker);
         areaWidthSlider = new WidgetHSlider(this, 0, 2, "width", 6, 100, 40, 200, true);
         areaHeightSlider = new WidgetHSlider(this, 0, 3, "height", 6, 100, 40, 200, true);
         addWidget(areaWidthSlider);
@@ -225,7 +223,6 @@ public class LandedModal extends UModalTabs {
         groupIndex = 0;
         group = groups.get(0);
         roomLights = scaper.getRoomLights();
-        fillPicker.selection = scaper.getWallTerrain();
         areaWidthSlider.value = scaper.xsize;
         areaHeightSlider.value = scaper.ysize;
         lightChanceSlider.value = (int)(scaper.getLightChance()*100f);
@@ -487,8 +484,6 @@ public class LandedModal extends UModalTabs {
         } else if (widget == terrainPicker) {
             layer.terrain = terrainPicker.selection;
             autoRegenerate();
-        } else if (widget == fillPicker) {
-            autoRegenerate();
         } else if (widget == drawPicker) {
             layer.printMode = drawPicker.selection;
             autoRegenerate();
@@ -643,12 +638,12 @@ public class LandedModal extends UModalTabs {
         commander.renderer.render();
 
         if (area.xsize != areaWidthSlider.value || area.ysize != areaHeightSlider.value) {
-            area.initialize(areaWidthSlider.value, areaHeightSlider.value, fillPicker.selection);
+            area.initialize(areaWidthSlider.value, areaHeightSlider.value, "null");
             for (Layer l : layers) {
                 l.shaper.resize(areaWidthSlider.value - 2, areaHeightSlider.value - 2);
             }
         }
-        scaper.setup(nameWidget.text, areaWidthSlider.value, areaHeightSlider.value, layers, groups, fillPicker.selection, (float)(lightChanceSlider.value)/100f, roomLights, vaultSetPicker.selected());
+        scaper.setup(nameWidget.text, areaWidthSlider.value, areaHeightSlider.value, layers, groups,(float)(lightChanceSlider.value)/100f, roomLights, vaultSetPicker.selected());
         scaper.buildArea(area, 1, new String[]{});
 
         commander.camera().renderLights();
