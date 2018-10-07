@@ -54,6 +54,7 @@ public class LandedModal extends UModalTabs {
     WidgetRadio roomHallsRadio;
     WidgetHSlider roomMinSizeSlider, roomMaxSizeSlider, roomFrequencySlider, roomSeparationSlider, roomCountSlider;
     WidgetTerrainpick roomFloorPicker;
+    WidgetButton groupDeleteButton;
 
     WidgetHSlider lightChanceSlider;
     WidgetButton lightNewAmbient, lightNewPoint;
@@ -149,8 +150,10 @@ public class LandedModal extends UModalTabs {
 
 
         changeTab("Rooms");
-        groupPicker = new WidgetDropdown(this, 0, 0, new String[]{"Group 0", "<new group>"}, 0);
+        groupPicker = new WidgetDropdown(this, 0, 0, new String[]{"<new group>"}, 0);
         addWidget(groupPicker);
+        groupDeleteButton = new WidgetButton(this, 16, 0, "[ Delete ]", null);
+        addWidget(groupDeleteButton);
         roomHallsRadio = new WidgetRadio(this, 0, 2, "+hallways", null, null, false);
         addWidget(roomHallsRadio);
         roomCountSlider = new WidgetHSlider(this, 0, 3, "count", 8, 100, 1, 100, true);
@@ -193,8 +196,8 @@ public class LandedModal extends UModalTabs {
         clipsToBounds = false;
         setChildPosition(commander.camera().columns - cellw - 2, commander.camera().rows - cellh - 2, commander.camera());
 
-        //loadScaper("testscaper");
-        scaper = new Metascaper();  makeNewLayer();
+        loadScaper("testscaper");
+        //scaper = new Metascaper();  makeNewLayer(); makeNewGroup();
         roomLights = new ArrayList<>();
 
         changeTab("Layers");
@@ -218,6 +221,9 @@ public class LandedModal extends UModalTabs {
         layers = scaper.layers;
         layerIndex = 0;
         layer = layers.get(0);
+        groups = scaper.groups;
+        groupIndex = 0;
+        group = groups.get(0);
         roomLights = scaper.getRoomLights();
         fillPicker.selection = scaper.getWallTerrain();
         areaWidthSlider.value = scaper.xsize;
@@ -226,7 +232,7 @@ public class LandedModal extends UModalTabs {
         nameWidget.text = scaper.name;
         setTitle(scaper.name);
         updateLayerPicker();
-
+        updateGroupPicker();
         regenerate();
     }
 
@@ -300,6 +306,20 @@ public class LandedModal extends UModalTabs {
 
     void makeNewGroup() {
         Roomgroup g = new Roomgroup();
+        if (groups.size() == 0)
+            g.editorColor = new UColor(config.getHiliteColor());
+        else if (groups.size() == 1)
+            g.editorColor = new UColor(UColor.GREEN);
+        else if (groups.size() == 2)
+            g.editorColor = new UColor(UColor.RED);
+        else if (groups.size() == 3)
+            g.editorColor = new UColor(UColor.CYAN);
+        else if (groups.size() == 4)
+            g.editorColor = new UColor(UColor.BLUE);
+        else if (groups.size() == 5)
+            g.editorColor = new UColor(UColor.LIGHTRED);
+        else
+            g.editorColor = new UColor(UColor.YELLOW);
         groups.add(g);
         updateGroupPicker();
         selectGroup(groups.indexOf(g));
@@ -429,6 +449,8 @@ public class LandedModal extends UModalTabs {
             makeNewLight(ULight.AMBIENT);
         else if (widget == lightNewPoint)
             makeNewLight(ULight.POINT);
+        else if (widget == groupDeleteButton)
+            deleteGroup();
         else if (widget == layerDeleteButton) {
             deleteLayer();
         } else if (widget == layerUpButton) {
@@ -439,6 +461,9 @@ public class LandedModal extends UModalTabs {
             ((WidgetRadio)widget).on = !((WidgetRadio)widget).on;
             updateShaperFromWidgets();
             autoRegenerate();
+        } else if (tabWidgetSets.get("Rooms").contains(widget) && widget instanceof WidgetRadio) {
+            ((WidgetRadio)widget).on = !((WidgetRadio)widget).on;
+            updateGroupFromWidgets();
         }
     }
 
@@ -454,6 +479,11 @@ public class LandedModal extends UModalTabs {
                 makeNewLayer();
             else
                 selectLayer(layerPicker.selection);
+        } else if (widget == groupPicker) {
+            if (groupPicker.selected().equals("<new group>"))
+                makeNewGroup();
+            else
+                selectGroup(groupPicker.selection);
         } else if (widget == terrainPicker) {
             layer.terrain = terrainPicker.selection;
             autoRegenerate();
@@ -470,6 +500,8 @@ public class LandedModal extends UModalTabs {
         } else if (shaperWidgets.containsValue(widget)) {
             updateShaperFromWidgets();
             autoRegenerate();
+        } else if (tabWidgetSets.get("Rooms").contains(widget) && widget != groupPicker) {
+            updateGroupFromWidgets();
         }
     }
 
@@ -504,16 +536,19 @@ public class LandedModal extends UModalTabs {
     @Override
     public void draw() {
         if (widgets.contains(groupPicker)) {
-            if (scaper.getRooms() != null) {
-                for (Shape.Room r : scaper.getRooms()) {
-                    int rx = ((r.x - commander.camera().leftEdge) * gw()) - absoluteX();
-                    int ry = ((r.y - commander.camera().topEdge) * gh()) - absoluteY();
-                    float f = (float)(commander.frameCounter / 22f);
-                    f = f + (float)((r.x + r.y) / 26f + (r.x - r.y) / 25f) + (r.y / 11f);
-                    f = 0.1f + (float)Math.sin(f * 2.7f) * 0.04f;
-                    hiliteScratch.setAlpha(f);
-                    renderer.drawRectBorder(rx,ry,r.width*gw(),r.height*gh(),2,hiliteScratch,config.getHiliteColor());
-                    //renderer.drawRect(rx, ry, r.width * gw(), r.height * gh(), hiliteScratch);
+            for (Roomgroup group : groups) {
+                if (groupPicker.selection == 0 || groupPicker.selection == groups.indexOf(group)) {
+                    if (group.rooms != null) {
+                        for (Shape.Room r : group.rooms) {
+                            int rx = ((r.x - commander.camera().leftEdge) * gw()) - absoluteX();
+                            int ry = ((r.y - commander.camera().topEdge) * gh()) - absoluteY();
+                            float f = (float) (commander.frameCounter / 22f);
+                            f = f + (float) ((r.x + r.y) / 26f + (r.x - r.y) / 25f) + (r.y / 11f);
+                            f = 0.14f + (float) Math.sin(f * 2.7f) * 0.03f;
+                            group.editorColor.setAlpha(f);
+                            renderer.drawRectBorder(rx, ry, r.width * gw(), r.height * gh(), 2, group.editorColor, config.getHiliteColor());
+                        }
+                    }
                 }
             }
         }
@@ -560,6 +595,9 @@ public class LandedModal extends UModalTabs {
         roomFrequencySlider.value = (int)(group.frequency * 100f);
         roomSeparationSlider.value = group.separation;
         roomFloorPicker.selection = group.floorType;
+        removeWidget(groupDeleteButton);
+        if (selection > 0)
+            addWidget(groupDeleteButton);
     }
 
     void updateShaperFromWidgets() {
@@ -581,6 +619,16 @@ public class LandedModal extends UModalTabs {
         }
     }
 
+    void updateGroupFromWidgets() {
+        group.includeHallways = roomHallsRadio.on;
+        group.maxCount = roomCountSlider.value;
+        group.minRoomSize = roomMinSizeSlider.value;
+        group.maxRoomSize = roomMaxSizeSlider.value;
+        group.frequency = (float)(roomFrequencySlider.value) / 100f;
+        group.separation = roomSeparationSlider.value;
+        group.floorType = roomFloorPicker.selection;
+    }
+
     void autoRegenerate() {
         if (autoRegenRadio.on)
             regenerate();
@@ -600,7 +648,7 @@ public class LandedModal extends UModalTabs {
                 l.shaper.resize(areaWidthSlider.value - 2, areaHeightSlider.value - 2);
             }
         }
-        scaper.setup(nameWidget.text, areaWidthSlider.value, areaHeightSlider.value, layers, fillPicker.selection, (float)(lightChanceSlider.value)/100f, roomLights, vaultSetPicker.selected());
+        scaper.setup(nameWidget.text, areaWidthSlider.value, areaHeightSlider.value, layers, groups, fillPicker.selection, (float)(lightChanceSlider.value)/100f, roomLights, vaultSetPicker.selected());
         scaper.buildArea(area, 1, new String[]{});
 
         commander.camera().renderLights();

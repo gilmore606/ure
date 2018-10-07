@@ -19,8 +19,7 @@ public class Metascaper extends ULandscaper {
     public static final String TYPE = "meta";
 
     public ArrayList<Layer> layers;
-    @JsonIgnore
-    public Layer roomLayer;
+    public ArrayList<Roomgroup> groups;
 
     public String name;
     public int xsize,ysize;
@@ -52,6 +51,7 @@ public class Metascaper extends ULandscaper {
             previousLayer = layer;
             rooms = layer.shaper.rooms;
         }
+        buildRoomgroups(area);
 
         if (vaultSet != null)
             addVaults(area);
@@ -59,11 +59,27 @@ public class Metascaper extends ULandscaper {
             addRoomLights(area);
     }
 
-    public void setup(String name, int xsize, int ysize, ArrayList<Layer> layers, String wallTerrain, float lightChance, ArrayList<ULight> roomLights, String vaultSetName) {
+    public void buildRoomgroups(UArea area) {
+        if (groups == null) return;
+        if (groups.size() < 1) return;
+        groups.get(0).filterRooms(rooms, area);
+        ArrayList<Shape.Room> baseRooms = groups.get(0).rooms;
+        rooms.clear();
+        for (Shape.Room r : baseRooms)
+            rooms.add(r);
+        if (groups.size() > 1) {
+            for (int i=1;i<groups.size();i++) {
+                groups.get(i).filterRooms(baseRooms, area);
+            }
+        }
+    }
+
+    public void setup(String name, int xsize, int ysize, ArrayList<Layer> layers, ArrayList<Roomgroup> groups, String wallTerrain, float lightChance, ArrayList<ULight> roomLights, String vaultSetName) {
         this.name = name;
         this.xsize = xsize;
         this.ysize = ysize;
         this.layers = layers;
+        this.groups = groups;
         this.wallTerrain = wallTerrain;
         this.lightChance = lightChance;
         this.roomLights = roomLights;
@@ -118,14 +134,6 @@ public class Metascaper extends ULandscaper {
         this.layers = layers;
     }
 
-    public Layer getRoomLayer() {
-        return roomLayer;
-    }
-
-    public void setRoomLayer(Layer roomLayer) {
-        this.roomLayer = roomLayer;
-    }
-
     public String getWallTerrain() {
         return wallTerrain;
     }
@@ -176,4 +184,8 @@ public class Metascaper extends ULandscaper {
 
     public String getName() { return name; }
     public void setName(String s) { name = s; }
+
+    public ArrayList<Roomgroup> getGroups() { return groups; }
+    public void setGroups(ArrayList<Roomgroup> groups) { this.groups = groups; }
+
 }

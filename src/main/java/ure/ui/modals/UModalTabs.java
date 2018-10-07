@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class UModalTabs extends UModal {
 
-    HashMap<String,ArrayList<Widget>> tabWidgetSets;
+    public HashMap<String,ArrayList<Widget>> tabWidgetSets;
     ArrayList<String> tabNames;
     String tab;
 
